@@ -5,7 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.barataribeiro.medimanage.entities.models.User;
-import com.barataribeiro.medimanage.exceptions.global.InternalServerError;
+import com.barataribeiro.medimanage.exceptions.MediManageException;
 import com.barataribeiro.medimanage.services.security.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +47,7 @@ public class TokenServiceImpl implements TokenService {
             return new AbstractMap.SimpleEntry<>(token, expirationDate);
         } catch (IllegalArgumentException | JWTCreationException exception) {
             logger.error(exception.getMessage());
-            throw new InternalServerError();
+            throw new MediManageException();
         }
     }
 
