@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -23,10 +24,14 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 
+        List<SimpleGrantedAuthority> authorities =
+                new ArrayList<>(Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getUserRoles().name())));
+        authorities.add(new SimpleGrantedAuthority("ACCOUNT_TYPE_" + user.getAccountType().name()));
+
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                new ArrayList<>(Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getUserRoles().name())))
+                authorities
         );
     }
 }
