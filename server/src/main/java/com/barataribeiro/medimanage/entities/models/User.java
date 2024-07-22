@@ -20,7 +20,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "tb_users", indexes = {
         @Index(name = "idx_user_username_unq", columnList = "username", unique = true),
-        @Index(name = "idx_user_email_unq", columnList = "email", unique = true)
+        @Index(name = "idx_user_email_unq", columnList = "email", unique = true),
+        @Index(name = "idx_user_full_name_unq", columnList = "full_name", unique = true)
 })
 public class User {
     @Id
@@ -37,18 +38,21 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column(name = "full_name")
+    private String fullName;
+
     private String phone;
 
     private String address;
 
-    private LocalDate birthdate;
+    private LocalDate birthDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "account_type", nullable = false, unique = true)
     private AccountType accountType;
 
-    @Enumerated(EnumType.STRING)
     @Builder.Default
+    @Enumerated(EnumType.STRING)
     @Column(name = "user_roles", unique = true)
     private UserRoles userRoles = UserRoles.USER;
 
