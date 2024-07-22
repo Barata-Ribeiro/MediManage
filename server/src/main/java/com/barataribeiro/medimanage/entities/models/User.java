@@ -4,7 +4,10 @@ import com.barataribeiro.medimanage.entities.enums.AccountType;
 import com.barataribeiro.medimanage.entities.enums.UserRoles;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -22,7 +25,7 @@ import java.util.UUID;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(nullable = false)
+    @Column(name = "id", nullable = false)
     private UUID id;
 
     @Column(nullable = false, unique = true)
@@ -49,4 +52,11 @@ public class User {
     @Column(name = "user_roles", unique = true)
     private UserRoles userRoles = UserRoles.USER;
 
+    @Column(name = "created_at", updatable = false)
+    @CreationTimestamp
+    private Instant createdAt;
+
+    @Column(name = "updated_at")
+    @UpdateTimestamp
+    private Instant updatedAt;
 }
