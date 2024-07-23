@@ -4,8 +4,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-import java.time.LocalDate;
-
 public record UpdateAccountRequestDTO(
         String currentPassword,
 
@@ -25,4 +23,4 @@ public record UpdateAccountRequestDTO(
 
         String phone,
         String address,
-        LocalDate birthDate) {}
+        String birthDate) {}

@@ -1,11 +1,14 @@
 package com.barataribeiro.medimanage.services.impl;
 
 import com.barataribeiro.medimanage.builders.UserMapper;
+import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.UserDTO;
 import com.barataribeiro.medimanage.dtos.requests.UpdateAccountRequestDTO;
 import com.barataribeiro.medimanage.dtos.requests.UpdateUserInformationRequestDTO;
 import com.barataribeiro.medimanage.entities.enums.AccountType;
 import com.barataribeiro.medimanage.entities.models.User;
+import com.barataribeiro.medimanage.exceptions.IllegalRequestException;
+import com.barataribeiro.medimanage.exceptions.users.UserNotFoundException;
 import com.barataribeiro.medimanage.repositories.UserRepository;
 import com.barataribeiro.medimanage.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,14 +19,16 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserServiceImpl implements UserService {
-
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
@@ -49,26 +54,81 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getUserInformation(String userId, Principal principal) {
-        return null;
+        User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new UserNotFoundException(
+                String.format(ApplicationMessages.USER_NOT_FOUND_WITH_ID, userId))
+        );
+
+        return userMapper.toDTO(user);
     }
 
     @Override
-    public UserDTO updateUserInformation(String userId, UpdateUserInformationRequestDTO body, Principal principal) {
-        return null;
+    @Transactional
+    public UserDTO updateUserInformation(String userId, @NotNull UpdateUserInformationRequestDTO body,
+                                         Principal principal) {
+        User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new UserNotFoundException(
+                String.format(ApplicationMessages.USER_NOT_FOUND_WITH_ID, userId))
+        );
+
+        user.setUsername(body.username());
+        user.setEmail(body.email());
+        user.setFullName(body.fullName());
+        user.setPhone(body.phone());
+        user.setAddress(body.address());
+        user.setBirthDate(LocalDate.parse(body.birthDate()));
+        user.setAccountType(AccountType.valueOf(body.accountType()));
+
+        return userMapper.toDTO(userRepository.save(user));
     }
 
     @Override
-    public void deleteUser(String userId, Principal principal) {
-        // TODO: To implement this delete method
+    @Transactional
+    public void deleteUser(String userId, @NotNull Principal principal) {
+        User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new UserNotFoundException(
+                String.format(ApplicationMessages.USER_NOT_FOUND_WITH_ID, userId))
+        );
+
+        if (user.getUsername().equals(principal.getName())) {
+            throw new IllegalRequestException("You cannot delete your own account.");
+        }
+
+        userRepository.delete(user);
     }
 
     @Override
-    public UserDTO getContext(Principal principal) {
-        return null;
+    public UserDTO getContext(@NotNull Principal principal) {
+        User user = userRepository.findByUsername(principal.getName()).orElseThrow(() -> new UserNotFoundException(
+                String.format(ApplicationMessages.USER_NOT_FOUND_WITH_USERNAME, principal.getName())
+        ));
+
+        return userMapper.toDTO(user);
     }
 
     @Override
-    public UserDTO updateAccount(UpdateAccountRequestDTO body, Principal principal) {
-        return null;
+    @Transactional
+    public UserDTO updateAccount(@NotNull UpdateAccountRequestDTO body, @NotNull Principal principal) {
+        User user = userRepository.findByUsername(principal.getName()).orElseThrow(() -> new UserNotFoundException(
+                String.format(ApplicationMessages.USER_NOT_FOUND_WITH_USERNAME, principal.getName())
+        ));
+
+        if (!user.getUsername().equals(principal.getName())) {
+            throw new IllegalRequestException("You cannot update another user's account.");
+        }
+
+        if (!user.getPassword().equals(body.currentPassword())) {
+            throw new IllegalRequestException("Current password is incorrect.");
+        }
+
+        if (userRepository.existsByEmail(body.email())) {
+            throw new IllegalRequestException("Email is already in use.");
+        }
+
+        user.setEmail(body.email());
+        user.setFullName(body.fullName());
+        user.setPassword(body.newPassword());
+        user.setPhone(body.phone());
+        user.setAddress(body.address());
+        user.setBirthDate(LocalDate.parse(body.birthDate()));
+
+        return userMapper.toDTO(userRepository.save(user));
     }
 }
