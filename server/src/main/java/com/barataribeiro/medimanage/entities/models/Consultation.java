@@ -16,11 +16,11 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Entity
-@Table(name = "tb_consultation")
+@Table(name = "tb_consultations")
 public class Consultation {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id", nullable = false)
+    @Column(nullable = false)
     private Long id;
 
     @ToString.Exclude
@@ -43,7 +43,7 @@ public class Consultation {
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "medical_record_id", nullable = false, unique = true)
+    @JoinColumn(name = "medical_record_id", nullable = false)
     private MedicalRecord medicalRecord;
 
     @Column(name = "created_at", updatable = false)

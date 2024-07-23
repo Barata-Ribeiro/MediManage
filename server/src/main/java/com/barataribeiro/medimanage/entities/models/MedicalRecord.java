@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Builder
 @AllArgsConstructor
@@ -19,16 +20,28 @@ import java.util.List;
 @Table(name = "tb_medical_records")
 public class MedicalRecord {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(nullable = false)
+    private UUID id;
 
-    @ToString.Exclude
-    @OneToOne(fetch = FetchType.LAZY, optional = false, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, optional = false, orphanRemoval = true)
     @JoinColumn(name = "patient_id", nullable = false, unique = true)
     private User patient;
 
+    @Column(name = "insurance_company")
+    private String insuranceCompany;
+
+    @Column(name = "insurance_member_id_number")
+    private String insuranceMemberIdNumber;
+
+    @Column(name = "insurance_group_number")
+    private String insuranceGroupNumber;
+
+    @Column(name = "insurance_policy_number")
+    private String insurancePolicyNumber;
+
     @ToString.Exclude
+    @Builder.Default
     @OneToMany(mappedBy = "medicalRecord", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("createdAt DESC")
     private List<Consultation> consultations = new ArrayList<>();

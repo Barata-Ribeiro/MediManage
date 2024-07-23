@@ -14,11 +14,11 @@ import java.time.Instant;
 @Setter
 @ToString
 @Entity
-@Table(name = "prescription")
+@Table(name = "tb_prescriptions")
 public class Prescription {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id", nullable = false)
+    @Column(nullable = false)
     private Long id;
 
     @ToString.Exclude

@@ -26,7 +26,7 @@ import java.util.UUID;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", nullable = false)
+    @Column(nullable = false)
     private UUID id;
 
     @Column(nullable = false, unique = true)
@@ -48,12 +48,12 @@ public class User {
     private LocalDate birthDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "account_type", nullable = false, unique = true)
+    @Column(name = "account_type", nullable = false)
     private AccountType accountType;
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
-    @Column(name = "user_roles", unique = true)
+    @Column(name = "user_roles")
     private UserRoles userRoles = UserRoles.USER;
 
     @Column(name = "created_at", updatable = false)
