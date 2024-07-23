@@ -7,8 +7,11 @@ import com.barataribeiro.medimanage.dtos.requests.RegisterByAssistantRequestDTO;
 import com.barataribeiro.medimanage.dtos.requests.RegisterRequestDTO;
 import com.barataribeiro.medimanage.dtos.responses.LoginResponseDTO;
 import com.barataribeiro.medimanage.entities.enums.AccountType;
+import com.barataribeiro.medimanage.entities.enums.UserRoles;
 import com.barataribeiro.medimanage.entities.models.User;
+import com.barataribeiro.medimanage.exceptions.users.InvalidUserCredentialsException;
 import com.barataribeiro.medimanage.exceptions.users.UserAlreadyExistsException;
+import com.barataribeiro.medimanage.exceptions.users.UserIsBannedException;
 import com.barataribeiro.medimanage.repositories.UserRepository;
 import com.barataribeiro.medimanage.services.AuthService;
 import com.barataribeiro.medimanage.services.security.TokenService;
@@ -19,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Random;
@@ -50,13 +54,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public Map<String, Object> registerByAssistant(@NotNull RegisterByAssistantRequestDTO body) {
         if (userRepository.existsByEmailOrFullName(body.email(), body.fullName())) {
             throw new UserAlreadyExistsException();
         }
 
-        var generatedUsername = this.generateUniqueUsername();
-        var generatedPassword = this.generatePassword();
+        String generatedUsername = this.generateUniqueUsername();
+        String generatedPassword = this.generatePassword();
 
         User registration = User.builder()
                 .username(generatedUsername)
@@ -78,8 +83,28 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public LoginResponseDTO login(LoginRequestDTO body) {
-        return null;
+    public LoginResponseDTO login(@NotNull LoginRequestDTO body) {
+        User user = userRepository.findByUsernameOrEmail(body.emailOrUsername())
+                .orElseThrow(() -> new InvalidUserCredentialsException("The credential '" + body.emailOrUsername() +
+                                                                               "' is invalid."));
+
+        boolean passwordMatches = passwordEncoder.matches(body.password(), user.getPassword());
+        boolean userBannedOrNone =
+                user.getUserRoles().equals(UserRoles.BANNED) || user.getUserRoles().equals(UserRoles.NONE);
+
+        if (!passwordMatches) {
+            throw new InvalidUserCredentialsException("The provided password is incorrect.");
+        }
+
+        if (userBannedOrNone) {
+            throw new UserIsBannedException();
+        }
+
+        Map.Entry<String, Instant> tokenAndExpiration = tokenService.generateToken(user, body.rememberMe());
+
+        return new LoginResponseDTO(userMapper.toDTO(user),
+                                    tokenAndExpiration.getKey(),
+                                    tokenAndExpiration.getValue());
     }
 
     private @NotNull String generateRandomString() {
