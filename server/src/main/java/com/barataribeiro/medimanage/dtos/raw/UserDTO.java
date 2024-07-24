@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -29,6 +30,6 @@ public class UserDTO implements Serializable {
     LocalDate birthDate;
     AccountType accountType;
     UserRoles userRoles;
-    LocalDate createdAt;
-    LocalDate updatedAt;
+    Instant createdAt;
+    Instant updatedAt;
 }

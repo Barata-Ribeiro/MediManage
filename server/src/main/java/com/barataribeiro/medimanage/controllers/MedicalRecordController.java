@@ -1,6 +1,5 @@
 package com.barataribeiro.medimanage.controllers;
 
-import com.barataribeiro.medimanage.config.security.AccountType;
 import com.barataribeiro.medimanage.dtos.raw.MedicalRecordDTO;
 import com.barataribeiro.medimanage.dtos.raw.RestResponseDTO;
 import com.barataribeiro.medimanage.dtos.requests.MedicalRecordRegisterDTO;
@@ -10,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,8 +23,8 @@ import java.security.Principal;
 public class MedicalRecordController {
     private final MedicalRecordService medicalRecordService;
 
-    @AccountType("ASSISTANT")
     @PostMapping
+    @Secured("ACCOUNT_TYPE_ASSISTANT")
     public ResponseEntity<RestResponseDTO> registerMedicalRecord(@RequestBody @Valid MedicalRecordRegisterDTO body,
                                                                  Principal principal) {
         MedicalRecordDTO response = medicalRecordService.registerMedicalRecord(principal, body);

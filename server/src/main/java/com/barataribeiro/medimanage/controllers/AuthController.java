@@ -1,6 +1,5 @@
 package com.barataribeiro.medimanage.controllers;
 
-import com.barataribeiro.medimanage.config.security.AccountType;
 import com.barataribeiro.medimanage.dtos.raw.RestResponseDTO;
 import com.barataribeiro.medimanage.dtos.raw.UserDTO;
 import com.barataribeiro.medimanage.dtos.requests.LoginRequestDTO;
@@ -13,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,8 +35,8 @@ public class AuthController {
                                                      response));
     }
 
-    @AccountType("ASSISTANT")
     @PostMapping("/register-by-assistant")
+    @Secured("ACCOUNT_TYPE_ASSISTANT")
     public ResponseEntity<RestResponseDTO> registerByAssistant(@RequestBody @Valid RegisterByAssistantRequestDTO body) {
         Map<String, Object> response = authService.registerByAssistant(body);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.CREATED,
