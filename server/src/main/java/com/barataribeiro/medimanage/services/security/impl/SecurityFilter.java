@@ -1,5 +1,6 @@
 package com.barataribeiro.medimanage.services.security.impl;
 
+import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.entities.models.User;
 import com.barataribeiro.medimanage.exceptions.users.UserNotFoundException;
 import com.barataribeiro.medimanage.repositories.UserRepository;
@@ -38,9 +39,10 @@ public class SecurityFilter extends OncePerRequestFilter {
             var login = tokenService.validateToken(token);
 
             if (login != null) {
-                User user = userRepository.findByUsername(login).orElseThrow(() -> new UserNotFoundException(
-                        "An user with the username " + login + " was not found."
-                ));
+                User user = userRepository.findByUsername(login)
+                        .orElseThrow(() -> new UserNotFoundException(
+                                String.format(ApplicationMessages.USER_NOT_FOUND_WITH_USERNAME, login)
+                        ));
 
                 List<SimpleGrantedAuthority> authorities =
                         Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getUserRoles().name()));
