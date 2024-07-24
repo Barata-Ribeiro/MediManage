@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @PreAuthorize("hasRole('ROLE_USER') " +
         "or hasRole('ROLE_ADMIN') " +
-        "and @accountTypeSecurity.isAccountType(authentication, #accountType)")
+        "and @accountTypeSecurity.isAccountType(authentication, #value)")
 public @interface AccountType {
-    String value();
+    String[] value();
 }
