@@ -25,7 +25,7 @@ public class MedicalRecord {
     private UUID id;
 
     @OneToOne(fetch = FetchType.EAGER, optional = false, orphanRemoval = true)
-    @JoinColumn(name = "patient_id", nullable = false, unique = true)
+    @JoinColumn(name = "patient_id", nullable = false)
     private User patient;
 
     @Column(name = "insurance_company")
