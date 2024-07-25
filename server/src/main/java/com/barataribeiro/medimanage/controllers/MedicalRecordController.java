@@ -7,13 +7,11 @@ import com.barataribeiro.medimanage.services.MedicalRecordService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -22,6 +20,33 @@ import java.security.Principal;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class MedicalRecordController {
     private final MedicalRecordService medicalRecordService;
+
+    @GetMapping
+    @Secured({"ACCOUNT_TYPE_ASSISTANT", "ACCOUNT_TYPE_DOCTOR"})
+    public ResponseEntity<RestResponseDTO> getMedicalRecordsPaginated(@RequestParam(required = false) String search,
+                                                                      @RequestParam(defaultValue = "0") int page,
+                                                                      @RequestParam(defaultValue = "10") int perPage,
+                                                                      @RequestParam(defaultValue = "ASC") String direction,
+                                                                      @RequestParam(defaultValue = "createdAt") String orderBy,
+                                                                      Principal principal) {
+        Page<MedicalRecordDTO> response = medicalRecordService.getMedicalRecordsPaginated(search, page, perPage,
+                                                                                          direction, orderBy,
+                                                                                          principal);
+        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
+                                                     HttpStatus.OK.value(),
+                                                     "Medical record(s) retrieved successfully.",
+                                                     response));
+    }
+
+    @GetMapping("/{recordId}")
+    @Secured({"ACCOUNT_TYPE_ASSISTANT", "ACCOUNT_TYPE_DOCTOR"})
+    public ResponseEntity<RestResponseDTO> getMedicalRecord(@PathVariable String recordId, Principal principal) {
+        MedicalRecordDTO response = medicalRecordService.getMedicalRecord(recordId, principal);
+        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
+                                                     HttpStatus.OK.value(),
+                                                     "Medical record retrieved successfully.",
+                                                     response));
+    }
 
     @PostMapping
     @Secured("ACCOUNT_TYPE_ASSISTANT")
@@ -32,5 +57,16 @@ public class MedicalRecordController {
                                                      HttpStatus.CREATED.value(),
                                                      "Medical record registered successfully.",
                                                      response));
+    }
+
+    @PutMapping("/{recordId}")
+    @Secured("ACCOUNT_TYPE_DOCTOR")
+    public ResponseEntity<RestResponseDTO> updateMedicalRecord(@PathVariable String recordId,
+                                                               @RequestBody @Valid MedicalRecordRegisterDTO body,
+                                                               Principal principal) {
+        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
+                                                     HttpStatus.OK.value(),
+                                                     "Medical record updated successfully.",
+                                                     null));
     }
 }

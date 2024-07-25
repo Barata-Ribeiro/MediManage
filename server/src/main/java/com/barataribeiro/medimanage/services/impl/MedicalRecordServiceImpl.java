@@ -14,10 +14,15 @@ import com.barataribeiro.medimanage.services.MedicalRecordService;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -27,6 +32,34 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     private final MedicalRecordRepository medicalRecordRepository;
     private final MedicalRecordMapper medicalRecordMapper;
 
+    @Override
+    public Page<MedicalRecordDTO> getMedicalRecordsPaginated(String search, int page, int perPage,
+                                                             @NotNull String direction,
+                                                             String orderBy, Principal principal) {
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        orderBy = orderBy.equalsIgnoreCase("createdAt") ? "createdAt" : orderBy;
+        PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
+
+        Page<MedicalRecord> records;
+        if (search != null && !search.trim().isEmpty()) {
+            records = medicalRecordRepository.findRecordsBySearchParams(search, pageable);
+        } else {
+            records = medicalRecordRepository.findAll(pageable);
+        }
+
+        List<MedicalRecordDTO> medicalRecordDTOS = medicalRecordMapper.toDTOList(records.getContent());
+
+        return new PageImpl<>(medicalRecordDTOS, pageable, records.getTotalElements());
+    }
+
+    @Override
+    public MedicalRecordDTO getMedicalRecord(String recordId, Principal principal) {
+        MedicalRecord medicalRecord = medicalRecordRepository.findById(UUID.fromString(recordId))
+                .orElseThrow(() -> new IllegalRequestException(
+                        String.format(ApplicationMessages.MEDICAL_RECORD_NOT_FOUND_WITH_ID, recordId)
+                ));
+        return medicalRecordMapper.toDTO(medicalRecord);
+    }
 
     @Override
     @Transactional
