@@ -4,7 +4,7 @@ import com.barataribeiro.medimanage.builders.UserMapper;
 import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.UserDTO;
 import com.barataribeiro.medimanage.dtos.requests.UpdateAccountRequestDTO;
-import com.barataribeiro.medimanage.dtos.requests.UpdateUserInformationRequestDTO;
+import com.barataribeiro.medimanage.dtos.requests.UpdateUserInformationDTO;
 import com.barataribeiro.medimanage.entities.enums.AccountType;
 import com.barataribeiro.medimanage.entities.models.User;
 import com.barataribeiro.medimanage.exceptions.IllegalRequestException;
@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDTO updateUserInformation(String userId, @NotNull UpdateUserInformationRequestDTO body,
+    public UserDTO updateUserInformation(String userId, @NotNull UpdateUserInformationDTO body,
                                          Principal principal) {
         User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new UserNotFoundException(
                 String.format(ApplicationMessages.USER_NOT_FOUND_WITH_ID, userId))

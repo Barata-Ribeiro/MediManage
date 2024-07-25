@@ -2,7 +2,7 @@ package com.barataribeiro.medimanage.services;
 
 import com.barataribeiro.medimanage.dtos.raw.UserDTO;
 import com.barataribeiro.medimanage.dtos.requests.UpdateAccountRequestDTO;
-import com.barataribeiro.medimanage.dtos.requests.UpdateUserInformationRequestDTO;
+import com.barataribeiro.medimanage.dtos.requests.UpdateUserInformationDTO;
 import org.springframework.data.domain.Page;
 
 import java.security.Principal;
@@ -13,7 +13,7 @@ public interface UserService {
 
     UserDTO getUserInformation(String userId, Principal principal);
 
-    UserDTO updateUserInformation(String userId, UpdateUserInformationRequestDTO body, Principal principal);
+    UserDTO updateUserInformation(String userId, UpdateUserInformationDTO body, Principal principal);
 
     void deleteUser(String userId, Principal principal);
 

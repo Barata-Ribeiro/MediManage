@@ -3,7 +3,7 @@ package com.barataribeiro.medimanage.controllers;
 import com.barataribeiro.medimanage.dtos.raw.RestResponseDTO;
 import com.barataribeiro.medimanage.dtos.raw.UserDTO;
 import com.barataribeiro.medimanage.dtos.requests.LoginRequestDTO;
-import com.barataribeiro.medimanage.dtos.requests.RegisterByAssistantRequestDTO;
+import com.barataribeiro.medimanage.dtos.requests.RegisterByAssistantDTO;
 import com.barataribeiro.medimanage.dtos.requests.RegisterRequestDTO;
 import com.barataribeiro.medimanage.dtos.responses.LoginResponseDTO;
 import com.barataribeiro.medimanage.services.AuthService;
@@ -37,7 +37,7 @@ public class AuthController {
 
     @PostMapping("/register-by-assistant")
     @Secured("ACCOUNT_TYPE_ASSISTANT")
-    public ResponseEntity<RestResponseDTO> registerByAssistant(@RequestBody @Valid RegisterByAssistantRequestDTO body) {
+    public ResponseEntity<RestResponseDTO> registerByAssistant(@RequestBody @Valid RegisterByAssistantDTO body) {
         Map<String, Object> response = authService.registerByAssistant(body);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.CREATED,
                                                      HttpStatus.CREATED.value(),

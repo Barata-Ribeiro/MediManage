@@ -3,7 +3,7 @@ package com.barataribeiro.medimanage.controllers;
 import com.barataribeiro.medimanage.dtos.raw.RestResponseDTO;
 import com.barataribeiro.medimanage.dtos.raw.UserDTO;
 import com.barataribeiro.medimanage.dtos.requests.UpdateAccountRequestDTO;
-import com.barataribeiro.medimanage.dtos.requests.UpdateUserInformationRequestDTO;
+import com.barataribeiro.medimanage.dtos.requests.UpdateUserInformationDTO;
 import com.barataribeiro.medimanage.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +50,7 @@ public class UserController {
     @PutMapping("/{userId}")
     @Secured("ACCOUNT_TYPE_ADMINISTRATOR")
     public ResponseEntity<RestResponseDTO> updateUserInformation(@PathVariable String userId,
-                                                                 @RequestBody @Valid UpdateUserInformationRequestDTO body,
+                                                                 @RequestBody @Valid UpdateUserInformationDTO body,
                                                                  Principal principal) {
         UserDTO response = userService.updateUserInformation(userId, body, principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,

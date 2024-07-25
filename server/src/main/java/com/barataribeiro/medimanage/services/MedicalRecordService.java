@@ -13,4 +13,6 @@ public interface MedicalRecordService {
     MedicalRecordDTO getMedicalRecord(String recordId, Principal principal);
 
     MedicalRecordDTO registerMedicalRecord(Principal principal, MedicalRecordRegisterDTO body);
+
+    MedicalRecordDTO updateMedicalRecord(Principal principal, MedicalRecordRegisterDTO body, String recordId);
 }
