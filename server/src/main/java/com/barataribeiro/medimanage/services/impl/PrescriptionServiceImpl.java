@@ -2,9 +2,11 @@ package com.barataribeiro.medimanage.services.impl;
 
 import com.barataribeiro.medimanage.builders.PrescriptionMapper;
 import com.barataribeiro.medimanage.builders.UserMapper;
+import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.PrescriptionDTO;
 import com.barataribeiro.medimanage.dtos.raw.SimplePrescriptionDTO;
 import com.barataribeiro.medimanage.entities.models.Prescription;
+import com.barataribeiro.medimanage.exceptions.prescriptions.PrescriptionNotFoundException;
 import com.barataribeiro.medimanage.repositories.PrescriptionRepository;
 import com.barataribeiro.medimanage.repositories.UserRepository;
 import com.barataribeiro.medimanage.services.PrescriptionService;
@@ -48,7 +50,10 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
     @Override
     public PrescriptionDTO getPrescription(String prescriptionId, Principal principal) {
-        Prescription prescription = prescriptionRepository.findById(Long.valueOf(prescriptionId)).orElseThrow();
+        Prescription prescription = prescriptionRepository.findById(Long.valueOf(prescriptionId)).orElseThrow(
+                () -> new PrescriptionNotFoundException(String.format(
+                        ApplicationMessages.PRESCRIPTION_NOT_FOUND_WITH_ID, prescriptionId)
+                ));
         return prescriptionMapper.toDTO(prescription);
     }
 

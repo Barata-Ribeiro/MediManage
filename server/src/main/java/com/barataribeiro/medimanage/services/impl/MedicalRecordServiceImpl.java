@@ -7,6 +7,7 @@ import com.barataribeiro.medimanage.dtos.requests.MedicalRecordRegisterDTO;
 import com.barataribeiro.medimanage.entities.models.MedicalRecord;
 import com.barataribeiro.medimanage.entities.models.User;
 import com.barataribeiro.medimanage.exceptions.IllegalRequestException;
+import com.barataribeiro.medimanage.exceptions.records.MedicalRecordNotFoundException;
 import com.barataribeiro.medimanage.exceptions.users.UserNotFoundException;
 import com.barataribeiro.medimanage.repositories.MedicalRecordRepository;
 import com.barataribeiro.medimanage.repositories.UserRepository;
@@ -55,7 +56,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     @Override
     public MedicalRecordDTO getMedicalRecord(String recordId, Principal principal) {
         MedicalRecord medicalRecord = medicalRecordRepository.findById(UUID.fromString(recordId))
-                .orElseThrow(() -> new IllegalRequestException(
+                .orElseThrow(() -> new MedicalRecordNotFoundException(
                         String.format(ApplicationMessages.MEDICAL_RECORD_NOT_FOUND_WITH_ID, recordId)
                 ));
         return medicalRecordMapper.toDTO(medicalRecord);
