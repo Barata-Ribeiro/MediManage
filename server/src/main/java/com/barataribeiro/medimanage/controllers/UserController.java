@@ -26,7 +26,7 @@ public class UserController {
     @Secured("ACCOUNT_TYPE_ADMINISTRATOR")
     public ResponseEntity<RestResponseDTO> getAllUsersPaginated(@RequestParam(defaultValue = "0") int page,
                                                                 @RequestParam(defaultValue = "10") int perPage,
-                                                                @RequestParam(defaultValue = "ALL") String type,
+                                                                @RequestParam(required = false) String type,
                                                                 @RequestParam(defaultValue = "ASC") String direction,
                                                                 @RequestParam(defaultValue = "createdAt") String orderBy,
                                                                 Principal principal) {
