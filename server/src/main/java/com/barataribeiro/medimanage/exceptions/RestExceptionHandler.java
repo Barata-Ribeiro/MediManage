@@ -1,7 +1,9 @@
 package com.barataribeiro.medimanage.exceptions;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -10,13 +12,22 @@ import java.util.List;
 
 @RestControllerAdvice
 public class RestExceptionHandler {
+    @ExceptionHandler(AccessDeniedException.class)
+    protected ProblemDetail handleAccessDenied(@NotNull AccessDeniedException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
+        problemDetail.setTitle("Forbidden");
+        problemDetail.setDetail(String.format("%s. You do not have sufficient privileges to access this resource.",
+                                              ex.getMessage()));
+        return problemDetail;
+    }
+
     @ExceptionHandler(MediManageException.class)
-    protected ProblemDetail handleInternalServerError(MediManageException ex) {
+    protected ProblemDetail handleInternalServerError(@NotNull MediManageException ex) {
         return ex.toProblemDetail();
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ProblemDetail handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+    protected ProblemDetail handleMethodArgumentNotValid(@NotNull MethodArgumentNotValidException ex) {
 
         List<InvalidParam> fieldErrors = ex.getFieldErrors()
                 .stream()
