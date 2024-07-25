@@ -88,4 +88,29 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 
         return medicalRecordMapper.toDTO(medicalRecordRepository.save(medicalRecord));
     }
+
+    @Override
+    @Transactional
+    public MedicalRecordDTO updateMedicalRecord(@NotNull Principal principal, @NotNull MedicalRecordRegisterDTO body,
+                                                String recordId) {
+        MedicalRecord medicalRecord = medicalRecordRepository.findById(UUID.fromString(recordId))
+                .orElseThrow(() -> new IllegalRequestException(
+                        String.format(ApplicationMessages.MEDICAL_RECORD_NOT_FOUND_WITH_ID, recordId)
+                ));
+
+        if (medicalRecord.getPatient().getUsername().equals(principal.getName())) {
+            throw new IllegalRequestException("You cannot update a medical record for yourself.");
+        }
+
+        medicalRecord.setInsuranceCompany(body.insuranceCompany());
+        medicalRecord.setInsuranceMemberIdNumber(String.valueOf(body.insuranceMemberIdNumber()));
+        medicalRecord.setInsuranceGroupNumber(String.valueOf(body.insuranceGroupNumber()));
+        medicalRecord.setInsurancePolicyNumber(String.valueOf(body.insurancePolicyNumber()));
+        medicalRecord.setAllergies(body.allergies());
+        medicalRecord.setMedications(body.medications());
+        medicalRecord.setMedicalHistory(body.medicalHistory());
+        medicalRecord.setFamilyMedicalHistory(body.familyMedicalHistory());
+
+        return medicalRecordMapper.toDTO(medicalRecordRepository.save(medicalRecord));
+    }
 }

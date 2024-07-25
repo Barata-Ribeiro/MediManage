@@ -64,9 +64,10 @@ public class MedicalRecordController {
     public ResponseEntity<RestResponseDTO> updateMedicalRecord(@PathVariable String recordId,
                                                                @RequestBody @Valid MedicalRecordRegisterDTO body,
                                                                Principal principal) {
+        MedicalRecordDTO response = medicalRecordService.updateMedicalRecord(principal, body, recordId);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                                                      HttpStatus.OK.value(),
                                                      "Medical record updated successfully.",
-                                                     null));
+                                                     response));
     }
 }
