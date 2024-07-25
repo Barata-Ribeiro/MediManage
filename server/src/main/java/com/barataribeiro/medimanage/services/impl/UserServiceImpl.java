@@ -33,6 +33,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public Page<UserDTO> getAllUsersPaginated(int page, int perPage, String type, @NotNull String direction,
                                               String orderBy, Principal principal) {
         Sort.Direction sortDirection = direction.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC;

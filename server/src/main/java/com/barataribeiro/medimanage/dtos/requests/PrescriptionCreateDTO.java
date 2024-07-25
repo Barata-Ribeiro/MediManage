@@ -1,4 +1,6 @@
 package com.barataribeiro.medimanage.dtos.requests;
 
-public record PrescriptionCreateDTO() {
+import jakarta.validation.constraints.NotBlank;
+
+public record PrescriptionCreateDTO(@NotBlank String text) {
 }

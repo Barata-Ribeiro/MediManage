@@ -34,6 +34,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     private final MedicalRecordMapper medicalRecordMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public Page<MedicalRecordDTO> getMedicalRecordsPaginated(String search, int page, int perPage,
                                                              @NotNull String direction,
                                                              String orderBy, Principal principal) {
