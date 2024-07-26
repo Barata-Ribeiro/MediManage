@@ -31,7 +31,7 @@ public class Prescription {
     @JoinColumn(name = "doctor_id", nullable = false)
     private User doctor;
 
-    @Column(name = "prescription_text", nullable = false)
+    @Column(name = "prescription_text", nullable = false, length = 1000)
     private String text;
 
     @Column(name = "created_at", updatable = false)

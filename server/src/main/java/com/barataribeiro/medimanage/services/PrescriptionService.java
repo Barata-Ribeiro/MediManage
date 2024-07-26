@@ -2,6 +2,7 @@ package com.barataribeiro.medimanage.services;
 
 import com.barataribeiro.medimanage.dtos.raw.PrescriptionDTO;
 import com.barataribeiro.medimanage.dtos.raw.SimplePrescriptionDTO;
+import com.barataribeiro.medimanage.dtos.requests.PrescriptionCreateDTO;
 import org.springframework.data.domain.Page;
 
 import java.security.Principal;
@@ -13,5 +14,5 @@ public interface PrescriptionService {
 
     PrescriptionDTO getPrescription(String prescriptionId, Principal principal);
 
-    PrescriptionDTO createPrescription(String text, Principal principal);
+    PrescriptionDTO createPrescription(String patientId, PrescriptionCreateDTO body, Principal principal);
 }

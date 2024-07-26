@@ -3,9 +3,9 @@ package com.barataribeiro.medimanage.controllers;
 import com.barataribeiro.medimanage.dtos.raw.PrescriptionDTO;
 import com.barataribeiro.medimanage.dtos.raw.RestResponseDTO;
 import com.barataribeiro.medimanage.dtos.raw.SimplePrescriptionDTO;
+import com.barataribeiro.medimanage.dtos.requests.PrescriptionCreateDTO;
 import com.barataribeiro.medimanage.services.PrescriptionService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -54,9 +54,10 @@ public class PrescriptionController {
 
     @PostMapping("/patients/{patientId}")
     @Secured("ACCOUNT_TYPE_DOCTOR")
-    public ResponseEntity<RestResponseDTO> createPrescription(@RequestBody @Valid @NotBlank String text,
+    public ResponseEntity<RestResponseDTO> createPrescription(@PathVariable String patientId,
+                                                              @RequestBody @Valid PrescriptionCreateDTO body,
                                                               Principal principal) {
-        PrescriptionDTO response = prescriptionService.createPrescription(text, principal);
+        PrescriptionDTO response = prescriptionService.createPrescription(patientId, body, principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.CREATED,
                                                      HttpStatus.CREATED.value(),
                                                      "Prescription created successfully.",
