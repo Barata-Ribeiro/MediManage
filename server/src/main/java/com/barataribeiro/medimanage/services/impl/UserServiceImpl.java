@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
@@ -78,11 +79,11 @@ public class UserServiceImpl implements UserService {
         user.setBirthDate(LocalDate.parse(body.birthDate()));
         user.setAccountType(AccountType.valueOf(body.accountType()));
 
-        return userMapper.toDTO(userRepository.save(user));
+        return userMapper.toDTO(userRepository.saveAndFlush(user));
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void deleteUser(String userId, @NotNull Principal principal) {
         User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new UserNotFoundException(
                 String.format(ApplicationMessages.USER_NOT_FOUND_WITH_ID, userId))
@@ -130,6 +131,6 @@ public class UserServiceImpl implements UserService {
         user.setAddress(body.address());
         user.setBirthDate(LocalDate.parse(body.birthDate()));
 
-        return userMapper.toDTO(userRepository.save(user));
+        return userMapper.toDTO(userRepository.saveAndFlush(user));
     }
 }

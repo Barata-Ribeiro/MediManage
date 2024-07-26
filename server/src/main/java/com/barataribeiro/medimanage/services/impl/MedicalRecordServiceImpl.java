@@ -88,7 +88,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
                 .familyMedicalHistory(body.familyMedicalHistory())
                 .build();
 
-        return medicalRecordMapper.toDTO(medicalRecordRepository.save(medicalRecord));
+        return medicalRecordMapper.toDTO(medicalRecordRepository.saveAndFlush(medicalRecord));
     }
 
     @Override
@@ -113,6 +113,6 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
         medicalRecord.setMedicalHistory(body.medicalHistory());
         medicalRecord.setFamilyMedicalHistory(body.familyMedicalHistory());
 
-        return medicalRecordMapper.toDTO(medicalRecordRepository.save(medicalRecord));
+        return medicalRecordMapper.toDTO(medicalRecordRepository.saveAndFlush(medicalRecord));
     }
 }

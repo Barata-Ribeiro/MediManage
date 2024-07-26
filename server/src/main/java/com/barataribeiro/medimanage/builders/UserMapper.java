@@ -1,5 +1,6 @@
 package com.barataribeiro.medimanage.builders;
 
+import com.barataribeiro.medimanage.dtos.raw.SimpleUserDTO;
 import com.barataribeiro.medimanage.dtos.raw.UserDTO;
 import com.barataribeiro.medimanage.entities.models.User;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,10 @@ public class UserMapper {
         return modelMapper.map(user, UserDTO.class);
     }
 
+    public SimpleUserDTO toSimpleDTO(User user) {
+        return modelMapper.map(user, SimpleUserDTO.class);
+    }
+
     public User toEntity(UserDTO userDTO) {
         return modelMapper.map(userDTO, User.class);
     }
@@ -28,6 +33,12 @@ public class UserMapper {
     public List<UserDTO> toDTOList(@NotNull List<User> users) {
         return users.stream()
                 .map(this::toDTO)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public List<SimpleUserDTO> toSimpleDTOList(@NotNull List<User> users) {
+        return users.stream()
+                .map(this::toSimpleDTO)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 

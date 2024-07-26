@@ -50,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
                 .accountType(AccountType.PATIENT)
                 .build();
 
-        return userMapper.toDTO(userRepository.save(registration));
+        return userMapper.toDTO(userRepository.saveAndFlush(registration));
     }
 
     @Override
@@ -74,7 +74,7 @@ public class AuthServiceImpl implements AuthService {
                 .accountType(AccountType.PATIENT)
                 .build();
 
-        User savedUser = userRepository.save(registration);
+        User savedUser = userRepository.saveAndFlush(registration);
 
         return Map.of("username", generatedUsername,
                       "password", generatedPassword,
@@ -83,6 +83,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public LoginResponseDTO login(@NotNull LoginRequestDTO body) {
         User user = userRepository.findByUsernameOrEmail(body.emailOrUsername())
                 .orElseThrow(() -> new InvalidUserCredentialsException("The credential '" + body.emailOrUsername() +

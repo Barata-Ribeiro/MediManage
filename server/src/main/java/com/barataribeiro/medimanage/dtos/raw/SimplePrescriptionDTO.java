@@ -18,8 +18,8 @@ import java.time.Instant;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SimplePrescriptionDTO implements Serializable {
     Long id;
-    UserDTO patient;
-    UserDTO doctor;
+    SimpleUserDTO patient;
+    SimpleUserDTO doctor;
     Instant createdAt;
     Instant updatedAt;
 }
