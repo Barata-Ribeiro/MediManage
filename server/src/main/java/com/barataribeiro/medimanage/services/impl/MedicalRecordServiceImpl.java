@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -77,6 +78,10 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
             throw new IllegalRequestException("You cannot register a medical record for yourself.");
         }
 
+        if (medicalRecordRepository.existsByPatient(user)) {
+            throw new IllegalRequestException("A medical record already exists for this patient.");
+        }
+
         MedicalRecord medicalRecord = MedicalRecord.builder()
                 .patient(user)
                 .insuranceCompany(body.insuranceCompany())
@@ -94,7 +99,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 
     @Override
     @Transactional
-    public MedicalRecordDTO updateMedicalRecord(@NotNull Principal principal, @NotNull MedicalRecordRegisterDTO body,
+    public MedicalRecordDTO updateMedicalRecord(@NotNull Principal principal, MedicalRecordRegisterDTO body,
                                                 String recordId) {
         MedicalRecord medicalRecord = medicalRecordRepository.findById(UUID.fromString(recordId))
                 .orElseThrow(() -> new IllegalRequestException(
@@ -105,15 +110,26 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
             throw new IllegalRequestException("You cannot update a medical record for yourself.");
         }
 
-        medicalRecord.setInsuranceCompany(body.insuranceCompany());
-        medicalRecord.setInsuranceMemberIdNumber(String.valueOf(body.insuranceMemberIdNumber()));
-        medicalRecord.setInsuranceGroupNumber(String.valueOf(body.insuranceGroupNumber()));
-        medicalRecord.setInsurancePolicyNumber(String.valueOf(body.insurancePolicyNumber()));
-        medicalRecord.setAllergies(body.allergies());
-        medicalRecord.setMedications(body.medications());
-        medicalRecord.setMedicalHistory(body.medicalHistory());
-        medicalRecord.setFamilyMedicalHistory(body.familyMedicalHistory());
+        verifyIfBodyExistsThenSetProperties(body, medicalRecord);
 
         return medicalRecordMapper.toDTO(medicalRecordRepository.saveAndFlush(medicalRecord));
+    }
+
+    private static void verifyIfBodyExistsThenSetProperties(@NotNull MedicalRecordRegisterDTO body,
+                                                            @NotNull MedicalRecord medicalRecord) {
+        setIfValid(body.insuranceCompany(), medicalRecord::setInsuranceCompany);
+        setIfValid(String.valueOf(body.insuranceMemberIdNumber()), medicalRecord::setInsuranceMemberIdNumber);
+        setIfValid(String.valueOf(body.insuranceGroupNumber()), medicalRecord::setInsuranceGroupNumber);
+        setIfValid(String.valueOf(body.insurancePolicyNumber()), medicalRecord::setInsurancePolicyNumber);
+        setIfValid(body.allergies(), medicalRecord::setAllergies);
+        setIfValid(body.medications(), medicalRecord::setMedications);
+        setIfValid(body.medicalHistory(), medicalRecord::setMedicalHistory);
+        setIfValid(body.familyMedicalHistory(), medicalRecord::setFamilyMedicalHistory);
+    }
+
+    private static void setIfValid(String value, Consumer<String> setter) {
+        if (value != null && !value.trim().isEmpty()) {
+            setter.accept(value);
+        }
     }
 }

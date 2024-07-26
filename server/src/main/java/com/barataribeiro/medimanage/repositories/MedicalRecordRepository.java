@@ -1,6 +1,7 @@
 package com.barataribeiro.medimanage.repositories;
 
 import com.barataribeiro.medimanage.entities.models.MedicalRecord;
+import com.barataribeiro.medimanage.entities.models.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -17,4 +18,7 @@ public interface MedicalRecordRepository extends JpaRepository<MedicalRecord, UU
             "WHERE LOWER(p.username) LIKE LOWER(CONCAT('%', :search, '%')) " +
             "OR LOWER(p.fullName) LIKE LOWER(CONCAT('%', :search, '%'))")
     Page<MedicalRecord> findRecordsBySearchParams(@Param("search") String search, Pageable pageable);
+
+    boolean existsByPatient(User patient);
+
 }

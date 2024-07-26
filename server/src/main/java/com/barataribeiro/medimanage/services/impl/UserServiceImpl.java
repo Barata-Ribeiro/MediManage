@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,7 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
@@ -116,7 +118,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalRequestException("You cannot update another user's account.");
         }
 
-        if (!user.getPassword().equals(body.currentPassword())) {
+        if (!passwordEncoder.matches(body.currentPassword(), user.getPassword())) {
             throw new IllegalRequestException("Current password is incorrect.");
         }
 
@@ -124,13 +126,34 @@ public class UserServiceImpl implements UserService {
             throw new IllegalRequestException("Email is already in use.");
         }
 
-        user.setEmail(body.email());
-        user.setFullName(body.fullName());
-        user.setPassword(body.newPassword());
-        user.setPhone(body.phone());
-        user.setAddress(body.address());
-        user.setBirthDate(LocalDate.parse(body.birthDate()));
+        verifyIfBodyExistsThenSetProperties(body, user);
 
         return userMapper.toDTO(userRepository.saveAndFlush(user));
+    }
+
+    private void verifyIfBodyExistsThenSetProperties(@NotNull UpdateAccountRequestDTO body, User user) {
+        if (body.email() != null && !body.email().trim().isEmpty()) {
+            user.setEmail(body.email());
+        }
+
+        if (body.fullName() != null && !body.fullName().trim().isEmpty()) {
+            user.setFullName(body.fullName());
+        }
+
+        if (body.newPassword() != null && !body.newPassword().trim().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(body.newPassword()));
+        }
+
+        if (body.phone() != null && !body.phone().trim().isEmpty()) {
+            user.setPhone(body.phone());
+        }
+
+        if (body.address() != null && !body.address().trim().isEmpty()) {
+            user.setAddress(body.address());
+        }
+
+        if (body.birthDate() != null && !body.birthDate().trim().isEmpty()) {
+            user.setBirthDate(LocalDate.parse(body.birthDate()));
+        }
     }
 }
