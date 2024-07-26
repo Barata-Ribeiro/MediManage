@@ -2,7 +2,9 @@ package com.barataribeiro.medimanage.entities.enums;
 
 public enum ConsultationStatus {
     SCHEDULED,
+    ACCEPTED,
     IN_PROGRESS,
-    CANCELED,
-    DONE
+    DONE,
+    MISSED,
+    CANCELED
 }
