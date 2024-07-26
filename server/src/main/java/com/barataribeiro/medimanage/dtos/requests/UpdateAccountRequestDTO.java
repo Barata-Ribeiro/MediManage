@@ -1,10 +1,12 @@
 package com.barataribeiro.medimanage.dtos.requests;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record UpdateAccountRequestDTO(
+        @NotBlank(message = "Current password is required to update account.")
         String currentPassword,
 
         @Email(regexp = "[A-Za-z0-9._%-+]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}",
@@ -21,6 +23,8 @@ public record UpdateAccountRequestDTO(
                         "one uppercase letter, one special character and no whitespace.")
         String newPassword,
 
+        @Pattern(regexp = "^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$",
+                message = "You must provide a valid phone number.")
         String phone,
         String address,
         String birthDate) {}
