@@ -1,6 +1,7 @@
 package com.barataribeiro.medimanage.builders;
 
 import com.barataribeiro.medimanage.dtos.raw.MedicalRecordDTO;
+import com.barataribeiro.medimanage.dtos.raw.SimpleMedicalRecordDTO;
 import com.barataribeiro.medimanage.entities.models.MedicalRecord;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,10 @@ public class MedicalRecordMapper {
         return modelMapper.map(medicalRecord, MedicalRecordDTO.class);
     }
 
+    public SimpleMedicalRecordDTO toSimpleDTO(MedicalRecord medicalRecord) {
+        return modelMapper.map(medicalRecord, SimpleMedicalRecordDTO.class);
+    }
+
     public MedicalRecord toEntity(MedicalRecordDTO medicalRecordDTO) {
         return modelMapper.map(medicalRecordDTO, MedicalRecord.class);
     }
@@ -28,6 +33,12 @@ public class MedicalRecordMapper {
     public List<MedicalRecordDTO> toDTOList(@NotNull List<MedicalRecord> records) {
         return records.stream()
                 .map(this::toDTO)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public List<SimpleMedicalRecordDTO> toSimpleDTOList(@NotNull List<MedicalRecord> records) {
+        return records.stream()
+                .map(this::toSimpleDTO)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 

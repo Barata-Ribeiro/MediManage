@@ -2,6 +2,7 @@ package com.barataribeiro.medimanage.controllers;
 
 import com.barataribeiro.medimanage.dtos.raw.MedicalRecordDTO;
 import com.barataribeiro.medimanage.dtos.raw.RestResponseDTO;
+import com.barataribeiro.medimanage.dtos.raw.SimpleMedicalRecordDTO;
 import com.barataribeiro.medimanage.dtos.requests.MedicalRecordRegisterDTO;
 import com.barataribeiro.medimanage.services.MedicalRecordService;
 import jakarta.validation.Valid;
@@ -29,9 +30,9 @@ public class MedicalRecordController {
                                                                       @RequestParam(defaultValue = "ASC") String direction,
                                                                       @RequestParam(defaultValue = "createdAt") String orderBy,
                                                                       Principal principal) {
-        Page<MedicalRecordDTO> response = medicalRecordService.getMedicalRecordsPaginated(search, page, perPage,
-                                                                                          direction, orderBy,
-                                                                                          principal);
+        Page<SimpleMedicalRecordDTO> response = medicalRecordService.getMedicalRecordsPaginated(search, page, perPage,
+                                                                                                direction, orderBy,
+                                                                                                principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                                                      HttpStatus.OK.value(),
                                                      "Medical record(s) retrieved successfully.",

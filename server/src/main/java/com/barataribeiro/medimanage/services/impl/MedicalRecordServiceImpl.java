@@ -3,6 +3,7 @@ package com.barataribeiro.medimanage.services.impl;
 import com.barataribeiro.medimanage.builders.MedicalRecordMapper;
 import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.MedicalRecordDTO;
+import com.barataribeiro.medimanage.dtos.raw.SimpleMedicalRecordDTO;
 import com.barataribeiro.medimanage.dtos.requests.MedicalRecordRegisterDTO;
 import com.barataribeiro.medimanage.entities.models.MedicalRecord;
 import com.barataribeiro.medimanage.entities.models.User;
@@ -35,9 +36,9 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<MedicalRecordDTO> getMedicalRecordsPaginated(String search, int page, int perPage,
-                                                             @NotNull String direction,
-                                                             String orderBy, Principal principal) {
+    public Page<SimpleMedicalRecordDTO> getMedicalRecordsPaginated(String search, int page, int perPage,
+                                                                   @NotNull String direction,
+                                                                   String orderBy, Principal principal) {
         Sort.Direction sortDirection = direction.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC;
         orderBy = orderBy.equalsIgnoreCase("createdAt") ? "createdAt" : orderBy;
         PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
@@ -49,7 +50,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
             records = medicalRecordRepository.findAll(pageable);
         }
 
-        List<MedicalRecordDTO> medicalRecordDTOS = medicalRecordMapper.toDTOList(records.getContent());
+        List<SimpleMedicalRecordDTO> medicalRecordDTOS = medicalRecordMapper.toSimpleDTOList(records.getContent());
 
         return new PageImpl<>(medicalRecordDTOS, pageable, records.getTotalElements());
     }
