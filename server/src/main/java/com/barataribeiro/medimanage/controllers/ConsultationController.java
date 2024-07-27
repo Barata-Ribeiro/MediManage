@@ -44,8 +44,10 @@ public class ConsultationController {
                                                                        @RequestParam(defaultValue = "ASC") String direction,
                                                                        @RequestParam(defaultValue = "createdAt") String orderBy,
                                                                        Principal principal) {
-        Page<ConsultationDTO> response = consultationService.getConsultationsByPatientId(patientId, page, perPage,
-                                                                                         direction, orderBy, principal);
+        Page<ConsultationDTO> response = consultationService.getPatientConsultationsPaginatedList(patientId, page,
+                                                                                                  perPage,
+                                                                                                  direction, orderBy,
+                                                                                                  principal);
         String username = response.getContent().getFirst().getPatient().getUsername();
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                                                      HttpStatus.OK.value(),

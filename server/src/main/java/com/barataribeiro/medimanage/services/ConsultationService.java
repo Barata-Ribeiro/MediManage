@@ -9,6 +9,7 @@ public interface ConsultationService {
     Page<ConsultationDTO> getConsultationsPaginated(String search, int page, int perPage, String direction,
                                                     String orderBy, Principal principal);
 
-    Page<ConsultationDTO> getConsultationsByPatientId(String patientId, int page, int perPage, String direction,
-                                                      String orderBy, Principal principal);
+    Page<ConsultationDTO> getPatientConsultationsPaginatedList(String patientId, int page, int perPage,
+                                                               String direction,
+                                                               String orderBy, Principal principal);
 }

@@ -1,6 +1,7 @@
 package com.barataribeiro.medimanage.services.impl;
 
 import com.barataribeiro.medimanage.builders.ConsultationMapper;
+import com.barataribeiro.medimanage.constants.ApplicationConstants;
 import com.barataribeiro.medimanage.dtos.raw.ConsultationDTO;
 import com.barataribeiro.medimanage.entities.models.Consultation;
 import com.barataribeiro.medimanage.repositories.ConsultationRepository;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -31,7 +33,7 @@ public class ConsultationServiceImpl implements ConsultationService {
                                                            String orderBy, Principal principal) {
 
         Sort.Direction sortDirection = direction.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC;
-        orderBy = orderBy.equalsIgnoreCase("createdAt") ? "createdAt" : orderBy;
+        orderBy = orderBy.equalsIgnoreCase(ApplicationConstants.CREATED_AT) ? ApplicationConstants.CREATED_AT : orderBy;
         PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
 
         Page<Consultation> consultations;
@@ -47,8 +49,19 @@ public class ConsultationServiceImpl implements ConsultationService {
     }
 
     @Override
-    public Page<ConsultationDTO> getConsultationsByPatientId(String patientId, int page, int perPage,
-                                                             String direction, String orderBy, Principal principal) {
-        return null;
+    @Transactional(readOnly = true)
+    public Page<ConsultationDTO> getPatientConsultationsPaginatedList(String patientId, int page, int perPage,
+                                                                      @NotNull String direction, String orderBy,
+                                                                      Principal principal) {
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        orderBy = orderBy.equalsIgnoreCase(ApplicationConstants.CREATED_AT) ? ApplicationConstants.CREATED_AT : orderBy;
+        PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
+
+        Page<Consultation> consultations = consultationRepository.findAllByPatient_Id(UUID.fromString(patientId),
+                                                                                      pageable);
+
+        List<ConsultationDTO> consultationDTOS = consultationMapper.toDTOList(consultations.getContent());
+
+        return new PageImpl<>(consultationDTOS, pageable, consultations.getTotalElements());
     }
 }
