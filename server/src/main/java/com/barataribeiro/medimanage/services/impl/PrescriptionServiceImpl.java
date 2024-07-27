@@ -1,6 +1,7 @@
 package com.barataribeiro.medimanage.services.impl;
 
 import com.barataribeiro.medimanage.builders.PrescriptionMapper;
+import com.barataribeiro.medimanage.constants.ApplicationConstants;
 import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.PrescriptionDTO;
 import com.barataribeiro.medimanage.dtos.raw.SimplePrescriptionDTO;
@@ -40,7 +41,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
                                                                             @NotNull String direction, String orderBy,
                                                                             Principal principal) {
         Sort.Direction sortDirection = direction.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC;
-        orderBy = orderBy.equalsIgnoreCase("createdAt") ? "createdAt" : orderBy;
+        orderBy = orderBy.equalsIgnoreCase(ApplicationConstants.CREATED_AT) ? ApplicationConstants.CREATED_AT : orderBy;
         PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
 
         Page<Prescription> prescriptions =

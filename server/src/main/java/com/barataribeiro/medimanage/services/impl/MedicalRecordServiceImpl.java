@@ -1,6 +1,7 @@
 package com.barataribeiro.medimanage.services.impl;
 
 import com.barataribeiro.medimanage.builders.MedicalRecordMapper;
+import com.barataribeiro.medimanage.constants.ApplicationConstants;
 import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.MedicalRecordDTO;
 import com.barataribeiro.medimanage.dtos.raw.SimpleMedicalRecordDTO;
@@ -41,7 +42,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
                                                                    @NotNull String direction,
                                                                    String orderBy, Principal principal) {
         Sort.Direction sortDirection = direction.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC;
-        orderBy = orderBy.equalsIgnoreCase("createdAt") ? "createdAt" : orderBy;
+        orderBy = orderBy.equalsIgnoreCase(ApplicationConstants.CREATED_AT) ? ApplicationConstants.CREATED_AT : orderBy;
         PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
 
         Page<MedicalRecord> records;
