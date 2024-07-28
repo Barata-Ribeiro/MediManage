@@ -1,5 +1,6 @@
 package com.barataribeiro.medimanage.controllers;
 
+import com.barataribeiro.medimanage.constants.ApplicationConstants;
 import com.barataribeiro.medimanage.dtos.raw.RestResponseDTO;
 import com.barataribeiro.medimanage.dtos.raw.UserDTO;
 import com.barataribeiro.medimanage.dtos.requests.LoginRequestDTO;
@@ -32,7 +33,7 @@ public class AuthController {
         UserDTO response = authService.register(body);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.CREATED,
                                                      HttpStatus.CREATED.value(),
-                                                     "User registered successfully.",
+                                                     ApplicationConstants.USER_REGISTERED_SUCCESSFULLY,
                                                      response));
     }
 
@@ -42,7 +43,7 @@ public class AuthController {
         Map<String, Object> response = authService.registerByAssistant(body);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.CREATED,
                                                      HttpStatus.CREATED.value(),
-                                                     "User registered successfully.",
+                                                     ApplicationConstants.USER_REGISTERED_SUCCESSFULLY,
                                                      response));
     }
 
@@ -52,7 +53,7 @@ public class AuthController {
         Map<String, Object> response = authService.registerNewEmployee(body);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.CREATED,
                                                      HttpStatus.CREATED.value(),
-                                                     "User registered successfully.",
+                                                     ApplicationConstants.USER_REGISTERED_SUCCESSFULLY,
                                                      response));
     }
 
