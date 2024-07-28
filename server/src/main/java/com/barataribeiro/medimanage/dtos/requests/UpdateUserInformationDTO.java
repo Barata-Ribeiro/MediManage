@@ -17,7 +17,20 @@ public record UpdateUserInformationDTO(
         @Size(min = 8, max = 100, message = "Full name must be between 8 and 100 " +
                 "characters.")
         String fullName,
+
+        @Pattern(regexp = "^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$",
+                message = "You must provide a valid phone number.")
         String phone,
         String address,
         String birthDate,
+
+        // Alter Pattern's regex based on ORIGIN of registration number
+        @Pattern(regexp = "^\\d{6}-\\d{2}/[A-Z]{2}$", message = "You must provide a valid " +
+                "registration number.")
+        String registrationNumber,
+        String registrationOrigin,
+        String specialization,
+
+        @Pattern(regexp = "PATIENT|ASSISTANT|DOCTOR|ADMINISTRATOR", message = "Account type must be one of: PATIENT, " +
+                "ASSISTANT, DOCTOR, ADMINISTRATOR.")
         String accountType) {}
