@@ -4,6 +4,7 @@ import com.barataribeiro.medimanage.builders.UserMapper;
 import com.barataribeiro.medimanage.dtos.raw.UserDTO;
 import com.barataribeiro.medimanage.dtos.requests.LoginRequestDTO;
 import com.barataribeiro.medimanage.dtos.requests.RegisterByAssistantDTO;
+import com.barataribeiro.medimanage.dtos.requests.RegisterNewEmployee;
 import com.barataribeiro.medimanage.dtos.requests.RegisterRequestDTO;
 import com.barataribeiro.medimanage.dtos.responses.LoginResponseDTO;
 import com.barataribeiro.medimanage.entities.enums.AccountType;
@@ -72,6 +73,38 @@ public class AuthServiceImpl implements AuthService {
                 .address(body.address())
                 .birthDate(LocalDate.parse(body.birthDate()))
                 .accountType(AccountType.PATIENT)
+                .build();
+
+        User savedUser = userRepository.saveAndFlush(registration);
+
+        return Map.of("username", generatedUsername,
+                      "password", generatedPassword,
+                      "registeredAt", savedUser.getCreatedAt(),
+                      "message", "Please, change your password after login.");
+    }
+
+    @Override
+    @Transactional
+    public Map<String, Object> registerNewEmployee(@NotNull RegisterNewEmployee body) {
+        if (userRepository.existsByEmailOrFullName(body.email(), body.fullName())) {
+            throw new UserAlreadyExistsException();
+        }
+
+        String generatedUsername = this.generateUniqueUsername();
+        String generatedPassword = this.generatePassword();
+        AccountType accountType = AccountType.valueOf(body.accountType());
+        UserRoles role = accountType.equals(AccountType.ADMINISTRATOR) ? UserRoles.ADMIN : UserRoles.USER;
+
+        User registration = User.builder()
+                .username(generatedUsername)
+                .email(body.email())
+                .password(passwordEncoder.encode(generatedPassword))
+                .fullName(body.fullName())
+                .phone(body.phone())
+                .address(body.address())
+                .birthDate(LocalDate.parse(body.birthDate()))
+                .userRoles(role)
+                .accountType(accountType)
                 .build();
 
         User savedUser = userRepository.saveAndFlush(registration);

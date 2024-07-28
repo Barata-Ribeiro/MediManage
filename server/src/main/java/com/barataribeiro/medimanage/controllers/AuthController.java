@@ -4,6 +4,7 @@ import com.barataribeiro.medimanage.dtos.raw.RestResponseDTO;
 import com.barataribeiro.medimanage.dtos.raw.UserDTO;
 import com.barataribeiro.medimanage.dtos.requests.LoginRequestDTO;
 import com.barataribeiro.medimanage.dtos.requests.RegisterByAssistantDTO;
+import com.barataribeiro.medimanage.dtos.requests.RegisterNewEmployee;
 import com.barataribeiro.medimanage.dtos.requests.RegisterRequestDTO;
 import com.barataribeiro.medimanage.dtos.responses.LoginResponseDTO;
 import com.barataribeiro.medimanage.services.AuthService;
@@ -39,6 +40,16 @@ public class AuthController {
     @Secured("ACCOUNT_TYPE_ASSISTANT")
     public ResponseEntity<RestResponseDTO> registerByAssistant(@RequestBody @Valid RegisterByAssistantDTO body) {
         Map<String, Object> response = authService.registerByAssistant(body);
+        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.CREATED,
+                                                     HttpStatus.CREATED.value(),
+                                                     "User registered successfully.",
+                                                     response));
+    }
+
+    @PostMapping("/register-new-employee")
+    @Secured("ACCOUNT_TYPE_ADMINISTRATOR")
+    public ResponseEntity<RestResponseDTO> registerNewEmployee(@RequestBody @Valid RegisterNewEmployee body) {
+        Map<String, Object> response = authService.registerNewEmployee(body);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.CREATED,
                                                      HttpStatus.CREATED.value(),
                                                      "User registered successfully.",
