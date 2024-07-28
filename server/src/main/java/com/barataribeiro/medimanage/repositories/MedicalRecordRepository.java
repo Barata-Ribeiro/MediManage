@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface MedicalRecordRepository extends JpaRepository<MedicalRecord, UUID> {
@@ -18,6 +19,9 @@ public interface MedicalRecordRepository extends JpaRepository<MedicalRecord, UU
             "WHERE LOWER(p.username) LIKE LOWER(CONCAT('%', :search, '%')) " +
             "OR LOWER(p.fullName) LIKE LOWER(CONCAT('%', :search, '%'))")
     Page<MedicalRecord> findRecordsBySearchParams(@Param("search") String search, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"patient", "consultations"})
+    Optional<MedicalRecord> findByPatient(User patient);
 
     boolean existsByPatient(User patient);
 

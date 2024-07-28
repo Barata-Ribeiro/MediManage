@@ -2,6 +2,7 @@ package com.barataribeiro.medimanage.controllers;
 
 import com.barataribeiro.medimanage.dtos.raw.ConsultationDTO;
 import com.barataribeiro.medimanage.dtos.raw.RestResponseDTO;
+import com.barataribeiro.medimanage.dtos.requests.ConsultationRegisterDTO;
 import com.barataribeiro.medimanage.services.ConsultationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,17 @@ public class ConsultationController {
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                                                      HttpStatus.OK.value(),
                                                      "Consultation(s) retrieved successfully for " + username + ".",
+                                                     response));
+    }
+
+    @PostMapping
+    @Secured("ACCOUNT_TYPE_ASSISTANT")
+    public ResponseEntity<RestResponseDTO> registerNewConsultationForPatient(@RequestBody ConsultationRegisterDTO body,
+                                                                             Principal principal) {
+        ConsultationDTO response = consultationService.registerNewConsultationForPatient(body, principal);
+        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.CREATED,
+                                                     HttpStatus.CREATED.value(),
+                                                     "Consultation created successfully.",
                                                      response));
     }
 }

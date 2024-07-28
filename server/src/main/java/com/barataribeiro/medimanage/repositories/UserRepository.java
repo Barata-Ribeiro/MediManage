@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,6 +20,10 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByUsernameOrEmail(@Param("usernameOrEmail") String usernameOrEmail);
 
     Page<User> findDistinctByAccountType(AccountType accountType, Pageable pageable);
+
+
+    List<User> findDistinctAllByFullNameInIgnoreCaseAndAccountTypeIn(Collection<String> fullName,
+                                                                     Collection<AccountType> accountType);
 
     boolean existsByUsername(String username);
 

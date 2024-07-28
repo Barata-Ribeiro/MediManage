@@ -10,6 +10,9 @@ public final class ApplicationMessages {
     public static final String USER_NOT_FOUND_WITH_USERNAME = "User with username %s not found.";
 
     @NonNls
+    public static final String USER_NOT_FOUND_WITH_NAME = "User with name %s not found.";
+
+    @NonNls
     public static final String MEDICAL_RECORD_NOT_FOUND_WITH_ID = "Medical record with ID %s not found.";
 
     @NonNls
