@@ -28,6 +28,9 @@ public class UserDTO implements Serializable {
     String phone;
     String address;
     LocalDate birthDate;
+    String registrationNumber;
+    String registrationOrigin;
+    String specialization;
     AccountType accountType;
     UserRoles userRoles;
     Instant createdAt;

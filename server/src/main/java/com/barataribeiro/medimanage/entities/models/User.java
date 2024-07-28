@@ -47,6 +47,15 @@ public class User {
 
     private LocalDate birthDate;
 
+    // Doctor related fields
+    @Column(name = "registration_number", unique = true)
+    private String registrationNumber;
+
+    @Column(name = "registration_origin")
+    private String registrationOrigin;
+
+    private String specialization;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "account_type", nullable = false)
     private AccountType accountType;
