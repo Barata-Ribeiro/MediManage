@@ -1,6 +1,7 @@
 package com.barataribeiro.medimanage.builders;
 
 import com.barataribeiro.medimanage.dtos.raw.ArticleDTO;
+import com.barataribeiro.medimanage.dtos.raw.SimpleArticleDTO;
 import com.barataribeiro.medimanage.entities.models.Article;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,10 @@ public class ArticleMapper {
         return modelMapper.map(article, ArticleDTO.class);
     }
 
+    public SimpleArticleDTO toSimpleDTO(Article article) {
+        return modelMapper.map(article, SimpleArticleDTO.class);
+    }
+
     public Article toEntity(ArticleDTO articleDTO) {
         return modelMapper.map(articleDTO, Article.class);
     }
@@ -28,6 +33,12 @@ public class ArticleMapper {
     public List<ArticleDTO> toDTOList(@NotNull List<Article> articles) {
         return articles.stream()
                 .map(this::toDTO)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public List<SimpleArticleDTO> toSimpleDTOList(@NotNull List<Article> articles) {
+        return articles.stream()
+                .map(this::toSimpleDTO)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
