@@ -1,0 +1,40 @@
+package com.barataribeiro.medimanage.services.impl;
+
+import com.barataribeiro.medimanage.builders.ArticleMapper;
+import com.barataribeiro.medimanage.constants.ApplicationMessages;
+import com.barataribeiro.medimanage.dtos.raw.ArticleDTO;
+import com.barataribeiro.medimanage.dtos.raw.SimpleArticleDTO;
+import com.barataribeiro.medimanage.entities.models.Article;
+import com.barataribeiro.medimanage.exceptions.articles.ArticleNotFoundException;
+import com.barataribeiro.medimanage.repositories.ArticleRepository;
+import com.barataribeiro.medimanage.services.ArticleService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+public class ArticleServiceImpl implements ArticleService {
+    private final ArticleRepository articleRepository;
+    private final ArticleMapper articleMapper;
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SimpleArticleDTO> getLatestArticles() {
+        List<Article> articleList = articleRepository.findDistinctTop4ByOrderByCreatedAtDesc();
+        return articleMapper.toSimpleDTOList(articleList);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ArticleDTO getArticleById(Long articleId) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new ArticleNotFoundException(
+                        String.format(ApplicationMessages.ARTICLE_NOT_FOUND_WITH_ID, articleId)
+                ));
+        return articleMapper.toDTO(article);
+    }
+}
