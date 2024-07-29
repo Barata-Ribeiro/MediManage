@@ -3,7 +3,9 @@ package com.barataribeiro.medimanage.controllers;
 import com.barataribeiro.medimanage.dtos.raw.ConsultationDTO;
 import com.barataribeiro.medimanage.dtos.raw.RestResponseDTO;
 import com.barataribeiro.medimanage.dtos.requests.ConsultationRegisterDTO;
+import com.barataribeiro.medimanage.dtos.requests.ConsultationUpdateDTO;
 import com.barataribeiro.medimanage.services.ConsultationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -66,4 +68,27 @@ public class ConsultationController {
                                                      "Consultation created successfully.",
                                                      response));
     }
+
+    @GetMapping("/{consultationId}")
+    @Secured({"ACCOUNT_TYPE_ASSISTANT", "ACCOUNT_TYPE_DOCTOR"})
+    public ResponseEntity<RestResponseDTO> getConsultation(@PathVariable String consultationId, Principal principal) {
+        ConsultationDTO response = consultationService.getConsultation(consultationId, principal);
+        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
+                                                     HttpStatus.OK.value(),
+                                                     "Consultation retrieved successfully.",
+                                                     response));
+    }
+
+    @PutMapping("/{consultationId}")
+    @Secured({"ACCOUNT_TYPE_ASSISTANT", "ACCOUNT_TYPE_DOCTOR"})
+    public ResponseEntity<RestResponseDTO> updateConsultation(@PathVariable String consultationId,
+                                                              @RequestBody @Valid ConsultationUpdateDTO body,
+                                                              Principal principal) {
+        ConsultationDTO response = consultationService.updateConsultation(consultationId, body, principal);
+        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
+                                                     HttpStatus.OK.value(),
+                                                     "Consultation status updated successfully.",
+                                                     response));
+    }
+
 }

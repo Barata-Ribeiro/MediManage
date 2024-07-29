@@ -5,10 +5,13 @@ import com.barataribeiro.medimanage.constants.ApplicationConstants;
 import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.ConsultationDTO;
 import com.barataribeiro.medimanage.dtos.requests.ConsultationRegisterDTO;
+import com.barataribeiro.medimanage.dtos.requests.ConsultationUpdateDTO;
 import com.barataribeiro.medimanage.entities.enums.AccountType;
+import com.barataribeiro.medimanage.entities.enums.ConsultationStatus;
 import com.barataribeiro.medimanage.entities.models.Consultation;
 import com.barataribeiro.medimanage.entities.models.MedicalRecord;
 import com.barataribeiro.medimanage.entities.models.User;
+import com.barataribeiro.medimanage.exceptions.consultations.ConsultationNotFoundException;
 import com.barataribeiro.medimanage.exceptions.users.UserNotFoundException;
 import com.barataribeiro.medimanage.repositories.ConsultationRepository;
 import com.barataribeiro.medimanage.repositories.MedicalRecordRepository;
@@ -110,6 +113,36 @@ public class ConsultationServiceImpl implements ConsultationService {
                 .scheduledTo(LocalDateTime.parse(body.scheduledTo()))
                 .medicalRecord(medicalRecord)
                 .build();
+
+        return consultationMapper.toDTO(consultationRepository.saveAndFlush(consultation));
+    }
+
+    @Override
+    public ConsultationDTO getConsultation(String consultationId, Principal principal) {
+        Consultation consultation = consultationRepository.findById(Long.valueOf(consultationId))
+                .orElseThrow(() -> new ConsultationNotFoundException(
+                        String.format(ApplicationMessages.CONSULTATION_NOT_FOUND_WITH_ID, consultationId)
+                ));
+        return consultationMapper.toDTO(consultation);
+    }
+
+    @Override
+    @Transactional
+    public ConsultationDTO updateConsultation(String consultationId, @NotNull ConsultationUpdateDTO body,
+                                              Principal principal) {
+        Consultation consultation = consultationRepository.findById(Long.valueOf(consultationId))
+                .orElseThrow(() -> new ConsultationNotFoundException(
+                        String.format(ApplicationMessages.CONSULTATION_NOT_FOUND_WITH_ID, consultationId)
+                ));
+
+        if (body.status() != null) {
+            ConsultationStatus consultationStatus = ConsultationStatus.valueOf(body.status());
+            consultation.setStatus(consultationStatus);
+        }
+
+        if (body.scheduledTo() != null) {
+            consultation.setScheduledTo(LocalDateTime.parse(body.scheduledTo()));
+        }
 
         return consultationMapper.toDTO(consultationRepository.saveAndFlush(consultation));
     }
