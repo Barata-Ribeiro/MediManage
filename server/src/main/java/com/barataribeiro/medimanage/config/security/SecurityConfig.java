@@ -39,6 +39,7 @@ public class SecurityConfig {
             // -- MediManage
             "/",
             "/api/v1/auth/**",
+            "/api/v1/articles/public/**",
             };
 
     private final SecurityFilter securityFilter;
