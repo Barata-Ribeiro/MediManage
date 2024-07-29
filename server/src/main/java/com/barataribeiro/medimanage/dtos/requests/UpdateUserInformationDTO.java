@@ -22,6 +22,9 @@ public record UpdateUserInformationDTO(
                 message = "You must provide a valid phone number.")
         String phone,
         String address,
+
+        @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$",
+                message = "Date must be in the format yyyy-MM-dd.")
         String birthDate,
 
         // Alter Pattern's regex based on ORIGIN of registration number

@@ -2,6 +2,7 @@ package com.barataribeiro.medimanage.dtos.requests;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record RegisterByAssistantDTO(@NotBlank
@@ -21,4 +22,6 @@ public record RegisterByAssistantDTO(@NotBlank
                                      String address,
 
                                      @NotBlank
+                                     @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$",
+                                             message = "Date must be in the format yyyy-MM-dd.")
                                      String birthDate) {}
