@@ -21,13 +21,11 @@ public class Prescription {
     @Column(nullable = false)
     private Long id;
 
-    @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "patient_id", nullable = false)
     private User patient;
 
-    @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "doctor_id", nullable = false)
     private User doctor;
 
