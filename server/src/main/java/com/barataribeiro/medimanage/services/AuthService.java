@@ -3,7 +3,7 @@ package com.barataribeiro.medimanage.services;
 import com.barataribeiro.medimanage.dtos.raw.UserDTO;
 import com.barataribeiro.medimanage.dtos.requests.LoginRequestDTO;
 import com.barataribeiro.medimanage.dtos.requests.RegisterByAssistantDTO;
-import com.barataribeiro.medimanage.dtos.requests.RegisterNewEmployee;
+import com.barataribeiro.medimanage.dtos.requests.RegisterNewEmployeeDTO;
 import com.barataribeiro.medimanage.dtos.requests.RegisterRequestDTO;
 import com.barataribeiro.medimanage.dtos.responses.LoginResponseDTO;
 
@@ -14,7 +14,7 @@ public interface AuthService {
 
     Map<String, Object> registerByAssistant(RegisterByAssistantDTO body);
 
-    Map<String, Object> registerNewEmployee(RegisterNewEmployee body);
+    Map<String, Object> registerNewEmployee(RegisterNewEmployeeDTO body);
 
     LoginResponseDTO login(LoginRequestDTO body);
 }

@@ -4,7 +4,7 @@ import com.barataribeiro.medimanage.builders.UserMapper;
 import com.barataribeiro.medimanage.dtos.raw.UserDTO;
 import com.barataribeiro.medimanage.dtos.requests.LoginRequestDTO;
 import com.barataribeiro.medimanage.dtos.requests.RegisterByAssistantDTO;
-import com.barataribeiro.medimanage.dtos.requests.RegisterNewEmployee;
+import com.barataribeiro.medimanage.dtos.requests.RegisterNewEmployeeDTO;
 import com.barataribeiro.medimanage.dtos.requests.RegisterRequestDTO;
 import com.barataribeiro.medimanage.dtos.responses.LoginResponseDTO;
 import com.barataribeiro.medimanage.entities.enums.AccountType;
@@ -85,7 +85,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public Map<String, Object> registerNewEmployee(@NotNull RegisterNewEmployee body) {
+    public Map<String, Object> registerNewEmployee(@NotNull RegisterNewEmployeeDTO body) {
         if (userRepository.existsByEmailOrFullName(body.email(), body.fullName())) {
             throw new UserAlreadyExistsException();
         }
