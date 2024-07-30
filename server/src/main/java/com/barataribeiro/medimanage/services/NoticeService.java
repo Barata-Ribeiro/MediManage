@@ -14,4 +14,6 @@ public interface NoticeService {
     NoticeDTO getNoticeById(Long noticeId);
 
     NoticeDTO createNotice(NoticeRequestDTO body, Principal principal);
+
+    NoticeDTO updateNotice(Long noticeId, NoticeRequestDTO body, Principal principal);
 }

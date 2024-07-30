@@ -63,4 +63,16 @@ public class NoticeController {
                                                      "Notice created successfully.",
                                                      response));
     }
+
+    @PutMapping("/{noticeId}")
+    @Secured("ACCOUNT_TYPE_ADMINISTRATOR")
+    public ResponseEntity<RestResponseDTO> updateNotice(@PathVariable Long noticeId,
+                                                        @RequestBody @Valid NoticeRequestDTO body,
+                                                        Principal principal) {
+        NoticeDTO response = noticeService.updateNotice(noticeId, body, principal);
+        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
+                                                     HttpStatus.OK.value(),
+                                                     "Notice updated successfully.",
+                                                     response));
+    }
 }

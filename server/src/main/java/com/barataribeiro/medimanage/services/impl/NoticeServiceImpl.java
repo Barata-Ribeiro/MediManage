@@ -77,20 +77,44 @@ public class NoticeServiceImpl implements NoticeService {
                 .issuer(user)
                 .build();
 
+        setOptionalProperties(body, newNotice);
+
+        return noticeMapper.toDTO(noticeRepository.saveAndFlush(newNotice));
+    }
+
+    @Override
+    @Transactional
+    public NoticeDTO updateNotice(Long noticeId, @NotNull NoticeRequestDTO body, Principal principal) {
+        Notice notice = noticeRepository.findById(noticeId).orElseThrow(
+                () -> new NoticeNotFoundException(String.format(ApplicationMessages.NOTICE_NOT_FOUND_WITH_ID, noticeId))
+        );
+
+        if (body.title() != null && !body.title().isEmpty()) {
+            notice.setTitle(body.title());
+        }
+
+        if (body.description() != null && !body.description().isEmpty()) {
+            notice.setDescription(body.description());
+        }
+
+        setOptionalProperties(body, notice);
+
+        return noticeMapper.toDTO(noticeRepository.saveAndFlush(notice));
+    }
+
+    private void setOptionalProperties(@NotNull NoticeRequestDTO body, Notice notice) {
         if (body.mediaUrl() != null && !body.mediaUrl().isEmpty()) {
-            newNotice.setMediaUrl(body.mediaUrl());
+            notice.setMediaUrl(body.mediaUrl());
         }
 
         if (body.type() != null && !body.type().isEmpty()) {
             NoticeType type = NoticeType.valueOf(body.type());
-            newNotice.setType(type);
+            notice.setType(type);
         }
 
         if (body.status() != null && !body.status().isEmpty()) {
             NoticeStatus status = NoticeStatus.valueOf(body.status());
-            newNotice.setStatus(status);
+            notice.setStatus(status);
         }
-
-        return noticeMapper.toDTO(noticeRepository.saveAndFlush(newNotice));
     }
 }
