@@ -40,7 +40,8 @@ public class SecurityConfig {
             "/",
             "/api/v1/auth/**",
             "/api/v1/articles/public/**",
-            };
+            "/api/v1/notices/public/**"
+    };
 
     private final SecurityFilter securityFilter;
 
