@@ -6,12 +6,10 @@ import com.barataribeiro.medimanage.dtos.raw.SimpleArticleDTO;
 import com.barataribeiro.medimanage.services.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,12 +29,18 @@ public class ArticleController {
     }
 
     @GetMapping("/public")
-    public ResponseEntity<RestResponseDTO> getAllArticles() {
-        // TODO: Implement pagination
+    public ResponseEntity<RestResponseDTO> getAllArticles(@RequestParam(required = false) String search,
+                                                          @RequestParam(required = false) String category,
+                                                          @RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "10") int perPage,
+                                                          @RequestParam(defaultValue = "ASC") String direction,
+                                                          @RequestParam(defaultValue = "createdAt") String orderBy) {
+        Page<SimpleArticleDTO> response = articleService.getAllArticles(search, category, page, perPage, direction,
+                                                                        orderBy);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                                                      HttpStatus.OK.value(),
                                                      "All articles retrieved successfully.",
-                                                     null));
+                                                     response));
     }
 
     @GetMapping("/public/{articleId}")
