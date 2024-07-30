@@ -15,7 +15,7 @@ public class ArticleNotFoundException extends MediManageException {
     public ProblemDetail toProblemDetail() {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
 
-        problemDetail.setTitle("Prescription not found");
+        problemDetail.setTitle("Article not found");
         problemDetail.setDetail(detail);
 
         return problemDetail;
