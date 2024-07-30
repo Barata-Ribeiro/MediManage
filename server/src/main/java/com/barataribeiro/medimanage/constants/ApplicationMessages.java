@@ -27,6 +27,9 @@ public final class ApplicationMessages {
     @NonNls
     public static final String ARTICLE_NOT_FOUND_WITH_ID = "Article with ID %s not found.";
 
+    @NonNls
+    public static final String NOTICE_NOT_FOUND_WITH_ID = "Notice with ID %s not found.";
+
     private ApplicationMessages() {
         throw new UnsupportedOperationException("This class cannot be instantiated.");
     }
