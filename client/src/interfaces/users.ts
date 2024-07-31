@@ -9,8 +9,24 @@ interface User {
     registrationNumber: string | null
     registrationOrigin: string | null
     specialization: string | null
-    accountType: "PATIENT" | "ASSISTANT" | "DOCTOR" | "ADMINISTRATOR"
-    userRoles: "NONE" | "ADMIN" | "USER" | "BANNED"
+    accountType: UserAccountType
+    userRoles: UserRoles
     createdAt: string
     updatedAt: string
 }
+
+enum UserAccountType {
+    PATIENT = "PATIENT",
+    ASSISTANT = "ASSISTANT",
+    DOCTOR = "DOCTOR",
+    ADMINISTRATOR = "ADMINISTRATOR",
+}
+
+enum UserRoles {
+    NONE = "NONE",
+    ADMIN = "ADMIN",
+    USER = "USER",
+    BANNED = "BANNED",
+}
+
+export type { User }
