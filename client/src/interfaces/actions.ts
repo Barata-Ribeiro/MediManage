@@ -1,3 +1,7 @@
+import { ZodIssue } from "zod"
+
+type ValidationError = Partial<Pick<ZodIssue, "path" | "message">>
+
 interface ApiResponse {
     status: string
     code: number
@@ -7,8 +11,8 @@ interface ApiResponse {
 
 interface State {
     ok: boolean
-    error: string | null
+    error: string | ValidationError[] | null
     response: ApiResponse | null
 }
 
-export type { ApiResponse, State }
+export type { ApiResponse, State, ValidationError }
