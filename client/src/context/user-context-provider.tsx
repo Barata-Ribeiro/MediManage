@@ -10,6 +10,7 @@ import {
     useMemo,
     useState,
 } from "react"
+import { User } from "@/interfaces/users"
 
 interface UserContextProviderProps {
     children: ReactNode
@@ -32,12 +33,17 @@ export const useUser = () => {
 
 export function UserContextProvider({ children, user }: Readonly<UserContextProviderProps>) {
     const [currentUser, setCurrentUser] = useState<User | null>(user)
+    const userContextMemo = useMemo(
+        () => ({
+            user: currentUser,
+            setUser: setCurrentUser,
+        }),
+        [currentUser],
+    )
 
     useEffect(() => {
         setCurrentUser(user)
     }, [currentUser, user])
 
-    const userObjectMemo = useMemo(() => ({ user: currentUser, setUser: setCurrentUser }), [currentUser])
-
-    return <UserContext.Provider value={userObjectMemo}>{children}</UserContext.Provider>
+    return <UserContext.Provider value={userContextMemo}>{children}</UserContext.Provider>
 }
