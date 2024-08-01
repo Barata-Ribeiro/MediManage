@@ -1,12 +1,24 @@
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Nunito, Roboto } from "next/font/google"
 import "./globals.css"
 import { type ReactNode } from "react"
 import { UserContextProvider } from "@/context/user-context-provider"
 import { User } from "@/interfaces/users"
 import getUserContext from "@/actions/users/get-user-context"
+import { twMerge } from "tailwind-merge"
 
-const inter = Inter({ subsets: ["latin"] })
+const roboto = Roboto({
+    weight: ["100", "300", "400", "500", "700", "900"],
+    subsets: ["latin"],
+    display: "swap",
+    variable: "--font-roboto",
+})
+
+const nunito = Nunito({
+    subsets: ["latin"],
+    display: "swap",
+    variable: "--font-nunito",
+})
 
 export const metadata: Metadata = {
     title: {
@@ -21,9 +33,12 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     let user: User | null = null
     if (context.ok) user = context.response?.data
 
+    const fontVariables = `${roboto.variable}, ${nunito.variable}`
+    const bodyClasses = twMerge(fontVariables, "h-full")
+
     return (
-        <html lang="en">
-            <body className={inter.className}>
+        <html lang="en" className="h-full bg-neutral-200">
+            <body className={bodyClasses}>
                 <UserContextProvider user={user}>{children}</UserContextProvider>
             </body>
         </html>
