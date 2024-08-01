@@ -1,28 +1,22 @@
 import { type ReactNode } from "react"
-import getUserContext from "@/actions/users/get-user-context"
-import { notFound } from "next/navigation"
+import Header from "@/components/dashboard/header"
+import Footer from "@/components/dashboard/footer"
 
 interface DashboardLayoutProps {
     children: ReactNode
     params: { username: string }
 }
 
-export async function generateMetadata({ params }: DashboardLayoutProps) {
-    return {
-        title: params.username,
-        description: "Dashboard from " + params.username,
-    }
-}
-
 export default async function DashboardLayout({ children }: Readonly<DashboardLayoutProps>) {
-    const state = await getUserContext()
-    const user = state.response?.data
-    if (!user) return notFound()
-
     return (
-        <>
-            <h1>Welcome, {user.username}!</h1>
-            {children}
-        </>
+        <div className="min-h-full">
+            <Header />
+
+            <main className="-mt-32">
+                <section className="container px-4 pb-12 font-body sm:px-6 lg:px-8">{children}</section>
+            </main>
+
+            <Footer />
+        </div>
     )
 }
