@@ -1,7 +1,7 @@
 "use server"
 
 import ResponseError from "@/actions/response-error"
-import { ApiResponse } from "@/interfaces/actions"
+import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import { User } from "@/interfaces/users"
 import verifyAuthentication from "@/utils/verify-authentication"
 import { USER_GET_CONTEXT } from "@/utils/api-urls"
@@ -20,9 +20,14 @@ export default async function getUserContext() {
             next: { revalidate: 30, tags: ["context"] },
         })
 
-        const responseData: ApiResponse = await response.json()
+        const json = await response.json()
 
-        if (!response.ok) return ResponseError(new Error(responseData.message))
+        if (!response.ok) {
+            const problemDetails = json as ProblemDetails
+            return ResponseError(new Error(problemDetails.detail))
+        }
+
+        const responseData = json as ApiResponse
 
         const data = responseData.data as User
 

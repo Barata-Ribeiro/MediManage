@@ -1,6 +1,6 @@
 "use server"
 
-import { ApiResponse, State } from "@/interfaces/actions"
+import { ApiResponse, ProblemDetails, State } from "@/interfaces/actions"
 import ResponseError from "@/actions/response-error"
 import { AUTH_REGISTER } from "@/utils/api-urls"
 import { z } from "zod"
@@ -56,9 +56,14 @@ export default async function postAuthRegister(state: State, formData: FormData)
             body: JSON.stringify(parsedFormData.data),
         })
 
-        const responseData: ApiResponse = await response.json()
+        const json = await response.json()
 
-        if (!response.ok) return ResponseError(new Error(responseData.message))
+        if (!response.ok) {
+            const problemDetails = json as ProblemDetails
+            return ResponseError(new Error(problemDetails.detail))
+        }
+
+        const responseData = json as ApiResponse
 
         const registerResponse = responseData.data as User
 

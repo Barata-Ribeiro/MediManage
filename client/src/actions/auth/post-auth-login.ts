@@ -1,12 +1,13 @@
 "use server"
 
-import { ApiResponse, State } from "@/interfaces/actions"
+import { ApiResponse, ProblemDetails, State } from "@/interfaces/actions"
 import ResponseError from "@/actions/response-error"
 import { z } from "zod"
 import { revalidateTag } from "next/cache"
 import { LoginResponse } from "@/interfaces/auth"
 import { cookies } from "next/headers"
 import { AUTH_LOGIN } from "@/utils/api-urls"
+import { tokenName } from "@/constants"
 
 const loginSchema = z.object({
     emailOrUsername: z
@@ -38,13 +39,18 @@ export default async function postAuthLogin(state: State, formData: FormData) {
             body: JSON.stringify(parsedFormData.data),
         })
 
-        const responseData: ApiResponse = await response.json()
+        const json = await response.json()
 
-        if (!response.ok) return ResponseError(new Error(responseData.message))
+        if (!response.ok) {
+            const problemDetails = json as ProblemDetails
+            return ResponseError(new Error(problemDetails.detail))
+        }
+
+        const responseData = json as ApiResponse
 
         const loginResponse = responseData.data as LoginResponse
 
-        cookies().set("authToken", loginResponse.token, {
+        cookies().set(tokenName, loginResponse.token, {
             httpOnly: true,
             secure: true,
             sameSite: "lax",
