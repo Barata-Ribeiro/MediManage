@@ -1,6 +1,9 @@
 import getUserContext from "@/actions/users/get-user-context"
 import type { Metadata } from "next"
 import Link from "next/link"
+import parseDate from "@/utils/parse-date"
+import { notFound } from "next/navigation"
+import { User } from "@/interfaces/users"
 
 export const metadata: Metadata = {
     title: "Settings",
@@ -10,7 +13,8 @@ export const metadata: Metadata = {
 
 export default async function SettingsPage() {
     const context = await getUserContext()
-    const user = context.response.data
+    const user = context.response?.data as User
+    if (!user) return notFound()
 
     const basePath = "/dashboard/" + user.username
 
@@ -27,7 +31,7 @@ export default async function SettingsPage() {
                         <div className="pt-6 sm:flex">
                             <dt className="font-medium text-neutral-900 sm:w-64 sm:flex-none sm:pr-6">Username</dt>
                             <dd className="mt-1 flex justify-between gap-x-6 sm:mt-0 sm:flex-auto">
-                                <div className="text-neutral-900">{user.username}</div>
+                                <p className="text-neutral-900">{user.username}</p>
                                 <Link
                                     href={basePath + "/settings/edit"}
                                     className="font-semibold text-indigo-600 hover:text-indigo-500">
@@ -38,7 +42,9 @@ export default async function SettingsPage() {
                         <div className="pt-6 sm:flex">
                             <dt className="font-medium text-neutral-900 sm:w-64 sm:flex-none sm:pr-6">Full name</dt>
                             <dd className="mt-1 flex justify-between gap-x-6 sm:mt-0 sm:flex-auto">
-                                <div className="text-neutral-900">{user.fullName ?? "Empty"}</div>
+                                <p className="text-neutral-900">
+                                    {user.fullName ?? <span className="text-neutral-500">Empty</span>}
+                                </p>
                                 <Link
                                     href={basePath + "/settings/edit"}
                                     className="font-semibold text-indigo-600 hover:text-indigo-500">
@@ -49,7 +55,7 @@ export default async function SettingsPage() {
                         <div className="pt-6 sm:flex">
                             <dt className="font-medium text-neutral-900 sm:w-64 sm:flex-none sm:pr-6">Email address</dt>
                             <dd className="mt-1 flex justify-between gap-x-6 sm:mt-0 sm:flex-auto">
-                                <div className="text-neutral-900">{user.email}</div>
+                                <p className="text-neutral-900">{user.email}</p>
                                 <Link
                                     href={basePath + "/settings/edit"}
                                     className="font-semibold text-indigo-600 hover:text-indigo-500">
@@ -58,9 +64,37 @@ export default async function SettingsPage() {
                             </dd>
                         </div>
                         <div className="pt-6 sm:flex">
-                            <dt className="font-medium text-neutral-900 sm:w-64 sm:flex-none sm:pr-6">Account</dt>
+                            <dt className="font-medium text-neutral-900 sm:w-64 sm:flex-none sm:pr-6">Address</dt>
                             <dd className="mt-1 flex justify-between gap-x-6 sm:mt-0 sm:flex-auto">
-                                <div className="capitalize text-neutral-900">{user.accountType.toLowerCase()}</div>
+                                <p className="text-neutral-900">
+                                    {user.address ?? <span className="text-neutral-500">Empty</span>}
+                                </p>
+                            </dd>
+                        </div>
+                        <div className="pt-6 sm:flex">
+                            <dt className="font-medium text-neutral-900 sm:w-64 sm:flex-none sm:pr-6">Birth Date</dt>
+                            <dd className="mt-1 flex justify-between gap-x-6 sm:mt-0 sm:flex-auto">
+                                <p className="text-neutral-900">
+                                    {parseDate(user.birthDate) ?? <span className="text-neutral-500">Empty</span>}
+                                </p>
+                            </dd>
+                        </div>
+                        <div className="pt-6 sm:flex">
+                            <dt className="font-medium text-neutral-900 sm:w-64 sm:flex-none sm:pr-6">Account Type</dt>
+                            <dd className="mt-1 flex justify-between gap-x-6 sm:mt-0 sm:flex-auto">
+                                <p className="capitalize text-neutral-900">{user.accountType.toLowerCase()}</p>
+                            </dd>
+                        </div>
+                        <div className="pt-6 sm:flex">
+                            <dt className="font-medium text-neutral-900 sm:w-64 sm:flex-none sm:pr-6">Registered At</dt>
+                            <dd className="mt-1 flex justify-between gap-x-6 sm:mt-0 sm:flex-auto">
+                                <p className="text-neutral-900">{parseDate(user.createdAt)}</p>
+                            </dd>
+                        </div>
+                        <div className="pt-6 sm:flex">
+                            <dt className="font-medium text-neutral-900 sm:w-64 sm:flex-none sm:pr-6">Last Updated</dt>
+                            <dd className="mt-1 flex justify-between gap-x-6 sm:mt-0 sm:flex-auto">
+                                <p className="text-neutral-900">{parseDate(user.updatedAt)}</p>
                             </dd>
                         </div>
                     </dl>

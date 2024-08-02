@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
     const context = await getUserContext()
     let user: User | null = null
-    if (context.ok) user = context.response?.data
+    if (context.ok) user = context.response?.data as User
 
     const fontVariables = `${roboto.variable}, ${nunito.variable}`
     const bodyClasses = twMerge(fontVariables, "h-full")
