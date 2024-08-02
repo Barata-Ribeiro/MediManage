@@ -1,4 +1,4 @@
-import { State, ValidationError } from "@/interfaces/actions"
+import { ProblemDetails, State, ValidationError } from "@/interfaces/actions"
 import { ZodError } from "zod"
 
 export default function ResponseError(error: unknown): State {
@@ -18,6 +18,13 @@ export default function ResponseError(error: unknown): State {
         return {
             ...state,
             error: validationErrors,
+        }
+    }
+
+    if (error as ProblemDetails) {
+        return {
+            ...state,
+            error: error as ProblemDetails,
         }
     }
 
