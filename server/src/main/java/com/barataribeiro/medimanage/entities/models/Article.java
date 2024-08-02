@@ -53,6 +53,7 @@ public class Article {
     private User author;
 
     @ToString.Exclude
+    @Builder.Default
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinTable(name = "tb_articles_categories",
             joinColumns = @JoinColumn(name = "article_"),

@@ -31,15 +31,16 @@ public class Category {
     private String description;
 
     @ToString.Exclude
+    @Builder.Default
     @ManyToMany(mappedBy = "categories", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH,
-                                                    CascadeType.DETACH})
+            CascadeType.DETACH})
     private Set<Article> articles = new LinkedHashSet<>();
 
     @Override
     public final int hashCode() {
         return this instanceof HibernateProxy hibernateProxy ?
-               hibernateProxy.getHibernateLazyInitializer().getPersistentClass().hashCode() :
-               getClass().hashCode();
+                hibernateProxy.getHibernateLazyInitializer().getPersistentClass().hashCode() :
+                getClass().hashCode();
     }
 
     @Override
@@ -47,11 +48,11 @@ public class Category {
         if (this == o) return true;
         if (o == null || this.getClass() != o.getClass()) return false;
         Class<?> oEffectiveClass = o instanceof HibernateProxy hibernateProxy ?
-                                   hibernateProxy.getHibernateLazyInitializer().getPersistentClass() :
-                                   o.getClass();
+                hibernateProxy.getHibernateLazyInitializer().getPersistentClass() :
+                o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy hibernateProxyThis ?
-                                      hibernateProxyThis.getHibernateLazyInitializer().getPersistentClass() :
-                                      this.getClass();
+                hibernateProxyThis.getHibernateLazyInitializer().getPersistentClass() :
+                this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
         Category category = (Category) o;
         return getId() != null && Objects.equals(getId(), category.getId());
