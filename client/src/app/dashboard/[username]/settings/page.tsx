@@ -32,11 +32,6 @@ export default async function SettingsPage() {
                             <dt className="font-medium text-neutral-900 sm:w-64 sm:flex-none sm:pr-6">Username</dt>
                             <dd className="mt-1 flex justify-between gap-x-6 sm:mt-0 sm:flex-auto">
                                 <p className="text-neutral-900">{user.username}</p>
-                                <Link
-                                    href={basePath + "/settings/edit"}
-                                    className="font-semibold text-indigo-600 hover:text-indigo-500">
-                                    Update
-                                </Link>
                             </dd>
                         </div>
                         <div className="pt-6 sm:flex">
@@ -69,14 +64,28 @@ export default async function SettingsPage() {
                                 <p className="text-neutral-900">
                                     {user.address ?? <span className="text-neutral-500">Empty</span>}
                                 </p>
+                                <Link
+                                    href={basePath + "/settings/edit"}
+                                    className="font-semibold text-indigo-600 hover:text-indigo-500">
+                                    Update
+                                </Link>
                             </dd>
                         </div>
                         <div className="pt-6 sm:flex">
                             <dt className="font-medium text-neutral-900 sm:w-64 sm:flex-none sm:pr-6">Birth Date</dt>
                             <dd className="mt-1 flex justify-between gap-x-6 sm:mt-0 sm:flex-auto">
                                 <p className="text-neutral-900">
-                                    {parseDate(user.birthDate) ?? <span className="text-neutral-500">Empty</span>}
+                                    {user.birthDate ? (
+                                        parseDate(user.birthDate)
+                                    ) : (
+                                        <span className="text-neutral-500">Empty</span>
+                                    )}
                                 </p>
+                                <Link
+                                    href={basePath + "/settings/edit"}
+                                    className="font-semibold text-indigo-600 hover:text-indigo-500">
+                                    Update
+                                </Link>
                             </dd>
                         </div>
                         <div className="pt-6 sm:flex">

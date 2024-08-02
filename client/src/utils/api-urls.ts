@@ -8,3 +8,4 @@ export const AUTH_LOGIN = () => `${BACKEND_URL}/api/v1/auth/login`
 
 // User
 export const USER_GET_CONTEXT = () => `${BACKEND_URL}/api/v1/users/me/context`
+export const USER_UPDATE_ACCOUNT = () => `${BACKEND_URL}/api/v1/users/me`
