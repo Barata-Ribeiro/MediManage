@@ -9,10 +9,24 @@ interface ApiResponse {
     data?: unknown
 }
 
+interface InvalidParam {
+    fieldName: string
+    reason: string
+}
+
+interface ProblemDetails {
+    type: string
+    title: string
+    status: number
+    detail: string
+    instance: string
+    "invalid-params"?: InvalidParam[]
+}
+
 interface State {
     ok: boolean
-    error: string | ValidationError[] | null
+    error: string | ValidationError[] | ProblemDetails | null
     response: ApiResponse | null
 }
 
-export type { ApiResponse, State, ValidationError }
+export type { ApiResponse, ProblemDetails, State, ValidationError }
