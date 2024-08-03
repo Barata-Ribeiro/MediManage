@@ -17,14 +17,14 @@ export default function ResponseError(error: unknown): State {
         }))
         return {
             ...state,
-            error: validationErrors,
+            error: { ...validationErrors },
         }
     }
 
-    if (error as ProblemDetails) {
+    if ((error as ProblemDetails).detail) {
         return {
             ...state,
-            error: error as ProblemDetails,
+            error: { ...(error as ProblemDetails) },
         }
     }
 

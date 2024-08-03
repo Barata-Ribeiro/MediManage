@@ -6,6 +6,7 @@ import { UserContextProvider } from "@/context/user-context-provider"
 import { User } from "@/interfaces/users"
 import getUserContext from "@/actions/users/get-user-context"
 import { twMerge } from "tailwind-merge"
+import SimpleErrorNotification from "@/components/helpers/simple-error-notification"
 
 const roboto = Roboto({
     weight: ["100", "300", "400", "500", "700", "900"],
@@ -40,6 +41,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <html lang="en" className="h-full bg-neutral-200">
             <body className={bodyClasses}>
                 <UserContextProvider user={user}>{children}</UserContextProvider>
+                {context.error && <SimpleErrorNotification error={JSON.parse(JSON.stringify(context.error))} />}
             </body>
         </html>
     )
