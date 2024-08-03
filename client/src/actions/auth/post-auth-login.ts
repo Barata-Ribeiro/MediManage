@@ -3,7 +3,6 @@
 import { ApiResponse, ProblemDetails, State } from "@/interfaces/actions"
 import ResponseError from "@/actions/response-error"
 import { z } from "zod"
-import { revalidateTag } from "next/cache"
 import { LoginResponse } from "@/interfaces/auth"
 import { cookies } from "next/headers"
 import { AUTH_LOGIN } from "@/utils/api-urls"
@@ -43,7 +42,7 @@ export default async function postAuthLogin(state: State, formData: FormData) {
 
         if (!response.ok) {
             const problemDetails = json as ProblemDetails
-            return ResponseError(new Error(problemDetails.detail))
+            return ResponseError(problemDetails)
         }
 
         const responseData = json as ApiResponse
@@ -56,8 +55,6 @@ export default async function postAuthLogin(state: State, formData: FormData) {
             sameSite: "lax",
             expires: Date.now() + (parsedFormData.data.rememberMe ? ONE_YEAR : ONE_DAY),
         })
-
-        revalidateTag("context")
 
         return {
             ok: true,

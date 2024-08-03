@@ -5,6 +5,7 @@ import ResponseError from "@/actions/response-error"
 import { AUTH_REGISTER } from "@/utils/api-urls"
 import { z } from "zod"
 import { User } from "@/interfaces/users"
+import { revalidateTag } from "next/cache"
 
 const registerSchema = z
     .object({
@@ -60,12 +61,14 @@ export default async function postAuthRegister(state: State, formData: FormData)
 
         if (!response.ok) {
             const problemDetails = json as ProblemDetails
-            return ResponseError(new Error(problemDetails.detail))
+            return ResponseError(problemDetails)
         }
 
         const responseData = json as ApiResponse
 
         const registerResponse = responseData.data as User
+
+        revalidateTag("users")
 
         return {
             ok: true,

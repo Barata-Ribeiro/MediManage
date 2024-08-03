@@ -6,6 +6,7 @@ import verifyAuthentication from "@/utils/verify-authentication"
 import ResponseError from "@/actions/response-error"
 import { z } from "zod"
 import { User } from "@/interfaces/users"
+import { revalidateTag } from "next/cache"
 
 const updateAccountSchema = z
     .object({
@@ -61,9 +62,11 @@ const updateAccountSchema = z
     })
 
 export default async function putUpdateAccount(state: State, formData: FormData) {
-    const URL = USER_UPDATE_ACCOUNT()
-    const authToken = String(verifyAuthentication())
     try {
+        const URL = USER_UPDATE_ACCOUNT()
+
+        const authToken = verifyAuthentication()
+
         const rawFormData = Object.fromEntries(formData.entries())
         const parsedFormData = updateAccountSchema.safeParse(rawFormData)
 
@@ -92,6 +95,9 @@ export default async function putUpdateAccount(state: State, formData: FormData)
         const responseData = json as ApiResponse
 
         const updateAccountResponse = responseData.data as User
+
+        revalidateTag("users")
+        revalidateTag("context")
 
         return {
             ok: true,
