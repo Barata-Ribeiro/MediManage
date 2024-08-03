@@ -29,4 +29,14 @@ enum UserRoles {
     BANNED = "BANNED",
 }
 
-export type { User }
+interface PaginatedUsers {
+    content: User[]
+    page: {
+        size: number
+        number: number
+        totalElements: number
+        totalPages: number
+    }
+}
+
+export type { User, PaginatedUsers }

@@ -9,3 +9,18 @@ export const AUTH_LOGIN = () => `${BACKEND_URL}/api/v1/auth/login`
 // User
 export const USER_GET_CONTEXT = () => `${BACKEND_URL}/api/v1/users/me/context`
 export const USER_UPDATE_ACCOUNT = () => `${BACKEND_URL}/api/v1/users/me`
+export const USER_GET_ALL = (
+    page = 0,
+    perPage = 10,
+    type: string | null = null,
+    direction = "ASC",
+    orderBy = "createdAt",
+) => {
+    let url = `${BACKEND_URL}/api/v1/users?page=${page}&perPage=${perPage}&direction=${direction}&orderBy=${orderBy}`
+
+    if (type) {
+        url += `&type=${type}`
+    }
+
+    return url
+}
