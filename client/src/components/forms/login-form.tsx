@@ -5,13 +5,23 @@ import { useForm } from "@/hooks/use-form"
 import Link from "next/link"
 import RequisitionError from "@/components/helpers/requisition-error"
 import InputValidationError from "@/components/helpers/input-validation-error"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { LoginResponse } from "@/interfaces/auth"
 
 export default function LoginForm() {
+    const router = useRouter()
     const { isPending, formState, formAction, onSubmit } = useForm(postAuthLogin, {
         ok: false,
         error: null,
         response: null,
     })
+
+    useEffect(() => {
+        if (formState.ok) {
+            router.push("/dashboard/" + (formState.response?.data as LoginResponse).user.username)
+        }
+    }, [formState, router])
 
     return (
         <form action={formAction} onSubmit={onSubmit} className="space-y-6">

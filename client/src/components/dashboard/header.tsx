@@ -62,12 +62,12 @@ export default function Header() {
             <Disclosure as="nav" className="bg-mourning-blue-800">
                 {({ open }) => (
                     <>
-                        <div className="font-heading container sm:px-6 lg:px-8">
+                        <div className="container font-heading sm:px-6 lg:px-8">
                             <div className="border-b border-neutral-700">
                                 <div className="flex h-16 items-center justify-between px-4 sm:px-0">
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0">
-                                            <div className="bg-hello-spring-600 h-8 w-8 rounded-full shadow" />
+                                            <div className="h-8 w-8 rounded-full bg-hello-spring-600 shadow" />
                                         </div>
                                         <div className="hidden md:block">
                                             <div className="ml-10 flex items-baseline space-x-4">
@@ -80,7 +80,7 @@ export default function Header() {
                                                             className={twMerge(
                                                                 pathname.endsWith(item.href)
                                                                     ? "bg-mourning-blue-900 text-neutral-50"
-                                                                    : "hover:bg-mourning-blue-700 text-neutral-300 hover:text-neutral-50",
+                                                                    : "text-neutral-300 hover:bg-mourning-blue-700 hover:text-neutral-50",
                                                                 "rounded-md px-3 py-2 text-sm font-medium",
                                                             )}
                                                             aria-current={
@@ -96,7 +96,7 @@ export default function Header() {
                                         <div className="ml-4 flex items-center md:ml-6">
                                             <button
                                                 type="button"
-                                                className="bg-mourning-blue-800 rounded-full p-1 text-neutral-400 hover:text-neutral-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                                                className="rounded-full bg-mourning-blue-800 p-1 text-neutral-400 hover:text-neutral-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                                                 <span className="sr-only">View notifications</span>
                                                 <FaBell className="h-6 w-6" aria-hidden="true" />
                                             </button>
@@ -104,7 +104,7 @@ export default function Header() {
                                             {/* Profile dropdown */}
                                             <Menu as="div" className="relative ml-3">
                                                 <div>
-                                                    <MenuButton className="bg-mourning-blue-800 flex max-w-xs items-center rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                                                    <MenuButton className="flex max-w-xs items-center rounded-full bg-mourning-blue-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                                                         <span className="sr-only">Open user menu</span>
                                                         <span
                                                             id="avatar"
@@ -143,7 +143,7 @@ export default function Header() {
                                     </div>
                                     <div className="-mr-2 flex md:hidden">
                                         {/* Mobile menu button */}
-                                        <DisclosureButton className="bg-mourning-blue-800 hover:bg-mourning-blue-700 inline-flex items-center justify-center rounded-md p-2 text-neutral-400 hover:text-neutral-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                                        <DisclosureButton className="inline-flex items-center justify-center rounded-md bg-mourning-blue-800 p-2 text-neutral-400 hover:bg-mourning-blue-700 hover:text-neutral-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                                             <span className="sr-only">Open main menu</span>
                                             {open ? (
                                                 <FaX className="block h-6 w-6" aria-hidden="true" />
@@ -156,7 +156,7 @@ export default function Header() {
                             </div>
                         </div>
 
-                        <DisclosurePanel className="font-heading border-b border-neutral-700 md:hidden">
+                        <DisclosurePanel className="border-b border-neutral-700 font-heading md:hidden">
                             <div className="space-y-1 px-2 py-3 sm:px-3">
                                 {navigation
                                     .filter(item => item.condition)
@@ -168,7 +168,7 @@ export default function Header() {
                                             className={twMerge(
                                                 pathname.endsWith(item.href)
                                                     ? "bg-mourning-blue-900 text-neutral-50"
-                                                    : "hover:bg-mourning-blue-700 text-neutral-300 hover:text-neutral-50",
+                                                    : "text-neutral-300 hover:bg-mourning-blue-700 hover:text-neutral-50",
                                                 "block rounded-md px-3 py-2 text-base font-medium",
                                             )}
                                             aria-current={pathname.endsWith(item.href) ? "page" : undefined}>
@@ -193,7 +193,7 @@ export default function Header() {
                                     </div>
                                     <button
                                         type="button"
-                                        className="bg-mourning-blue-800 ml-auto flex-shrink-0 rounded-full p-1 text-neutral-400 hover:text-neutral-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                                        className="ml-auto flex-shrink-0 rounded-full bg-mourning-blue-800 p-1 text-neutral-400 hover:text-neutral-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                                         <span className="sr-only">View notifications</span>
                                         <FaBell className="h-6 w-6" aria-hidden="true" />
                                     </button>
@@ -204,7 +204,7 @@ export default function Header() {
                                             key={item.name}
                                             as="a"
                                             href={item.href}
-                                            className="hover:bg-mourning-blue-700 block rounded-md px-3 py-2 text-base font-medium text-neutral-400 hover:text-neutral-50">
+                                            className="block rounded-md px-3 py-2 text-base font-medium text-neutral-400 hover:bg-mourning-blue-700 hover:text-neutral-50">
                                             {item.name}
                                         </DisclosureButton>
                                     ))}
