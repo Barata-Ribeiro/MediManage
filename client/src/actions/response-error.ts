@@ -17,7 +17,7 @@ export default function ResponseError(error: unknown): State {
         }))
         return {
             ...state,
-            error: { ...validationErrors },
+            error: validationErrors,
         }
     }
 
