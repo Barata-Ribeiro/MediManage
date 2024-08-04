@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    body {
+        @apply font-body;
+        @apply text-neutral-900;
+        @apply dark:text-neutral-50;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    a,
+    button {
+        @apply font-heading;
+        @apply text-neutral-900;
+        @apply dark:text-neutral-50;
+    }
+}
