@@ -4,9 +4,11 @@ import { useForm } from "@/hooks/use-form"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { useUser } from "@/context/user-context-provider"
-import InputValidationError from "@/components/helpers/input-validation-error"
 import RequisitionError from "@/components/helpers/requisition-error"
 import putUpdateAccount from "@/actions/users/put-update-account"
+import { Button, Field, Input, Label } from "@headlessui/react"
+import InputValidationError from "@/components/helpers/input-validation-error"
+import { User } from "@/interfaces/users"
 
 export default function EditAccountForm() {
     const router = useRouter()
@@ -19,7 +21,8 @@ export default function EditAccountForm() {
 
     useEffect(() => {
         if (formState.ok) {
-            router.push("")
+            const updatedUser = formState.response?.data as User
+            router.push("/dashboard/" + updatedUser.username + "/settings")
         }
     }, [formState, router])
 
@@ -31,12 +34,12 @@ export default function EditAccountForm() {
             </p>
 
             <dl className="mt-6 space-y-6 divide-y divide-neutral-200 border-t border-neutral-200 text-sm leading-6">
-                <div className="pt-6 sm:flex">
+                <Field className="pt-6 sm:flex">
                     <dt className="font-medium text-neutral-900 sm:w-64 sm:flex-none sm:pr-6">
-                        <label htmlFor="currentPassword">Current Password</label>
+                        <Label htmlFor="currentPassword">Current Password</Label>
                     </dt>
                     <dd className="mt-1 flex flex-col sm:mt-0 sm:flex-auto">
-                        <input
+                        <Input
                             type="password"
                             id="currentPassword"
                             name="currentPassword"
@@ -44,13 +47,14 @@ export default function EditAccountForm() {
                             className="block w-full rounded-md border-0 py-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-400 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-mourning-blue-600 sm:text-sm sm:leading-6"
                         />
                     </dd>
-                </div>
-                <div className="pt-6 sm:flex">
+                </Field>
+
+                <Field className="pt-6 sm:flex">
                     <dt className="font-medium text-neutral-900 sm:w-64 sm:flex-none sm:pr-6">
-                        <label htmlFor="email">Email</label>
+                        <Label htmlFor="email">Email</Label>
                     </dt>
                     <dd className="mt-1 flex flex-col sm:mt-0 sm:flex-auto">
-                        <input
+                        <Input
                             type="email"
                             id="email"
                             name="email"
@@ -60,13 +64,14 @@ export default function EditAccountForm() {
                         />
                         <p className="mt-1 text-sm font-bold text-neutral-500">{data.user?.email}</p>
                     </dd>
-                </div>
-                <div className="pt-6 sm:flex">
+                </Field>
+
+                <Field className="pt-6 sm:flex">
                     <dt className="font-medium text-neutral-900 sm:w-64 sm:flex-none sm:pr-6">
-                        <label htmlFor="fullName">Full name</label>
+                        <Label htmlFor="fullName">Full name</Label>
                     </dt>
                     <dd className="mt-1 flex flex-col sm:mt-0 sm:flex-auto">
-                        <input
+                        <Input
                             id="fullName"
                             name="fullName"
                             type="text"
@@ -77,13 +82,14 @@ export default function EditAccountForm() {
                             <p className="mt-1 text-sm font-bold text-neutral-500">{data.user?.fullName}</p>
                         )}
                     </dd>
-                </div>
-                <div className="pt-6 sm:flex">
+                </Field>
+
+                <Field className="pt-6 sm:flex">
                     <dt className="font-medium text-neutral-900 sm:w-64 sm:flex-none sm:pr-6">
-                        <label htmlFor="phone">Phone</label>
+                        <Label htmlFor="phone">Phone</Label>
                     </dt>
                     <dd className="mt-1 flex flex-col sm:mt-0 sm:flex-auto">
-                        <input
+                        <Input
                             type="text"
                             id="phone"
                             name="phone"
@@ -93,13 +99,14 @@ export default function EditAccountForm() {
                         />
                         <p className="mt-1 text-sm font-bold text-neutral-500">{data.user?.phone}</p>
                     </dd>
-                </div>
-                <div className="pt-6 sm:flex">
+                </Field>
+
+                <Field className="pt-6 sm:flex">
                     <dt className="font-medium text-neutral-900 sm:w-64 sm:flex-none sm:pr-6">
-                        <label htmlFor="address">Address</label>
+                        <Label htmlFor="address">Address</Label>
                     </dt>
                     <dd className="mt-1 flex flex-col sm:mt-0 sm:flex-auto">
-                        <input
+                        <Input
                             type="text"
                             id="address"
                             name="address"
@@ -109,13 +116,14 @@ export default function EditAccountForm() {
                         />
                         <p className="mt-1 text-sm font-bold text-neutral-500">{data.user?.address}</p>
                     </dd>
-                </div>
-                <div className="pt-6 sm:flex">
+                </Field>
+
+                <Field className="pt-6 sm:flex">
                     <dt className="font-medium text-neutral-900 sm:w-64 sm:flex-none sm:pr-6">
-                        <label htmlFor="birthDate">Birth Date</label>
+                        <Label htmlFor="birthDate">Birth Date</Label>
                     </dt>
                     <dd className="mt-1 flex flex-col sm:mt-0 sm:flex-auto">
-                        <input
+                        <Input
                             type="date"
                             id="birthDate"
                             name="birthDate"
@@ -123,7 +131,7 @@ export default function EditAccountForm() {
                         />
                         <p className="mt-1 text-sm font-bold text-neutral-500">{data.user?.birthDate}</p>
                     </dd>
-                </div>
+                </Field>
             </dl>
 
             <div className="mt-6 grid border-t">
@@ -136,18 +144,18 @@ export default function EditAccountForm() {
                 {formState.error && !Array.isArray(formState.error) && <RequisitionError error={formState.error} />}
 
                 <div className="mt-4 flex items-center justify-end gap-x-6">
-                    <button
+                    <Button
                         type="button"
                         onClick={() => router.back()}
                         className="rounded-md px-3 py-2 text-sm font-semibold leading-6 text-neutral-900 hover:bg-neutral-200">
                         Cancel
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="submit"
                         disabled={isPending}
                         className="rounded-md bg-mourning-blue-600 px-3 py-2 text-sm font-semibold text-neutral-50 shadow-sm hover:bg-mourning-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mourning-blue-600 disabled:opacity-50">
                         {isPending ? "Processing..." : "Save"}
-                    </button>
+                    </Button>
                 </div>
             </div>
         </form>

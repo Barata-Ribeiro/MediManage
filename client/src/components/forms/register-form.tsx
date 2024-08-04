@@ -4,6 +4,8 @@ import { useForm } from "@/hooks/use-form"
 import postAuthRegister from "@/actions/auth/post-auth-register"
 import InputValidationError from "@/components/helpers/input-validation-error"
 import RequisitionError from "@/components/helpers/requisition-error"
+import { Button, Field, Input, Label } from "@headlessui/react"
+import Spinner from "@/components/helpers/spinner"
 
 export default function RegisterForm() {
     const { isPending, formState, formAction, onSubmit } = useForm(postAuthRegister, {
@@ -14,12 +16,12 @@ export default function RegisterForm() {
 
     return (
         <form action={formAction} onSubmit={onSubmit} className="space-y-6">
-            <div>
-                <label htmlFor="username" className="block text-sm font-medium leading-6 text-neutral-900">
+            <Field>
+                <Label htmlFor="username" className="block text-sm font-medium leading-6 text-neutral-900">
                     Username
-                </label>
+                </Label>
                 <div className="mt-2">
-                    <input
+                    <Input
                         type="text"
                         id="username"
                         name="username"
@@ -28,14 +30,14 @@ export default function RegisterForm() {
                         required
                     />
                 </div>
-            </div>
+            </Field>
 
-            <div>
-                <label htmlFor="emailOrUsername" className="block text-sm font-medium leading-6 text-neutral-900">
+            <Field>
+                <Label htmlFor="emailOrUsername" className="block text-sm font-medium leading-6 text-neutral-900">
                     Email
-                </label>
+                </Label>
                 <div className="mt-2">
-                    <input
+                    <Input
                         type="email"
                         id="email"
                         name="email"
@@ -44,14 +46,14 @@ export default function RegisterForm() {
                         required
                     />
                 </div>
-            </div>
+            </Field>
 
-            <div>
-                <label htmlFor="password" className="block text-sm font-medium leading-6 text-neutral-900">
+            <Field>
+                <Label htmlFor="password" className="block text-sm font-medium leading-6 text-neutral-900">
                     Password
-                </label>
+                </Label>
                 <div className="mt-2">
-                    <input
+                    <Input
                         type="password"
                         id="password"
                         name="password"
@@ -60,14 +62,14 @@ export default function RegisterForm() {
                         required
                     />
                 </div>
-            </div>
+            </Field>
 
             <div>
-                <label htmlFor="password" className="block text-sm font-medium leading-6 text-neutral-900">
+                <Label htmlFor="password" className="block text-sm font-medium leading-6 text-neutral-900">
                     Confirm Password
-                </label>
+                </Label>
                 <div className="mt-2">
-                    <input
+                    <Input
                         type="password"
                         id="confirmPassword"
                         name="confirmPassword"
@@ -81,12 +83,18 @@ export default function RegisterForm() {
             {formState.error && !Array.isArray(formState.error) && <RequisitionError error={formState.error} />}
 
             <div>
-                <button
+                <Button
                     type="submit"
                     disabled={isPending}
-                    className="flex w-full justify-center rounded-md bg-mourning-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-mourning-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50">
-                    {isPending ? "Processing..." : "Register"}
-                </button>
+                    className="inline-flex w-full items-center justify-center rounded-md bg-mourning-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-mourning-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50">
+                    {isPending ? (
+                        <>
+                            <Spinner /> Loading...
+                        </>
+                    ) : (
+                        "Register"
+                    )}
+                </Button>
             </div>
         </form>
     )

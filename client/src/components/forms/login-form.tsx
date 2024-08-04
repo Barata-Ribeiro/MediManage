@@ -8,6 +8,8 @@ import InputValidationError from "@/components/helpers/input-validation-error"
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { LoginResponse } from "@/interfaces/auth"
+import { Button, Field, Input, Label } from "@headlessui/react"
+import Spinner from "@/components/helpers/spinner"
 
 export default function LoginForm() {
     const router = useRouter()
@@ -25,12 +27,12 @@ export default function LoginForm() {
 
     return (
         <form action={formAction} onSubmit={onSubmit} className="space-y-6">
-            <div>
-                <label htmlFor="emailOrUsername" className="block text-sm font-medium leading-6 text-neutral-900">
+            <Field>
+                <Label htmlFor="emailOrUsername" className="block text-sm font-medium leading-6 text-neutral-900">
                     Email or Username
-                </label>
+                </Label>
                 <div className="mt-2">
-                    <input
+                    <Input
                         type="text"
                         id="emailOrUsername"
                         name="emailOrUsername"
@@ -39,14 +41,14 @@ export default function LoginForm() {
                         required
                     />
                 </div>
-            </div>
+            </Field>
 
-            <div>
-                <label htmlFor="password" className="block text-sm font-medium leading-6 text-neutral-900">
+            <Field>
+                <Label htmlFor="password" className="block text-sm font-medium leading-6 text-neutral-900">
                     Password
-                </label>
+                </Label>
                 <div className="mt-2">
-                    <input
+                    <Input
                         id="password"
                         name="password"
                         type="password"
@@ -56,19 +58,19 @@ export default function LoginForm() {
                         required
                     />
                 </div>
-            </div>
+            </Field>
 
-            <div className="flex items-center justify-between">
+            <Field className="flex items-center justify-between">
                 <div className="flex items-center">
-                    <input
+                    <Input
                         id="remember-me"
                         name="rememberMe"
                         type="checkbox"
-                        className="h-4 w-4 rounded border-neutral-500 text-hello-spring-600 focus:ring-mourning-blue-600"
+                        className="h-4 w-4 rounded border-neutral-500 text-hello-spring-600 focus:ring-hello-spring-600"
                     />
-                    <label htmlFor="remember-me" className="ml-3 block text-sm leading-6 text-neutral-700">
+                    <Label htmlFor="remember-me" className="ml-3 block text-sm leading-6 text-neutral-700">
                         Remember me
-                    </label>
+                    </Label>
                 </div>
 
                 <div className="text-sm leading-6">
@@ -78,18 +80,24 @@ export default function LoginForm() {
                         Forgot password?
                     </Link>
                 </div>
-            </div>
+            </Field>
 
             {formState.error && Array.isArray(formState.error) && <InputValidationError errors={formState.error} />}
             {formState.error && !Array.isArray(formState.error) && <RequisitionError error={formState.error} />}
 
             <div>
-                <button
+                <Button
                     type="submit"
                     disabled={isPending}
-                    className="flex w-full justify-center rounded-md bg-mourning-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-mourning-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50">
-                    {isPending ? "Processing..." : "Login"}
-                </button>
+                    className="inline-flex w-full items-center justify-center rounded-md bg-mourning-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-mourning-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50">
+                    {isPending ? (
+                        <>
+                            <Spinner /> Loading...
+                        </>
+                    ) : (
+                        "Login"
+                    )}
+                </Button>
             </div>
         </form>
     )
