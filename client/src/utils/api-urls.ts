@@ -39,7 +39,24 @@ export const CONSULTATIONS_GET_ALL = (
     let url = `${BACKEND_URL}/api/v1/consultations?page=${page}&perPage=${perPage}&direction=${direction}&orderBy=${orderBy}`
 
     if (search) {
-        url += `&type=${search}`
+        url += `&search=${search}`
+    }
+
+    return url
+}
+
+// Medical Records
+export const MEDICAL_RECORDS_GET_ALL = (
+    page: number,
+    perPage: number,
+    search: string | null,
+    direction: string,
+    orderBy: string,
+) => {
+    let url = `${BACKEND_URL}/api/v1/records?page=${page}&perPage=${perPage}&direction=${direction}&orderBy=${orderBy}`
+
+    if (search) {
+        url += `&search=${search}`
     }
 
     return url
