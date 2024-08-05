@@ -10,11 +10,11 @@ export const AUTH_LOGIN = () => `${BACKEND_URL}/api/v1/auth/login`
 export const USER_GET_CONTEXT = () => `${BACKEND_URL}/api/v1/users/me/context`
 export const USER_UPDATE_ACCOUNT = () => `${BACKEND_URL}/api/v1/users/me`
 export const USER_GET_ALL = (
-    page = 0,
-    perPage = 10,
-    type: string | null = null,
-    direction = "ASC",
-    orderBy = "createdAt",
+    page: number,
+    perPage: number,
+    type: string | null,
+    direction: string,
+    orderBy: string,
 ) => {
     let url = `${BACKEND_URL}/api/v1/users?page=${page}&perPage=${perPage}&direction=${direction}&orderBy=${orderBy}`
 
@@ -27,3 +27,20 @@ export const USER_GET_ALL = (
 export const USER_GET_PROFILE_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/users/${id}`
 export const USER_DELETE_PROFILE_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/users/${id}`
 export const USER_UPDATE_PROFILE_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/users/${id}`
+
+// Consultations
+export const CONSULTATIONS_GET_ALL = (
+    page: number,
+    perPage: number,
+    search: string | null,
+    direction: string,
+    orderBy: string,
+) => {
+    let url = `${BACKEND_URL}/api/v1/consultations?page=${page}&perPage=${perPage}&direction=${direction}&orderBy=${orderBy}`
+
+    if (search) {
+        url += `&type=${search}`
+    }
+
+    return url
+}
