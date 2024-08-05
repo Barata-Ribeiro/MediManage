@@ -29,7 +29,7 @@ export default function UserFilter() {
     }, [type, direction, orderBy, searchParams, router])
 
     const labelStyles = tw`block font-heading text-sm font-semibold leading-6 text-neutral-900`
-    const selectStyles = tw`mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6`
+    const selectStyles = tw`mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-neutral-900 ring-1 ring-inset ring-neutral-300 focus:ring-2 focus:ring-mourning-blue-600 sm:text-sm sm:leading-6`
 
     return (
         <div className="flex w-max flex-wrap justify-center gap-2 sm:justify-normal">

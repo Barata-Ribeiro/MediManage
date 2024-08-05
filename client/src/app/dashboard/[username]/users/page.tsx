@@ -78,49 +78,60 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
                                 </tr>
                             </thead>
                             <tbody>
-                                {content.map((user, userIdx) => (
-                                    <tr key={user.email}>
+                                {content.length > 0 &&
+                                    content.map((user, userIdx) => (
+                                        <tr key={user.email}>
+                                            <td
+                                                className={twMerge(
+                                                    userIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
+                                                    "whitespace-nowrap py-4 pl-4 pr-3 font-body text-sm font-medium text-neutral-900 sm:pl-6 lg:pl-8",
+                                                )}>
+                                                {user.id}
+                                            </td>
+                                            <td
+                                                className={twMerge(
+                                                    userIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
+                                                    "hidden whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900 sm:table-cell",
+                                                )}>
+                                                {user.username}
+                                            </td>
+                                            <td
+                                                className={twMerge(
+                                                    userIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
+                                                    "hidden whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900 lg:table-cell",
+                                                )}>
+                                                {user.email}
+                                            </td>
+                                            <td
+                                                className={twMerge(
+                                                    userIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
+                                                    "whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900",
+                                                )}>
+                                                {user.accountType}
+                                            </td>
+                                            <td
+                                                className={twMerge(
+                                                    userIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
+                                                    "relative whitespace-nowrap py-4 pl-3 pr-4 text-right font-body text-sm font-medium sm:pr-8 lg:pr-8",
+                                                )}>
+                                                <Link
+                                                    href={`/dashboard/${params.username}/users/profile?id=${user.id}`}
+                                                    className="font-heading text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
+                                                    View<span className="sr-only">, {user.username}</span>
+                                                </Link>
+                                            </td>
+                                        </tr>
+                                    ))}
+
+                                {content.length < 1 && (
+                                    <tr className="border-b border-neutral-300 bg-white">
                                         <td
-                                            className={twMerge(
-                                                userIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
-                                                "whitespace-nowrap py-4 pl-4 pr-3 font-body text-sm font-medium text-neutral-900 sm:pl-6 lg:pl-8",
-                                            )}>
-                                            {user.id}
-                                        </td>
-                                        <td
-                                            className={twMerge(
-                                                userIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
-                                                "hidden whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900 sm:table-cell",
-                                            )}>
-                                            {user.username}
-                                        </td>
-                                        <td
-                                            className={twMerge(
-                                                userIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
-                                                "hidden whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900 lg:table-cell",
-                                            )}>
-                                            {user.email}
-                                        </td>
-                                        <td
-                                            className={twMerge(
-                                                userIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
-                                                "whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900",
-                                            )}>
-                                            {user.accountType}
-                                        </td>
-                                        <td
-                                            className={twMerge(
-                                                userIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
-                                                "relative whitespace-nowrap py-4 pl-3 pr-4 text-right font-body text-sm font-medium sm:pr-8 lg:pr-8",
-                                            )}>
-                                            <Link
-                                                href={`/dashboard/${params.username}/users/profile?id=${user.id}`}
-                                                className="font-heading text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
-                                                View<span className="sr-only">, {user.username}</span>
-                                            </Link>
+                                            colSpan={6}
+                                            className="py-4 pl-4 pr-3 text-sm font-bold text-neutral-900 sm:pl-6 lg:pl-8">
+                                            No consultations found or available.
                                         </td>
                                     </tr>
-                                ))}
+                                )}
                             </tbody>
                         </table>
                         <NavigationPagination usePageInfo={pageInfo} contentSize={content.length} />
