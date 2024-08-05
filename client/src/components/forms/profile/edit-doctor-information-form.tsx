@@ -28,6 +28,7 @@ export default function EditDoctorInformationForm({ user }: Readonly<{ user: Use
 
     return (
         <form id="doctor-information" className="md:col-span-2" action={formAction} onSubmit={onSubmit}>
+            <Input type="hidden" name="userId" value={user.id} />
             <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6">
                 <Field className="col-span-full" disabled={user.accountType !== "DOCTOR"}>
                     <Label

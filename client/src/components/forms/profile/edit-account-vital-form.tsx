@@ -28,6 +28,7 @@ export default function EditAccountVitalForm({ user }: Readonly<{ user: User }>)
 
     return (
         <form id="account-vital" className="md:col-span-2" action={formAction} onSubmit={onSubmit}>
+            <Input type="hidden" name="userId" value={user.id} />
             <div className="mb-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6">
                 <Field className="col-span-full">
                     <Label htmlFor="username" className="block text-sm font-semibold leading-6 text-neutral-900">
