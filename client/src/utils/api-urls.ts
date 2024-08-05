@@ -25,3 +25,5 @@ export const USER_GET_ALL = (
     return url
 }
 export const USER_GET_PROFILE_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/users/${id}`
+export const USER_DELETE_PROFILE_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/users/${id}`
+export const USER_UPDATE_PROFILE_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/users/${id}`
