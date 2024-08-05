@@ -1,11 +1,12 @@
 "use client"
 
-import { useRouter, useSearchParams } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Field, Input, Label, Select } from "@headlessui/react"
 import tw from "@/utils/tw"
 
 export default function SearchFilter() {
+    const pathname = usePathname()
     const router = useRouter()
     const searchParams = useSearchParams()
 
@@ -36,7 +37,7 @@ export default function SearchFilter() {
             <Field className="grid w-auto">
                 <Label className={labelStyles}>Search</Label>
                 <Input
-                    type="text"
+                    type="search"
                     name="search"
                     value={search}
                     className={selectStyles}
@@ -62,12 +63,10 @@ export default function SearchFilter() {
                     name="orderBy"
                     value={orderBy}
                     onChange={e => setOrderBy(e.target.value)}>
-                    <option value="scheduledTo">Scheduled To</option>
                     <option value="id">Id</option>
+                    {pathname.includes("consultations") && <option value="scheduledTo">Scheduled To</option>}
                     <option value="createdAt">Created At</option>
                     <option value="updatedAt">Updated At</option>
-                    <option value="username">Username</option>
-                    <option value="email">Email</option>
                 </Select>
             </Field>
         </div>
