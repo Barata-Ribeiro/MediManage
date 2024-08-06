@@ -21,7 +21,7 @@ export default function ResponseError(error: unknown): State {
         }
     }
 
-    if ((error as ProblemDetails).detail) {
+    if ((error as ProblemDetails) && !(error instanceof Error)) {
         return {
             ...state,
             error: { ...(error as ProblemDetails) },
