@@ -4,6 +4,8 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Field, Input, Label, Select } from "@headlessui/react"
 import tw from "@/utils/tw"
+import { FaMagnifyingGlass } from "react-icons/fa6"
+import { twMerge } from "tailwind-merge"
 
 export default function SearchFilter() {
     const pathname = usePathname()
@@ -30,20 +32,25 @@ export default function SearchFilter() {
     }, [search, direction, orderBy, searchParams, router])
 
     const labelStyles = tw`block font-heading text-sm font-semibold leading-6 text-neutral-900`
-    const selectStyles = tw`mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-neutral-900 ring-1 ring-inset ring-neutral-300 focus:ring-2 focus:ring-mourning-blue-600 sm:text-sm sm:leading-6`
+    const selectStyles = tw`mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 focus:ring-2 focus:ring-mourning-blue-600 sm:text-sm sm:leading-6`
 
     return (
         <div className="flex w-max flex-wrap justify-center gap-2 sm:justify-normal">
             <Field className="grid w-auto">
                 <Label className={labelStyles}>Search</Label>
-                <Input
-                    type="search"
-                    name="search"
-                    value={search}
-                    className={selectStyles}
-                    onChange={e => setSearch(e.target.value)}
-                    placeholder="Search..."
-                />
+                <div className="relative mt-2 rounded-md">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <FaMagnifyingGlass aria-hidden="true" className="h-5 w-5 text-neutral-400" />
+                    </div>
+                    <Input
+                        type="search"
+                        name="search"
+                        value={search}
+                        className={twMerge(selectStyles, "mt-0 pl-10 pr-3")}
+                        onChange={e => setSearch(e.target.value)}
+                        placeholder="Search..."
+                    />
+                </div>
             </Field>
             <Field className="grid w-auto">
                 <Label className={labelStyles}>Direction</Label>
