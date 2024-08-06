@@ -10,6 +10,7 @@ import com.barataribeiro.medimanage.dtos.responses.LoginResponseDTO;
 import com.barataribeiro.medimanage.entities.enums.AccountType;
 import com.barataribeiro.medimanage.entities.enums.UserRoles;
 import com.barataribeiro.medimanage.entities.models.User;
+import com.barataribeiro.medimanage.exceptions.IllegalRequestException;
 import com.barataribeiro.medimanage.exceptions.users.InvalidUserCredentialsException;
 import com.barataribeiro.medimanage.exceptions.users.UserAlreadyExistsException;
 import com.barataribeiro.medimanage.exceptions.users.UserIsBannedException;
@@ -78,9 +79,9 @@ public class AuthServiceImpl implements AuthService {
         User savedUser = userRepository.saveAndFlush(registration);
 
         return Map.of("username", generatedUsername,
-                      "password", generatedPassword,
-                      "registeredAt", savedUser.getCreatedAt(),
-                      "message", "Please, change your password after login.");
+                "password", generatedPassword,
+                "registeredAt", savedUser.getCreatedAt(),
+                "message", "Please, change your password after login.");
     }
 
     @Override
@@ -110,9 +111,9 @@ public class AuthServiceImpl implements AuthService {
         User savedUser = userRepository.saveAndFlush(registration);
 
         return Map.of("username", generatedUsername,
-                      "password", generatedPassword,
-                      "registeredAt", savedUser.getCreatedAt(),
-                      "message", "Please, change your password after login.");
+                "password", generatedPassword,
+                "registeredAt", savedUser.getCreatedAt(),
+                "message", "Please, change your password after login.");
     }
 
     @Override
@@ -120,7 +121,7 @@ public class AuthServiceImpl implements AuthService {
     public LoginResponseDTO login(@NotNull LoginRequestDTO body) {
         User user = userRepository.findByUsernameOrEmail(body.emailOrUsername())
                 .orElseThrow(() -> new InvalidUserCredentialsException("The credential '" + body.emailOrUsername() +
-                                                                               "' is invalid."));
+                        "' is invalid."));
 
         boolean passwordMatches = passwordEncoder.matches(body.password(), user.getPassword());
         boolean userBannedOrNone =
@@ -137,8 +138,8 @@ public class AuthServiceImpl implements AuthService {
         Map.Entry<String, Instant> tokenAndExpiration = tokenService.generateToken(user, body.rememberMe());
 
         return new LoginResponseDTO(userMapper.toDTO(user),
-                                    tokenAndExpiration.getKey(),
-                                    tokenAndExpiration.getValue());
+                tokenAndExpiration.getKey(),
+                tokenAndExpiration.getValue());
     }
 
     private @NotNull String generateRandomString() {
@@ -146,7 +147,7 @@ public class AuthServiceImpl implements AuthService {
         StringBuilder sb = new StringBuilder(8);
 
         for (int i = 0; i < 8; i++) {
-            int index = (alphaNumericStr.length() * random.nextInt() / Integer.MAX_VALUE);
+            int index = random.nextInt(alphaNumericStr.length());
             sb.append(alphaNumericStr.charAt(index));
         }
 
@@ -154,10 +155,19 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private String generateUniqueUsername() {
+        int maxAttempts = 100;
+        int attempts = 0;
         String username;
+
         do {
+            if (attempts >= maxAttempts) {
+                throw new IllegalRequestException("Exceeded maximum attempts to generate a unique username");
+            }
+
             username = generateRandomString();
+            attempts++;
         } while (userRepository.existsByUsername(username));
+
         return username;
     }
 
