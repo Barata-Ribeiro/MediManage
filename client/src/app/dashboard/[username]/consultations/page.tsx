@@ -3,9 +3,8 @@ import { notFound } from "next/navigation"
 import getAllConsultationsPaginated from "@/actions/consultations/get-all-consultations-paginated"
 import { PaginatedConsultations } from "@/interfaces/consultations"
 import NavigationPagination from "@/components/dashboard/filters/navigation-pagination"
-import { twMerge } from "tailwind-merge"
 import SearchFilter from "@/components/dashboard/filters/search-filter"
-import Link from "next/link"
+import ConsultationTableRow from "@/components/dashboard/consultation-table-row"
 
 interface ConsultationsPageProps {
     params: { username: string }
@@ -76,78 +75,17 @@ export default async function ConsultationsPage({ params, searchParams }: Readon
                                         className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left font-heading text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter">
                                         Status
                                     </th>
-                                    <th
-                                        scope="col"
-                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 py-3.5 pl-3 pr-4 font-heading backdrop-blur backdrop-filter sm:pr-6 lg:pr-8">
-                                        <span className="sr-only">View/Edit</span>
-                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {content.length > 0 &&
                                     content.map((consult, consultIdx) => (
-                                        <tr
-                                            key={consult.id + "_" + consultIdx}
-                                            className="border-b border-neutral-300 bg-white">
-                                            <td
-                                                className={twMerge(
-                                                    consultIdx !== content.length - 1
-                                                        ? "border-b border-neutral-200"
-                                                        : "",
-                                                    "whitespace-nowrap py-4 pl-4 pr-3 font-body text-sm font-medium text-neutral-900 sm:pl-6 lg:pl-8",
-                                                )}>
-                                                {consult.id}
-                                            </td>
-                                            <td
-                                                className={twMerge(
-                                                    consultIdx !== content.length - 1
-                                                        ? "border-b border-neutral-200"
-                                                        : "",
-                                                    "hidden whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900 sm:table-cell",
-                                                )}>
-                                                {consult.patient.username}
-                                            </td>
-                                            <td
-                                                className={twMerge(
-                                                    consultIdx !== content.length - 1
-                                                        ? "border-b border-neutral-200"
-                                                        : "",
-                                                    "hidden whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900 sm:table-cell",
-                                                )}>
-                                                {consult.doctor.username}
-                                            </td>
-                                            <td
-                                                className={twMerge(
-                                                    consultIdx !== content.length - 1
-                                                        ? "border-b border-neutral-200"
-                                                        : "",
-                                                    "relative whitespace-nowrap py-4 pl-3 pr-4 text-right font-body text-sm font-medium sm:pr-8 lg:pr-8",
-                                                )}>
-                                                {consult.scheduledTo}
-                                            </td>
-                                            <td
-                                                className={twMerge(
-                                                    consultIdx !== content.length - 1
-                                                        ? "border-b border-neutral-200"
-                                                        : "",
-                                                    "whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900",
-                                                )}>
-                                                {consult.status}
-                                            </td>
-                                            <td
-                                                className={twMerge(
-                                                    consultIdx !== content.length - 1
-                                                        ? "border-b border-neutral-200"
-                                                        : "",
-                                                    "relative whitespace-nowrap py-4 pl-3 pr-4 text-right font-body text-sm font-medium sm:pr-8 lg:pr-8",
-                                                )}>
-                                                <Link
-                                                    href={`/dashboard/${params.username}/consultations/view?id=${consult.id}`}
-                                                    className="font-heading font-semibold text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
-                                                    View<span className="sr-only">, {consult.patient.username}</span>
-                                                </Link>
-                                            </td>
-                                        </tr>
+                                        <ConsultationTableRow
+                                            key={consult.id}
+                                            index={consultIdx}
+                                            length={content.length}
+                                            consult={consult}
+                                        />
                                     ))}
 
                                 {content.length < 1 && (

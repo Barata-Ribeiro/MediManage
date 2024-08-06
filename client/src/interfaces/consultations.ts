@@ -11,7 +11,7 @@ interface Consultation {
 }
 
 enum ConsultationStatus {
-    SCHEUDLED = "SCHEDULED",
+    SCHEDULED = "SCHEDULED",
     ACCEPTED = "ACCEPTED",
     IN_PROGRESS = "IN_PROGRESS",
     DONE = "DONE",
