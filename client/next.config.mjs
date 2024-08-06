@@ -5,7 +5,7 @@ const nextConfig = {
     trailingSlash: false,
     skipTrailingSlashRedirect: true,
     experimental: {
-        optimizePackageImports: ["tailwindcss", "@headlessui/react"],
+        optimizePackageImports: ["tailwindcss", "@headlessui/react", "react-icons/fa6"],
     },
 }
 
