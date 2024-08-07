@@ -1,11 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button, Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
 import { FaChevronDown } from "react-icons/fa6"
 import { twMerge } from "tailwind-merge"
 import putUpdateConsultation from "@/actions/consultations/put-update-consultation"
 import { Consultation } from "@/interfaces/consultations"
+import SimpleErrorNotification from "@/components/helpers/simple-error-notification"
+import { ProblemDetails } from "@/interfaces/actions"
 
 type ConsultStatus = "SCHEDULED" | "ACCEPTED" | "IN_PROGRESS" | "DONE" | "MISSED" | "CANCELLED"
 
@@ -17,6 +19,7 @@ interface SelectConsultStatusProps {
 export default function SelectConsultStatus({ id, currentStatus }: Readonly<SelectConsultStatusProps>) {
     const [status, setStatus] = useState<ConsultStatus>(currentStatus)
     const [isPending, setIsPending] = useState(false)
+    const [error, setError] = useState<ProblemDetails | string | null>(null)
 
     const statusList: ConsultStatus[] = ["SCHEDULED", "ACCEPTED", "IN_PROGRESS", "DONE", "MISSED", "CANCELLED"]
     const statusColor = {
@@ -33,18 +36,29 @@ export default function SelectConsultStatus({ id, currentStatus }: Readonly<Sele
             setIsPending(true)
 
             const state = await putUpdateConsultation(String(id), option, null)
+
+            if (!state.ok) {
+                setError(state.error as ProblemDetails | string)
+                return
+            }
+
             const consultation = state.response?.data as Consultation
 
             setStatus(consultation.status)
         } catch (error) {
-            console.error(error)
+            console.error("Unknown error: ", error)
         } finally {
             setIsPending(false)
         }
     }
 
+    useEffect(() => {
+        setStatus(currentStatus)
+    }, [currentStatus])
+
     return (
         <Menu as="div" className="relative inline-block text-left">
+            {error && <SimpleErrorNotification error={error} />}
             <div>
                 <MenuButton
                     className="group inline-flex items-center justify-center text-sm font-medium text-neutral-800 hover:text-neutral-900 disabled:opacity-50"

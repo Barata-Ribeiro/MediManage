@@ -72,6 +72,7 @@ export default function SearchFilter() {
                     onChange={e => setOrderBy(e.target.value)}>
                     <option value="id">Id</option>
                     {pathname.includes("consultations") && <option value="scheduledTo">Scheduled To</option>}
+                    {pathname.includes("consultations") && <option value="status">Status</option>}
                     <option value="createdAt">Created At</option>
                     <option value="updatedAt">Updated At</option>
                 </Select>
