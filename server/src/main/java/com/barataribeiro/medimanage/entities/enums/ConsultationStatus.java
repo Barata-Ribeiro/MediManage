@@ -6,5 +6,5 @@ public enum ConsultationStatus {
     IN_PROGRESS,
     DONE,
     MISSED,
-    CANCELED
+    CANCELLED
 }
