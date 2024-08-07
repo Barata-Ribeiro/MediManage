@@ -1,7 +1,8 @@
 import type { Consultation } from "@/interfaces/consultations"
 import { twMerge } from "tailwind-merge"
 import SelectConsultStatus from "@/components/dashboard/select-consult-status"
-import parseDate from "@/utils/parse-date"
+import React from "react"
+import SelectConsultDate from "@/components/dashboard/select-consult-date"
 
 interface ConsultationTableRowProps {
     index: number
@@ -36,9 +37,9 @@ export default function ConsultationTableRow(props: Readonly<ConsultationTableRo
             <td
                 className={twMerge(
                     props.index !== props.length - 1 ? "border-b border-neutral-200" : "",
-                    "whitespace-nowrap px-3 py-4 text-sm text-neutral-700",
+                    "w-max whitespace-nowrap px-3 py-4 text-sm text-neutral-700",
                 )}>
-                <time dateTime={props.consult.scheduledTo}>{parseDate(props.consult.scheduledTo)}</time>
+                <SelectConsultDate id={props.consult.id} currentScheduledTo={props.consult?.scheduledTo} />
             </td>
             <td
                 className={twMerge(
