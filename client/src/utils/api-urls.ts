@@ -44,6 +44,7 @@ export const CONSULTATIONS_GET_ALL = (
 
     return url
 }
+export const CONSULTATIONS_UPDATE_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/consultations/${id}`
 
 // Medical Records
 export const MEDICAL_RECORDS_GET_ALL = (

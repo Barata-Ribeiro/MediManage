@@ -4,6 +4,8 @@ import { useState } from "react"
 import { Button, Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
 import { FaChevronDown } from "react-icons/fa6"
 import { twMerge } from "tailwind-merge"
+import putUpdateConsultation from "@/actions/consultations/put-update-consultation"
+import { Consultation } from "@/interfaces/consultations"
 
 type ConsultStatus = "SCHEDULED" | "ACCEPTED" | "IN_PROGRESS" | "DONE" | "MISSED" | "CANCELLED"
 
@@ -26,12 +28,14 @@ export default function SelectConsultStatus({ id, currentStatus }: Readonly<Sele
         CANCELLED: "text-red-600 bg-red-600/10",
     }
 
-    async function handleStatusChange(status: string) {
+    async function handleStatusChange(option: string) {
         try {
             setIsPending(true)
-            // set timeout to simulate a real request
-            await new Promise(resolve => setTimeout(resolve, 1000))
-            setStatus(status as ConsultStatus)
+
+            const state = await putUpdateConsultation(String(id), option, null)
+            const consultation = state.response?.data as Consultation
+
+            setStatus(consultation.status)
         } catch (error) {
             console.error(error)
         } finally {
