@@ -4,6 +4,7 @@ import { MEDICAL_RECORDS_GET_ALL } from "@/utils/api-urls"
 import verifyAuthentication from "@/utils/verify-authentication"
 import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import ResponseError from "@/actions/response-error"
+import { PaginatedSimpleRecords } from "@/interfaces/records"
 
 export async function getAllRecordsPaginated(
     page: number,
@@ -35,7 +36,7 @@ export async function getAllRecordsPaginated(
 
         const responseData = json as ApiResponse
 
-        const data = responseData.data
+        const data = responseData.data as PaginatedSimpleRecords
 
         return {
             ok: true,

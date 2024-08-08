@@ -8,7 +8,7 @@ import { getAllRecordsPaginated } from "@/actions/records/get-all-records-pagina
 import { PaginatedSimpleRecords } from "@/interfaces/records"
 import parseDate from "@/utils/parse-date"
 
-interface RecordsPageProps {
+export interface RecordsPageProps {
     params: { username: string }
     searchParams?: { [key: string]: string | string[] | undefined }
 }
