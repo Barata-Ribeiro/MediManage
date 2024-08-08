@@ -34,7 +34,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     let user: User | null = null
     if (context.ok) user = context.response?.data as User
 
-    const fontVariables = `${roboto.variable}, ${nunito.variable}`
+    const fontVariables = `${roboto.variable} ${nunito.variable}`
     const bodyClasses = twMerge(fontVariables, "h-full")
 
     return (
