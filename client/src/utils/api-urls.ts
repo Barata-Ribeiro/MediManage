@@ -62,3 +62,5 @@ export const MEDICAL_RECORDS_GET_ALL = (
 
     return url
 }
+
+export const MEDICAL_RECORDS_GET_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/records/${id}`
