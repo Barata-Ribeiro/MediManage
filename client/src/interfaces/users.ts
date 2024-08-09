@@ -15,6 +15,14 @@ interface User {
     updatedAt: string
 }
 
+interface SimpleUser {
+    id: string
+    username: string
+    fullName: string | null
+    AccountType: UserAccountType
+    userRoles: UserRoles
+}
+
 enum UserAccountType {
     PATIENT = "PATIENT",
     ASSISTANT = "ASSISTANT",
@@ -39,4 +47,4 @@ interface PaginatedUsers {
     }
 }
 
-export type { User, PaginatedUsers }
+export type { User, SimpleUser, PaginatedUsers }

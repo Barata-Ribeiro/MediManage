@@ -17,14 +17,15 @@ export const USER_GET_ALL = (
     orderBy: string,
 ) => {
     let url = `${BACKEND_URL}/api/v1/users?page=${page}&perPage=${perPage}&direction=${direction}&orderBy=${orderBy}`
-
-    if (type) {
-        url += `&type=${type}`
-    }
-
+    if (type) url += `&type=${type}`
     return url
 }
 export const USER_GET_PROFILE_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/users/${id}`
+export const USER_GET_SEARCH_SUGGESTIONS = (query: string, type: string) => {
+    let url = `${BACKEND_URL}/api/v1/users/search-suggestions?accountType=${type}`
+    if (query) url += `&search=${query}`
+    return url
+}
 export const USER_DELETE_PROFILE_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/users/${id}`
 export const USER_UPDATE_PROFILE_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/users/${id}`
 
@@ -37,11 +38,7 @@ export const CONSULTATIONS_GET_ALL = (
     orderBy: string,
 ) => {
     let url = `${BACKEND_URL}/api/v1/consultations?page=${page}&perPage=${perPage}&direction=${direction}&orderBy=${orderBy}`
-
-    if (search) {
-        url += `&search=${search}`
-    }
-
+    if (search) url += `&search=${search}`
     return url
 }
 export const CONSULTATIONS_UPDATE_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/consultations/${id}`
@@ -55,11 +52,7 @@ export const MEDICAL_RECORDS_GET_ALL = (
     orderBy: string,
 ) => {
     let url = `${BACKEND_URL}/api/v1/records?page=${page}&perPage=${perPage}&direction=${direction}&orderBy=${orderBy}`
-
-    if (search) {
-        url += `&search=${search}`
-    }
-
+    if (search) url += `&search=${search}`
     return url
 }
 
