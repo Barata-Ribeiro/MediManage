@@ -1,5 +1,6 @@
 package com.barataribeiro.medimanage.repositories;
 
+import com.barataribeiro.medimanage.dtos.raw.SimpleUserDTO;
 import com.barataribeiro.medimanage.entities.enums.AccountType;
 import com.barataribeiro.medimanage.entities.models.User;
 import org.springframework.data.domain.Page;
@@ -8,10 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByUsername(String username);
@@ -21,9 +19,25 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     Page<User> findDistinctByAccountType(AccountType accountType, Pageable pageable);
 
-
     List<User> findDistinctAllByFullNameInIgnoreCaseAndAccountTypeIn(Collection<String> fullName,
                                                                      Collection<AccountType> accountType);
+
+    // TESTING QUERY WITH DTO
+    @Query("""
+             SELECT DISTINCT new com.barataribeiro.medimanage.dtos.raw.SimpleUserDTO(
+                     u.id,\s
+                     u.username,\s
+                     u.fullName,\s
+                     u.accountType,\s
+                     u.userRoles
+             )\s
+             FROM User u
+             WHERE (LOWER(u.username) LIKE LOWER(CONCAT('%', :search, '%'))
+                   OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :search, '%')))
+             AND u.accountType = :accountType
+             ORDER BY u.fullName
+            \s""")
+    Set<SimpleUserDTO> findUsersBySearchAndAccountType(@Param("search") String search, @Param("accountType") AccountType accountType);
 
     boolean existsByUsername(String username);
 
