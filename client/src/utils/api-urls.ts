@@ -41,6 +41,7 @@ export const CONSULTATIONS_GET_ALL = (
     if (search) url += `&search=${search}`
     return url
 }
+export const CONSULTATION_CREATE = () => `${BACKEND_URL}/api/v1/consultations`
 export const CONSULTATIONS_UPDATE_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/consultations/${id}`
 
 // Medical Records
