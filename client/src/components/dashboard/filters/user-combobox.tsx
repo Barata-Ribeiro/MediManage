@@ -38,7 +38,7 @@ export default function UserCombobox({ type }: Readonly<UserComboboxProps>) {
     return (
         <Combobox
             value={selectedPerson}
-            name={`${entity.toLowerCase()}FullName`}
+            name={`${entity.toLowerCase()}`}
             onChange={person => setSelectedPerson(person)}
             onClose={() => setQuery("")}>
             <Label className="block text-sm font-medium leading-6 text-neutral-900">Select {entity}</Label>
