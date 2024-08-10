@@ -15,7 +15,7 @@ enum ConsultationStatus {
     ACCEPTED = "ACCEPTED",
     IN_PROGRESS = "IN_PROGRESS",
     DONE = "DONE",
-    MISSSED = "MISSED",
+    MISSED = "MISSED",
     CANCELLED = "CANCELLED",
 }
 

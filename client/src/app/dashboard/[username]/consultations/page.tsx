@@ -25,8 +25,8 @@ export default async function ConsultationsPage({ params, searchParams }: Readon
     const search = (searchParams.search as string) || ""
     const page = parseInt(searchParams.page as string, 10) || 0
     const perPage = parseInt(searchParams.perPage as string, 10) || 10
-    const direction = (searchParams.direction as string) || "ASC"
-    const orderBy = (searchParams.orderBy as string) || "updatedAt"
+    const direction = (searchParams.direction as string) || "DESC"
+    const orderBy = (searchParams.orderBy as string) || "scheduledTo"
 
     const state = await getAllConsultationsPaginated(page, perPage, search, direction, orderBy)
     const pagination = state.response?.data as PaginatedConsultations
