@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.Map;
 
 @RestController
@@ -22,8 +23,8 @@ public class HomeController {
 
     @GetMapping("/administrator-info")
     @Secured("ACCOUNT_TYPE_ADMINISTRATOR")
-    public ResponseEntity<RestResponseDTO> getAdministratorInfo() {
-        Map<String, Object> response = homeService.getAdministratorInfo();
+    public ResponseEntity<RestResponseDTO> getAdministratorInfo(Principal principal) {
+        Map<String, Object> response = homeService.getAdministratorInfo(principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                 HttpStatus.OK.value(),
                 ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
@@ -32,8 +33,8 @@ public class HomeController {
 
     @GetMapping("/patient-info")
     @Secured("ACCOUNT_TYPE_PATIENT")
-    public ResponseEntity<RestResponseDTO> getPatientInfo() {
-        Map<String, Object> response = homeService.getPatientInfo();
+    public ResponseEntity<RestResponseDTO> getPatientInfo(Principal principal) {
+        Map<String, Object> response = homeService.getPatientInfo(principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                 HttpStatus.OK.value(),
                 ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
@@ -42,8 +43,8 @@ public class HomeController {
 
     @GetMapping("/assistant-info")
     @Secured("ACCOUNT_TYPE_ASSISTANT")
-    public ResponseEntity<RestResponseDTO> getAssistantInfo() {
-        Map<String, Object> response = homeService.getAssistantInfo();
+    public ResponseEntity<RestResponseDTO> getAssistantInfo(Principal principal) {
+        Map<String, Object> response = homeService.getAssistantInfo(principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                 HttpStatus.OK.value(),
                 ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
@@ -52,8 +53,8 @@ public class HomeController {
 
     @GetMapping("/doctor-info")
     @Secured("ACCOUNT_TYPE_DOCTOR")
-    public ResponseEntity<RestResponseDTO> getDoctorInfo() {
-        Map<String, Object> response = homeService.getDoctorInfo();
+    public ResponseEntity<RestResponseDTO> getDoctorInfo(Principal principal) {
+        Map<String, Object> response = homeService.getDoctorInfo(principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                 HttpStatus.OK.value(),
                 ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
