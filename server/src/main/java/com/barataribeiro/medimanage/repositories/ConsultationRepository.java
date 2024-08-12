@@ -9,13 +9,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public interface ConsultationRepository extends JpaRepository<Consultation, Long> {
-
+    @EntityGraph(attributePaths = {"patient", "doctor"})
     @Query("SELECT c FROM Consultation c " +
            "JOIN c.patient p JOIN c.doctor d " +
            "WHERE LOWER(p.username) LIKE LOWER(CONCAT('%', :search, '%')) " +
@@ -27,8 +24,17 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
     @EntityGraph(attributePaths = {"patient", "doctor"})
     Page<Consultation> findAllByPatient_Id(UUID uuid, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"patient", "doctor"})
     List<Consultation> findAllByScheduledToBeforeAndStatusNotIn(LocalDateTime now,
                                                                 Collection<ConsultationStatus> statuses);
+
+    @EntityGraph(attributePaths = {"patient", "doctor"})
+    @Query("""
+           SELECT c FROM Consultation c WHERE c.patient.username = :username
+           AND c.status = 'SCHEDULED'
+           ORDER BY c.scheduledTo ASC
+           """)
+    Optional<Consultation> findNextScheduledConsultation(String username);
 
     @Query("""
            SELECT

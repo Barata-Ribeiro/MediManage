@@ -25,28 +25,28 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     // TESTING QUERY WITH DTO
     @Query("""
             SELECT DISTINCT new com.barataribeiro.medimanage.dtos.raw.SimpleUserDTO(
-                    u.id,\s
-                    u.username,\s
-                    u.fullName,\s
-                    u.accountType,\s
-                    u.userRoles
-            )\s
+                    u.id,
+                    u.username,
+                    u.fullName,
+                    u.accountType,
+                    u.userRoles)
             FROM User u
             WHERE (LOWER(u.username) LIKE LOWER(CONCAT('%', :search, '%'))
                   OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :search, '%')))
             AND u.accountType = :accountType
             ORDER BY u.fullName
-           \s""")
+           """)
     Set<SimpleUserDTO> findUsersBySearchAndAccountType(
             @Param("search") String search, @Param("accountType") AccountType accountType);
 
     @Query("""
-            SELECT\s
+            SELECT
+            COUNT (u) AS totalUsers,
             SUM(CASE WHEN u.accountType = 'PATIENT' THEN 1 ELSE 0 END) AS patients,
             SUM(CASE WHEN u.accountType = 'DOCTOR' THEN 1 ELSE 0 END) AS doctors,
             SUM(CASE WHEN u.accountType = 'ASSISTANT' OR u.accountType = 'ADMINISTRATOR' THEN 1 ELSE 0 END) AS employees
             FROM User u
-           \s""")
+           """)
     Map<String, Long> countGroupedUsers();
 
     boolean existsByUsername(String username);

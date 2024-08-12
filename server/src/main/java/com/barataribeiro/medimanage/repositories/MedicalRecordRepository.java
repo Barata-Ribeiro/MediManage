@@ -16,13 +16,15 @@ public interface MedicalRecordRepository extends JpaRepository<MedicalRecord, UU
 
     @EntityGraph(attributePaths = {"patient"})
     @Query("SELECT mr FROM MedicalRecord mr JOIN mr.patient p " +
-            "WHERE LOWER(p.username) LIKE LOWER(CONCAT('%', :search, '%')) " +
-            "OR LOWER(p.fullName) LIKE LOWER(CONCAT('%', :search, '%'))")
+           "WHERE LOWER(p.username) LIKE LOWER(CONCAT('%', :search, '%')) " +
+           "OR LOWER(p.fullName) LIKE LOWER(CONCAT('%', :search, '%'))")
     Page<MedicalRecord> findRecordsBySearchParams(@Param("search") String search, Pageable pageable);
 
     @EntityGraph(attributePaths = {"patient", "consultations"})
     Optional<MedicalRecord> findByPatient(User patient);
 
-    boolean existsByPatient(User patient);
+    @EntityGraph(attributePaths = {"patient", "consultations"})
+    Optional<MedicalRecord> findByPatient_Username(String username);
 
+    boolean existsByPatient(User patient);
 }
