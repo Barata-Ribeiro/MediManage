@@ -3,11 +3,11 @@ package com.barataribeiro.medimanage.services;
 import java.util.Map;
 
 public interface HomeService {
-    Map<String, String> getAdministratorInfo();
+    Map<String, Object> getAdministratorInfo();
 
-    Map<String, String> getPatientInfo();
+    Map<String, Object> getPatientInfo();
 
-    Map<String, String> getAssistantInfo();
+    Map<String, Object> getAssistantInfo();
 
-    Map<String, String> getDoctorInfo();
+    Map<String, Object> getDoctorInfo();
 }

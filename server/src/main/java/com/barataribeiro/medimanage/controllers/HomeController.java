@@ -23,7 +23,7 @@ public class HomeController {
     @GetMapping("/administrator-info")
     @Secured("ACCOUNT_TYPE_ADMINISTRATOR")
     public ResponseEntity<RestResponseDTO> getAdministratorInfo() {
-        Map<String, String> response = homeService.getAdministratorInfo();
+        Map<String, Object> response = homeService.getAdministratorInfo();
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                 HttpStatus.OK.value(),
                 ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
@@ -33,7 +33,7 @@ public class HomeController {
     @GetMapping("/patient-info")
     @Secured("ACCOUNT_TYPE_PATIENT")
     public ResponseEntity<RestResponseDTO> getPatientInfo() {
-        Map<String, String> response = homeService.getPatientInfo();
+        Map<String, Object> response = homeService.getPatientInfo();
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                 HttpStatus.OK.value(),
                 ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
@@ -43,7 +43,7 @@ public class HomeController {
     @GetMapping("/assistant-info")
     @Secured("ACCOUNT_TYPE_ASSISTANT")
     public ResponseEntity<RestResponseDTO> getAssistantInfo() {
-        Map<String, String> response = homeService.getAssistantInfo();
+        Map<String, Object> response = homeService.getAssistantInfo();
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                 HttpStatus.OK.value(),
                 ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
@@ -53,7 +53,7 @@ public class HomeController {
     @GetMapping("/doctor-info")
     @Secured("ACCOUNT_TYPE_DOCTOR")
     public ResponseEntity<RestResponseDTO> getDoctorInfo() {
-        Map<String, String> response = homeService.getDoctorInfo();
+        Map<String, Object> response = homeService.getDoctorInfo();
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                 HttpStatus.OK.value(),
                 ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
