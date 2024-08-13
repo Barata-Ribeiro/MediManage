@@ -36,6 +36,14 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
            """)
     Optional<Consultation> findNextScheduledConsultation(String username);
 
+    @EntityGraph(attributePaths = {"patient", "doctor"})
+    @Query("""
+              SELECT c FROM Consultation c
+              WHERE c.status = 'SCHEDULED'
+              ORDER BY c.scheduledTo ASC
+           """)
+    Optional<Consultation> findNextConsultationToBeAccepted();
+
     @Query("""
            SELECT
            SUM (CASE WHEN c.status = 'SCHEDULED' THEN 1 ELSE 0 END) AS scheduled,

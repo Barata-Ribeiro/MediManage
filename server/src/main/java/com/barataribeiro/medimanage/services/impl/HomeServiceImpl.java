@@ -1,12 +1,11 @@
 package com.barataribeiro.medimanage.services.impl;
 
+import com.barataribeiro.medimanage.constants.ApplicationConstants;
 import com.barataribeiro.medimanage.entities.models.Consultation;
 import com.barataribeiro.medimanage.entities.models.MedicalRecord;
+import com.barataribeiro.medimanage.entities.models.Notice;
 import com.barataribeiro.medimanage.entities.models.Prescription;
-import com.barataribeiro.medimanage.repositories.ConsultationRepository;
-import com.barataribeiro.medimanage.repositories.MedicalRecordRepository;
-import com.barataribeiro.medimanage.repositories.PrescriptionRepository;
-import com.barataribeiro.medimanage.repositories.UserRepository;
+import com.barataribeiro.medimanage.repositories.*;
 import com.barataribeiro.medimanage.services.HomeService;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -24,13 +23,15 @@ public class HomeServiceImpl implements HomeService {
     private final ConsultationRepository consultationRepository;
     private final PrescriptionRepository prescriptionRepository;
     private final MedicalRecordRepository medicalRecordRepository;
+    private final NoticeRepository noticeRepository;
 
     @Override
     @Transactional(readOnly = true)
     public Map<String, Object> getAdministratorInfo(@NotNull Principal principal) {
-        return Map.of("allUsers", userRepository.countGroupedUsers(),
-                "consultationsByStatus", consultationRepository.countGroupedConsultationsByStatus(),
-                "totalPrescriptions", prescriptionRepository.count());
+        return Map.of(ApplicationConstants.ALL_USERS, userRepository.countGroupedUsers(),
+                ApplicationConstants.CONSULTATIONS_BY_STATUS,
+                consultationRepository.countGroupedConsultationsByStatus(),
+                ApplicationConstants.TOTAL_PRESCRIPTIONS, prescriptionRepository.count());
     }
 
     @Override
@@ -42,21 +43,39 @@ public class HomeServiceImpl implements HomeService {
                 .findNextScheduledConsultation(principal.getName()).orElse(null);
         MedicalRecord medicalRecord = medicalRecordRepository.findByPatient_Username(principal.getName()).orElse(null);
 
-        return Map.of("latestPrescription", latestPrescription != null ? latestPrescription : new Object(),
-                "nextConsultation", nextConsultation != null ? nextConsultation : new Object(),
-                "medicalRecord", medicalRecord != null ? medicalRecord : new Object());
+        return Map.of(ApplicationConstants.LATEST_PRESCRIPTION,
+                latestPrescription != null ? latestPrescription : new Object(),
+
+                ApplicationConstants.NEXT_CONSULTATION, nextConsultation != null ? nextConsultation : new Object(),
+
+                ApplicationConstants.MEDICAL_RECORD, medicalRecord != null ? medicalRecord : new Object());
     }
 
     @Override
     @Transactional(readOnly = true)
     public Map<String, Object> getAssistantInfo(@NotNull Principal principal) {
-        return Map.of("consultationsByStatus", consultationRepository.countGroupedConsultationsByStatus(),
-                "todayConsultations", consultationRepository.countGroupedConsultationsByStatusToday());
+        Notice latestNotice = noticeRepository.findDistinctFirstByOrderByCreatedAtDesc().orElse(null);
+        return Map.of(ApplicationConstants.CONSULTATIONS_BY_STATUS,
+                consultationRepository.countGroupedConsultationsByStatus(),
+
+                ApplicationConstants.TODAY_CONSULTATIONS,
+                consultationRepository.countGroupedConsultationsByStatusToday(),
+
+                ApplicationConstants.LATEST_NOTICE, latestNotice != null ? latestNotice : new Object());
     }
 
     @Override
     @Transactional(readOnly = true)
     public Map<String, Object> getDoctorInfo(@NotNull Principal principal) {
-        return Map.of();
+        Notice latestNotice = noticeRepository.findDistinctFirstByOrderByCreatedAtDesc().orElse(null);
+        Consultation nextConsultation = consultationRepository.findNextConsultationToBeAccepted().orElse(null);
+
+        return Map.of(ApplicationConstants.NEXT_CONSULTATION,
+                nextConsultation != null ? nextConsultation : new Object(),
+
+                ApplicationConstants.CONSULTATIONS_BY_STATUS,
+                consultationRepository.countGroupedConsultationsByStatus(),
+
+                ApplicationConstants.LATEST_NOTICE, latestNotice != null ? latestNotice : new Object());
     }
 }
