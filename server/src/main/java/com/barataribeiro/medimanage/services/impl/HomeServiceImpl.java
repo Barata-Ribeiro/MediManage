@@ -28,10 +28,14 @@ public class HomeServiceImpl implements HomeService {
     @Override
     @Transactional(readOnly = true)
     public Map<String, Object> getAdministratorInfo(@NotNull Principal principal) {
-        return Map.of(ApplicationConstants.ALL_USERS, userRepository.countGroupedUsers(),
+        return Map.of(
+                ApplicationConstants.ALL_USERS, userRepository.countGroupedUsers(),
+
                 ApplicationConstants.CONSULTATIONS_BY_STATUS,
                 consultationRepository.countGroupedConsultationsByStatus(),
-                ApplicationConstants.TOTAL_PRESCRIPTIONS, prescriptionRepository.count());
+
+                ApplicationConstants.TOTAL_PRESCRIPTIONS, prescriptionRepository.count()
+        );
     }
 
     @Override
@@ -43,25 +47,26 @@ public class HomeServiceImpl implements HomeService {
                 .findNextScheduledConsultation(principal.getName()).orElse(null);
         MedicalRecord medicalRecord = medicalRecordRepository.findByPatient_Username(principal.getName()).orElse(null);
 
-        return Map.of(ApplicationConstants.LATEST_PRESCRIPTION,
-                latestPrescription != null ? latestPrescription : new Object(),
-
-                ApplicationConstants.NEXT_CONSULTATION, nextConsultation != null ? nextConsultation : new Object(),
-
-                ApplicationConstants.MEDICAL_RECORD, medicalRecord != null ? medicalRecord : new Object());
+        return Map.of(
+                ApplicationConstants.LATEST_PRESCRIPTION, latestPrescription != null ? latestPrescription : Map.of(),
+                ApplicationConstants.NEXT_CONSULTATION, nextConsultation != null ? nextConsultation : Map.of(),
+                ApplicationConstants.MEDICAL_RECORD, medicalRecord != null ? medicalRecord : Map.of()
+        );
     }
 
     @Override
     @Transactional(readOnly = true)
     public Map<String, Object> getAssistantInfo(@NotNull Principal principal) {
         Notice latestNotice = noticeRepository.findDistinctFirstByOrderByCreatedAtDesc().orElse(null);
-        return Map.of(ApplicationConstants.CONSULTATIONS_BY_STATUS,
+        return Map.of(
+                ApplicationConstants.CONSULTATIONS_BY_STATUS,
                 consultationRepository.countGroupedConsultationsByStatus(),
 
                 ApplicationConstants.TODAY_CONSULTATIONS,
                 consultationRepository.countGroupedConsultationsByStatusToday(),
 
-                ApplicationConstants.LATEST_NOTICE, latestNotice != null ? latestNotice : new Object());
+                ApplicationConstants.LATEST_NOTICE, latestNotice != null ? latestNotice : Map.of()
+        );
     }
 
     @Override
@@ -70,12 +75,13 @@ public class HomeServiceImpl implements HomeService {
         Notice latestNotice = noticeRepository.findDistinctFirstByOrderByCreatedAtDesc().orElse(null);
         Consultation nextConsultation = consultationRepository.findNextConsultationToBeAccepted().orElse(null);
 
-        return Map.of(ApplicationConstants.NEXT_CONSULTATION,
-                nextConsultation != null ? nextConsultation : new Object(),
+        return Map.of(
+                ApplicationConstants.NEXT_CONSULTATION, nextConsultation != null ? nextConsultation : Map.of(),
 
                 ApplicationConstants.CONSULTATIONS_BY_STATUS,
                 consultationRepository.countGroupedConsultationsByStatus(),
 
-                ApplicationConstants.LATEST_NOTICE, latestNotice != null ? latestNotice : new Object());
+                ApplicationConstants.LATEST_NOTICE, latestNotice != null ? latestNotice : Map.of()
+        );
     }
 }
