@@ -16,6 +16,8 @@ import { twMerge } from "tailwind-merge"
 import { FaBars, FaBell, FaUserDoctor, FaUserInjured, FaUserNurse, FaUserTie, FaX } from "react-icons/fa6"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
+import miniLogo from "../../../public/images/medimanage-mini.svg"
+import Image from "next/image"
 
 export default function Header() {
     const data = useUser()
@@ -25,7 +27,7 @@ export default function Header() {
     const userIsAdmin = data.user?.accountType === "ADMINISTRATOR"
     const userIsDoctor = data.user?.accountType === "DOCTOR"
     const userIsAssistant = data.user?.accountType === "ASSISTANT"
-    const userIsPatient = data.user?.accountType === "PATIENT"
+    // const userIsPatient = data.user?.accountType === "PATIENT"
 
     const navigation = [
         { name: "Dashboard", href: "/dashboard/" + encodedName, condition: true },
@@ -46,15 +48,10 @@ export default function Header() {
     ]
 
     function getUserIcon(userIsAdmin: boolean, userIsDoctor: boolean, userIsAssistant: boolean) {
-        if (userIsAdmin) {
-            return <FaUserTie size={24} />
-        } else if (userIsDoctor) {
-            return <FaUserDoctor size={24} />
-        } else if (userIsAssistant) {
-            return <FaUserNurse size={24} />
-        } else {
-            return <FaUserInjured size={24} />
-        }
+        if (userIsAdmin) return <FaUserTie size={24} />
+        else if (userIsDoctor) return <FaUserDoctor size={24} />
+        else if (userIsAssistant) return <FaUserNurse size={24} />
+        else return <FaUserInjured size={24} />
     }
 
     return (
@@ -67,7 +64,12 @@ export default function Header() {
                                 <div className="flex h-16 items-center justify-between px-4 sm:px-0">
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0">
-                                            <div className="h-8 w-8 rounded-full bg-hello-spring-600 shadow" />
+                                            <Image
+                                                alt="MediManage logo"
+                                                src={miniLogo}
+                                                className="h-8 w-full object-cover"
+                                                priority
+                                            />
                                         </div>
                                         <div className="hidden md:block">
                                             <div className="ml-10 flex items-baseline space-x-4">
