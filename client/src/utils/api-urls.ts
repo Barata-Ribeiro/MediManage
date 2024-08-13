@@ -6,6 +6,12 @@ export const AUTH_REGISTER_BY_ASSISTANT = () => `${BACKEND_URL}/api/v1/auth/regi
 export const AUTH_REGISTER_NEW_EMPLOYEE = () => `${BACKEND_URL}/api/v1/auth/register-new-employee`
 export const AUTH_LOGIN = () => `${BACKEND_URL}/api/v1/auth/login`
 
+// Home
+export const HOME_GET_ADMIN_INFO = () => `${BACKEND_URL}/api/v1/home/administrator-info`
+export const HOME_GET_PATIENT_INFO = () => `${BACKEND_URL}/api/v1/home/patient-info`
+export const HOME_GET_ASSISTANT_INFO = () => `${BACKEND_URL}/api/v1/home/assistant-info`
+export const HOME_GET_DOCTOR_INFO = () => `${BACKEND_URL}/api/v1/home/doctor-info`
+
 // User
 export const USER_GET_CONTEXT = () => `${BACKEND_URL}/api/v1/users/me/context`
 export const USER_UPDATE_ACCOUNT = () => `${BACKEND_URL}/api/v1/users/me`
