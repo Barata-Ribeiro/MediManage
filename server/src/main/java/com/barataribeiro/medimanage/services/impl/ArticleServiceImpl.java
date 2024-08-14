@@ -6,6 +6,7 @@ import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.ArticleDTO;
 import com.barataribeiro.medimanage.dtos.raw.SimpleArticleDTO;
 import com.barataribeiro.medimanage.dtos.requests.ArticleRequestDTO;
+import com.barataribeiro.medimanage.dtos.requests.ArticleUpdateRequestDTO;
 import com.barataribeiro.medimanage.entities.models.Article;
 import com.barataribeiro.medimanage.entities.models.Category;
 import com.barataribeiro.medimanage.exceptions.articles.ArticleNotFoundException;
@@ -88,10 +89,46 @@ public class ArticleServiceImpl implements ArticleService {
 
         Article article = Article.builder()
                 .title(body.title())
+                .subTitle(body.subTitle())
                 .content(body.content())
+                .slug(generateSlug(body.title()))
                 .categories(categories)
                 .build();
 
         return articleMapper.toDTO(articleRepository.saveAndFlush(article));
+    }
+
+    @Override
+    @Transactional
+    public ArticleDTO updateArticle(Long articleId, @NotNull ArticleUpdateRequestDTO body, Principal principal) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new ArticleNotFoundException(
+                        String.format(ApplicationMessages.ARTICLE_NOT_FOUND_WITH_ID, articleId)
+                ));
+
+        if (body.title() != null && !body.title().trim().isEmpty()) {
+            article.setTitle(body.title());
+            article.setSlug(generateSlug(body.title()));
+        }
+
+        if (body.subTitle() != null && !body.subTitle().trim().isEmpty()) {
+            article.setSubTitle(body.subTitle());
+        }
+
+        if (body.content() != null && !body.content().trim().isEmpty()) {
+            article.setContent(body.content());
+        }
+
+        if (body.mediaUrl() != null && !body.mediaUrl().trim().isEmpty()) {
+            article.setMediaUrl(body.mediaUrl());
+        }
+
+        article.setWasEdit(true);
+
+        return articleMapper.toDTO(articleRepository.saveAndFlush(article));
+    }
+
+    private @NotNull String generateSlug(@NotNull String title) {
+        return title.toLowerCase().replaceAll("\\s+", "-");
     }
 }
