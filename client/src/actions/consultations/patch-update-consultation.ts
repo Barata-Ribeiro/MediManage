@@ -7,7 +7,7 @@ import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import { Consultation } from "@/interfaces/consultations"
 import { revalidateTag } from "next/cache"
 
-export default async function putUpdateConsultation(
+export default async function patchUpdateConsultation(
     consultId: string,
     consultStatus?: string | null,
     consultScheduleTo?: string | null,
@@ -22,7 +22,7 @@ export default async function putUpdateConsultation(
         const authToken = verifyAuthentication()
 
         const response = await fetch(URL, {
-            method: "PUT",
+            method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: "Bearer " + authToken,

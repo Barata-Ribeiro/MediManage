@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Field, Input, Label } from "@headlessui/react"
-import putUpdateConsultation from "@/actions/consultations/put-update-consultation"
+import patchUpdateConsultation from "@/actions/consultations/patch-update-consultation"
 import { Consultation } from "@/interfaces/consultations"
 import parseDate from "@/utils/parse-date"
 import { ProblemDetails } from "@/interfaces/actions"
@@ -27,7 +27,7 @@ export default function SelectConsultDate({ id, currentScheduledTo }: Readonly<P
         try {
             setIsPending(true)
 
-            const state = await putUpdateConsultation(String(id), null, inputDateTime)
+            const state = await patchUpdateConsultation(String(id), null, inputDateTime)
 
             if (!state.ok) {
                 setError(state.error as ProblemDetails | string)

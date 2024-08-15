@@ -4,7 +4,7 @@ import { User } from "@/interfaces/users"
 import { useRouter } from "next/navigation"
 import { useUser } from "@/context/user-context-provider"
 import { useForm } from "@/hooks/use-form"
-import putUpdateProfile from "@/actions/users/put-update-profile"
+import patchUpdateProfile from "@/actions/users/patch-update-profile"
 import { useEffect } from "react"
 import { Button, Description, Field, Input, Label } from "@headlessui/react"
 import InputValidationError from "@/components/helpers/input-validation-error"
@@ -14,7 +14,7 @@ import Spinner from "@/components/helpers/spinner"
 export default function EditDoctorInformationForm({ user }: Readonly<{ user: User }>) {
     const router = useRouter()
     const data = useUser()
-    const { isPending, formState, formAction, onSubmit } = useForm(putUpdateProfile, {
+    const { isPending, formState, formAction, onSubmit } = useForm(patchUpdateProfile, {
         ok: false,
         error: null,
         response: null,

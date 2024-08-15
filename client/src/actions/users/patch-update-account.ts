@@ -61,7 +61,7 @@ const updateAccountSchema = z
         return data
     })
 
-export default async function putUpdateAccount(state: State, formData: FormData) {
+export default async function patchUpdateAccount(state: State, formData: FormData) {
     try {
         const URL = USER_UPDATE_ACCOUNT()
 
@@ -75,7 +75,7 @@ export default async function putUpdateAccount(state: State, formData: FormData)
         }
 
         const response = await fetch(URL, {
-            method: "PUT",
+            method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: "Bearer " + authToken,

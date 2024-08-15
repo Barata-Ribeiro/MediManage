@@ -10,12 +10,12 @@ import InputValidationError from "@/components/helpers/input-validation-error"
 import RequisitionError from "@/components/helpers/requisition-error"
 import Spinner from "@/components/helpers/spinner"
 import parseDate from "@/utils/parse-date"
-import putUpdateProfile from "@/actions/users/put-update-profile"
+import patchUpdateProfile from "@/actions/users/patch-update-profile"
 
 export default function EditPersonalInformationForm({ user }: Readonly<{ user: User }>) {
     const router = useRouter()
     const data = useUser()
-    const { isPending, formState, formAction, onSubmit } = useForm(putUpdateProfile, {
+    const { isPending, formState, formAction, onSubmit } = useForm(patchUpdateProfile, {
         ok: false,
         error: null,
         response: null,

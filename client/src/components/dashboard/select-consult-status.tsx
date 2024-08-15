@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Button, Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
 import { FaChevronDown } from "react-icons/fa6"
 import { twMerge } from "tailwind-merge"
-import putUpdateConsultation from "@/actions/consultations/put-update-consultation"
+import patchUpdateConsultation from "@/actions/consultations/patch-update-consultation"
 import { Consultation } from "@/interfaces/consultations"
 import SimpleErrorNotification from "@/components/helpers/simple-error-notification"
 import { ProblemDetails } from "@/interfaces/actions"
@@ -35,7 +35,7 @@ export default function SelectConsultStatus({ id, currentStatus }: Readonly<Sele
         try {
             setIsPending(true)
 
-            const state = await putUpdateConsultation(String(id), option, null)
+            const state = await patchUpdateConsultation(String(id), option, null)
 
             if (!state.ok) {
                 setError(state.error as ProblemDetails | string)

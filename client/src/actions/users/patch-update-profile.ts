@@ -54,7 +54,7 @@ const updateProfileSchema = z
         if (data.specialization === "") delete data.specialization
     })
 
-export default async function putUpdateProfile(state: State, formData: FormData) {
+export default async function patchUpdateProfile(state: State, formData: FormData) {
     try {
         const id = formData.get("userId") as string
         if (!id) return ResponseError(new Error("User ID is required"))
@@ -71,7 +71,7 @@ export default async function putUpdateProfile(state: State, formData: FormData)
         }
 
         const response = await fetch(URL, {
-            method: "PUT",
+            method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: "Bearer " + authToken,

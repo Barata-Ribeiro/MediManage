@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { useUser } from "@/context/user-context-provider"
 import RequisitionError from "@/components/helpers/requisition-error"
-import putUpdateAccount from "@/actions/users/put-update-account"
+import patchUpdateAccount from "@/actions/users/patch-update-account"
 import { Button, Field, Input, Label } from "@headlessui/react"
 import InputValidationError from "@/components/helpers/input-validation-error"
 import { User } from "@/interfaces/users"
@@ -13,7 +13,7 @@ import { User } from "@/interfaces/users"
 export default function EditAccountForm() {
     const router = useRouter()
     const data = useUser()
-    const { isPending, formState, formAction, onSubmit } = useForm(putUpdateAccount, {
+    const { isPending, formState, formAction, onSubmit } = useForm(patchUpdateAccount, {
         ok: false,
         error: null,
         response: null,
