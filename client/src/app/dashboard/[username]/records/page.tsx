@@ -115,7 +115,7 @@ export default async function RecordsPage({ params, searchParams }: Readonly<Rec
                                                     "whitespace-nowrap py-4 pl-3 pr-4 font-body text-sm text-neutral-900 sm:pr-6 lg:pr-8",
                                                 )}>
                                                 <Link
-                                                    href={`/dashboard/${params.username}/records/view?id=${record.id}`}
+                                                    href={`/dashboard/${params.username}/records/view?id=${record.id}&user=${record.patient.id}`}
                                                     className="font-heading font-semibold text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
                                                     View<span className="sr-only">, {record.patient.username}</span>
                                                 </Link>
