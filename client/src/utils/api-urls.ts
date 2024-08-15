@@ -47,6 +47,15 @@ export const CONSULTATIONS_GET_ALL = (
     if (search) url += `&search=${search}`
     return url
 }
+export const CONSULTATIONS_GET_BY_PATIENT_ID = (
+    id: string,
+    page: number,
+    perPage: number,
+    direction: string,
+    orderBy: string,
+) => {
+    return `${BACKEND_URL}/api/v1/consultations/patient/${id}?page=${page}&perPage=${perPage}&direction=${direction}&orderBy=${orderBy}`
+}
 export const CONSULTATION_CREATE = () => `${BACKEND_URL}/api/v1/consultations`
 export const CONSULTATIONS_UPDATE_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/consultations/${id}`
 
