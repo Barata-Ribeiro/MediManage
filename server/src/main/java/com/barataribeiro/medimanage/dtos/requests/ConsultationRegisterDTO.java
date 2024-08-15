@@ -9,5 +9,4 @@ public record ConsultationRegisterDTO(@NotBlank String patientFullName,
                                       @NotBlank
                                       @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$",
                                               message = "Date must be in the format yyyy-MM-ddTHH:mm.")
-                                      String scheduledTo) {
-}
+                                      String scheduledTo) {}
