@@ -37,9 +37,9 @@ public class UserController {
                                                                 Principal principal) {
         Page<UserDTO> response = userService.getAllUsersPaginated(page, perPage, type, direction, orderBy, principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
-                HttpStatus.OK.value(),
-                "Users retrieved successfully.",
-                response));
+                                                     HttpStatus.OK.value(),
+                                                     "Users retrieved successfully.",
+                                                     response));
     }
 
     @GetMapping("/{userId}")
@@ -47,21 +47,21 @@ public class UserController {
     public ResponseEntity<RestResponseDTO> getUserInformation(@PathVariable String userId, Principal principal) {
         UserDTO response = userService.getUserInformation(userId, principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
-                HttpStatus.OK.value(),
-                "User retrieved successfully.",
-                response));
+                                                     HttpStatus.OK.value(),
+                                                     "User retrieved successfully.",
+                                                     response));
     }
 
-    @PutMapping("/{userId}")
+    @PatchMapping("/{userId}")
     @Secured("ACCOUNT_TYPE_ADMINISTRATOR")
     public ResponseEntity<RestResponseDTO> updateUserInformation(@PathVariable String userId,
                                                                  @RequestBody @Valid UpdateUserInformationDTO body,
                                                                  Principal principal) {
         UserDTO response = userService.updateUserInformation(userId, body, principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
-                HttpStatus.OK.value(),
-                "User updated successfully.",
-                response));
+                                                     HttpStatus.OK.value(),
+                                                     "User updated successfully.",
+                                                     response));
     }
 
     @DeleteMapping("/{userId}")
@@ -69,38 +69,39 @@ public class UserController {
     public ResponseEntity<RestResponseDTO> deleteUser(@PathVariable String userId, Principal principal) {
         userService.deleteUser(userId, principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
-                HttpStatus.OK.value(),
-                "User deleted successfully.",
-                null));
+                                                     HttpStatus.OK.value(),
+                                                     "User deleted successfully.",
+                                                     null));
     }
 
     @GetMapping("/me/context")
     public ResponseEntity<RestResponseDTO> getContext(Principal principal) {
         UserDTO response = userService.getContext(principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
-                HttpStatus.OK.value(),
-                "User context retrieved successfully.",
-                response));
+                                                     HttpStatus.OK.value(),
+                                                     "User context retrieved successfully.",
+                                                     response));
     }
 
-    @PutMapping("/me")
+    @PatchMapping("/me")
     public ResponseEntity<RestResponseDTO> updateAccount(@RequestBody @Valid UpdateAccountRequestDTO body,
                                                          Principal principal) {
         UserDTO response = userService.updateAccount(body, principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
-                HttpStatus.OK.value(),
-                "Account updated successfully.",
-                response));
+                                                     HttpStatus.OK.value(),
+                                                     "Account updated successfully.",
+                                                     response));
     }
 
     @GetMapping("/search-suggestions")
     @Secured({"ACCOUNT_TYPE_ASSISTANT", "ACCOUNT_TYPE_ADMINISTRATOR", "ACCOUNT_TYPE_DOCTOR"})
     public ResponseEntity<RestResponseDTO> getSearchSuggestions(@RequestParam(defaultValue = "") String search,
                                                                 @RequestParam String accountType) {
-        Set<SimpleUserDTO> response = userRepository.findUsersBySearchAndAccountType(search, AccountType.valueOf(accountType));
+        Set<SimpleUserDTO> response = userRepository.findUsersBySearchAndAccountType(search,
+                                                                                     AccountType.valueOf(accountType));
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
-                HttpStatus.OK.value(),
-                "Suggestions retrieved successfully.",
-                response));
+                                                     HttpStatus.OK.value(),
+                                                     "Suggestions retrieved successfully.",
+                                                     response));
     }
 }

@@ -64,7 +64,7 @@ public class NoticeController {
                                                      response));
     }
 
-    @PutMapping("/{noticeId}")
+    @PatchMapping("/{noticeId}")
     @Secured("ACCOUNT_TYPE_ADMINISTRATOR")
     public ResponseEntity<RestResponseDTO> updateNotice(@PathVariable Long noticeId,
                                                         @RequestBody @Valid NoticeRequestDTO body,

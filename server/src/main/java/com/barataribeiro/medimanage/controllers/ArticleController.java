@@ -68,7 +68,7 @@ public class ArticleController {
                                                      response));
     }
 
-    @PutMapping("/{articleId}")
+    @PatchMapping("/{articleId}")
     @Secured({"ACCOUNT_TYPE_DOCTOR", "ACCOUNT_TYPE_ADMINISTRATOR"})
     public ResponseEntity<RestResponseDTO> updateArticle(@PathVariable Long articleId,
                                                          @RequestBody @Valid ArticleUpdateRequestDTO body,
