@@ -14,12 +14,12 @@ export default async function DashboardLayout({ children }: Readonly<DashboardLa
             <Header />
 
             <main className="-mt-32">
-                <section className="container px-4 pb-12 font-body sm:px-6 lg:px-8">
-                    <div className="h-full overflow-auto rounded-md bg-neutral-50 p-4 shadow-derek">
+                <div className="container px-4 pb-12 font-body sm:px-6 lg:px-8">
+                    <section className="h-full overflow-auto rounded-md bg-neutral-50 p-4 shadow-derek">
                         <Breadcrumbs />
                         {children}
-                    </div>
-                </section>
+                    </section>
+                </div>
             </main>
 
             <Footer />
