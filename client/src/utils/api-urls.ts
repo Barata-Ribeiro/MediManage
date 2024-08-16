@@ -73,3 +73,14 @@ export const MEDICAL_RECORDS_GET_ALL = (
 }
 
 export const MEDICAL_RECORDS_GET_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/records/${id}`
+
+// Prescription
+export const PRESCRIPTIONS_GET_ALL_BY_PATIENT_ID = (
+    id: string,
+    page: number,
+    perPage: number,
+    direction: string,
+    orderBy: string,
+) => {
+    return `${BACKEND_URL}/api/v1/prescriptions/patients/${id}?page=${page}&perPage=${perPage}&direction=${direction}&orderBy=${orderBy}`
+}
