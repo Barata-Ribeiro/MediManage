@@ -27,16 +27,18 @@ public class ConsultationController {
     public ResponseEntity<RestResponseDTO> getConsultationsPaginated(@RequestParam(required = false) String search,
                                                                      @RequestParam(defaultValue = "0") int page,
                                                                      @RequestParam(defaultValue = "10") int perPage,
-                                                                     @RequestParam(defaultValue = "ASC") String direction,
-                                                                     @RequestParam(defaultValue = "createdAt") String orderBy,
+                                                                     @RequestParam(defaultValue = "ASC")
+                                                                     String direction,
+                                                                     @RequestParam(defaultValue = "createdAt")
+                                                                     String orderBy,
                                                                      Principal principal) {
         Page<ConsultationDTO> response = consultationService.getConsultationsPaginated(search, page, perPage,
-                                                                                       direction, orderBy,
-                                                                                       principal);
+                direction, orderBy,
+                principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
-                                                     HttpStatus.OK.value(),
-                                                     "Consultation(s) retrieved successfully.",
-                                                     response));
+                HttpStatus.OK.value(),
+                "Consultation(s) retrieved successfully.",
+                response));
     }
 
     @GetMapping("/patient/{patientId}")
@@ -44,18 +46,23 @@ public class ConsultationController {
     public ResponseEntity<RestResponseDTO> getConsultationsByPatientId(@PathVariable String patientId,
                                                                        @RequestParam(defaultValue = "0") int page,
                                                                        @RequestParam(defaultValue = "10") int perPage,
-                                                                       @RequestParam(defaultValue = "ASC") String direction,
-                                                                       @RequestParam(defaultValue = "createdAt") String orderBy,
+                                                                       @RequestParam(defaultValue = "ASC")
+                                                                       String direction,
+                                                                       @RequestParam(defaultValue = "createdAt")
+                                                                       String orderBy,
                                                                        Principal principal) {
         Page<ConsultationDTO> response = consultationService.getPatientConsultationsPaginatedList(patientId, page,
-                                                                                                  perPage,
-                                                                                                  direction, orderBy,
-                                                                                                  principal);
-        String username = response.getContent().getFirst().getPatient().getUsername();
+                perPage,
+                direction, orderBy,
+                principal);
+        String message = response.isEmpty() ? "No consultations found for %s." : "Consultation(s) retrieved " +
+                                                                                 "successfully for %s.";
+        String username = response.isEmpty() ? principal.getName() :
+                          response.getContent().getFirst().getPatient().getUsername();
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
-                                                     HttpStatus.OK.value(),
-                                                     "Consultation(s) retrieved successfully for " + username + ".",
-                                                     response));
+                HttpStatus.OK.value(),
+                String.format(message, username),
+                response));
     }
 
     @PostMapping
@@ -65,9 +72,9 @@ public class ConsultationController {
             Principal principal) {
         ConsultationDTO response = consultationService.registerNewConsultationForPatient(body, principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.CREATED,
-                                                     HttpStatus.CREATED.value(),
-                                                     "Consultation created successfully.",
-                                                     response));
+                HttpStatus.CREATED.value(),
+                "Consultation created successfully.",
+                response));
     }
 
     @GetMapping("/{consultationId}")
@@ -75,9 +82,9 @@ public class ConsultationController {
     public ResponseEntity<RestResponseDTO> getConsultation(@PathVariable String consultationId, Principal principal) {
         ConsultationDTO response = consultationService.getConsultation(consultationId, principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
-                                                     HttpStatus.OK.value(),
-                                                     "Consultation retrieved successfully.",
-                                                     response));
+                HttpStatus.OK.value(),
+                "Consultation retrieved successfully.",
+                response));
     }
 
     @PatchMapping("/{consultationId}")
@@ -87,9 +94,9 @@ public class ConsultationController {
                                                               Principal principal) {
         ConsultationDTO response = consultationService.updateConsultation(consultationId, body, principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
-                                                     HttpStatus.OK.value(),
-                                                     "Consultation status updated successfully.",
-                                                     response));
+                HttpStatus.OK.value(),
+                "Consultation status updated successfully.",
+                response));
     }
 
 }

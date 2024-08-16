@@ -72,7 +72,11 @@ public class ConsultationServiceImpl implements ConsultationService {
         PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
 
         Page<Consultation> consultations = consultationRepository.findAllByPatient_Id(UUID.fromString(patientId),
-                                                                                      pageable);
+                pageable);
+
+        if (consultations.isEmpty()) {
+            return new PageImpl<>(List.of(), pageable, 0);
+        }
 
         List<ConsultationDTO> consultationDTOS = consultationMapper.toDTOList(consultations.getContent());
 
