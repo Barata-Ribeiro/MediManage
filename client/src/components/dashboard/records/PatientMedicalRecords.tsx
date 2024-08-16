@@ -50,7 +50,7 @@ export default function PatientMedicalRecords({ displayName, record }: Readonly<
                     <div className="grid grid-cols-2 items-start">
                         <dt className="text-sm font-semibold leading-5 text-neutral-600">Birth Date</dt>
                         <dd className="text-sm leading-5 text-neutral-900">
-                            {parseDate(record.patient.birthDate) ?? "Empty"}
+                            {(record.patient.birthDate && parseDate(record.patient.birthDate)) ?? "Empty"}
                         </dd>
                     </div>
                 </dl>
