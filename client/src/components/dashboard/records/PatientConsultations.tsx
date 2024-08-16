@@ -7,10 +7,10 @@ interface PatientConsultationsProps {
 
 export default function PatientConsultations({ consultationsPage }: Readonly<PatientConsultationsProps>) {
     return (
-        <aside className="hidden w-1/3 border-r border-gray-200 px-4 py-6 sm:px-6 lg:px-8 xl:block">
+        <aside className="hidden w-1/2 border-r border-gray-200 px-4 py-6 sm:px-6 lg:px-8 xl:block">
             <h2 className="text-base font-semibold leading-7 text-neutral-900">Recent Consultations</h2>
             <div className="mt-6 space-y-6">
-                {consultationsPage ? (
+                {consultationsPage.content.length > 0 ? (
                     consultationsPage.content.map(consultation => (
                         <div
                             key={consultation.id}

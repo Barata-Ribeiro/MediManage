@@ -8,6 +8,8 @@ import PatientConsultations from "@/components/dashboard/records/PatientConsulta
 import PatientPrescriptions from "@/components/dashboard/records/PatientPrescriptions"
 import getAllPatientConsultationsPaginated from "@/actions/consultations/get-all-patient-consultations-paginated"
 import { PaginatedConsultations } from "@/interfaces/consultations"
+import getAllPatientPrescriptionsPaginated from "@/actions/prescriptions/get-all-patient-prescriptions-paginated"
+import { PaginatedSimplePrescriptions } from "@/interfaces/prescriptions"
 
 export async function generateMetadata({ searchParams }: Readonly<RecordsPageProps>): Promise<Metadata> {
     if (!searchParams?.id || !searchParams?.user) return notFound()
@@ -26,13 +28,15 @@ export async function generateMetadata({ searchParams }: Readonly<RecordsPagePro
 export default async function ViewMedicalRecordsPage({ params, searchParams }: Readonly<RecordsPageProps>) {
     if (!params.username || !searchParams?.id || !searchParams?.user) return notFound()
 
-    const [recordState, consultationsState] = await Promise.all([
+    const [recordState, consultationsState, prescriptionState] = await Promise.all([
         await getRecordById(searchParams.id.toString()),
         await getAllPatientConsultationsPaginated(searchParams.user.toString()),
+        await getAllPatientPrescriptionsPaginated(searchParams.user.toString()),
     ])
 
     const record = recordState.response?.data as MedicalRecord
     const consultations = consultationsState.response?.data as PaginatedConsultations
+    const prescriptions = prescriptionState.response?.data as PaginatedSimplePrescriptions
 
     const displayName = record.patient.fullName ?? record.patient.username
 
@@ -41,7 +45,7 @@ export default async function ViewMedicalRecordsPage({ params, searchParams }: R
             <PatientMedicalRecords displayName={displayName} record={record} />
             <div className="w-full xl:flex">
                 <PatientConsultations consultationsPage={consultations} />
-                <PatientPrescriptions />
+                <PatientPrescriptions prescriptionsPage={prescriptions} />
             </div>
         </div>
     )
