@@ -44,8 +44,8 @@ export default async function ViewMedicalRecordsPage({ params, searchParams }: R
         <div className="space-y-4 divide-y divide-neutral-200">
             <PatientMedicalRecords displayName={displayName} record={record} />
             <div className="w-full xl:flex">
-                <PatientConsultations consultationsPage={consultations} />
-                <PatientPrescriptions prescriptionsPage={prescriptions} />
+                <PatientConsultations consultationsPage={consultations} patient={record.patient} />
+                <PatientPrescriptions prescriptionsPage={prescriptions} patient={record.patient} />
             </div>
         </div>
     )
