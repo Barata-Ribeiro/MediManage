@@ -1,15 +1,21 @@
 import { PaginatedSimplePrescriptions } from "@/interfaces/prescriptions"
 import parseDate from "@/utils/parse-date"
 import Link from "next/link"
+import PatientNewPrescriptionButton from "@/components/dashboard/records/patient-new-prescription-button"
+import { User } from "@/interfaces/users"
 
 interface PatientPrescriptionsProps {
     prescriptionsPage: PaginatedSimplePrescriptions
+    patient: User
 }
 
-export default function PatientPrescriptions({ prescriptionsPage }: Readonly<PatientPrescriptionsProps>) {
+export default function PatientPrescriptions({ prescriptionsPage, patient }: Readonly<PatientPrescriptionsProps>) {
     return (
         <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
-            <h2 className="text-base font-semibold leading-7 text-neutral-900">Prescriptions</h2>
+            <div className="flex flex-wrap justify-between gap-2">
+                <h2 className="text-base font-semibold leading-7 text-neutral-900">Recent Prescriptions</h2>
+                <PatientNewPrescriptionButton userId={patient.id} />
+            </div>
             <ul className="mt-6 grid gap-4">
                 {prescriptionsPage.content.length > 0 ? (
                     prescriptionsPage.content.map(prescription => (
