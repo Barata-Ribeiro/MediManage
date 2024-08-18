@@ -21,6 +21,10 @@
   "dependencies": {
     "@headlessui/react": "^2.1.2",
     "@react-pdf/renderer": "^3.4.4",
+    "@tiptap/extension-underline": "^2.6.4",
+    "@tiptap/pm": "^2.6.4",
+    "@tiptap/react": "^2.6.4",
+    "@tiptap/starter-kit": "^2.6.4",
     "jose": "^5.6.3",
     "next": "14.2.5",
     "react": "^18.3.1",
@@ -33,6 +37,7 @@
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.14",
     "@types/node": "^22.3.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
