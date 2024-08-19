@@ -1,7 +1,7 @@
 import { RecordsPageProps } from "@/app/dashboard/[username]/records/page"
 import { notFound } from "next/navigation"
-import { Metadata } from "next"
 import NewPrescriptionForm from "@/components/forms/new-prescription-form"
+import { Metadata } from "next"
 
 export const metadata: Metadata = {
     title: "New Prescription",
