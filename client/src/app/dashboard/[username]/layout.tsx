@@ -5,10 +5,11 @@ import Breadcrumbs from "@/components/breadcrumbs"
 
 interface DashboardLayoutProps {
     children: ReactNode
+    modal?: ReactNode
     params: { username: string }
 }
 
-export default async function DashboardLayout({ children }: Readonly<DashboardLayoutProps>) {
+export default async function DashboardLayout({ children, modal }: Readonly<DashboardLayoutProps>) {
     return (
         <div className="min-h-full">
             <Header />
@@ -23,6 +24,7 @@ export default async function DashboardLayout({ children }: Readonly<DashboardLa
             </main>
 
             <Footer />
+            {modal}
         </div>
     )
 }
