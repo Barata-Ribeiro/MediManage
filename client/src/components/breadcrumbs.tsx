@@ -29,10 +29,12 @@ export default function Breadcrumbs() {
                 )}
                 {crumbs.map((crumb, index) => {
                     const isLast = index === crumbs.length - 1
+                    const isPrescription = crumb === "prescriptions"
                     const active = isLast
                         ? tw`font-bold text-hello-spring-600 hover:text-hello-spring-700 active:text-hello-spring-800`
                         : tw`font-semibold text-neutral-400 hover:text-neutral-600 active:text-neutral-700`
                     const sortedClasses = twMerge(active, "ml-2 text-sm font-heading capitalize")
+                    const includeParams = isLast && existingParams ? savedParams : ""
                     return (
                         <li key={crumb + "_" + index}>
                             <div className="flex items-center">
@@ -42,7 +44,11 @@ export default function Breadcrumbs() {
                                     aria-hidden="true"
                                 />
                                 <Link
-                                    href={`${home}/${crumbs.slice(0, index + 1).join("/")}${isLast && existingParams ? savedParams : ""}`}
+                                    href={
+                                        isPrescription
+                                            ? `${home}/${crumbs.slice(0, index + 1).join("/")}${savedParams}`
+                                            : `${home}/${crumbs.slice(0, index + 1).join("/")}${includeParams}`
+                                    }
                                     className={sortedClasses}>
                                     {crumb}
                                 </Link>
