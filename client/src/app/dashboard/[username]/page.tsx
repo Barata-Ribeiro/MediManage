@@ -3,6 +3,12 @@ import getUserContext from "@/actions/users/get-user-context"
 import { User } from "@/interfaces/users"
 import getHomeInfo from "@/actions/get-home-info"
 import { AdministratorInfo, AssistantInfo, DoctorInfo, PatientInfo } from "@/interfaces/home"
+import ConsultationsStats from "@/components/dashboard/home/consultations-stats"
+import LatestNotice from "@/components/dashboard/home/latest-notice"
+import NextConsultation from "@/components/dashboard/home/next-consultation"
+import { Fragment } from "react"
+import { FaCircleInfo, FaUserClock } from "react-icons/fa6"
+import DividerWithContent from "@/components/helpers/divider-with-content"
 
 export async function generateMetadata({ params }: { params: { username: string } }): Promise<Metadata> {
     return {
@@ -21,21 +27,24 @@ export default async function HomePage() {
     console.log(homeInfo)
 
     return (
-        <div className="border-b border-b-gray-900/10 lg:border-t lg:border-t-gray-900/5">
-            <dl className="mx-auto grid max-w-7xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:px-2 xl:px-0">
-                {user.accountType === "ASSISTANT" && (
-                    <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 border-t border-gray-900/5 px-4 py-10 sm:px-6 lg:border-t-0 xl:px-8">
-                        <dt className="text-sm font-medium leading-6 text-gray-500">Consultations by Status</dt>
-                        {Object.entries((homeInfo as AssistantInfo).consultationsByStatus).map(([status, count]) => (
-                            <dd
-                                key={status}
-                                className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
-                                {status}: {count}
-                            </dd>
-                        ))}
-                    </div>
-                )}
-            </dl>
+        <div className="grid gap-4">
+            {user.accountType === "DOCTOR" && (
+                <>
+                    <ConsultationsStats data={(homeInfo as DoctorInfo).consultationsByStatus} />
+                    <DividerWithContent>
+                        <span className="bg-neutral-50 px-2 text-neutral-600">
+                            <FaCircleInfo aria-hidden className="h-5 w-5 text-neutral-600" />
+                        </span>
+                    </DividerWithContent>
+                    <LatestNotice data={(homeInfo as DoctorInfo).latestNotice} />
+                    <DividerWithContent>
+                        <span className="bg-neutral-50 px-2 text-neutral-600">
+                            <FaUserClock aria-hidden className="h-5 w-5 text-neutral-600" />
+                        </span>
+                    </DividerWithContent>
+                    <NextConsultation data={(homeInfo as DoctorInfo).nextConsultation} />
+                </>
+            )}
         </div>
     )
 }
