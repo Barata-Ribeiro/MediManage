@@ -16,7 +16,7 @@ import { FaRedo, FaUndo } from "react-icons/fa"
 export default function Toolbar({ editor }: Readonly<{ editor: Editor | null }>) {
     if (!editor) return null
     return (
-        <div className="flex w-max flex-wrap items-center justify-start gap-4 rounded-md p-1.5 ring-1 ring-inset ring-neutral-300">
+        <div className="flex flex-wrap items-center justify-start gap-4 rounded-md p-1.5 ring-1 ring-inset ring-neutral-300">
             <button
                 onClick={e => {
                     e.preventDefault()

@@ -29,11 +29,11 @@ export default function NewPrescriptionForm({ userId }: Readonly<{ userId: strin
     }, [formState, data, router, userId])
 
     return (
-        <form action={formAction} onSubmit={onSubmit} className="grid w-full">
+        <form action={formAction} onSubmit={onSubmit} className="grid w-full justify-center">
             <Input type="hidden" name="userId" value={userId} />
 
             <Field className="my-4 w-full">
-                <Label htmlFor="content" className="block text-sm font-medium text-gray-700">
+                <Label htmlFor="content" className="block text-sm font-medium text-neutral-700">
                     Content
                 </Label>
                 <Tiptap onUpdate={setContent} />

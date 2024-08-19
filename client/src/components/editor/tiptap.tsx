@@ -1,23 +1,32 @@
-"use client"
-
 import { StarterKit } from "@tiptap/starter-kit"
 import { EditorContent, useEditor } from "@tiptap/react"
 import { Underline } from "@tiptap/extension-underline"
 import Toolbar from "@/components/editor/toolbar"
-import { Heading } from "@tiptap/extension-heading"
-import { OrderedList } from "@tiptap/extension-ordered-list"
-import { BulletList } from "@tiptap/extension-bullet-list"
-import { ListItem } from "@tiptap/extension-list-item"
+import { Dispatch, SetStateAction } from "react"
 
-export default function Tiptap({ onUpdate }: Readonly<never>) {
+interface TiptapProps {
+    onUpdate: Dispatch<SetStateAction<string>>
+}
+
+export default function Tiptap({ onUpdate }: Readonly<TiptapProps>) {
     const editor = useEditor({
         extensions: [
-            StarterKit,
+            StarterKit.configure({
+                heading: {
+                    levels: [2],
+                    HTMLAttributes: { class: "font-heading text-2xl" },
+                },
+                bulletList: {
+                    HTMLAttributes: { class: "list-disc list-inside space-y-1" },
+                },
+                orderedList: {
+                    HTMLAttributes: { class: "list-decimal list-inside space-y-1" },
+                },
+                listItem: {
+                    HTMLAttributes: { class: "list-item [&>p]:inline-block" },
+                },
+            }),
             Underline,
-            Heading.configure({ levels: [2], HTMLAttributes: { class: "font-heading text-2xl" } }),
-            BulletList.configure({ HTMLAttributes: { class: "list-disc list-inside space-y-1" } }),
-            OrderedList.configure({ HTMLAttributes: { class: "list-decimal list-inside space-y-1" } }),
-            ListItem.configure({ HTMLAttributes: { class: "list-item [&>p]:inline-block" } }),
         ],
         editorProps: {
             attributes: {
