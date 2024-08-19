@@ -21,7 +21,7 @@ interface AssistantInfo {
 
 interface DoctorInfo {
     nextConsultation: Consultation | object
-    consultationsByStatus: number
+    consultationsByStatus: Record<string, number>
     latestNotice: object
 }
 
