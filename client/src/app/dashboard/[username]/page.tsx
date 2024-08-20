@@ -3,12 +3,7 @@ import getUserContext from "@/actions/users/get-user-context"
 import { User } from "@/interfaces/users"
 import getHomeInfo from "@/actions/get-home-info"
 import { AdministratorInfo, AssistantInfo, DoctorInfo, PatientInfo } from "@/interfaces/home"
-import ConsultationsStats from "@/components/dashboard/home/consultations-stats"
-import LatestNotice from "@/components/dashboard/home/latest-notice"
-import NextConsultation from "@/components/dashboard/home/next-consultation"
-import { Fragment } from "react"
-import { FaCircleInfo, FaUserClock } from "react-icons/fa6"
-import DividerWithContent from "@/components/helpers/divider-with-content"
+import DoctorHomeContent from "@/components/dashboard/home/doctor-home-content"
 
 export async function generateMetadata({ params }: { params: { username: string } }): Promise<Metadata> {
     return {
@@ -28,23 +23,7 @@ export default async function HomePage() {
 
     return (
         <div className="grid gap-4">
-            {user.accountType === "DOCTOR" && (
-                <>
-                    <ConsultationsStats data={(homeInfo as DoctorInfo).consultationsByStatus} />
-                    <DividerWithContent>
-                        <span className="bg-neutral-50 px-2 text-neutral-600">
-                            <FaCircleInfo aria-hidden className="h-5 w-5 text-neutral-600" />
-                        </span>
-                    </DividerWithContent>
-                    <LatestNotice data={(homeInfo as DoctorInfo).latestNotice} />
-                    <DividerWithContent>
-                        <span className="bg-neutral-50 px-2 text-neutral-600">
-                            <FaUserClock aria-hidden className="h-5 w-5 text-neutral-600" />
-                        </span>
-                    </DividerWithContent>
-                    <NextConsultation data={(homeInfo as DoctorInfo).nextConsultation} />
-                </>
-            )}
+            {user.accountType === "DOCTOR" && <DoctorHomeContent homeInfo={homeInfo as DoctorInfo} />}
         </div>
     )
 }
