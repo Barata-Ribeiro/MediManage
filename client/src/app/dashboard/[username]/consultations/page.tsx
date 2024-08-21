@@ -34,10 +34,17 @@ export default async function ConsultationsPage({ params, searchParams }: Readon
     const pageInfo = pagination.page
 
     return (
-        <div className="px-4 sm:px-6 lg:px-8">
+        <section
+            id="consultations-section"
+            aria-labelledby="consultations-section-title"
+            className="px-4 sm:px-6 lg:px-8">
             <div className="flex flex-wrap items-center gap-4 md:justify-between">
                 <div className="w-max flex-auto">
-                    <h1 className="w-max text-base font-bold leading-6 text-neutral-900">Consultations</h1>
+                    <h1
+                        id="consultations-section-title"
+                        className="w-max text-base font-bold leading-6 text-neutral-900">
+                        Consultations
+                    </h1>
                     <p className="mt-2 max-w-xl text-sm text-neutral-700">
                         List all of the consultations in the system and manage them. This list is available for both
                         assistants and doctors. You can search by patient, doctor, and filter through options.
@@ -113,6 +120,6 @@ export default async function ConsultationsPage({ params, searchParams }: Readon
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     )
 }

@@ -33,10 +33,12 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
     const pageInfo = pagiantion.page
 
     return (
-        <div className="px-4 sm:px-6 lg:px-8">
+        <section id="users-section" aria-labelledby="users-section-title" className="px-4 sm:px-6 lg:px-8">
             <div className="flex flex-wrap items-center gap-4 md:justify-between">
                 <div className="w-max flex-auto">
-                    <h1 className="w-max text-base font-bold leading-6 text-neutral-900">Users</h1>
+                    <h1 id="users-section-title" className="w-max text-base font-bold leading-6 text-neutral-900">
+                        Users
+                    </h1>
                     <p className="mt-2 max-w-xl text-sm text-neutral-700">
                         List all of the users in the system and manage their accounts. You can filter the list by
                         account type, direction, and order by.
@@ -138,6 +140,6 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     )
 }

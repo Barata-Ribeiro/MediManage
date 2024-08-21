@@ -34,10 +34,17 @@ export default async function RecordsPage({ params, searchParams }: Readonly<Rec
     const pageInfo = pagination.page
 
     return (
-        <div className="px-4 sm:px-6 lg:px-8">
+        <section
+            id="medical-records-section"
+            aria-labelledby="medical-records-section-title"
+            className="px-4 sm:px-6 lg:px-8">
             <div className="flex flex-wrap items-center gap-4 md:justify-between">
                 <div className="w-max flex-auto">
-                    <h1 className="w-max text-base font-bold leading-6 text-neutral-900">Medical Records</h1>
+                    <h1
+                        id="medical-records-section-title"
+                        className="w-max text-base font-bold leading-6 text-neutral-900">
+                        Medical Records
+                    </h1>
                     <p className="mt-2 max-w-xl text-sm text-neutral-700">
                         List all of the medical records in the system and manage them. This list is available for both
                         assistants and doctors. You can search by patient, doctor, and filter through options.
@@ -138,6 +145,6 @@ export default async function RecordsPage({ params, searchParams }: Readonly<Rec
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     )
 }

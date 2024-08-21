@@ -19,9 +19,14 @@ export default async function SettingsPage() {
     const basePath = "/dashboard/" + user.username
 
     return (
-        <div className="mx-auto max-w-2xl space-y-16 sm:space-y-20 lg:mx-0 lg:max-w-none">
+        <section
+            id="settings-section"
+            aria-labelledby="settings-section-title"
+            className="mx-auto max-w-2xl space-y-16 sm:space-y-20 lg:mx-0 lg:max-w-none">
             <div>
-                <h2 className="text-base font-semibold leading-7 text-neutral-900">Settings</h2>
+                <h1 id="settings-section-title" className="text-base font-semibold leading-7 text-neutral-900">
+                    Settings
+                </h1>
                 <p className="mt-1 text-sm leading-6 text-neutral-600">
                     This information will be displayed for your doctor and other healthcare providers.
                 </p>
@@ -107,6 +112,6 @@ export default async function SettingsPage() {
                     </div>
                 </dl>
             </div>
-        </div>
+        </section>
     )
 }

@@ -41,12 +41,12 @@ export default async function ViewMedicalRecordsPage({ params, searchParams }: R
     const displayName = record.patient.fullName ?? record.patient.username
 
     return (
-        <div className="space-y-4 divide-y divide-neutral-200">
+        <section id="view-medical-records-section" className="space-y-4 divide-y divide-neutral-200">
             <PatientMedicalRecords displayName={displayName} record={record} />
             <div className="w-full xl:flex">
                 <PatientConsultations consultationsPage={consultations} patient={record.patient} />
                 <PatientPrescriptions prescriptionsPage={prescriptions} patient={record.patient} />
             </div>
-        </div>
+        </section>
     )
 }

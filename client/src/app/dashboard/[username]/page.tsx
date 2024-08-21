@@ -22,8 +22,8 @@ export default async function HomePage() {
     console.log(homeInfo)
 
     return (
-        <div className="grid gap-4">
+        <section id="home-section" className="grid gap-4">
             {user.accountType === "DOCTOR" && <DoctorHomeContent homeInfo={homeInfo as DoctorInfo} />}
-        </div>
+        </section>
     )
 }

@@ -26,7 +26,7 @@ export default async function ViewProfilePage({ params, searchParams }: Readonly
     const user = state.response?.data as User
 
     return (
-        <div className="divide-y divide-neutral-900/5">
+        <section id="profile-section" className="divide-y divide-neutral-900/5">
             <div className="grid grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
                 <div>
                     <h2 className="text-base font-semibold leading-7 text-neutral-900">Account</h2>
@@ -71,6 +71,6 @@ export default async function ViewProfilePage({ params, searchParams }: Readonly
 
                 <DeleteAccountForm user={user} />
             </div>
-        </div>
+        </section>
     )
 }

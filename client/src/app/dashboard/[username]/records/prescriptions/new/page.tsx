@@ -15,9 +15,13 @@ export default function NewPrescriptionPage({ params, searchParams }: Readonly<R
     const userId = searchParams.user as string
 
     return (
-        <div>
+        <section id="new-prescription-section" aria-labelledby="new-prescription-section-title">
             <div>
-                <h1 className="w-max text-base font-bold leading-6 text-neutral-900">Write a new prescription</h1>
+                <h1
+                    id="new-prescription-section-title"
+                    className="w-max text-base font-bold leading-6 text-neutral-900">
+                    Write a new prescription
+                </h1>
                 <p className="mt-2 max-w-xl text-sm text-neutral-700">
                     Write a new prescription for a patient. Fill in the field below and click the <strong>issue</strong>{" "}
                     button to create a new prescription.
@@ -28,6 +32,6 @@ export default function NewPrescriptionPage({ params, searchParams }: Readonly<R
             </div>
 
             <NewPrescriptionForm userId={userId} />
-        </div>
+        </section>
     )
 }

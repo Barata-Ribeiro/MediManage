@@ -14,14 +14,14 @@ export default async function DashboardLayout({ children, modal }: Readonly<Dash
         <div className="min-h-full">
             <Header />
 
-            <main className="-mt-32">
+            <div className="-mt-32">
                 <div className="container px-4 pb-12 font-body sm:px-6 lg:px-8">
-                    <section className="h-full overflow-auto rounded-md bg-neutral-50 p-4 shadow-derek">
+                    <main className="h-full overflow-auto rounded-md bg-neutral-50 p-4 shadow-derek">
                         <Breadcrumbs />
                         {children}
-                    </section>
+                    </main>
                 </div>
-            </main>
+            </div>
 
             <Footer />
             {modal}
