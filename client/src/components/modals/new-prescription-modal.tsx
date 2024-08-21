@@ -1,7 +1,7 @@
 "use client"
 
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle, Field, Input, Label } from "@headlessui/react"
-import { usePathname, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { FaPrescriptionBottleMedical } from "react-icons/fa6"
 import { useUser } from "@/context/user-context-provider"
@@ -17,7 +17,6 @@ export default function NewPrescriptionModal({ userId }: Readonly<{ userId: stri
     const [content, setContent] = useState<string>("")
     const [open, setOpen] = useState(true)
 
-    const pathname = usePathname()
     const router = useRouter()
     const data = useUser()
 

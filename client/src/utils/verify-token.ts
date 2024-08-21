@@ -12,6 +12,7 @@ export default async function verifyToken(token: string): Promise<boolean> {
 
         return true
     } catch (error) {
+        console.error(error)
         return false
     }
 }
