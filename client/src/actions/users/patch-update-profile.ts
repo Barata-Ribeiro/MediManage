@@ -55,13 +55,12 @@ const updateProfileSchema = z
     })
 
 export default async function patchUpdateProfile(state: State, formData: FormData) {
+    const authToken = verifyAuthentication()
     try {
         const id = formData.get("userId") as string
         if (!id) return ResponseError(new Error("User ID is required"))
 
         const URL = USER_UPDATE_PROFILE_BY_ID(id)
-
-        const authToken = verifyAuthentication()
 
         const rawFormData = Object.fromEntries(formData.entries())
         const parsedFormData = updateProfileSchema.safeParse(rawFormData)

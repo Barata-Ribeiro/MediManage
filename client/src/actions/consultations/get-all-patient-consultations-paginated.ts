@@ -13,10 +13,9 @@ export default async function getAllPatientConsultationsPaginated(
     direction = "ASC",
     orderBy = "updatedAt",
 ) {
+    const authToken = verifyAuthentication()
     try {
         const URL = CONSULTATIONS_GET_BY_PATIENT_ID(id, page, perPage, direction, orderBy)
-
-        const authToken = verifyAuthentication()
 
         const response = await fetch(URL, {
             method: "GET",

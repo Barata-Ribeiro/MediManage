@@ -12,8 +12,10 @@ import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import { AdministratorInfo, AssistantInfo, DoctorInfo, PatientInfo } from "@/interfaces/home"
 
 export default async function getHomeInfo(accountType: string) {
+    const authToken = verifyAuthentication()
     try {
         let URL
+
         switch (accountType) {
             case "ADMINISTRATOR":
                 URL = HOME_GET_ADMIN_INFO()
@@ -28,8 +30,6 @@ export default async function getHomeInfo(accountType: string) {
                 URL = HOME_GET_PATIENT_INFO()
                 break
         }
-
-        const authToken = verifyAuthentication()
 
         const response = await fetch(URL, {
             method: "GET",

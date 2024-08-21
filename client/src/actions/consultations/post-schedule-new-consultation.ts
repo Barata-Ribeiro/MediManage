@@ -21,10 +21,9 @@ const consultationSchema = z.object({
 })
 
 export default async function postScheduleNewConsultation(state: State, formData: FormData) {
+    const authToken = verifyAuthentication()
     try {
         const URL = CONSULTATION_CREATE()
-
-        const authToken = verifyAuthentication()
 
         const rawFormData = Object.fromEntries(formData.entries())
         const parsedFormData = consultationSchema.safeParse(rawFormData)

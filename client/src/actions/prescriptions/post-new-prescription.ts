@@ -12,9 +12,8 @@ const prescriptionSchema = z.object({
 })
 
 export default async function postNewPrescription(state: State, formData: FormData) {
+    const authToken = verifyAuthentication()
     try {
-        const authToken = verifyAuthentication()
-
         const rawFormData = Object.fromEntries(formData.entries())
         const parsedFormData = prescriptionSchema.safeParse(rawFormData)
 

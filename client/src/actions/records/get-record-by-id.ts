@@ -7,10 +7,9 @@ import verifyAuthentication from "@/utils/verify-authentication"
 import { MedicalRecord } from "@/interfaces/records"
 
 export default async function getRecordById(id: string) {
+    const authToken = verifyAuthentication()
     try {
         const URL = MEDICAL_RECORDS_GET_BY_ID(id)
-
-        const authToken = verifyAuthentication()
 
         const response = await fetch(URL, {
             method: "GET",

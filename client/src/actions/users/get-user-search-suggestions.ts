@@ -7,10 +7,9 @@ import ResponseError from "@/actions/response-error"
 import { SimpleUser } from "@/interfaces/users"
 
 export default async function getUserSearchSuggestions(query: string, type: string) {
+    const authToken = String(verifyAuthentication())
     try {
         const URL = USER_GET_SEARCH_SUGGESTIONS(query, type)
-
-        const authToken = String(verifyAuthentication())
 
         const response = await fetch(URL, {
             method: "GET",

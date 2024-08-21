@@ -7,12 +7,11 @@ import ResponseError from "@/actions/response-error"
 import { User } from "@/interfaces/users"
 
 export default async function getUserProfileById(id: string) {
+    const authToken = String(verifyAuthentication())
     try {
         if (!id) return ResponseError(new Error("User ID is required"))
 
         const URL = USER_GET_PROFILE_BY_ID(id)
-
-        const authToken = String(verifyAuthentication())
 
         const response = await fetch(URL, {
             method: "GET",

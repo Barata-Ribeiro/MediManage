@@ -13,10 +13,9 @@ export async function getAllRecordsPaginated(
     direction: string,
     orderBy: string,
 ) {
+    const authToken = verifyAuthentication()
     try {
         const URL = MEDICAL_RECORDS_GET_ALL(page, perPage, search, direction, orderBy)
-
-        const authToken = verifyAuthentication()
 
         const response = await fetch(URL, {
             method: "GET",

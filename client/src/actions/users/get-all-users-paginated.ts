@@ -13,10 +13,9 @@ export default async function getAllUsersPaginated(
     direction = "ASC",
     orderBy = "createdAt",
 ) {
+    const authToken = verifyAuthentication()
     try {
         const URL = USER_GET_ALL(page, perPage, type, direction, orderBy)
-
-        const authToken = verifyAuthentication()
 
         const response = await fetch(URL, {
             method: "GET",

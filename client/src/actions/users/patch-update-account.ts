@@ -62,10 +62,9 @@ const updateAccountSchema = z
     })
 
 export default async function patchUpdateAccount(state: State, formData: FormData) {
+    const authToken = verifyAuthentication()
     try {
         const URL = USER_UPDATE_ACCOUNT()
-
-        const authToken = verifyAuthentication()
 
         const rawFormData = Object.fromEntries(formData.entries())
         const parsedFormData = updateAccountSchema.safeParse(rawFormData)

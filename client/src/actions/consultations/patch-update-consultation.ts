@@ -12,14 +12,14 @@ export default async function patchUpdateConsultation(
     consultStatus?: string | null,
     consultScheduleTo?: string | null,
 ) {
+    const authToken = verifyAuthentication()
     try {
         if (!consultId) return ResponseError(new Error("Consultation ID is required."))
-        if (!consultStatus && !consultScheduleTo)
+        if (!consultStatus && !consultScheduleTo) {
             return ResponseError(new Error("Consultation status or schedule to is required."))
+        }
 
         const URL = CONSULTATIONS_UPDATE_BY_ID(consultId)
-
-        const authToken = verifyAuthentication()
 
         const response = await fetch(URL, {
             method: "PATCH",

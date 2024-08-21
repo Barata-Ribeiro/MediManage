@@ -7,10 +7,9 @@ import { USER_GET_CONTEXT } from "@/utils/api-urls"
 import verifyAuthentication from "@/utils/verify-authentication"
 
 export default async function getUserContext() {
+    const authToken = String(verifyAuthentication())
     try {
         const URL = USER_GET_CONTEXT()
-
-        const authToken = String(verifyAuthentication())
 
         const response = await fetch(URL, {
             method: "GET",

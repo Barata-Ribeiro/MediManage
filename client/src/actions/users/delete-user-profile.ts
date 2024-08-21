@@ -7,13 +7,12 @@ import verifyAuthentication from "@/utils/verify-authentication"
 import { USER_DELETE_PROFILE_BY_ID } from "@/utils/api-urls"
 
 export default async function deleteUserProfile(state: State, formData: FormData) {
+    const authToken = verifyAuthentication()
     try {
         const id = formData.get("userId") as string
         if (!id) return ResponseError(new Error("User ID is required"))
 
         const URL = USER_DELETE_PROFILE_BY_ID(id)
-
-        const authToken = verifyAuthentication()
 
         const response = await fetch(URL, {
             method: "DELETE",
