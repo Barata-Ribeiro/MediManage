@@ -1,21 +1,22 @@
 import { Consultation } from "@/interfaces/consultations"
 import { MedicalRecord } from "@/interfaces/records"
+import { Prescription } from "@/interfaces/prescriptions"
 
 interface AdministratorInfo {
-    allUsers: number
+    allUsers: Record<string, number>
     consultationsByStatus: Record<string, number>
     totalPrescriptions: number
 }
 
 interface PatientInfo {
-    latestPrescription: object
+    latestPrescription: Prescription | object
     nextConsultation: Consultation | object
     medicalRecord: MedicalRecord | object
 }
 
 interface AssistantInfo {
     consultationsByStatus: Record<string, number>
-    todayConsultations: number
+    todayConsultations: Consultation[]
     latestNotice: object
 }
 
