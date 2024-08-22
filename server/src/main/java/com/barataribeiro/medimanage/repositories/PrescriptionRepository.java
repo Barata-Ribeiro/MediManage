@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,4 +17,7 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, Long
 
     @EntityGraph(attributePaths = {"patient", "doctor"})
     Optional<Prescription> findFirstByPatient_UsernameOrderByCreatedAtAsc(String username);
+
+    @EntityGraph(attributePaths = {"patient", "doctor"})
+    List<Prescription> findTop5DistinctByDoctor_UsernameOrderByUpdatedAtDescDoctor_UsernameOrderByUpdatedAtDesc(String username);
 }
