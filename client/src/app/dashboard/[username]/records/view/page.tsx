@@ -10,11 +10,19 @@ import getAllPatientConsultationsPaginated from "@/actions/consultations/get-all
 import { PaginatedConsultations } from "@/interfaces/consultations"
 import getAllPatientPrescriptionsPaginated from "@/actions/prescriptions/get-all-patient-prescriptions-paginated"
 import { PaginatedSimplePrescriptions } from "@/interfaces/prescriptions"
+import StateError from "@/components/helpers/state-error"
+import { ProblemDetails } from "@/interfaces/actions"
 
 export async function generateMetadata({ searchParams }: Readonly<RecordsPageProps>): Promise<Metadata> {
     if (!searchParams?.id || !searchParams?.user) return notFound()
 
     const state = await getRecordById(searchParams.id.toString())
+    if (!state.ok) {
+        return {
+            title: (state.error as ProblemDetails).status + " - " + (state.error as ProblemDetails).title,
+            description: (state.error as ProblemDetails).detail,
+        }
+    }
     const record = state.response?.data as MedicalRecord
 
     const displayName = record.patient.fullName ?? record.patient.username
@@ -33,6 +41,14 @@ export default async function ViewMedicalRecordsPage({ params, searchParams }: R
         await getAllPatientConsultationsPaginated(searchParams.user.toString()),
         await getAllPatientPrescriptionsPaginated(searchParams.user.toString()),
     ])
+
+    if (!recordState.ok || !consultationsState.ok || !prescriptionState.ok) {
+        return (
+            <StateError
+                error={(recordState.error ?? consultationsState.error ?? prescriptionState.error) as ProblemDetails}
+            />
+        )
+    }
 
     const record = recordState.response?.data as MedicalRecord
     const consultations = consultationsState.response?.data as PaginatedConsultations

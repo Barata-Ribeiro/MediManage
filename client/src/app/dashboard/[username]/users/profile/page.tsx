@@ -7,10 +7,19 @@ import EditAccountVitalForm from "@/components/forms/profile/edit-account-vital-
 import EditPersonalInformationForm from "@/components/forms/profile/edit-personal-information-form"
 import EditDoctorInformationForm from "@/components/forms/profile/edit-doctor-information-form"
 import DeleteAccountForm from "@/components/forms/profile/delete-account-form"
+import StateError from "@/components/helpers/state-error"
+import { ProblemDetails } from "@/interfaces/actions"
 
 export async function generateMetadata({ searchParams }: Readonly<UsersPageProps>): Promise<Metadata> {
     if (!searchParams?.id) return notFound()
     const state = await getUserProfileById(searchParams.id.toString())
+    if (!state.ok) {
+        return {
+            title: (state.error as ProblemDetails).status + " - " + (state.error as ProblemDetails).title,
+            description: (state.error as ProblemDetails).detail,
+        }
+    }
+
     const user = state.response?.data as User
 
     return {
@@ -23,6 +32,8 @@ export default async function ViewProfilePage({ params, searchParams }: Readonly
     if (!params.username || !searchParams?.id) return notFound()
 
     const state = await getUserProfileById(searchParams.id.toString())
+    if (!state.ok) return <StateError error={state.error as ProblemDetails} />
+
     const user = state.response?.data as User
 
     return (

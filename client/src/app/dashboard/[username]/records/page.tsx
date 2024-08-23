@@ -7,6 +7,8 @@ import Link from "next/link"
 import { getAllRecordsPaginated } from "@/actions/records/get-all-records-paginated"
 import { PaginatedSimpleRecords } from "@/interfaces/records"
 import parseDate from "@/utils/parse-date"
+import StateError from "@/components/helpers/state-error"
+import { ProblemDetails } from "@/interfaces/actions"
 
 export interface RecordsPageProps {
     params: { username: string }
@@ -29,6 +31,8 @@ export default async function RecordsPage({ params, searchParams }: Readonly<Rec
     const orderBy = (searchParams.orderBy as string) || "updatedAt"
 
     const state = await getAllRecordsPaginated(page, perPage, search, direction, orderBy)
+    if (!state.ok) return <StateError error={state.error as ProblemDetails} />
+
     const pagination = state.response?.data as PaginatedSimpleRecords
     const content = pagination.content ?? []
     const pageInfo = pagination.page

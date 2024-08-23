@@ -7,6 +7,8 @@ import NavigationPagination from "@/components/dashboard/filters/navigation-pagi
 import { twMerge } from "tailwind-merge"
 import parseDate from "@/utils/parse-date"
 import Link from "next/link"
+import StateError from "@/components/helpers/state-error"
+import { ProblemDetails } from "@/interfaces/actions"
 
 export async function generateMetadata({ searchParams }: Readonly<RecordsPageProps>): Promise<Metadata> {
     if (!searchParams?.user) return notFound()
@@ -29,6 +31,8 @@ export default async function PrescriptionsPage({ params, searchParams }: Readon
     const orderBy = (searchParams.orderBy as string) || "createdAt"
 
     const state = await getAllPatientPrescriptionsPaginated(userId, page, perPage, direction, orderBy)
+    if (!state.ok) return <StateError error={state.error as ProblemDetails} />
+
     const pagination = state.response?.data as PaginatedSimplePrescriptions
     const content = pagination.content ?? []
     const pageInfo = pagination.page

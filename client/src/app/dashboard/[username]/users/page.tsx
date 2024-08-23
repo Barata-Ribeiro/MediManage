@@ -6,6 +6,8 @@ import getAllUsersPaginated from "@/actions/users/get-all-users-paginated"
 import { PaginatedUsers } from "@/interfaces/users"
 import UserFilter from "@/components/dashboard/filters/user-filter"
 import NavigationPagination from "@/components/dashboard/filters/navigation-pagination"
+import StateError from "@/components/helpers/state-error"
+import { ProblemDetails } from "@/interfaces/actions"
 
 export interface UsersPageProps {
     params: { username: string }
@@ -28,6 +30,8 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
     const orderBy = (searchParams.orderBy as string) || "createdAt"
 
     const state = await getAllUsersPaginated(page, perPage, type, direction, orderBy)
+    if (!state.ok) return <StateError error={state.error as ProblemDetails} />
+
     const pagiantion = state.response as PaginatedUsers
     const content = pagiantion.content
     const pageInfo = pagiantion.page
