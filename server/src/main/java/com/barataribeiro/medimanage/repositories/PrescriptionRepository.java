@@ -19,5 +19,5 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, Long
     Optional<Prescription> findFirstByPatient_UsernameOrderByCreatedAtAsc(String username);
 
     @EntityGraph(attributePaths = {"patient", "doctor"})
-    List<Prescription> findTop5DistinctByDoctor_UsernameOrderByUpdatedAtDescDoctor_UsernameOrderByUpdatedAtDesc(String username);
+    List<Prescription> findTop5DistinctByDoctor_UsernameOrderByUpdatedAtDesc(String username);
 }

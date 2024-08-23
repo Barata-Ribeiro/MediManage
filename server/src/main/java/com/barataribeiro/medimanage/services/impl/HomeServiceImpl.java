@@ -91,8 +91,8 @@ public class HomeServiceImpl implements HomeService {
         Notice latestNotice = noticeRepository.findDistinctFirstByOrderByCreatedAtDesc().orElse(null);
         Consultation nextConsultation = consultationRepository.findNextConsultationToBeAccepted().orElse(null);
 
-        List<Prescription> prescriptions = prescriptionRepository
-                .findTop5DistinctByDoctor_UsernameOrderByUpdatedAtDescDoctor_UsernameOrderByUpdatedAtDesc(principal.getName());
+        List<Prescription> prescriptions =
+                prescriptionRepository.findTop5DistinctByDoctor_UsernameOrderByUpdatedAtDesc(principal.getName());
         List<SimplePrescriptionDTO> recentPrescriptions = prescriptionMapper.toSimpleDTOList(prescriptions);
 
         return Map.of(
