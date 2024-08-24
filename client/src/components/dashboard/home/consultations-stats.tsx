@@ -1,7 +1,9 @@
 "use client"
 
+type ConsultationValues = "missed" | "inProgress" | "scheduled" | "cancelled" | "accepted" | "done"
+
 interface DoctorHomeProps {
-    data: Record<string, number>
+    data: Record<ConsultationValues, number>
 }
 
 export default function ConsultationsStats({ data }: Readonly<DoctorHomeProps>) {
