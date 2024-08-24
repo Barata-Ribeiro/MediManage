@@ -20,7 +20,7 @@ interface PatientInfo {
 
 interface AssistantInfo {
     consultationsByStatus: Record<string, number>
-    todayConsultations: Consultation[]
+    todayConsultations: Record<string, number>
     latestNotice: Notice | object
 }
 
