@@ -5,6 +5,7 @@ import getHomeInfo from "@/actions/get-home-info"
 import { AdministratorInfo, AssistantInfo, DoctorInfo, PatientInfo } from "@/interfaces/home"
 import DoctorHomeContent from "@/components/dashboard/home/doctor-home-content"
 import AdminHomeContent from "@/components/dashboard/home/admin-home-content"
+import AssistantHomeContent from "@/components/dashboard/home/assistant-home-content"
 
 export async function generateMetadata({ params }: { params: { username: string } }): Promise<Metadata> {
     return {
@@ -26,6 +27,7 @@ export default async function HomePage() {
         <section id="home-section" className="grid gap-4">
             {user.accountType === "ADMINISTRATOR" && <AdminHomeContent homeInfo={homeInfo as AdministratorInfo} />}
             {user.accountType === "DOCTOR" && <DoctorHomeContent homeInfo={homeInfo as DoctorInfo} />}
+            {user.accountType === "ASSISTANT" && <AssistantHomeContent homeInfo={homeInfo as AssistantInfo} />}
         </section>
     )
 }
