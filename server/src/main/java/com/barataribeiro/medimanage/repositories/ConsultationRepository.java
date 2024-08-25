@@ -45,6 +45,13 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
     Optional<Consultation> findNextConsultationToBeAccepted();
 
     @Query("""
+           SELECT c FROM Consultation c
+           WHERE c.scheduledTo >= :startOfDay AND c.scheduledTo < :endOfDay
+           ORDER BY c.scheduledTo ASC
+           """)
+    List<Consultation> findAllConsultationsForToday(LocalDateTime startOfDay, LocalDateTime endOfDay);
+
+    @Query("""
            SELECT
            SUM (CASE WHEN c.status = 'SCHEDULED' THEN 1 ELSE 0 END) AS scheduled,
            SUM (CASE WHEN c.status = 'ACCEPTED' THEN 1 ELSE 0 END) AS accepted,

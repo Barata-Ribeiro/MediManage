@@ -1,7 +1,9 @@
 package com.barataribeiro.medimanage.services.impl;
 
+import com.barataribeiro.medimanage.builders.ConsultationMapper;
 import com.barataribeiro.medimanage.builders.PrescriptionMapper;
 import com.barataribeiro.medimanage.constants.ApplicationConstants;
+import com.barataribeiro.medimanage.dtos.raw.ConsultationDTO;
 import com.barataribeiro.medimanage.dtos.raw.SimplePrescriptionDTO;
 import com.barataribeiro.medimanage.entities.models.Consultation;
 import com.barataribeiro.medimanage.entities.models.MedicalRecord;
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +33,7 @@ public class HomeServiceImpl implements HomeService {
     private final PrescriptionMapper prescriptionMapper;
     private final PrescriptionRepository prescriptionRepository;
     private final UserRepository userRepository;
+    private final ConsultationMapper consultationMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -74,12 +79,20 @@ public class HomeServiceImpl implements HomeService {
     @Transactional(readOnly = true)
     public Map<String, Object> getAssistantInfo(@NotNull Principal principal) {
         Notice latestNotice = noticeRepository.findDistinctFirstByOrderByCreatedAtDesc().orElse(null);
+        List<ConsultationDTO> consultationsForToday = consultationMapper.toDTOList(
+                consultationRepository.findAllConsultationsForToday(
+                        LocalDateTime.now().with(LocalTime.MIN),
+                        LocalDateTime.now().with(LocalTime.MAX)
+                ));
+
         return Map.of(
                 ApplicationConstants.CONSULTATIONS_BY_STATUS,
                 consultationRepository.countGroupedConsultationsByStatus(),
 
-                ApplicationConstants.TODAY_CONSULTATIONS,
+                ApplicationConstants.TOTAL_CONSULTATIONS_FOR_TODAY,
                 consultationRepository.countGroupedConsultationsByStatusToday(),
+
+                ApplicationConstants.CONSULTATIONS_FOR_TODAY, consultationsForToday,
 
                 ApplicationConstants.LATEST_NOTICE, latestNotice != null ? latestNotice : Map.of()
         );

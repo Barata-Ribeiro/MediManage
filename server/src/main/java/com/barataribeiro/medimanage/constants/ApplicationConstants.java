@@ -18,6 +18,9 @@ public class ApplicationConstants {
     public static final String CONSULTATIONS_BY_STATUS = "consultationsByStatus";
 
     @NonNls
+    public static final String CONSULTATIONS_FOR_TODAY = "consultationsForToday";
+
+    @NonNls
     public static final String CREATED_AT = "createdAt";
 
     @NonNls
@@ -36,13 +39,13 @@ public class ApplicationConstants {
     public static final String RECENT_PRESCRIPTIONS = "recentPrescriptions";
 
     @NonNls
-    public static final String TODAY_CONSULTATIONS = "todayConsultations";
-
-    @NonNls
     public static final String TOTAL_ARTICLES = "totalArticles";
 
     @NonNls
     public static final String TOTAL_PRESCRIPTIONS = "totalPrescriptions";
+
+    @NonNls
+    public static final String TOTAL_CONSULTATIONS_FOR_TODAY = "totalConsultationsForToday";
 
     // Description
     @NonNls
