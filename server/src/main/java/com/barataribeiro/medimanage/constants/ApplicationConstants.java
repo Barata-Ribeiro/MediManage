@@ -30,6 +30,9 @@ public class ApplicationConstants {
     public static final String LATEST_PRESCRIPTION = "latestPrescription";
 
     @NonNls
+    public static final String ISSUED_AT = "issuedAt";
+
+    @NonNls
     public static final String MEDICAL_RECORD = "medicalRecord";
 
     @NonNls
