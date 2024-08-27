@@ -13,11 +13,12 @@ import {
 } from "@headlessui/react"
 import { Fragment } from "react"
 import { twMerge } from "tailwind-merge"
-import { FaBars, FaBell, FaUserDoctor, FaUserInjured, FaUserNurse, FaUserTie, FaX } from "react-icons/fa6"
+import { FaBars, FaUserDoctor, FaUserInjured, FaUserNurse, FaUserTie, FaX } from "react-icons/fa6"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import miniLogo from "../../../public/images/medimanage-mini.svg"
 import Image from "next/image"
+import NotificationButton from "@/components/dashboard/notification-button"
 
 export default function Header() {
     const data = useUser()
@@ -96,12 +97,7 @@ export default function Header() {
                                     </div>
                                     <div className="hidden md:block">
                                         <div className="ml-4 flex items-center md:ml-6">
-                                            <button
-                                                type="button"
-                                                className="rounded-full bg-mourning-blue-800 p-1 text-neutral-400 hover:text-neutral-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                                                <span className="sr-only">View notifications</span>
-                                                <FaBell className="h-6 w-6" aria-hidden="true" />
-                                            </button>
+                                            <NotificationButton />
 
                                             {/* Profile dropdown */}
                                             <Menu as="div" className="relative ml-3">
@@ -193,12 +189,7 @@ export default function Header() {
                                             {data.user?.email}
                                         </div>
                                     </div>
-                                    <button
-                                        type="button"
-                                        className="ml-auto flex-shrink-0 rounded-full bg-mourning-blue-800 p-1 text-neutral-400 hover:text-neutral-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                                        <span className="sr-only">View notifications</span>
-                                        <FaBell className="h-6 w-6" aria-hidden="true" />
-                                    </button>
+                                    <NotificationButton />
                                 </div>
                                 <div className="mt-3 space-y-1 px-2">
                                     {userNavigation.map(item => (
