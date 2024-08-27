@@ -11,6 +11,7 @@ interface User {
     specialization: string | null
     accountType: UserAccountType
     userRoles: UserRoles
+    totalNotifications: number
     createdAt: string
     updatedAt: string
 }
@@ -47,4 +48,4 @@ interface PaginatedUsers {
     }
 }
 
-export type { User, SimpleUser, PaginatedUsers }
+export type { User, SimpleUser, UserAccountType, UserRoles, PaginatedUsers }
