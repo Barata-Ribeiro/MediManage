@@ -17,7 +17,7 @@ export default async function getUserContext() {
                 "Content-Type": "application/json",
                 Authorization: "Bearer " + authToken,
             },
-            next: { revalidate: 30, tags: ["context"] },
+            next: { revalidate: 5, tags: ["context"] },
         })
 
         const json = await response.json()
