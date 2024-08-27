@@ -45,6 +45,7 @@ export const NOTIFICATIONS_GET_ALL = (
 ) => {
     return `${BACKEND_URL}/api/v1/notifications/${id}?page=${page}&perPage=${perPage}&direction=${direction}&orderBy=${orderBy}`
 }
+export const NOTIFICATIONS_GET_LATEST = (id: string) => `${BACKEND_URL}/api/v1/notifications/${id}/latest`
 
 // Consultations
 export const CONSULTATIONS_GET_ALL = (
