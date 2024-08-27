@@ -35,6 +35,17 @@ export const USER_GET_SEARCH_SUGGESTIONS = (query: string, type: string) => {
 export const USER_DELETE_PROFILE_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/users/${id}`
 export const USER_UPDATE_PROFILE_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/users/${id}`
 
+// Notifications
+export const NOTIFICATIONS_GET_ALL = (
+    id: string,
+    page: number,
+    perPage: number,
+    direction: string,
+    orderBy: string,
+) => {
+    return `${BACKEND_URL}/api/v1/notifications/${id}?page=${page}&perPage=${perPage}&direction=${direction}&orderBy=${orderBy}`
+}
+
 // Consultations
 export const CONSULTATIONS_GET_ALL = (
     page: number,
