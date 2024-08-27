@@ -6,10 +6,12 @@ import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.PrescriptionDTO;
 import com.barataribeiro.medimanage.dtos.raw.SimplePrescriptionDTO;
 import com.barataribeiro.medimanage.dtos.requests.PrescriptionCreateDTO;
+import com.barataribeiro.medimanage.entities.models.Notification;
 import com.barataribeiro.medimanage.entities.models.Prescription;
 import com.barataribeiro.medimanage.entities.models.User;
 import com.barataribeiro.medimanage.exceptions.prescriptions.PrescriptionNotFoundException;
 import com.barataribeiro.medimanage.exceptions.users.UserNotFoundException;
+import com.barataribeiro.medimanage.repositories.NotificationRepository;
 import com.barataribeiro.medimanage.repositories.PrescriptionRepository;
 import com.barataribeiro.medimanage.repositories.UserRepository;
 import com.barataribeiro.medimanage.services.PrescriptionService;
@@ -33,6 +35,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     private final PrescriptionRepository prescriptionRepository;
     private final PrescriptionMapper prescriptionMapper;
     private final UserRepository userRepository;
+    private final NotificationRepository notificationRepository;
 
 
     @Override
@@ -82,6 +85,16 @@ public class PrescriptionServiceImpl implements PrescriptionService {
                 .doctor(doctor)
                 .text(body.text())
                 .build();
+
+        String doctorName = !doctor.getFullName().isEmpty() ? doctor.getFullName() : doctor.getUsername();
+        Notification notification = Notification.builder()
+                .title("New prescription!")
+                .message(String.format("%s has issued a new prescription for you.", doctorName))
+                .user(patient)
+                .build();
+        notificationRepository.save(notification);
+        patient.incrementTotalNotifications();
+        userRepository.save(patient);
 
         return prescriptionMapper.toDTO(prescriptionRepository.saveAndFlush(prescription));
     }

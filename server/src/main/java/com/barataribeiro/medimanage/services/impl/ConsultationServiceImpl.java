@@ -10,11 +10,13 @@ import com.barataribeiro.medimanage.entities.enums.AccountType;
 import com.barataribeiro.medimanage.entities.enums.ConsultationStatus;
 import com.barataribeiro.medimanage.entities.models.Consultation;
 import com.barataribeiro.medimanage.entities.models.MedicalRecord;
+import com.barataribeiro.medimanage.entities.models.Notification;
 import com.barataribeiro.medimanage.entities.models.User;
 import com.barataribeiro.medimanage.exceptions.consultations.ConsultationNotFoundException;
 import com.barataribeiro.medimanage.exceptions.users.UserNotFoundException;
 import com.barataribeiro.medimanage.repositories.ConsultationRepository;
 import com.barataribeiro.medimanage.repositories.MedicalRecordRepository;
+import com.barataribeiro.medimanage.repositories.NotificationRepository;
 import com.barataribeiro.medimanage.repositories.UserRepository;
 import com.barataribeiro.medimanage.services.ConsultationService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,6 +43,7 @@ public class ConsultationServiceImpl implements ConsultationService {
     private final ConsultationMapper consultationMapper;
     private final UserRepository userRepository;
     private final MedicalRecordRepository medicalRecordRepository;
+    private final NotificationRepository notificationRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -72,7 +77,7 @@ public class ConsultationServiceImpl implements ConsultationService {
         PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
 
         Page<Consultation> consultations = consultationRepository.findAllByPatient_Id(UUID.fromString(patientId),
-                pageable);
+                                                                                      pageable);
 
         if (consultations.isEmpty()) {
             return new PageImpl<>(List.of(), pageable, 0);
@@ -93,14 +98,16 @@ public class ConsultationServiceImpl implements ConsultationService {
         );
 
         User patient = users.stream()
-                .filter(user -> user.getFullName().equals(body.patientFullName()) && user.getAccountType() == AccountType.PATIENT)
+                .filter(user -> user.getFullName().equals(
+                        body.patientFullName()) && user.getAccountType() == AccountType.PATIENT)
                 .findFirst()
                 .orElseThrow(() -> new UserNotFoundException(
                         String.format(ApplicationMessages.USER_NOT_FOUND_WITH_NAME, body.patientFullName())
                 ));
 
         User doctor = users.stream()
-                .filter(user -> user.getFullName().equals(body.doctorFullName()) && user.getAccountType() == AccountType.DOCTOR)
+                .filter(user -> user.getFullName().equals(
+                        body.doctorFullName()) && user.getAccountType() == AccountType.DOCTOR)
                 .findFirst()
                 .orElseThrow(() -> new UserNotFoundException(
                         String.format(ApplicationMessages.USER_NOT_FOUND_WITH_NAME, body.doctorFullName())
@@ -117,6 +124,20 @@ public class ConsultationServiceImpl implements ConsultationService {
                 .scheduledTo(LocalDateTime.parse(body.scheduledTo()))
                 .medicalRecord(medicalRecord)
                 .build();
+
+        String doctorName = !doctor.getFullName().isEmpty() ? doctor.getFullName() : doctor.getUsername();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy 'at' hh:mm a");
+        String formattedScheduledTo = LocalDateTime.parse(body.scheduledTo()).format(formatter);
+        Notification notification = Notification.builder()
+                .title("New consultation!")
+                .message(String.format("You have a new consultation with %s scheduled to %s", doctorName,
+                                       formattedScheduledTo))
+                .user(patient)
+                .build();
+
+        notificationRepository.save(notification);
+        patient.incrementTotalNotifications();
+        userRepository.save(patient);
 
         return consultationMapper.toDTO(consultationRepository.saveAndFlush(consultation));
     }
@@ -139,14 +160,33 @@ public class ConsultationServiceImpl implements ConsultationService {
                         String.format(ApplicationMessages.CONSULTATION_NOT_FOUND_WITH_ID, consultationId)
                 ));
 
+        List<String> changes = new ArrayList<>();
+
         if (body.status() != null) {
             ConsultationStatus consultationStatus = ConsultationStatus.valueOf(body.status());
             consultation.setStatus(consultationStatus);
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy 'at' hh:mm a");
+            String formattedScheduledTo = LocalDateTime.parse(body.scheduledTo()).format(formatter);
+            changes.add("Status - " + formattedScheduledTo);
         }
 
         if (body.scheduledTo() != null) {
             consultation.setScheduledTo(LocalDateTime.parse(body.scheduledTo()));
+            changes.add("Scheduled To - " + body.scheduledTo());
         }
+
+        String doctorName = !consultation.getDoctor().getFullName().isEmpty() ? consultation.getDoctor().getFullName() :
+                            consultation.getDoctor().getUsername();
+        Notification notification = Notification.builder()
+                .title("Consultation updated.")
+                .message(String.format("Your consultation with %s has been updated. Changes: %s", doctorName,
+                                       String.join(", ", changes)))
+                .user(consultation.getPatient())
+                .build();
+        notificationRepository.save(notification);
+        consultation.getPatient().incrementTotalNotifications();
+        userRepository.save(consultation.getPatient());
 
         return consultationMapper.toDTO(consultationRepository.saveAndFlush(consultation));
     }

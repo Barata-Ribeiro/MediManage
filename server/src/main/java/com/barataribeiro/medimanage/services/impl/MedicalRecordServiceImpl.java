@@ -7,11 +7,13 @@ import com.barataribeiro.medimanage.dtos.raw.MedicalRecordDTO;
 import com.barataribeiro.medimanage.dtos.raw.SimpleMedicalRecordDTO;
 import com.barataribeiro.medimanage.dtos.requests.MedicalRecordRegisterDTO;
 import com.barataribeiro.medimanage.entities.models.MedicalRecord;
+import com.barataribeiro.medimanage.entities.models.Notification;
 import com.barataribeiro.medimanage.entities.models.User;
 import com.barataribeiro.medimanage.exceptions.IllegalRequestException;
 import com.barataribeiro.medimanage.exceptions.records.MedicalRecordNotFoundException;
 import com.barataribeiro.medimanage.exceptions.users.UserNotFoundException;
 import com.barataribeiro.medimanage.repositories.MedicalRecordRepository;
+import com.barataribeiro.medimanage.repositories.NotificationRepository;
 import com.barataribeiro.medimanage.repositories.UserRepository;
 import com.barataribeiro.medimanage.services.MedicalRecordService;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,25 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     private final UserRepository userRepository;
     private final MedicalRecordRepository medicalRecordRepository;
     private final MedicalRecordMapper medicalRecordMapper;
+    private final NotificationRepository notificationRepository;
+
+    private static void verifyIfBodyExistsThenSetProperties(@NotNull MedicalRecordRegisterDTO body,
+                                                            @NotNull MedicalRecord medicalRecord) {
+        setIfValid(body.insuranceCompany(), medicalRecord::setInsuranceCompany);
+        setIfValid(String.valueOf(body.insuranceMemberIdNumber()), medicalRecord::setInsuranceMemberIdNumber);
+        setIfValid(String.valueOf(body.insuranceGroupNumber()), medicalRecord::setInsuranceGroupNumber);
+        setIfValid(String.valueOf(body.insurancePolicyNumber()), medicalRecord::setInsurancePolicyNumber);
+        setIfValid(body.allergies(), medicalRecord::setAllergies);
+        setIfValid(body.medications(), medicalRecord::setMedications);
+        setIfValid(body.medicalHistory(), medicalRecord::setMedicalHistory);
+        setIfValid(body.familyMedicalHistory(), medicalRecord::setFamilyMedicalHistory);
+    }
+
+    private static void setIfValid(String value, Consumer<String> setter) {
+        if (value != null && !value.trim().isEmpty()) {
+            setter.accept(value);
+        }
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -113,24 +134,16 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 
         verifyIfBodyExistsThenSetProperties(body, medicalRecord);
 
+        Notification notification = Notification.builder()
+                .title("Medical Record Updated.")
+                .message("Your medical record has been updated.")
+                .user(medicalRecord.getPatient())
+                .build();
+
+        notificationRepository.save(notification);
+        medicalRecord.getPatient().incrementTotalNotifications();
+        userRepository.save(medicalRecord.getPatient());
+
         return medicalRecordMapper.toDTO(medicalRecordRepository.saveAndFlush(medicalRecord));
-    }
-
-    private static void verifyIfBodyExistsThenSetProperties(@NotNull MedicalRecordRegisterDTO body,
-                                                            @NotNull MedicalRecord medicalRecord) {
-        setIfValid(body.insuranceCompany(), medicalRecord::setInsuranceCompany);
-        setIfValid(String.valueOf(body.insuranceMemberIdNumber()), medicalRecord::setInsuranceMemberIdNumber);
-        setIfValid(String.valueOf(body.insuranceGroupNumber()), medicalRecord::setInsuranceGroupNumber);
-        setIfValid(String.valueOf(body.insurancePolicyNumber()), medicalRecord::setInsurancePolicyNumber);
-        setIfValid(body.allergies(), medicalRecord::setAllergies);
-        setIfValid(body.medications(), medicalRecord::setMedications);
-        setIfValid(body.medicalHistory(), medicalRecord::setMedicalHistory);
-        setIfValid(body.familyMedicalHistory(), medicalRecord::setFamilyMedicalHistory);
-    }
-
-    private static void setIfValid(String value, Consumer<String> setter) {
-        if (value != null && !value.trim().isEmpty()) {
-            setter.accept(value);
-        }
     }
 }
