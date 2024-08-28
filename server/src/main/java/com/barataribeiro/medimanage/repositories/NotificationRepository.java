@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,4 +31,12 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     @EntityGraph(attributePaths = {"user"})
     List<Notification> findDistinctTop5ByUser_IdOrderByIssuedAtAsc(UUID id);
+
+    @EntityGraph(attributePaths = {"user"})
+    @Query("""
+           SELECT DISTINCT n FROM Notification n
+           LEFT JOIN FETCH n.user u
+           WHERE n.id IN :ids AND u.id = :userId
+           """)
+    List<Notification> findDistinctByListOfIds(@Param("ids") Collection<Long> ids, @Param("userId") UUID userId);
 }

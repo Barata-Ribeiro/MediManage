@@ -4,7 +4,9 @@ import com.barataribeiro.medimanage.builders.NotificationMapper;
 import com.barataribeiro.medimanage.constants.ApplicationConstants;
 import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.NotificationDTO;
+import com.barataribeiro.medimanage.dtos.requests.UpdateNotificationDTO;
 import com.barataribeiro.medimanage.entities.models.Notification;
+import com.barataribeiro.medimanage.exceptions.IllegalRequestException;
 import com.barataribeiro.medimanage.exceptions.notifications.NotificationNotFoundException;
 import com.barataribeiro.medimanage.repositories.NotificationRepository;
 import com.barataribeiro.medimanage.services.NotificationService;
@@ -75,6 +77,36 @@ public class NotificationServiceImpl implements NotificationService {
         notification.setIsRead(isRead);
 
         return notificationMapper.toDTO(notificationRepository.saveAndFlush(notification));
+    }
+
+    @Override
+    @Transactional
+    public List<NotificationDTO> changeNotificationStatusInBatch(String userId,
+                                                                 List<UpdateNotificationDTO> notifications) {
+        if (notifications == null || notifications.isEmpty()) {
+            throw new IllegalRequestException("No notifications to update.");
+        }
+
+        List<Long> notificationsIds = notifications.stream().map(
+                updateNotificationDTO -> Long.parseLong(updateNotificationDTO.notificationId())
+        ).toList();
+
+        List<Notification> notificationsToUpdate = notificationRepository
+                .findDistinctByListOfIds(notificationsIds, UUID.fromString(userId));
+
+        notificationsToUpdate.forEach(notification -> {
+            UpdateNotificationDTO updateNotificationDTO = notifications.stream().filter(
+                    updateNotification -> updateNotification.notificationId().equals(
+                            String.valueOf(notification.getId())
+                    )
+            ).findFirst().orElseThrow(() -> new NotificationNotFoundException(
+                    String.format(ApplicationMessages.NOTIFICATION_NOT_FOUND_WITH_ID, notification.getId())
+            ));
+
+            notification.setIsRead(updateNotificationDTO.newStatus());
+        });
+
+        return notificationMapper.toDTOList(notificationRepository.saveAllAndFlush(notificationsToUpdate));
     }
 
     @Override
