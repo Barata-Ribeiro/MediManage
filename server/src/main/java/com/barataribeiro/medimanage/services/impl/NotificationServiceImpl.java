@@ -66,12 +66,26 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional
     public NotificationDTO changeNotificationStatus(String userId, String notificationId, Boolean isRead) {
-        return null;
+        Notification notification = notificationRepository.findFirstByIdAndUser_Id(Long.parseLong(notificationId),
+                                                                                   UUID.fromString(userId))
+                .orElseThrow(() -> new NotificationNotFoundException(
+                        String.format(ApplicationMessages.NOTIFICATION_NOT_FOUND_WITH_ID, notificationId)
+                ));
+
+        notification.setIsRead(isRead);
+
+        return notificationMapper.toDTO(notificationRepository.saveAndFlush(notification));
     }
 
     @Override
     @Transactional
     public void deleteNotification(String userId, String notificationId) {
+        Notification notification = notificationRepository.findFirstByIdAndUser_Id(Long.parseLong(notificationId),
+                                                                                   UUID.fromString(userId))
+                .orElseThrow(() -> new NotificationNotFoundException(
+                        String.format(ApplicationMessages.NOTIFICATION_NOT_FOUND_WITH_ID, notificationId)
+                ));
 
+        notificationRepository.delete(notification);
     }
 }
