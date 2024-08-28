@@ -48,6 +48,8 @@ export const NOTIFICATIONS_GET_ALL = (
 export const NOTIFICATIONS_GET_LATEST = (id: string) => `${BACKEND_URL}/api/v1/notifications/${id}/latest`
 export const NOTIFICATION_CHANGE_STATUS = (userId: string, notifId: string, newStatus: boolean) =>
     `${BACKEND_URL}/api/v1/notifications/${userId}/${notifId}?isRead=${newStatus}`
+export const NOTIFICATION_DELETE_BY_ID = (userId: string, notifId: string) =>
+    `${BACKEND_URL}/api/v1/notifications/${userId}/${notifId}`
 
 // Consultations
 export const CONSULTATIONS_GET_ALL = (
