@@ -20,4 +20,6 @@ public interface NotificationService {
     List<NotificationDTO> changeNotificationStatusInBatch(String userId, List<UpdateNotificationDTO> notifications);
 
     void deleteNotification(String userId, String notificationId);
+
+    void deleteNotificationsInBatch(String userId, List<String> notifIds);
 }

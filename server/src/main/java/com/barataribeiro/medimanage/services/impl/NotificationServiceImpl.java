@@ -120,4 +120,22 @@ public class NotificationServiceImpl implements NotificationService {
 
         notificationRepository.delete(notification);
     }
+
+    @Override
+    @Transactional
+    public void deleteNotificationsInBatch(String userId, List<String> notifIds) {
+        if (notifIds == null || notifIds.isEmpty()) {
+            throw new IllegalRequestException("No notifications to delete.");
+        }
+
+        List<Long> notificationsIds = notifIds.stream().map(Long::parseLong).toList();
+        List<Notification> notificationsToDelete = notificationRepository
+                .findDistinctByListOfIds(notificationsIds, UUID.fromString(userId));
+
+        if (notificationsToDelete.isEmpty()) {
+            throw new IllegalRequestException("No notifications to delete.");
+        }
+
+        notificationRepository.deleteAll(notificationsToDelete);
+    }
 }

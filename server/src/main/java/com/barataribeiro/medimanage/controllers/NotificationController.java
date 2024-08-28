@@ -86,4 +86,14 @@ public class NotificationController {
                                                      "Notification deleted successfully.",
                                                      null));
     }
+
+    @DeleteMapping("/{userId}/batch")
+    public ResponseEntity<RestResponseDTO> deleteNotificationsInBatch(@PathVariable String userId,
+                                                                      @RequestParam List<String> notifIds) {
+        notificationService.deleteNotificationsInBatch(userId, notifIds);
+        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
+                                                     HttpStatus.OK.value(),
+                                                     "Notifications deleted successfully.",
+                                                     null));
+    }
 }
