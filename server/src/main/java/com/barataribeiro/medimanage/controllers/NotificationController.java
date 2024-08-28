@@ -2,7 +2,9 @@ package com.barataribeiro.medimanage.controllers;
 
 import com.barataribeiro.medimanage.dtos.raw.NotificationDTO;
 import com.barataribeiro.medimanage.dtos.raw.RestResponseDTO;
+import com.barataribeiro.medimanage.dtos.requests.UpdateNotificationDTO;
 import com.barataribeiro.medimanage.services.NotificationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -61,6 +63,17 @@ public class NotificationController {
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                                                      HttpStatus.OK.value(),
                                                      "Notification status changed successfully.",
+                                                     response));
+    }
+
+    @PatchMapping("/{userId}")
+    public ResponseEntity<RestResponseDTO> changeNotificationStatusInBatch(@PathVariable String userId,
+                                                                           @RequestBody @Valid
+                                                                           List<UpdateNotificationDTO> notifications) {
+        List<NotificationDTO> response = notificationService.changeNotificationStatusInBatch(userId, notifications);
+        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
+                                                     HttpStatus.OK.value(),
+                                                     "Notifications statuses changed successfully.",
                                                      response));
     }
 
