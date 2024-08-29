@@ -42,4 +42,11 @@ public class Notification {
 
     @Column(name = "read_at")
     private Instant readAt;
+
+    @PostPersist
+    @PostUpdate
+    @PostRemove
+    public void updateUser() {
+        user.updateNotificationCounts();
+    }
 }

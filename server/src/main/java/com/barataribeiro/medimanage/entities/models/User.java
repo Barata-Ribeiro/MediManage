@@ -79,6 +79,14 @@ public class User {
     @Column(name = "total_notifications", columnDefinition = "BIGINT default '0'", nullable = false)
     private Long totalNotifications = 0L;
 
+    @Builder.Default
+    @Column(name = "total_read_notifications", columnDefinition = "BIGINT default '0'", nullable = false)
+    private Long totalReadNotifications = 0L;
+
+    @Builder.Default
+    @Column(name = "total_unread_notifications", columnDefinition = "BIGINT default '0'", nullable = false)
+    private Long totalUnreadNotifications = 0L;
+
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
     private Instant createdAt;
@@ -87,11 +95,12 @@ public class User {
     @UpdateTimestamp
     private Instant updatedAt;
 
-    public void incrementTotalNotifications() {
-        this.totalNotifications++;
-    }
-
-    public void decrementTotalNotifications() {
-        this.totalNotifications = this.totalNotifications > 0 ? this.totalNotifications - 1 : 0;
+    @PostLoad
+    @PostPersist
+    @PostUpdate
+    public void updateNotificationCounts() {
+        this.totalNotifications = (long) this.notifications.size();
+        this.totalReadNotifications = this.notifications.stream().filter(Notification::getIsRead).count();
+        this.totalUnreadNotifications = this.totalNotifications - this.totalReadNotifications;
     }
 }

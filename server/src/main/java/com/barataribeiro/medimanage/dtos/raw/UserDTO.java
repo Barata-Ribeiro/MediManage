@@ -32,6 +32,8 @@ public class UserDTO implements Serializable {
     String registrationOrigin;
     String specialization;
     Long totalNotifications;
+    Long totalReadNotifications;
+    Long totalUnreadNotifications;
     AccountType accountType;
     UserRoles userRoles;
     Instant createdAt;
