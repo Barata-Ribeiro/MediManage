@@ -9,6 +9,8 @@ import { twMerge } from "tailwind-merge"
 import RequisitionError from "@/components/helpers/requisition-error"
 import { ProblemDetails } from "@/interfaces/actions"
 import { ZodIssue } from "zod"
+import parseDate from "@/utils/parse-date"
+import { FaCheckSquare } from "react-icons/fa"
 
 type StateError = string | ProblemDetails | Partial<Pick<ZodIssue, "path" | "message">>[]
 
@@ -51,7 +53,7 @@ export default function NotificationMenu({ disabled }: Readonly<{ disabled: bool
                 leave="transition ease-in duration-75"
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95">
-                <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-neutral-50 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <MenuItems className="absolute right-0 z-10 mt-2 w-72 origin-top-right rounded-md bg-neutral-50 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     {error && (
                         <MenuItem as="div" disabled>
                             <RequisitionError error={error as string | ProblemDetails} />
@@ -70,14 +72,34 @@ export default function NotificationMenu({ disabled }: Readonly<{ disabled: bool
                         notifications.map((notification, index) => (
                             <MenuItem key={notification.id + "_" + index}>
                                 {({ focus }) => (
-                                    <Link
-                                        href={url + "/" + notification.id}
-                                        className={twMerge(
-                                            focus ? "bg-mourning-blue-100" : "",
-                                            "block px-4 py-2 text-sm text-neutral-700",
-                                        )}>
-                                        {notification.title}
-                                    </Link>
+                                    <div className="inline-flex items-start gap-2 px-8 py-2">
+                                        <div className="flex-shrink-0">
+                                            <FaCheckSquare
+                                                aria-hidden
+                                                className={twMerge(
+                                                    "h-5 w-5",
+                                                    !notification.isRead ? "text-hello-spring-500" : "text-neutral-500",
+                                                )}
+                                            />
+                                        </div>
+                                        <Link
+                                            className="grid text-sm text-neutral-700"
+                                            href={url + "/" + notification.id}>
+                                            <h3
+                                                className={twMerge(
+                                                    "font-heading text-sm font-medium leading-5 tracking-wide transition-all",
+                                                    focus ? "underline underline-offset-2" : "",
+                                                )}>
+                                                {notification.title}
+                                            </h3>
+                                            <p className="text-sm">
+                                                Sent on{" "}
+                                                <time dateTime={notification.issuedAt}>
+                                                    {parseDate(notification.issuedAt)}
+                                                </time>
+                                            </p>
+                                        </Link>
+                                    </div>
                                 )}
                             </MenuItem>
                         ))}
@@ -85,7 +107,7 @@ export default function NotificationMenu({ disabled }: Readonly<{ disabled: bool
                         <Link
                             href={url}
                             className="w-full rounded-b-md bg-mourning-blue-600 py-2 text-center font-heading text-sm font-medium leading-7 tracking-wide text-neutral-50 hover:bg-mourning-blue-700 active:bg-mourning-blue-800">
-                            All Notifications
+                            See All Notifications ({dataUser.user?.totalNotifications})
                         </Link>
                     </MenuItem>
                 </MenuItems>

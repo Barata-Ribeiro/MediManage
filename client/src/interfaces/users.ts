@@ -9,9 +9,11 @@ interface User {
     registrationNumber: string | null
     registrationOrigin: string | null
     specialization: string | null
+    totalNotifications: number
+    totalReadNotifications: number
+    totalUnreadNotifications: number
     accountType: UserAccountType
     userRoles: UserRoles
-    totalNotifications: number
     createdAt: string
     updatedAt: string
 }
