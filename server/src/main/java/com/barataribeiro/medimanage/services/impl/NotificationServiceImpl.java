@@ -20,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -75,6 +76,7 @@ public class NotificationServiceImpl implements NotificationService {
                 ));
 
         notification.setIsRead(isRead);
+        notification.setReadAt(Boolean.TRUE.equals(isRead) ? Instant.now() : null);
 
         return notificationMapper.toDTO(notificationRepository.saveAndFlush(notification));
     }
@@ -104,6 +106,7 @@ public class NotificationServiceImpl implements NotificationService {
             ));
 
             notification.setIsRead(updateNotificationDTO.newStatus());
+            notification.setReadAt(Boolean.TRUE.equals(updateNotificationDTO.newStatus()) ? Instant.now() : null);
         });
 
         return notificationMapper.toDTOList(notificationRepository.saveAllAndFlush(notificationsToUpdate));
