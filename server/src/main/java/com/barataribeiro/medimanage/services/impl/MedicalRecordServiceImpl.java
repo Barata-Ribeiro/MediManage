@@ -141,8 +141,6 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
                 .build();
 
         notificationRepository.save(notification);
-        medicalRecord.getPatient().incrementTotalNotifications();
-        userRepository.save(medicalRecord.getPatient());
 
         return medicalRecordMapper.toDTO(medicalRecordRepository.saveAndFlush(medicalRecord));
     }

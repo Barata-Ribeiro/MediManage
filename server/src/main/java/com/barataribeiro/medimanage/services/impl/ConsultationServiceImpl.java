@@ -136,8 +136,6 @@ public class ConsultationServiceImpl implements ConsultationService {
                 .build();
 
         notificationRepository.save(notification);
-        patient.incrementTotalNotifications();
-        userRepository.save(patient);
 
         return consultationMapper.toDTO(consultationRepository.saveAndFlush(consultation));
     }
@@ -185,8 +183,6 @@ public class ConsultationServiceImpl implements ConsultationService {
                 .user(consultation.getPatient())
                 .build();
         notificationRepository.save(notification);
-        consultation.getPatient().incrementTotalNotifications();
-        userRepository.save(consultation.getPatient());
 
         return consultationMapper.toDTO(consultationRepository.saveAndFlush(consultation));
     }

@@ -93,8 +93,6 @@ public class PrescriptionServiceImpl implements PrescriptionService {
                 .user(patient)
                 .build();
         notificationRepository.save(notification);
-        patient.incrementTotalNotifications();
-        userRepository.save(patient);
 
         return prescriptionMapper.toDTO(prescriptionRepository.saveAndFlush(prescription));
     }
