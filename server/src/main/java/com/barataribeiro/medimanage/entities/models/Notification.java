@@ -13,9 +13,7 @@ import java.time.Instant;
 @Setter
 @ToString
 @Entity
-@Table(name = "tb_notifications", indexes = {
-        @Index(name = "idx_notification_user_id_unq", columnList = "user_id", unique = true)
-})
+@Table(name = "tb_notifications")
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
