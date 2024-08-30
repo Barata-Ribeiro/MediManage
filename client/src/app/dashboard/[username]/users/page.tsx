@@ -32,9 +32,9 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
     const state = await getAllUsersPaginated(page, perPage, type, direction, orderBy)
     if (!state.ok) return <StateError error={state.error as ProblemDetails} />
 
-    const pagiantion = state.response as PaginatedUsers
-    const content = pagiantion.content
-    const pageInfo = pagiantion.page
+    const pagination = state.response?.data as PaginatedUsers
+    const content = pagination.content
+    const pageInfo = pagination.page
 
     return (
         <section id="users-section" aria-labelledby="users-section-title" className="px-4 sm:px-6 lg:px-8">
