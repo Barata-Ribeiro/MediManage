@@ -1,6 +1,16 @@
 "use client"
 
-import { Dialog, DialogBackdrop, DialogPanel, DialogTitle, Field, Input, Label } from "@headlessui/react"
+import {
+    Button,
+    Description,
+    Dialog,
+    DialogBackdrop,
+    DialogPanel,
+    DialogTitle,
+    Field,
+    Input,
+    Label,
+} from "@headlessui/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { FaPrescriptionBottleMedical } from "react-icons/fa6"
@@ -38,7 +48,7 @@ export default function NewPrescriptionModal({ userId }: Readonly<{ userId: stri
         <Dialog open={open} onClose={setOpen} className="relative z-10">
             <DialogBackdrop
                 transition
-                className="fixed inset-0 bg-neutral-500 bg-opacity-75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+                className="fixed inset-0 bg-neutral-800 bg-opacity-75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
             />
 
             <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
@@ -64,16 +74,14 @@ export default function NewPrescriptionModal({ userId }: Readonly<{ userId: stri
                                             className="text-base font-semibold leading-6 text-neutral-900">
                                             Issue new Prescription
                                         </DialogTitle>
-                                        <div className="mt-2">
-                                            <p className="text-sm text-neutral-600">
-                                                Write a new prescription for a patient. Fill in the field below and
-                                                click the <strong>issue</strong> button to create a new prescription.
-                                                <br />
-                                                <br />
-                                                {/* */}A PDF copy of the prescription will be generated and be made
-                                                available for download.
-                                            </p>
-                                        </div>
+                                        <Description className="mt-2 text-sm text-neutral-600">
+                                            Write a new prescription for a patient. Fill in the field below and click
+                                            the <strong>issue</strong> button to create a new prescription.
+                                            <br />
+                                            <br />
+                                            {/* */}A PDF copy of the prescription will be generated and be made
+                                            available for download.
+                                        </Description>
                                     </DialogHeader>
                                     <DialogBody>
                                         <Input type="hidden" name="userId" value={userId} />
@@ -99,7 +107,7 @@ export default function NewPrescriptionModal({ userId }: Readonly<{ userId: stri
                             </div>
                         </div>
                         <div className="bg-neutral-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                            <button
+                            <Button
                                 type="submit"
                                 disabled={isPending}
                                 className="inline-flex w-full justify-center rounded-md bg-mourning-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-mourning-blue-700 active:bg-mourning-blue-800 sm:ml-3 sm:w-auto">
@@ -110,8 +118,8 @@ export default function NewPrescriptionModal({ userId }: Readonly<{ userId: stri
                                 ) : (
                                     "Issue"
                                 )}
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                                 type="button"
                                 data-autofocus={true}
                                 onClick={() => {
@@ -120,7 +128,7 @@ export default function NewPrescriptionModal({ userId }: Readonly<{ userId: stri
                                 }}
                                 className="mt-3 inline-flex w-full justify-center rounded-md bg-neutral-50 px-3 py-2 text-sm font-semibold text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 hover:bg-neutral-100 active:bg-neutral-200 sm:mt-0 sm:w-auto">
                                 Cancel
-                            </button>
+                            </Button>
                         </div>
                     </DialogPanel>
                 </form>
