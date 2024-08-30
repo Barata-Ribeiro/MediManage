@@ -69,40 +69,44 @@ export default function NotificationMenu({ disabled }: Readonly<{ disabled: bool
                     )}
                     {!loading &&
                         !error &&
-                        notifications.map((notification, index) => (
-                            <MenuItem key={notification.id + "_" + index}>
-                                {({ focus }) => (
-                                    <div className="inline-flex items-start gap-2 px-8 py-2">
-                                        <div className="flex-shrink-0">
-                                            <FaCheckSquare
-                                                aria-hidden
-                                                className={twMerge(
-                                                    "h-5 w-5",
-                                                    !notification.isRead ? "text-hello-spring-500" : "text-neutral-500",
-                                                )}
-                                            />
+                        notifications
+                            .toSorted((a, b) => new Date(b.issuedAt).getTime() - new Date(a.issuedAt).getTime())
+                            .map((notification, index) => (
+                                <MenuItem key={notification.id + "_" + index}>
+                                    {({ focus }) => (
+                                        <div className="inline-flex items-start gap-2 px-8 py-2">
+                                            <div className="flex-shrink-0">
+                                                <FaCheckSquare
+                                                    aria-hidden
+                                                    className={twMerge(
+                                                        "h-5 w-5",
+                                                        !notification.isRead
+                                                            ? "text-hello-spring-500"
+                                                            : "text-neutral-500",
+                                                    )}
+                                                />
+                                            </div>
+                                            <Link
+                                                className="grid text-sm text-neutral-700"
+                                                href={url + "/" + notification.id}>
+                                                <h3
+                                                    className={twMerge(
+                                                        "font-heading text-sm font-medium leading-5 tracking-wide transition-all",
+                                                        focus ? "underline underline-offset-2" : "",
+                                                    )}>
+                                                    {notification.title}
+                                                </h3>
+                                                <p className="text-sm">
+                                                    Sent on{" "}
+                                                    <time dateTime={notification.issuedAt}>
+                                                        {parseDate(notification.issuedAt)}
+                                                    </time>
+                                                </p>
+                                            </Link>
                                         </div>
-                                        <Link
-                                            className="grid text-sm text-neutral-700"
-                                            href={url + "/" + notification.id}>
-                                            <h3
-                                                className={twMerge(
-                                                    "font-heading text-sm font-medium leading-5 tracking-wide transition-all",
-                                                    focus ? "underline underline-offset-2" : "",
-                                                )}>
-                                                {notification.title}
-                                            </h3>
-                                            <p className="text-sm">
-                                                Sent on{" "}
-                                                <time dateTime={notification.issuedAt}>
-                                                    {parseDate(notification.issuedAt)}
-                                                </time>
-                                            </p>
-                                        </Link>
-                                    </div>
-                                )}
-                            </MenuItem>
-                        ))}
+                                    )}
+                                </MenuItem>
+                            ))}
                     <MenuItem as="div" className="-mb-2 flex h-full w-full rounded-b-md">
                         <Link
                             href={url}
