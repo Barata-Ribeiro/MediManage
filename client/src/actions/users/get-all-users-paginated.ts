@@ -40,7 +40,7 @@ export default async function getAllUsersPaginated(
         return {
             ok: true,
             error: null,
-            response: data,
+            response: { ...responseData, data },
         }
     } catch (error) {
         return ResponseError(error)
