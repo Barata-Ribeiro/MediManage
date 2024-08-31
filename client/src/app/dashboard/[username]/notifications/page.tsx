@@ -11,6 +11,7 @@ import { IoMailOpen, IoMailUnread } from "react-icons/io5"
 import type { Metadata } from "next"
 import parseDate from "@/utils/parse-date"
 import NotificationMessageModal from "@/components/modals/notification-message-modal"
+import NotifFilter from "@/components/dashboard/filters/notif-filter"
 
 interface NotificationsPageProps {
     params: { username: string }
@@ -30,12 +31,13 @@ export default async function NotificationsPage({ params, searchParams }: Readon
     const perPage = parseInt(searchParams.perPage as string, 10) || 10
     const direction = (searchParams.direction as string) || "DESC"
     const orderBy = (searchParams.orderBy as string) || "issuedAt"
+    const isRead = (searchParams.isRead as string) || ""
 
     const contextState = await getUserContext()
     if (!contextState.ok) return <StateError error={contextState.error as ProblemDetails} />
     const user = contextState.response?.data as User
 
-    const notifState = await getAllUserNotifications(user.id, page, perPage, direction, orderBy)
+    const notifState = await getAllUserNotifications(user.id, page, perPage, direction, orderBy, isRead)
     if (!notifState.ok) return <StateError error={notifState.error as ProblemDetails} />
 
     const pagination = notifState.response?.data as PaginatedNotifications
@@ -58,9 +60,9 @@ export default async function NotificationsPage({ params, searchParams }: Readon
                         View all your notifications here in one place. You can mark them as read or unread. Or you can
                         delete them if you don&apos;t need them anymore.
                     </p>
-
-                    {/*IMPLEMENT SORTING*/}
                 </div>
+
+                <NotifFilter />
             </div>
             <div className="mt-8 flow-root">
                 <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
@@ -137,6 +139,16 @@ export default async function NotificationsPage({ params, searchParams }: Readon
                                             </tr>
                                         )
                                     })}
+
+                                {content.length < 1 && (
+                                    <tr className="border-b border-neutral-300 bg-white">
+                                        <td
+                                            colSpan={6}
+                                            className="py-4 pl-4 pr-3 text-sm font-bold text-neutral-900 sm:pl-6 lg:pl-8">
+                                            No notifications found.
+                                        </td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
                         <NavigationPagination usePageInfo={pageInfo} contentSize={content.length} />
