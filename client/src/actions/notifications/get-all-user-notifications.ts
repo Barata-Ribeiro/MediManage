@@ -12,10 +12,11 @@ export default async function getAllUserNotifications(
     perPage = 10,
     direction = "ASC",
     orderBy = "issuedAt",
+    isRead: string | null = null,
 ) {
     const authToken = verifyAuthentication()
     try {
-        const URL = NOTIFICATIONS_GET_ALL(userId, page, perPage, direction, orderBy)
+        const URL = NOTIFICATIONS_GET_ALL(userId, page, perPage, direction, orderBy, isRead)
 
         const response = await fetch(URL, {
             method: "GET",

@@ -42,8 +42,11 @@ export const NOTIFICATIONS_GET_ALL = (
     perPage: number,
     direction: string,
     orderBy: string,
+    isRead: string | null,
 ) => {
-    return `${BACKEND_URL}/api/v1/notifications/${id}?page=${page}&perPage=${perPage}&direction=${direction}&orderBy=${orderBy}`
+    let url = `${BACKEND_URL}/api/v1/notifications/${id}?page=${page}&perPage=${perPage}&direction=${direction}&orderBy=${orderBy}`
+    if (isRead) url += `&isRead=${isRead}`
+    return url
 }
 export const NOTIFICATIONS_GET_LATEST = (id: string) => `${BACKEND_URL}/api/v1/notifications/${id}/latest`
 export const NOTIFICATION_CHANGE_STATUS = (userId: string, notifId: string, newStatus: boolean) =>
