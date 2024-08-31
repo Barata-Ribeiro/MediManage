@@ -20,7 +20,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
            LEFT JOIN FETCH n.user u
            WHERE u.id = :userId AND n.isRead = :isRead
            """)
-    Page<Notification> findAllNotificationsPaginated(@Param("isRead") Boolean isRead, @Param("userId") String userId,
+    Page<Notification> findAllNotificationsPaginated(@Param("isRead") Boolean isRead, @Param("userId") UUID userId,
                                                      Pageable pageable);
 
     @EntityGraph(attributePaths = {"user"})

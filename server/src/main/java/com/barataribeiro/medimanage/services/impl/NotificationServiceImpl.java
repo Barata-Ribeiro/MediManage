@@ -40,7 +40,8 @@ public class NotificationServiceImpl implements NotificationService {
 
         Page<Notification> notifications;
         if (isRead == null) notifications = notificationRepository.findAllByUser_Id(UUID.fromString(userId), pageable);
-        else notifications = notificationRepository.findAllNotificationsPaginated(isRead, userId, pageable);
+        else notifications = notificationRepository.findAllNotificationsPaginated(isRead, UUID.fromString(userId),
+                                                                                  pageable);
 
         List<NotificationDTO> notificationDTOS = notificationMapper.toDTOList(notifications.getContent());
 
