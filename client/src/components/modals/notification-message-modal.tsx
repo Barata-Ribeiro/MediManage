@@ -5,14 +5,53 @@ import { Button, Description, Dialog, DialogBackdrop, DialogPanel, DialogTitle }
 import { useState } from "react"
 import { Notification } from "@/interfaces/notifications"
 import { IoMail } from "react-icons/io5"
+import { ProblemDetails } from "@/interfaces/actions"
+import { ZodIssue } from "zod"
+import Spinner from "@/components/helpers/spinner"
+import RequisitionError from "@/components/helpers/requisition-error"
+import patchChangeNotificationStatus from "@/actions/notifications/patch-change-notification-status"
+import { useRouter } from "next/navigation"
 
 interface NotificationMessageProps {
     notif: Notification
 }
 
+type StateError = string | ProblemDetails | Partial<Pick<ZodIssue, "path" | "message">>[]
+
 export default function NotificationMessageModal({ notif }: Readonly<NotificationMessageProps>) {
     const [open, setOpen] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<StateError | null>(null)
+
+    const router = useRouter()
+
     const { user } = useUser()
+    if (!user) return null
+
+    const isRead = notif.isRead
+    const buttonAction = isRead ? "unread" : "read"
+
+    async function handleReadStatus() {
+        setLoading(true)
+
+        try {
+            if (!user) return
+
+            const state = await patchChangeNotificationStatus({
+                userId: user.id,
+                notifId: notif.id.toString(),
+                currentStatus: isRead.toString(),
+            })
+
+            if (!state.ok) setError(state.error)
+            setOpen(false)
+            router.refresh()
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setLoading(false)
+        }
+    }
 
     return (
         <>
@@ -43,19 +82,28 @@ export default function NotificationMessageModal({ notif }: Readonly<Notificatio
                                     <Description className="prose mt-2 text-base text-neutral-700">
                                         {notif.message}
                                     </Description>
+                                    {error && !Array.isArray(error) && <RequisitionError error={error} />}
                                 </div>
                             </div>
                             <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                                 <Button
                                     type="button"
-                                    onClick={() => setOpen(false)}
-                                    className="inline-flex w-full justify-center rounded-md bg-mourning-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-mourning-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mourning-blue-600 active:bg-mourning-blue-800 sm:col-start-2">
-                                    Mark as Read
+                                    onClick={handleReadStatus}
+                                    disabled={loading}
+                                    className="inline-flex w-full justify-center rounded-md bg-mourning-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-mourning-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mourning-blue-600 active:bg-mourning-blue-800 disabled:cursor-default disabled:opacity-50 sm:col-start-2">
+                                    {loading ? (
+                                        <>
+                                            <Spinner /> Loading...
+                                        </>
+                                    ) : (
+                                        "Mark as " + buttonAction
+                                    )}
                                 </Button>
                                 <Button
                                     type="button"
                                     data-autofocus={true}
                                     onClick={() => setOpen(false)}
+                                    disabled={loading}
                                     className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 hover:bg-neutral-50 active:bg-neutral-200 sm:col-start-1 sm:mt-0">
                                     Close
                                 </Button>
