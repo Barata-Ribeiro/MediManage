@@ -88,7 +88,7 @@ export default function NotificationMenu({ disabled }: Readonly<{ disabled: bool
                                             </div>
                                             <Link
                                                 className="grid text-sm text-neutral-700"
-                                                href={url + "/" + notification.id}>
+                                                href={url + "/" + notification.id + "?user=" + dataUser.user?.id}>
                                                 <h3
                                                     className={twMerge(
                                                         "font-heading text-sm font-medium leading-5 tracking-wide transition-all",
