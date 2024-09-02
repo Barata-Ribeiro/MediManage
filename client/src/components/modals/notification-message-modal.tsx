@@ -44,8 +44,10 @@ export default function NotificationMessageModal({ notif }: Readonly<Notificatio
             })
 
             if (!state.ok) setError(state.error)
-            setOpen(false)
-            router.refresh()
+            else {
+                setOpen(false)
+                router.refresh()
+            }
         } catch (error) {
             console.error(error)
         } finally {
@@ -79,13 +81,15 @@ export default function NotificationMessageModal({ notif }: Readonly<Notificatio
                                         className="font-heading text-lg font-semibold leading-6 text-neutral-900">
                                         {notif.title}
                                     </DialogTitle>
-                                    <Description className="prose mt-2 text-base text-neutral-700">
+                                    <Description className="prose my-2 text-base text-neutral-700">
                                         {notif.message}
                                     </Description>
-                                    {error && !Array.isArray(error) && <RequisitionError error={error} />}
                                 </div>
                             </div>
-                            <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+
+                            {error && !Array.isArray(error) && <RequisitionError error={error} />}
+
+                            <div className="mt-3 sm:mt-4 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                                 <Button
                                     type="button"
                                     onClick={handleReadStatus}
