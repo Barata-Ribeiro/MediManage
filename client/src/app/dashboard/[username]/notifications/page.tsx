@@ -13,7 +13,7 @@ import parseDate from "@/utils/parse-date"
 import NotificationMessageModal from "@/components/modals/notification-message-modal"
 import NotifFilter from "@/components/dashboard/filters/notif-filter"
 import Link from "next/link"
-import { Button } from "@headlessui/react"
+import NotificationDeleteModal from "@/components/modals/notification-delete-modal"
 
 interface NotificationsPageProps {
     params: { username: string }
@@ -151,11 +151,7 @@ export default async function NotificationsPage({ params, searchParams }: Readon
                                                         className="font-heading font-semibold text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
                                                         View
                                                     </Link>
-                                                    <Button
-                                                        type="button"
-                                                        className="font-heading font-semibold text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
-                                                        Delete
-                                                    </Button>
+                                                    <NotificationDeleteModal notif={notif} />
                                                 </td>
                                             </tr>
                                         )
