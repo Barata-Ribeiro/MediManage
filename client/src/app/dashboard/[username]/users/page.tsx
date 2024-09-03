@@ -134,7 +134,7 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
                                         <td
                                             colSpan={6}
                                             className="py-4 pl-4 pr-3 text-sm font-bold text-neutral-900 sm:pl-6 lg:pl-8">
-                                            No consultations found or available.
+                                            No users found.
                                         </td>
                                     </tr>
                                 )}
