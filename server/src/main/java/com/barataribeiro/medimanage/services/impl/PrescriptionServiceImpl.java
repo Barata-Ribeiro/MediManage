@@ -16,6 +16,7 @@ import com.barataribeiro.medimanage.repositories.PrescriptionRepository;
 import com.barataribeiro.medimanage.repositories.UserRepository;
 import com.barataribeiro.medimanage.services.PrescriptionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class PrescriptionServiceImpl implements PrescriptionService {
@@ -68,6 +70,9 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     @Transactional
     public PrescriptionDTO createPrescription(String patientId, PrescriptionCreateDTO body,
                                               @NotNull Principal principal) {
+        log.atInfo().log("Doctor {} is creating a prescription for patient with id '{}'", principal.getName(),
+                         patientId);
+
         User patient = userRepository.findById(UUID.fromString(patientId)).orElseThrow(
                 () -> new UserNotFoundException(String.format(ApplicationMessages.USER_NOT_FOUND_WITH_ID, patientId))
         );
@@ -93,6 +98,9 @@ public class PrescriptionServiceImpl implements PrescriptionService {
                 .user(patient)
                 .build();
         notificationRepository.save(notification);
+
+        log.atInfo().log("A new prescription for patient '{}' of username '{}' has been created by doctor '{}'",
+                         patient.getFullName(), patient.getUsername(), doctor.getUsername());
 
         return prescriptionMapper.toDTO(prescriptionRepository.saveAndFlush(prescription));
     }

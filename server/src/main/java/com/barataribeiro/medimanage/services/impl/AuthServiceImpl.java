@@ -18,6 +18,7 @@ import com.barataribeiro.medimanage.repositories.UserRepository;
 import com.barataribeiro.medimanage.services.AuthService;
 import com.barataribeiro.medimanage.services.security.TokenService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +30,7 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.Random;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AuthServiceImpl implements AuthService {
@@ -51,6 +53,8 @@ public class AuthServiceImpl implements AuthService {
                 .password(passwordEncoder.encode(body.password()))
                 .accountType(AccountType.PATIENT)
                 .build();
+
+        log.atInfo().log("New user registered with username: {}", registration.getUsername());
 
         return userMapper.toDTO(userRepository.saveAndFlush(registration));
     }
@@ -78,10 +82,13 @@ public class AuthServiceImpl implements AuthService {
 
         User savedUser = userRepository.saveAndFlush(registration);
 
+        log.atInfo().log("The assistant registered a new user through the assistant panel. User full name: {}",
+                         savedUser.getFullName());
+
         return Map.of("username", generatedUsername,
-                "password", generatedPassword,
-                "registeredAt", savedUser.getCreatedAt(),
-                "message", "Please, change your password after login.");
+                      "password", generatedPassword,
+                      "registeredAt", savedUser.getCreatedAt(),
+                      "message", "Please, change your password after login.");
     }
 
     @Override
@@ -110,18 +117,24 @@ public class AuthServiceImpl implements AuthService {
 
         User savedUser = userRepository.saveAndFlush(registration);
 
+        log.atInfo().log(
+                "The administrator registered a new employee through the administrator panel. Employee full name: {}",
+                savedUser.getFullName());
+
         return Map.of("username", generatedUsername,
-                "password", generatedPassword,
-                "registeredAt", savedUser.getCreatedAt(),
-                "message", "Please, change your password after login.");
+                      "password", generatedPassword,
+                      "registeredAt", savedUser.getCreatedAt(),
+                      "message", "Please, change your password after login.");
     }
 
     @Override
     @Transactional(readOnly = true)
     public LoginResponseDTO login(@NotNull LoginRequestDTO body) {
+        log.atInfo().log("User with email or username '{}' is trying to log in.", body.emailOrUsername());
+
         User user = userRepository.findByUsernameOrEmail(body.emailOrUsername())
                 .orElseThrow(() -> new InvalidUserCredentialsException("The credential '" + body.emailOrUsername() +
-                        "' is invalid."));
+                                                                       "' is invalid."));
 
         boolean passwordMatches = passwordEncoder.matches(body.password(), user.getPassword());
         boolean userBannedOrNone =
@@ -137,9 +150,11 @@ public class AuthServiceImpl implements AuthService {
 
         Map.Entry<String, Instant> tokenAndExpiration = tokenService.generateToken(user, body.rememberMe());
 
+        log.atInfo().log("User with username '{}' logged in successfully.", user.getUsername());
+
         return new LoginResponseDTO(userMapper.toDTO(user),
-                tokenAndExpiration.getKey(),
-                tokenAndExpiration.getValue());
+                                    tokenAndExpiration.getKey(),
+                                    tokenAndExpiration.getValue());
     }
 
     private @NotNull String generateRandomString() {
