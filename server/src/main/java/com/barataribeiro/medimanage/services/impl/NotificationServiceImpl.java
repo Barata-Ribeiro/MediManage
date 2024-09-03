@@ -21,13 +21,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@Slf4j
 public class NotificationServiceImpl implements NotificationService {
     private final NotificationRepository notificationRepository;
     private final NotificationMapper notificationMapper;
@@ -35,7 +36,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional(readOnly = true)
     public Page<NotificationDTO> getAllUserNotifications(String userId, Boolean isRead, int page, int perPage,
-                                                         @NotNull String direction, String orderBy) {
+                                                         @NotNull String direction, String orderBy,
+                                                         Principal principal) {
         log.atInfo().log("Fetching notifications for user with id: {}", userId);
         log.atInfo().log("isRead: {}, page: {}, perPage: {}, direction: {}, orderBy: {}",
                          isRead, page, perPage, direction, orderBy);
@@ -45,9 +47,14 @@ public class NotificationServiceImpl implements NotificationService {
         PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
 
         Page<Notification> notifications;
-        if (isRead == null) notifications = notificationRepository.findAllByUser_Id(UUID.fromString(userId), pageable);
-        else notifications = notificationRepository
-                .findAllNotificationsPaginated(isRead, UUID.fromString(userId), pageable);
+        if (isRead == null) {
+            notifications = notificationRepository
+                    .findAllByUser_IdAndUser_Username(UUID.fromString(userId), principal.getName(), pageable);
+        } else {
+            notifications = notificationRepository
+                    .findAllNotificationsPaginated(isRead, UUID.fromString(userId), principal.getName(), pageable);
+        }
+
         List<NotificationDTO> notificationDTOS = notificationMapper.toDTOList(notifications.getContent());
         log.atInfo().log("Returning {} notifications.", notificationDTOS.size());
         return new PageImpl<>(notificationDTOS, pageable, notifications.getTotalElements());
@@ -55,10 +62,11 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional(readOnly = true)
-    public NotificationDTO getNotification(String userId, String notificationId) {
+    public NotificationDTO getNotification(String userId, String notificationId, @NotNull Principal principal) {
         log.atInfo().log("Fetching notification with id: {} for user with id: {}", notificationId, userId);
         Notification notification = notificationRepository
-                .findFirstByIdAndUser_Id(Long.parseLong(notificationId), UUID.fromString(userId))
+                .findFirstByIdAndUser_IdAndUser_Username(Long.parseLong(notificationId), UUID.fromString(userId),
+                                                         principal.getName())
                 .orElseThrow(() -> new NotificationNotFoundException(
                         String.format(ApplicationMessages.NOTIFICATION_NOT_FOUND_WITH_ID, notificationId)
                 ));
@@ -68,21 +76,24 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<NotificationDTO> getLatestUserNotifications(String userId) {
+    public List<NotificationDTO> getLatestUserNotifications(String userId, @NotNull Principal principal) {
         log.atInfo().log("Fetching latest 5 notifications for user with id: {}", userId);
-        List<Notification> notifications = notificationRepository.findDistinctTop5ByUser_IdOrderByIssuedAtAsc(
-                UUID.fromString(userId));
+        List<Notification> notifications =
+                notificationRepository.findDistinctTop5ByUser_IdAndUser_UsernameOrderByIssuedAtAsc(
+                        UUID.fromString(userId), principal.getName());
         log.atInfo().log("{} of the latest notifications found and returned.", notifications.size());
         return notificationMapper.toDTOList(notifications);
     }
 
     @Override
     @Transactional
-    public NotificationDTO changeNotificationStatus(String userId, String notificationId, Boolean isRead) {
+    public NotificationDTO changeNotificationStatus(String userId, String notificationId, Boolean isRead,
+                                                    @NotNull Principal principal) {
         log.atInfo().log("Changing status of notification with id: {} for user with id: {} to: {}",
                          notificationId, userId, isRead);
         Notification notification = notificationRepository
-                .findFirstByIdAndUser_Id(Long.parseLong(notificationId), UUID.fromString(userId))
+                .findFirstByIdAndUser_IdAndUser_Username(Long.parseLong(notificationId), UUID.fromString(userId),
+                                                         principal.getName())
                 .orElseThrow(() -> new NotificationNotFoundException(
                         String.format(ApplicationMessages.NOTIFICATION_NOT_FOUND_WITH_ID, notificationId)
                 ));
@@ -96,7 +107,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional
     public List<NotificationDTO> changeNotificationStatusInBatch(String userId,
-                                                                 List<UpdateNotificationDTO> notifications) {
+                                                                 List<UpdateNotificationDTO> notifications,
+                                                                 Principal principal) {
         if (notifications == null || notifications.isEmpty()) {
             throw new IllegalRequestException("No notifications to update.");
         }
@@ -109,7 +121,7 @@ public class NotificationServiceImpl implements NotificationService {
         ).toList();
 
         List<Notification> notificationsToUpdate = notificationRepository
-                .findDistinctByListOfIds(notificationsIds, UUID.fromString(userId));
+                .findDistinctByListOfIds(notificationsIds, UUID.fromString(userId), principal.getName());
 
         notificationsToUpdate.forEach(notification -> {
             UpdateNotificationDTO updateNotificationDTO = notifications.stream().filter(
@@ -131,10 +143,11 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional
-    public void deleteNotification(String userId, String notificationId) {
+    public void deleteNotification(String userId, String notificationId, @NotNull Principal principal) {
         log.atInfo().log("Deleting notification with id: {} for user with id: {}", notificationId, userId);
         Notification notification = notificationRepository
-                .findFirstByIdAndUser_Id(Long.parseLong(notificationId), UUID.fromString(userId))
+                .findFirstByIdAndUser_IdAndUser_Username(Long.parseLong(notificationId), UUID.fromString(userId),
+                                                         principal.getName())
                 .orElseThrow(() -> new NotificationNotFoundException(
                         String.format(ApplicationMessages.NOTIFICATION_NOT_FOUND_WITH_ID, notificationId)
                 ));
@@ -143,7 +156,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional
-    public void deleteNotificationsInBatch(String userId, List<String> notifIds) {
+    public void deleteNotificationsInBatch(String userId, List<String> notifIds, Principal principal) {
         if (notifIds == null || notifIds.isEmpty()) {
             throw new IllegalRequestException("No notifications to delete.");
         }
@@ -151,7 +164,7 @@ public class NotificationServiceImpl implements NotificationService {
         log.atInfo().log("Deleting {} notifications for user with id: {}.", notifIds.size(), userId);
         List<Long> notificationsIds = notifIds.stream().map(Long::parseLong).toList();
         List<Notification> notificationsToDelete = notificationRepository
-                .findDistinctByListOfIds(notificationsIds, UUID.fromString(userId));
+                .findDistinctByListOfIds(notificationsIds, UUID.fromString(userId), principal.getName());
 
         if (notificationsToDelete.isEmpty()) {
             throw new IllegalRequestException("No notifications to delete.");

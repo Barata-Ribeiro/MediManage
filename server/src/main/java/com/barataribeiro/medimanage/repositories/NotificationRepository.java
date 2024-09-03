@@ -18,25 +18,28 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Query("""
            SELECT n FROM Notification n
            LEFT JOIN FETCH n.user u
-           WHERE u.id = :userId AND n.isRead = :isRead
+           WHERE u.id = :userId AND u.username = :username
+           AND n.isRead = :isRead
            """)
     Page<Notification> findAllNotificationsPaginated(@Param("isRead") Boolean isRead, @Param("userId") UUID userId,
-                                                     Pageable pageable);
+                                                     @Param("username") String username, Pageable pageable);
 
     @EntityGraph(attributePaths = {"user"})
-    Page<Notification> findAllByUser_Id(UUID id, Pageable pageable);
+    Page<Notification> findAllByUser_IdAndUser_Username(UUID id, String username, Pageable pageable);
 
     @EntityGraph(attributePaths = {"user"})
-    Optional<Notification> findFirstByIdAndUser_Id(Long notifId, UUID userId);
+    Optional<Notification> findFirstByIdAndUser_IdAndUser_Username(Long notifId, UUID userId, String username);
 
     @EntityGraph(attributePaths = {"user"})
-    List<Notification> findDistinctTop5ByUser_IdOrderByIssuedAtAsc(UUID id);
+    List<Notification> findDistinctTop5ByUser_IdAndUser_UsernameOrderByIssuedAtAsc(UUID id, String username);
 
     @EntityGraph(attributePaths = {"user"})
     @Query("""
            SELECT DISTINCT n FROM Notification n
            LEFT JOIN FETCH n.user u
-           WHERE n.id IN :ids AND u.id = :userId
+           WHERE n.id IN :ids
+           AND u.id = :userId AND u.username = :username
            """)
-    List<Notification> findDistinctByListOfIds(@Param("ids") Collection<Long> ids, @Param("userId") UUID userId);
+    List<Notification> findDistinctByListOfIds(@Param("ids") Collection<Long> ids, @Param("userId") UUID userId,
+                                               @Param("username") String username);
 }
