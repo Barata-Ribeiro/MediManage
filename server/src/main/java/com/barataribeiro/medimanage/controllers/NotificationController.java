@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -27,9 +28,9 @@ public class NotificationController {
                                                                    @RequestParam(defaultValue = "10") int perPage,
                                                                    @RequestParam(defaultValue = "ASC") String direction,
                                                                    @RequestParam(defaultValue = "issuedAt")
-                                                                   String orderBy) {
+                                                                   String orderBy, Principal principal) {
         Page<NotificationDTO> response = notificationService.getAllUserNotifications(userId, isRead, page, perPage,
-                                                                                     direction, orderBy);
+                                                                                     direction, orderBy, principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                                                      HttpStatus.OK.value(),
                                                      "Notifications retrieved successfully.",
@@ -37,8 +38,9 @@ public class NotificationController {
     }
 
     @GetMapping("/{userId}/latest")
-    public ResponseEntity<RestResponseDTO> getLatestUserNotifications(@PathVariable String userId) {
-        List<NotificationDTO> response = notificationService.getLatestUserNotifications(userId);
+    public ResponseEntity<RestResponseDTO> getLatestUserNotifications(@PathVariable String userId,
+                                                                      Principal principal) {
+        List<NotificationDTO> response = notificationService.getLatestUserNotifications(userId, principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                                                      HttpStatus.OK.value(),
                                                      "Notifications retrieved successfully.",
@@ -47,8 +49,8 @@ public class NotificationController {
 
     @GetMapping("/{userId}/{notificationId}")
     public ResponseEntity<RestResponseDTO> getNotification(@PathVariable String userId,
-                                                           @PathVariable String notificationId) {
-        NotificationDTO response = notificationService.getNotification(userId, notificationId);
+                                                           @PathVariable String notificationId, Principal principal) {
+        NotificationDTO response = notificationService.getNotification(userId, notificationId, principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                                                      HttpStatus.OK.value(),
                                                      "Notification retrieved successfully.",
@@ -58,8 +60,9 @@ public class NotificationController {
     @PatchMapping("/{userId}/{notificationId}")
     public ResponseEntity<RestResponseDTO> changeNotificationStatus(@PathVariable String userId,
                                                                     @PathVariable String notificationId,
-                                                                    @RequestParam Boolean isRead) {
-        NotificationDTO response = notificationService.changeNotificationStatus(userId, notificationId, isRead);
+                                                                    @RequestParam Boolean isRead, Principal principal) {
+        NotificationDTO response = notificationService.changeNotificationStatus(userId, notificationId, isRead,
+                                                                                principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                                                      HttpStatus.OK.value(),
                                                      "Notification status changed successfully.",
@@ -69,8 +72,10 @@ public class NotificationController {
     @PatchMapping("/{userId}")
     public ResponseEntity<RestResponseDTO> changeNotificationStatusInBatch(@PathVariable String userId,
                                                                            @RequestBody @Valid
-                                                                           List<UpdateNotificationDTO> notifications) {
-        List<NotificationDTO> response = notificationService.changeNotificationStatusInBatch(userId, notifications);
+                                                                           List<UpdateNotificationDTO> notifications,
+                                                                           Principal principal) {
+        List<NotificationDTO> response = notificationService.changeNotificationStatusInBatch(userId, notifications,
+                                                                                             principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                                                      HttpStatus.OK.value(),
                                                      "Notifications statuses changed successfully.",
@@ -79,8 +84,9 @@ public class NotificationController {
 
     @DeleteMapping("/{userId}/{notificationId}")
     public ResponseEntity<RestResponseDTO> deleteNotification(@PathVariable String userId,
-                                                              @PathVariable String notificationId) {
-        notificationService.deleteNotification(userId, notificationId);
+                                                              @PathVariable String notificationId,
+                                                              Principal principal) {
+        notificationService.deleteNotification(userId, notificationId, principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                                                      HttpStatus.OK.value(),
                                                      "Notification deleted successfully.",
@@ -89,8 +95,9 @@ public class NotificationController {
 
     @DeleteMapping("/{userId}/batch")
     public ResponseEntity<RestResponseDTO> deleteNotificationsInBatch(@PathVariable String userId,
-                                                                      @RequestParam List<String> notifIds) {
-        notificationService.deleteNotificationsInBatch(userId, notifIds);
+                                                                      @RequestParam List<String> notifIds,
+                                                                      Principal principal) {
+        notificationService.deleteNotificationsInBatch(userId, notifIds, principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                                                      HttpStatus.OK.value(),
                                                      "Notifications deleted successfully.",
