@@ -7,6 +7,7 @@ import { Consultation } from "@/interfaces/consultations"
 import parseDate from "@/utils/parse-date"
 import { ProblemDetails } from "@/interfaces/actions"
 import SimpleErrorNotification from "@/components/helpers/simple-error-notification"
+import { useUser } from "@/context/user-context-provider"
 
 interface Props {
     id: number
@@ -19,6 +20,8 @@ export default function SelectConsultDate({ id, currentScheduledTo }: Readonly<P
     const [isFocused, setIsFocused] = useState(false)
     const [isPending, setIsPending] = useState(false)
     const [error, setError] = useState<ProblemDetails | string | null>(null)
+
+    const dataUser = useUser()
 
     async function handleScheduledToUpdate() {
         if (scheduledTo === inputDateTime || !inputDateTime) return
@@ -67,7 +70,7 @@ export default function SelectConsultDate({ id, currentScheduledTo }: Readonly<P
                         setIsFocused(false)
                         await handleScheduledToUpdate()
                     }}
-                    disabled={isPending}
+                    disabled={isPending || dataUser.user?.accountType !== "ASSISTANT"}
                     className="peer block w-full border-0 bg-transparent py-1.5 text-neutral-700 focus:ring-0 disabled:opacity-50 sm:text-sm sm:leading-6"
                 />
             </Field>
