@@ -25,17 +25,18 @@ public class PrescriptionController {
     @GetMapping("/patients/{patientId}")
     @Secured({"ACCOUNT_TYPE_ASSISTANT", "ACCOUNT_TYPE_DOCTOR"})
     public ResponseEntity<RestResponseDTO> getPatientPrescriptionsPaginatedList(@PathVariable String patientId,
-                                                                                @RequestParam(defaultValue = "0") int page,
-                                                                                @RequestParam(defaultValue = "10") int perPage,
-                                                                                @RequestParam(defaultValue = "ASC") String direction,
+                                                                                @RequestParam(defaultValue = "0")
+                                                                                int page,
+                                                                                @RequestParam(defaultValue = "10")
+                                                                                int perPage,
+                                                                                @RequestParam(defaultValue = "ASC")
+                                                                                String direction,
                                                                                 @RequestParam(defaultValue =
-                                                                                        "createdAt") String orderBy,
+                                                                                        "createdAt")
+                                                                                String orderBy,
                                                                                 Principal principal) {
-        Page<SimplePrescriptionDTO> response = prescriptionService.getPatientPrescriptionsPaginatedList(patientId, page,
-                                                                                                        perPage,
-                                                                                                        direction,
-                                                                                                        orderBy,
-                                                                                                        principal);
+        Page<SimplePrescriptionDTO> response = prescriptionService
+                .getPatientPrescriptionsPaginatedList(patientId, page, perPage, direction, orderBy, principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                                                      HttpStatus.OK.value(),
                                                      "Prescriptions retrieved successfully.",
@@ -44,8 +45,9 @@ public class PrescriptionController {
 
     @GetMapping("/{prescriptionId}")
     @Secured({"ACCOUNT_TYPE_ASSISTANT", "ACCOUNT_TYPE_DOCTOR"})
-    public ResponseEntity<RestResponseDTO> getPrescription(@PathVariable String prescriptionId, Principal principal) {
-        PrescriptionDTO response = prescriptionService.getPrescription(prescriptionId, principal);
+    public ResponseEntity<RestResponseDTO> getPrescription(@PathVariable String prescriptionId,
+                                                           @RequestParam String username, Principal principal) {
+        PrescriptionDTO response = prescriptionService.getPrescription(username, prescriptionId, principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
                                                      HttpStatus.OK.value(),
                                                      "Prescription retrieved successfully.",

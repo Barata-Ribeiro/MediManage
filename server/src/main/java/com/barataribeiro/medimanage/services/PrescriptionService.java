@@ -12,7 +12,7 @@ public interface PrescriptionService {
                                                                      String direction, String orderBy,
                                                                      Principal principal);
 
-    PrescriptionDTO getPrescription(String prescriptionId, Principal principal);
+    PrescriptionDTO getPrescription(String username, String prescriptionId, Principal principal);
 
     PrescriptionDTO createPrescription(String patientId, PrescriptionCreateDTO body, Principal principal);
 }

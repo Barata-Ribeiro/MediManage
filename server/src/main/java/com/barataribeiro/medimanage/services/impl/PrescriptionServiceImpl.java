@@ -45,6 +45,9 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     public Page<SimplePrescriptionDTO> getPatientPrescriptionsPaginatedList(String patientId, int page, int perPage,
                                                                             @NotNull String direction, String orderBy,
                                                                             Principal principal) {
+        log.atInfo().log("Fetching prescriptions for patient with id: {}", patientId);
+        log.atInfo().log("page: {}, perPage: {}, direction: {}, orderBy: {}", page, perPage, direction, orderBy);
+
         Sort.Direction sortDirection = direction.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC;
         orderBy = orderBy.equalsIgnoreCase(ApplicationConstants.CREATED_AT) ? ApplicationConstants.CREATED_AT : orderBy;
         PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
@@ -53,16 +56,19 @@ public class PrescriptionServiceImpl implements PrescriptionService {
                 prescriptionRepository.findAllByPatient_Id(UUID.fromString(patientId), pageable);
 
         List<SimplePrescriptionDTO> prescriptionDTOS = prescriptionMapper.toSimpleDTOList(prescriptions.getContent());
-
+        log.atInfo().log("Returning {} prescriptions.", prescriptionDTOS.size());
         return new PageImpl<>(prescriptionDTOS, pageable, prescriptions.getTotalElements());
     }
 
     @Override
-    public PrescriptionDTO getPrescription(String prescriptionId, Principal principal) {
-        Prescription prescription = prescriptionRepository.findById(Long.valueOf(prescriptionId)).orElseThrow(
+    public PrescriptionDTO getPrescription(String username, String prescriptionId, Principal principal) {
+        log.atInfo().log("Fetching prescription with id '{}' for user '{}'", prescriptionId, username);
+        Prescription prescription = prescriptionRepository.findByIdAndPatient_Username(Long.valueOf(prescriptionId),
+                                                                                       username).orElseThrow(
                 () -> new PrescriptionNotFoundException(String.format(
                         ApplicationMessages.PRESCRIPTION_NOT_FOUND_WITH_ID, prescriptionId)
                 ));
+        log.atInfo().log("Prescription with id '{}' for user '{}' has been found.", prescriptionId, username);
         return prescriptionMapper.toDTO(prescription);
     }
 

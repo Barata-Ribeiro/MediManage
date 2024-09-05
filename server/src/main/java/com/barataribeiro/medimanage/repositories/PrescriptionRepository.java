@@ -16,6 +16,9 @@ public interface PrescriptionRepository extends JpaRepository<Prescription, Long
     Page<Prescription> findAllByPatient_Id(UUID patientId, Pageable pageable);
 
     @EntityGraph(attributePaths = {"patient", "doctor"})
+    Optional<Prescription> findByIdAndPatient_Username(Long id, String username);
+
+    @EntityGraph(attributePaths = {"patient", "doctor"})
     Optional<Prescription> findFirstByPatient_UsernameOrderByCreatedAtAsc(String username);
 
     @EntityGraph(attributePaths = {"patient", "doctor"})
