@@ -70,12 +70,6 @@ public class User {
     private UserRoles userRoles = UserRoles.USER;
 
     @Builder.Default
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonIgnore
-    @ToString.Exclude
-    private Set<Notification> notifications = new LinkedHashSet<>();
-
-    @Builder.Default
     @Column(name = "total_notifications", columnDefinition = "BIGINT default '0'", nullable = false)
     private Long totalNotifications = 0L;
 
@@ -95,6 +89,44 @@ public class User {
     @UpdateTimestamp
     private Instant updatedAt;
 
+    // Associations
+    @Builder.Default
+    @JsonIgnore
+    @ToString.Exclude
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<Notification> notifications = new LinkedHashSet<>();
+
+    @Builder.Default
+    @JsonIgnore
+    @ToString.Exclude
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<Consultation> consultationsAsPatient = new LinkedHashSet<>();
+
+    @Builder.Default
+    @JsonIgnore
+    @ToString.Exclude
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<Consultation> consultationsAsDoctor = new LinkedHashSet<>();
+
+    @JsonIgnore
+    @ToString.Exclude
+    @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+    private MedicalRecord medicalRecord;
+
+    @Builder.Default
+    @JsonIgnore
+    @ToString.Exclude
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<Prescription> prescriptionsAsPatient = new LinkedHashSet<>();
+
+    @Builder.Default
+    @JsonIgnore
+    @ToString.Exclude
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<Prescription> prescriptionsAsDoctor = new LinkedHashSet<>();
+
+
+    // Lifecycle methods
     @PostLoad
     @PostPersist
     @PostUpdate
