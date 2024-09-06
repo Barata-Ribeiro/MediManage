@@ -12,10 +12,13 @@ import { ProblemDetails } from "@/interfaces/actions"
 
 export async function generateMetadata({ searchParams }: Readonly<RecordsPageProps>): Promise<Metadata> {
     if (!searchParams?.user) return notFound()
+    const state = await getAllPatientPrescriptionsPaginated(searchParams.user as string)
+    const stateContent = (state.response?.data as PaginatedSimplePrescriptions).content
+    const patientName = stateContent?.[0]?.patient.fullName ?? stateContent?.[0]?.patient.username
 
     return {
-        title: "Prescriptions of " + searchParams.user,
-        description: "These are the prescriptions of the patient with the username " + searchParams.user + ".",
+        title: "Prescriptions of " + patientName,
+        description: "These are the prescriptions of the patient with the username " + patientName + ".",
     }
 }
 
@@ -74,13 +77,13 @@ export default async function PrescriptionsPage({ params, searchParams }: Readon
                                     </th>
                                     <th
                                         scope="col"
-                                        className="sticky top-0 z-10 hidden border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left font-heading text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter sm:table-cell">
+                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left font-heading text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter">
                                         Doctor
                                     </th>
                                     <th
                                         scope="col"
-                                        className="sticky top-0 z-10 hidden border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left font-heading text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter sm:table-cell">
-                                        Issued At
+                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left font-heading text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter">
+                                        Last Updated
                                     </th>
                                     <th
                                         scope="col"
@@ -112,7 +115,7 @@ export default async function PrescriptionsPage({ params, searchParams }: Readon
                                             <td
                                                 className={twMerge(
                                                     presIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
-                                                    "hidden whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900 sm:table-cell",
+                                                    "whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900",
                                                 )}>
                                                 {pres.doctor.fullName ?? pres.doctor.username}
                                             </td>
@@ -128,11 +131,23 @@ export default async function PrescriptionsPage({ params, searchParams }: Readon
                                                     presIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
                                                     "whitespace-nowrap py-4 pl-3 pr-4 font-body text-sm text-neutral-900 sm:pr-6 lg:pr-8",
                                                 )}>
-                                                <Link
-                                                    href="#"
-                                                    className="font-heading font-semibold text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
-                                                    View<span className="sr-only">, {pres.patient.username}</span>
-                                                </Link>
+                                                <div className="flex gap-2">
+                                                    <Link
+                                                        href="#"
+                                                        className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
+                                                        View
+                                                    </Link>
+                                                    <Link
+                                                        href="#"
+                                                        className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
+                                                        Edit
+                                                    </Link>
+                                                    <Link
+                                                        href="#"
+                                                        className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
+                                                        Print
+                                                    </Link>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}
