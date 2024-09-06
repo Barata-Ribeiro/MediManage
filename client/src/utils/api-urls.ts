@@ -106,4 +106,7 @@ export const PRESCRIPTIONS_GET_ALL_BY_PATIENT_ID = (
     return `${BACKEND_URL}/api/v1/prescriptions/patients/${id}?page=${page}&perPage=${perPage}&direction=${direction}&orderBy=${orderBy}`
 }
 
+export const PRESCRIPTION_GET_BY_ID_AND_USERNAME = (id: string, username: string) =>
+    `${BACKEND_URL}/api/v1/prescriptions/${id}?username=${username}`
+
 export const PRESCRIPTION_CREATE = (id: string) => `${BACKEND_URL}/api/v1/prescriptions/patients/${id}`
