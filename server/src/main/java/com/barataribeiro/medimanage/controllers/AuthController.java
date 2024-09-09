@@ -9,6 +9,7 @@ import com.barataribeiro.medimanage.dtos.requests.RegisterNewEmployeeDTO;
 import com.barataribeiro.medimanage.dtos.requests.RegisterRequestDTO;
 import com.barataribeiro.medimanage.dtos.responses.LoginResponseDTO;
 import com.barataribeiro.medimanage.services.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import java.util.Map;
 public class AuthController {
     private final AuthService authService;
 
+    @Operation(summary = "Register a new user")
     @PostMapping("/register")
     public ResponseEntity<RestResponseDTO> register(@RequestBody @Valid RegisterRequestDTO body) {
         UserDTO response = authService.register(body);
@@ -37,6 +39,7 @@ public class AuthController {
                                                      response));
     }
 
+    @Operation(summary = "An assistant registers a new user")
     @PostMapping("/register-by-assistant")
     @Secured("ACCOUNT_TYPE_ASSISTANT")
     public ResponseEntity<RestResponseDTO> registerByAssistant(@RequestBody @Valid RegisterByAssistantDTO body) {
@@ -47,6 +50,7 @@ public class AuthController {
                                                      response));
     }
 
+    @Operation(summary = "An administrator registers a new employee")
     @PostMapping("/register-new-employee")
     @Secured("ACCOUNT_TYPE_ADMINISTRATOR")
     public ResponseEntity<RestResponseDTO> registerNewEmployee(@RequestBody @Valid RegisterNewEmployeeDTO body) {
@@ -57,6 +61,7 @@ public class AuthController {
                                                      response));
     }
 
+    @Operation(summary = "Sign in to the application")
     @PostMapping("/login")
     public ResponseEntity<RestResponseDTO> login(@RequestBody @Valid LoginRequestDTO body) {
         LoginResponseDTO response = authService.login(body);

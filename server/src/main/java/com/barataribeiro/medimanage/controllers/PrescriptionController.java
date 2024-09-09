@@ -5,6 +5,7 @@ import com.barataribeiro.medimanage.dtos.raw.RestResponseDTO;
 import com.barataribeiro.medimanage.dtos.raw.SimplePrescriptionDTO;
 import com.barataribeiro.medimanage.dtos.requests.PrescriptionCreateDTO;
 import com.barataribeiro.medimanage.services.PrescriptionService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,11 @@ import java.security.Principal;
 public class PrescriptionController {
     private final PrescriptionService prescriptionService;
 
+    @Operation(summary = "Get patient prescriptions paginated list",
+               description = "Get a paginated list of prescriptions for a specific patient. The list can be ordered " +
+                             "by " +
+                             "createdAt or updatedAt, and ordered in ASC or DESC order.",
+               tags = {"prescriptions"})
     @GetMapping("/patients/{patientId}")
     @Secured({"ACCOUNT_TYPE_ASSISTANT", "ACCOUNT_TYPE_DOCTOR"})
     public ResponseEntity<RestResponseDTO> getPatientPrescriptionsPaginatedList(@PathVariable String patientId,
@@ -43,6 +49,9 @@ public class PrescriptionController {
                                                      response));
     }
 
+    @Operation(summary = "Get prescription",
+               description = "Get a specific prescription.",
+               tags = {"prescriptions"})
     @GetMapping("/{prescriptionId}")
     @Secured({"ACCOUNT_TYPE_ASSISTANT", "ACCOUNT_TYPE_DOCTOR"})
     public ResponseEntity<RestResponseDTO> getPrescription(@PathVariable String prescriptionId,
@@ -54,6 +63,9 @@ public class PrescriptionController {
                                                      response));
     }
 
+    @Operation(summary = "Create prescription",
+               description = "Create a prescription for a specific patient.",
+               tags = {"prescriptions"})
     @PostMapping("/patients/{patientId}")
     @Secured("ACCOUNT_TYPE_DOCTOR")
     public ResponseEntity<RestResponseDTO> createPrescription(@PathVariable String patientId,

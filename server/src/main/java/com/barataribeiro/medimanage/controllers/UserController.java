@@ -8,6 +8,7 @@ import com.barataribeiro.medimanage.dtos.requests.UpdateUserInformationDTO;
 import com.barataribeiro.medimanage.entities.enums.AccountType;
 import com.barataribeiro.medimanage.repositories.UserRepository;
 import com.barataribeiro.medimanage.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +28,20 @@ public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
 
+    @Operation(summary = "Get all users paginated",
+               description = "Get a paginated list of users. The list can be filtered by type, ordered by createdAt " +
+                             "or" +
+                             " " +
+                             "updatedAt, and ordered in ASC or DESC order.",
+               tags = {"users"})
     @GetMapping
     @Secured("ACCOUNT_TYPE_ADMINISTRATOR")
     public ResponseEntity<RestResponseDTO> getAllUsersPaginated(@RequestParam(defaultValue = "0") int page,
                                                                 @RequestParam(defaultValue = "10") int perPage,
                                                                 @RequestParam(required = false) String type,
                                                                 @RequestParam(defaultValue = "ASC") String direction,
-                                                                @RequestParam(defaultValue = "createdAt") String orderBy,
+                                                                @RequestParam(defaultValue = "createdAt")
+                                                                String orderBy,
                                                                 Principal principal) {
         Page<UserDTO> response = userService.getAllUsersPaginated(page, perPage, type, direction, orderBy, principal);
         return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
@@ -42,6 +50,9 @@ public class UserController {
                                                      response));
     }
 
+    @Operation(summary = "Get user information",
+               description = "Get a specific user information.",
+               tags = {"users"})
     @GetMapping("/{userId}")
     @Secured("ACCOUNT_TYPE_ADMINISTRATOR")
     public ResponseEntity<RestResponseDTO> getUserInformation(@PathVariable String userId, Principal principal) {
@@ -52,6 +63,9 @@ public class UserController {
                                                      response));
     }
 
+    @Operation(summary = "Update user information",
+               description = "Update a specific user information.",
+               tags = {"users"})
     @PatchMapping("/{userId}")
     @Secured("ACCOUNT_TYPE_ADMINISTRATOR")
     public ResponseEntity<RestResponseDTO> updateUserInformation(@PathVariable String userId,
@@ -64,6 +78,9 @@ public class UserController {
                                                      response));
     }
 
+    @Operation(summary = "Delete user",
+               description = "Delete a specific user.",
+               tags = {"users"})
     @DeleteMapping("/{userId}")
     @Secured("ACCOUNT_TYPE_ADMINISTRATOR")
     public ResponseEntity<RestResponseDTO> deleteUser(@PathVariable String userId, Principal principal) {
@@ -74,6 +91,9 @@ public class UserController {
                                                      null));
     }
 
+    @Operation(summary = "Get user context",
+               description = "For the logged user, get the user context.",
+               tags = {"users"})
     @GetMapping("/me/context")
     public ResponseEntity<RestResponseDTO> getContext(Principal principal) {
         UserDTO response = userService.getContext(principal);
@@ -83,6 +103,9 @@ public class UserController {
                                                      response));
     }
 
+    @Operation(summary = "Update account",
+               description = "Update the account information of the logged user.",
+               tags = {"users"})
     @PatchMapping("/me")
     public ResponseEntity<RestResponseDTO> updateAccount(@RequestBody @Valid UpdateAccountRequestDTO body,
                                                          Principal principal) {
@@ -93,6 +116,9 @@ public class UserController {
                                                      response));
     }
 
+    @Operation(summary = "Get search suggestions",
+               description = "Get search suggestions for users.",
+               tags = {"users"})
     @GetMapping("/search-suggestions")
     @Secured({"ACCOUNT_TYPE_ASSISTANT", "ACCOUNT_TYPE_ADMINISTRATOR", "ACCOUNT_TYPE_DOCTOR"})
     public ResponseEntity<RestResponseDTO> getSearchSuggestions(@RequestParam(defaultValue = "") String search,

@@ -4,6 +4,7 @@ import com.barataribeiro.medimanage.dtos.raw.NotificationDTO;
 import com.barataribeiro.medimanage.dtos.raw.RestResponseDTO;
 import com.barataribeiro.medimanage.dtos.requests.UpdateNotificationDTO;
 import com.barataribeiro.medimanage.services.NotificationService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,10 @@ import java.util.List;
 public class NotificationController {
     private final NotificationService notificationService;
 
+    @Operation(summary = "Get all user notifications",
+               description = "Get a paginated list of notifications for a specific user. The list can be filtered by " +
+                             "isRead, ordered by issuedAt, and ordered in ASC or DESC order.",
+               tags = {"notifications"})
     @GetMapping("/{userId}")
     public ResponseEntity<RestResponseDTO> getAllUserNotifications(@PathVariable String userId,
                                                                    @RequestParam(required = false) Boolean isRead,
@@ -37,6 +42,9 @@ public class NotificationController {
                                                      response));
     }
 
+    @Operation(summary = "Get latest user notifications",
+               description = "Get the latest notifications for a specific user.",
+               tags = {"notifications"})
     @GetMapping("/{userId}/latest")
     public ResponseEntity<RestResponseDTO> getLatestUserNotifications(@PathVariable String userId,
                                                                       Principal principal) {
@@ -47,6 +55,9 @@ public class NotificationController {
                                                      response));
     }
 
+    @Operation(summary = "Get notification",
+               description = "Get a specific notification.",
+               tags = {"notifications"})
     @GetMapping("/{userId}/{notificationId}")
     public ResponseEntity<RestResponseDTO> getNotification(@PathVariable String userId,
                                                            @PathVariable String notificationId, Principal principal) {
@@ -57,6 +68,9 @@ public class NotificationController {
                                                      response));
     }
 
+    @Operation(summary = "Change notification status",
+               description = "Change the status of a specific notification.",
+               tags = {"notifications"})
     @PatchMapping("/{userId}/{notificationId}")
     public ResponseEntity<RestResponseDTO> changeNotificationStatus(@PathVariable String userId,
                                                                     @PathVariable String notificationId,
@@ -69,6 +83,9 @@ public class NotificationController {
                                                      response));
     }
 
+    @Operation(summary = "Change notification status in batch",
+               description = "Change the status of multiple notifications.",
+               tags = {"notifications"})
     @PatchMapping("/{userId}")
     public ResponseEntity<RestResponseDTO> changeNotificationStatusInBatch(@PathVariable String userId,
                                                                            @RequestBody @Valid
@@ -82,6 +99,9 @@ public class NotificationController {
                                                      response));
     }
 
+    @Operation(summary = "Delete notification",
+               description = "Delete a specific notification.",
+               tags = {"notifications"})
     @DeleteMapping("/{userId}/{notificationId}")
     public ResponseEntity<RestResponseDTO> deleteNotification(@PathVariable String userId,
                                                               @PathVariable String notificationId,
@@ -93,6 +113,9 @@ public class NotificationController {
                                                      null));
     }
 
+    @Operation(summary = "Delete notifications in batch",
+               description = "Delete multiple notifications.",
+               tags = {"notifications"})
     @DeleteMapping("/{userId}/batch")
     public ResponseEntity<RestResponseDTO> deleteNotificationsInBatch(@PathVariable String userId,
                                                                       @RequestParam List<String> notifIds,

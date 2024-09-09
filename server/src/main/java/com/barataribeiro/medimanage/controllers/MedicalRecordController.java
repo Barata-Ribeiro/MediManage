@@ -5,6 +5,7 @@ import com.barataribeiro.medimanage.dtos.raw.RestResponseDTO;
 import com.barataribeiro.medimanage.dtos.raw.SimpleMedicalRecordDTO;
 import com.barataribeiro.medimanage.dtos.requests.MedicalRecordRegisterDTO;
 import com.barataribeiro.medimanage.services.MedicalRecordService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +23,20 @@ import java.security.Principal;
 public class MedicalRecordController {
     private final MedicalRecordService medicalRecordService;
 
+    @Operation(summary = "Get medical records paginated",
+               description = "Get a paginated list of medical records. The list can be filtered by search, ordered by" +
+                             " " +
+                             "createdAt or updatedAt, and ordered in ASC or DESC order.",
+               tags = {"records"})
     @GetMapping
     @Secured({"ACCOUNT_TYPE_ASSISTANT", "ACCOUNT_TYPE_DOCTOR"})
     public ResponseEntity<RestResponseDTO> getMedicalRecordsPaginated(@RequestParam(required = false) String search,
                                                                       @RequestParam(defaultValue = "0") int page,
                                                                       @RequestParam(defaultValue = "10") int perPage,
-                                                                      @RequestParam(defaultValue = "ASC") String direction,
-                                                                      @RequestParam(defaultValue = "createdAt") String orderBy,
+                                                                      @RequestParam(defaultValue = "ASC")
+                                                                      String direction,
+                                                                      @RequestParam(defaultValue = "createdAt")
+                                                                      String orderBy,
                                                                       Principal principal) {
         Page<SimpleMedicalRecordDTO> response = medicalRecordService.getMedicalRecordsPaginated(search, page, perPage,
                                                                                                 direction, orderBy,
@@ -39,6 +47,9 @@ public class MedicalRecordController {
                                                      response));
     }
 
+    @Operation(summary = "Get medical record",
+               description = "Get a specific medical record.",
+               tags = {"records"})
     @GetMapping("/{recordId}")
     @Secured({"ACCOUNT_TYPE_ASSISTANT", "ACCOUNT_TYPE_DOCTOR"})
     public ResponseEntity<RestResponseDTO> getMedicalRecord(@PathVariable String recordId, Principal principal) {
@@ -49,6 +60,9 @@ public class MedicalRecordController {
                                                      response));
     }
 
+    @Operation(summary = "Register medical record",
+               description = "Register a new medical record.",
+               tags = {"records"})
     @PostMapping
     @Secured("ACCOUNT_TYPE_ASSISTANT")
     public ResponseEntity<RestResponseDTO> registerMedicalRecord(@RequestBody @Valid MedicalRecordRegisterDTO body,
@@ -60,6 +74,9 @@ public class MedicalRecordController {
                                                      response));
     }
 
+    @Operation(summary = "Update medical record",
+               description = "Update a specific medical record.",
+               tags = {"records"})
     @PutMapping("/{recordId}")
     @Secured("ACCOUNT_TYPE_DOCTOR")
     public ResponseEntity<RestResponseDTO> updateMedicalRecord(@PathVariable String recordId,
