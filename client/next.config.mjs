@@ -6,6 +6,7 @@ const nextConfig = {
     skipTrailingSlashRedirect: true,
     experimental: {
         optimizePackageImports: ["tailwindcss", "@headlessui/react", "react-icons/fa6"],
+        serverComponentsExternalPackages: ["@react-pdf/renderer"],
     },
 }
 
