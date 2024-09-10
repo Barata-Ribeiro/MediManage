@@ -94,63 +94,78 @@ export default async function PrescriptionsPage({ params, searchParams }: Readon
                             </thead>
                             <tbody>
                                 {content.length > 0 &&
-                                    content.map((pres, presIdx) => (
-                                        <tr
-                                            key={pres.id + "_" + presIdx}
-                                            className="border-b border-neutral-300 bg-white">
-                                            <td
-                                                className={twMerge(
-                                                    presIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
-                                                    "whitespace-nowrap py-4 pl-4 pr-3 font-body text-sm font-medium text-neutral-900 sm:pl-6 lg:pl-8",
-                                                )}>
-                                                {pres.id}
-                                            </td>
-                                            <td
-                                                className={twMerge(
-                                                    presIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
-                                                    "hidden whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900 sm:table-cell",
-                                                )}>
-                                                {pres.patient.fullName ?? pres.patient.username}
-                                            </td>
-                                            <td
-                                                className={twMerge(
-                                                    presIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
-                                                    "whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900",
-                                                )}>
-                                                {pres.doctor.fullName ?? pres.doctor.username}
-                                            </td>
-                                            <td
-                                                className={twMerge(
-                                                    presIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
-                                                    "whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900",
-                                                )}>
-                                                {parseDate(pres.createdAt)}
-                                            </td>
-                                            <td
-                                                className={twMerge(
-                                                    presIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
-                                                    "whitespace-nowrap py-4 pl-3 pr-4 font-body text-sm text-neutral-900 sm:pr-6 lg:pr-8",
-                                                )}>
-                                                <div className="flex gap-2">
-                                                    <Link
-                                                        href="#"
-                                                        className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
-                                                        View
-                                                    </Link>
-                                                    <Link
-                                                        href="#"
-                                                        className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
-                                                        Edit
-                                                    </Link>
-                                                    <Link
-                                                        href="#"
-                                                        className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
-                                                        Print
-                                                    </Link>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                    content.map((pres, presIdx) => {
+                                        const baseUrl = `/dashboard/${params.username}/records/prescriptions/${pres.id}/${pres.patient.username}`
+                                        return (
+                                            <tr
+                                                key={pres.id + "_" + presIdx}
+                                                className="border-b border-neutral-300 bg-white">
+                                                <td
+                                                    className={twMerge(
+                                                        presIdx !== content.length - 1
+                                                            ? "border-b border-neutral-200"
+                                                            : "",
+                                                        "whitespace-nowrap py-4 pl-4 pr-3 font-body text-sm font-medium text-neutral-900 sm:pl-6 lg:pl-8",
+                                                    )}>
+                                                    {pres.id}
+                                                </td>
+                                                <td
+                                                    className={twMerge(
+                                                        presIdx !== content.length - 1
+                                                            ? "border-b border-neutral-200"
+                                                            : "",
+                                                        "hidden whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900 sm:table-cell",
+                                                    )}>
+                                                    {pres.patient.fullName ?? pres.patient.username}
+                                                </td>
+                                                <td
+                                                    className={twMerge(
+                                                        presIdx !== content.length - 1
+                                                            ? "border-b border-neutral-200"
+                                                            : "",
+                                                        "whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900",
+                                                    )}>
+                                                    {pres.doctor.fullName ?? pres.doctor.username}
+                                                </td>
+                                                <td
+                                                    className={twMerge(
+                                                        presIdx !== content.length - 1
+                                                            ? "border-b border-neutral-200"
+                                                            : "",
+                                                        "whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900",
+                                                    )}>
+                                                    {parseDate(pres.createdAt)}
+                                                </td>
+                                                <td
+                                                    className={twMerge(
+                                                        presIdx !== content.length - 1
+                                                            ? "border-b border-neutral-200"
+                                                            : "",
+                                                        "whitespace-nowrap py-4 pl-3 pr-4 font-body text-sm text-neutral-900 sm:pr-6 lg:pr-8",
+                                                    )}>
+                                                    <div className="flex gap-2">
+                                                        <Link
+                                                            href={baseUrl}
+                                                            className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
+                                                            View
+                                                        </Link>
+                                                        <Link
+                                                            href={baseUrl + "/edit"}
+                                                            className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
+                                                            Edit
+                                                        </Link>
+                                                        <Link
+                                                            href={baseUrl + "/pdf"}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
+                                                            Print
+                                                        </Link>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )
+                                    })}
 
                                 {content.length < 1 && (
                                     <tr className="border-b border-neutral-300 bg-white">
