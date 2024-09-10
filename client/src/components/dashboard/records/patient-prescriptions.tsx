@@ -47,17 +47,19 @@ export default function PatientPrescriptions({ prescriptionsPage, patient }: Rea
 
                             <div className="flex gap-2">
                                 <Link
-                                    href="#"
+                                    href={baseUrl + `/${prescription.id}/${prescription.patient.username}/view`}
                                     className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
                                     View
                                 </Link>
                                 <Link
-                                    href="#"
+                                    href={baseUrl + `/${prescription.id}/${prescription.patient.username}/edit`}
                                     className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
                                     Edit
                                 </Link>
                                 <Link
-                                    href="#"
+                                    href={baseUrl + `/${prescription.id}/${prescription.patient.username}/pdf`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
                                     Print
                                 </Link>
