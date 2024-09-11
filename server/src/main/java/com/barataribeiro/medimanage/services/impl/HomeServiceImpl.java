@@ -10,18 +10,19 @@ import com.barataribeiro.medimanage.entities.models.Consultation;
 import com.barataribeiro.medimanage.entities.models.MedicalRecord;
 import com.barataribeiro.medimanage.entities.models.Notice;
 import com.barataribeiro.medimanage.entities.models.Prescription;
-import com.barataribeiro.medimanage.exceptions.MediManageException;
 import com.barataribeiro.medimanage.repositories.*;
 import com.barataribeiro.medimanage.services.HomeService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Sinks;
+import reactor.core.scheduler.Schedulers;
 
 import java.security.Principal;
 import java.time.Duration;
@@ -30,6 +31,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class HomeServiceImpl implements HomeService {
@@ -41,15 +43,6 @@ public class HomeServiceImpl implements HomeService {
     private final PrescriptionRepository prescriptionRepository;
     private final UserRepository userRepository;
     private final ConsultationMapper consultationMapper;
-    private final Sinks.Many<RestResponseDTO<Map<String, Object>>> administratorSink =
-            Sinks.many().multicast().onBackpressureBuffer();
-    private final Sinks.Many<RestResponseDTO<Map<String, Object>>> patientSink =
-            Sinks.many().multicast().onBackpressureBuffer();
-    private final Sinks.Many<RestResponseDTO<Map<String, Object>>> assistantSink =
-            Sinks.many().multicast().onBackpressureBuffer();
-    private final Sinks.Many<RestResponseDTO<Map<String, Object>>> doctorSink =
-            Sinks.many().multicast().onBackpressureBuffer();
-    private HomeService homeService;
 
     @Override
     @Transactional
@@ -138,82 +131,55 @@ public class HomeServiceImpl implements HomeService {
 
     @Override
     public Flux<ServerSentEvent<RestResponseDTO<Map<String, Object>>>> streamAdministratorInfo(Principal principal) {
-        return Flux.interval(Duration.ofSeconds(5))
-                .map(seq -> {
-                    Map<String, Object> response = homeService.getAdministratorInfo(principal);
-                    RestResponseDTO<Map<String, Object>> restResponseDTO = new RestResponseDTO<>(
-                            HttpStatus.OK, HttpStatus.OK.value(),
-                            ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
-                            response);
-                    return ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
-                            .id(String.valueOf(seq))
-                            .event("admin-info")
-                            .data(restResponseDTO)
-                            .build();
-                }).doOnNext(event -> {
-                    if (event.data() != null) administratorSink.tryEmitNext(event.data());
-                    else administratorSink.tryEmitError(new MediManageException());
-                });
-
+        return null;
     }
 
     @Override
     public Flux<ServerSentEvent<RestResponseDTO<Map<String, Object>>>> streamPatientInfo(Principal principal) {
-        return Flux.interval(Duration.ofSeconds(5))
-                .map(seq -> {
-                    Map<String, Object> response = homeService.getPatientInfo(principal);
-                    RestResponseDTO<Map<String, Object>> restResponseDTO = new RestResponseDTO<>(
-                            HttpStatus.OK, HttpStatus.OK.value(),
-                            ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
-                            response);
-                    return ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
-                            .id(String.valueOf(seq))
-                            .event("patient-info")
-                            .data(restResponseDTO)
-                            .build();
-                }).doOnNext(event -> {
-                    if (event.data() != null) patientSink.tryEmitNext(event.data());
-                    else patientSink.tryEmitError(new MediManageException());
-                });
+        return null;
     }
 
     @Override
     public Flux<ServerSentEvent<RestResponseDTO<Map<String, Object>>>> streamAssistantInfo(Principal principal) {
-        return Flux.interval(Duration.ofSeconds(5))
-                .map(seq -> {
-                    Map<String, Object> response = homeService.getAssistantInfo(principal);
-                    RestResponseDTO<Map<String, Object>> restResponseDTO = new RestResponseDTO<>(
-                            HttpStatus.OK, HttpStatus.OK.value(),
-                            ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
-                            response);
-                    return ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
-                            .id(String.valueOf(seq))
-                            .event("assistant-info")
-                            .data(restResponseDTO)
-                            .build();
-                }).doOnNext(event -> {
-                    if (event.data() != null) assistantSink.tryEmitNext(event.data());
-                    else assistantSink.tryEmitError(new MediManageException());
-                });
+        return null;
     }
 
     @Override
     public Flux<ServerSentEvent<RestResponseDTO<Map<String, Object>>>> streamDoctorInfo(Principal principal) {
-        return Flux.interval(Duration.ofSeconds(5))
-                .map(seq -> {
-                    Map<String, Object> response = homeService.getDoctorInfo(principal);
-                    RestResponseDTO<Map<String, Object>> restResponseDTO = new RestResponseDTO<>(
-                            HttpStatus.OK, HttpStatus.OK.value(),
-                            ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
-                            response);
-                    return ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
-                            .id(String.valueOf(seq))
-                            .event("doctor-info")
-                            .data(restResponseDTO)
-                            .build();
-                }).doOnNext(event -> {
-                    if (event.data() != null) doctorSink.tryEmitNext(event.data());
-                    else doctorSink.tryEmitError(new MediManageException());
-                });
+        log.info("Streaming doctor info in HomeServiceImpl...");
+
+        return Flux.interval(Duration.ofSeconds(10))
+                .doOnNext(seq -> log.info("Emitting doctor info for stream..."))
+                .publishOn(Schedulers.boundedElastic())
+                .map(seq -> ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
+                        .id(String.valueOf(seq))
+                        .event("doctor-info")
+                        .data(new RestResponseDTO<>(HttpStatus.OK,
+                                                    HttpStatus.OK.value(),
+                                                    ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
+                                                    getDoctorInfoForStream(principal)))
+                        .build());
+    }
+
+    private @NotNull @Unmodifiable Map<String, Object> getDoctorInfoForStream(@NotNull Principal principal) {
+        log.info("Getting doctor info for stream in HomeServiceImpl...");
+
+        Notice latestNotice = noticeRepository.findDistinctFirstByOrderByCreatedAtDesc().orElse(null);
+        Consultation nextConsultation = consultationRepository.findNextConsultationToBeAccepted().orElse(null);
+
+        List<Prescription> prescriptions =
+                prescriptionRepository.findTop5DistinctByDoctor_UsernameOrderByUpdatedAtDesc(principal.getName());
+        List<SimplePrescriptionDTO> recentPrescriptions = prescriptionMapper.toSimpleDTOList(prescriptions);
+
+        return Map.of(
+                ApplicationConstants.NEXT_CONSULTATION, nextConsultation != null ? nextConsultation : Map.of(),
+
+                ApplicationConstants.CONSULTATIONS_BY_STATUS,
+                consultationRepository.countGroupedConsultationsByStatus(),
+
+                ApplicationConstants.LATEST_NOTICE, latestNotice != null ? latestNotice : Map.of(),
+
+                ApplicationConstants.RECENT_PRESCRIPTIONS, recentPrescriptions
+        );
     }
 }
