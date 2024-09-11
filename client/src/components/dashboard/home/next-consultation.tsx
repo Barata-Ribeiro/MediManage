@@ -1,5 +1,3 @@
-"use client"
-
 import { Consultation } from "@/interfaces/consultations"
 import ConsultationEmptySkeleton from "@/components/dashboard/skeletons/consultation-empty-skeleton"
 

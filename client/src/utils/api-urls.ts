@@ -1,4 +1,4 @@
-const BACKEND_URL = process.env.BACKEND_ORIGIN ?? "http://localhost:8080"
+export const BACKEND_URL = process.env.BACKEND_ORIGIN ?? "http://localhost:8080"
 
 // Auth
 export const AUTH_REGISTER = () => `${BACKEND_URL}/api/v1/auth/register`

@@ -1,5 +1,3 @@
-"use client"
-
 type ConsultationValues = "missed" | "inProgress" | "scheduled" | "cancelled" | "accepted" | "done"
 
 interface DoctorHomeProps {

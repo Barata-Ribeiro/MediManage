@@ -1,5 +1,3 @@
-"use client"
-
 import NoticeEmptySkeleton from "@/components/dashboard/skeletons/notice-empty-skeleton"
 
 interface LatestNoticeProps {
