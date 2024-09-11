@@ -1,9 +1,9 @@
 package com.barataribeiro.medimanage.controllers;
 
 import com.barataribeiro.medimanage.dtos.raw.PrescriptionDTO;
-import com.barataribeiro.medimanage.dtos.raw.RestResponseDTO;
 import com.barataribeiro.medimanage.dtos.raw.SimplePrescriptionDTO;
 import com.barataribeiro.medimanage.dtos.requests.PrescriptionCreateDTO;
+import com.barataribeiro.medimanage.dtos.responses.RestResponseDTO;
 import com.barataribeiro.medimanage.services.PrescriptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -30,23 +30,20 @@ public class PrescriptionController {
                tags = {"prescriptions"})
     @GetMapping("/patients/{patientId}")
     @Secured({"ACCOUNT_TYPE_ASSISTANT", "ACCOUNT_TYPE_DOCTOR"})
-    public ResponseEntity<RestResponseDTO> getPatientPrescriptionsPaginatedList(@PathVariable String patientId,
-                                                                                @RequestParam(defaultValue = "0")
-                                                                                int page,
-                                                                                @RequestParam(defaultValue = "10")
-                                                                                int perPage,
-                                                                                @RequestParam(defaultValue = "ASC")
-                                                                                String direction,
-                                                                                @RequestParam(defaultValue =
-                                                                                        "createdAt")
-                                                                                String orderBy,
-                                                                                Principal principal) {
+    public ResponseEntity<RestResponseDTO<Page<SimplePrescriptionDTO>>> getPatientPrescriptionsPaginatedList(
+            @PathVariable String patientId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int perPage,
+            @RequestParam(defaultValue = "ASC") String direction,
+            @RequestParam(defaultValue = "createdAt") String orderBy,
+            Principal principal) {
+
         Page<SimplePrescriptionDTO> response = prescriptionService
                 .getPatientPrescriptionsPaginatedList(patientId, page, perPage, direction, orderBy, principal);
-        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
-                                                     HttpStatus.OK.value(),
-                                                     "Prescriptions retrieved successfully.",
-                                                     response));
+        return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
+                                                       HttpStatus.OK.value(),
+                                                       "Prescriptions retrieved successfully.",
+                                                       response));
     }
 
     @Operation(summary = "Get prescription",
@@ -54,13 +51,14 @@ public class PrescriptionController {
                tags = {"prescriptions"})
     @GetMapping("/{prescriptionId}")
     @Secured({"ACCOUNT_TYPE_ASSISTANT", "ACCOUNT_TYPE_DOCTOR"})
-    public ResponseEntity<RestResponseDTO> getPrescription(@PathVariable String prescriptionId,
-                                                           @RequestParam String username, Principal principal) {
+    public ResponseEntity<RestResponseDTO<PrescriptionDTO>> getPrescription(@PathVariable String prescriptionId,
+                                                                            @RequestParam String username,
+                                                                            Principal principal) {
         PrescriptionDTO response = prescriptionService.getPrescription(username, prescriptionId, principal);
-        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
-                                                     HttpStatus.OK.value(),
-                                                     "Prescription retrieved successfully.",
-                                                     response));
+        return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
+                                                       HttpStatus.OK.value(),
+                                                       "Prescription retrieved successfully.",
+                                                       response));
     }
 
     @Operation(summary = "Create prescription",
@@ -68,13 +66,14 @@ public class PrescriptionController {
                tags = {"prescriptions"})
     @PostMapping("/patients/{patientId}")
     @Secured("ACCOUNT_TYPE_DOCTOR")
-    public ResponseEntity<RestResponseDTO> createPrescription(@PathVariable String patientId,
-                                                              @RequestBody @Valid PrescriptionCreateDTO body,
-                                                              Principal principal) {
+    public ResponseEntity<RestResponseDTO<PrescriptionDTO>> createPrescription(@PathVariable String patientId,
+                                                                               @RequestBody @Valid
+                                                                               PrescriptionCreateDTO body,
+                                                                               Principal principal) {
         PrescriptionDTO response = prescriptionService.createPrescription(patientId, body, principal);
-        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.CREATED,
-                                                     HttpStatus.CREATED.value(),
-                                                     "Prescription created successfully.",
-                                                     response));
+        return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.CREATED,
+                                                       HttpStatus.CREATED.value(),
+                                                       "Prescription created successfully.",
+                                                       response));
     }
 }

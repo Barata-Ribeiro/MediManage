@@ -1,8 +1,8 @@
 package com.barataribeiro.medimanage.controllers;
 
 import com.barataribeiro.medimanage.dtos.raw.NoticeDTO;
-import com.barataribeiro.medimanage.dtos.raw.RestResponseDTO;
 import com.barataribeiro.medimanage.dtos.requests.NoticeRequestDTO;
+import com.barataribeiro.medimanage.dtos.responses.RestResponseDTO;
 import com.barataribeiro.medimanage.services.NoticeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,57 +22,61 @@ public class NoticeController {
     private final NoticeService noticeService;
 
     @GetMapping("/public/latest")
-    public ResponseEntity<RestResponseDTO> getLastPublished() {
+    public ResponseEntity<RestResponseDTO<NoticeDTO>> getLastPublished() {
         NoticeDTO response = noticeService.getLastPublished();
-        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
-                                                     HttpStatus.OK.value(),
-                                                     "Latest notices retrieved successfully.",
-                                                     response));
+        return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
+                                                       HttpStatus.OK.value(),
+                                                       "Latest notices retrieved successfully.",
+                                                       response));
     }
 
     @GetMapping
     @Secured("ACCOUNT_TYPE_ADMINISTRATOR")
-    public ResponseEntity<RestResponseDTO> getAllNotices(@RequestParam(defaultValue = "0") int page,
-                                                         @RequestParam(defaultValue = "10") int perPage,
-                                                         @RequestParam(defaultValue = "ASC") String direction,
-                                                         @RequestParam(defaultValue = "createdAt") String orderBy) {
+    public ResponseEntity<RestResponseDTO<Page<NoticeDTO>>> getAllNotices(@RequestParam(defaultValue = "0") int page,
+                                                                          @RequestParam(defaultValue = "10")
+                                                                          int perPage,
+                                                                          @RequestParam(defaultValue = "ASC")
+                                                                          String direction,
+                                                                          @RequestParam(defaultValue = "createdAt")
+                                                                          String orderBy) {
+
         Page<NoticeDTO> response = noticeService.getAllNoticesPaginated(page, perPage, direction, orderBy);
-        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
-                                                     HttpStatus.OK.value(),
-                                                     "All notices retrieved successfully.",
-                                                     response));
+        return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
+                                                       HttpStatus.OK.value(),
+                                                       "All notices retrieved successfully.",
+                                                       response));
     }
 
     @GetMapping("/{noticeId}")
     @Secured("ACCOUNT_TYPE_ADMINISTRATOR")
-    public ResponseEntity<RestResponseDTO> getNoticeById(@PathVariable Long noticeId) {
+    public ResponseEntity<RestResponseDTO<NoticeDTO>> getNoticeById(@PathVariable Long noticeId) {
         NoticeDTO response = noticeService.getNoticeById(noticeId);
-        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
-                                                     HttpStatus.OK.value(),
-                                                     "Notice retrieved successfully.",
-                                                     response));
+        return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
+                                                       HttpStatus.OK.value(),
+                                                       "Notice retrieved successfully.",
+                                                       response));
     }
 
     @PostMapping
     @Secured("ACCOUNT_TYPE_ADMINISTRATOR")
-    public ResponseEntity<RestResponseDTO> createNotice(@RequestBody @Valid NoticeRequestDTO body,
-                                                        Principal principal) {
+    public ResponseEntity<RestResponseDTO<NoticeDTO>> createNotice(@RequestBody @Valid NoticeRequestDTO body,
+                                                                   Principal principal) {
         NoticeDTO response = noticeService.createNotice(body, principal);
-        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.CREATED,
-                                                     HttpStatus.CREATED.value(),
-                                                     "Notice created successfully.",
-                                                     response));
+        return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.CREATED,
+                                                       HttpStatus.CREATED.value(),
+                                                       "Notice created successfully.",
+                                                       response));
     }
 
     @PatchMapping("/{noticeId}")
     @Secured("ACCOUNT_TYPE_ADMINISTRATOR")
-    public ResponseEntity<RestResponseDTO> updateNotice(@PathVariable Long noticeId,
-                                                        @RequestBody @Valid NoticeRequestDTO body,
-                                                        Principal principal) {
+    public ResponseEntity<RestResponseDTO<NoticeDTO>> updateNotice(@PathVariable Long noticeId,
+                                                                   @RequestBody @Valid NoticeRequestDTO body,
+                                                                   Principal principal) {
         NoticeDTO response = noticeService.updateNotice(noticeId, body, principal);
-        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
-                                                     HttpStatus.OK.value(),
-                                                     "Notice updated successfully.",
-                                                     response));
+        return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
+                                                       HttpStatus.OK.value(),
+                                                       "Notice updated successfully.",
+                                                       response));
     }
 }

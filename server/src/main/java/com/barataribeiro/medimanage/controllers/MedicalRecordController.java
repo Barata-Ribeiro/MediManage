@@ -1,9 +1,9 @@
 package com.barataribeiro.medimanage.controllers;
 
 import com.barataribeiro.medimanage.dtos.raw.MedicalRecordDTO;
-import com.barataribeiro.medimanage.dtos.raw.RestResponseDTO;
 import com.barataribeiro.medimanage.dtos.raw.SimpleMedicalRecordDTO;
 import com.barataribeiro.medimanage.dtos.requests.MedicalRecordRegisterDTO;
+import com.barataribeiro.medimanage.dtos.responses.RestResponseDTO;
 import com.barataribeiro.medimanage.services.MedicalRecordService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -30,21 +30,22 @@ public class MedicalRecordController {
                tags = {"records"})
     @GetMapping
     @Secured({"ACCOUNT_TYPE_ASSISTANT", "ACCOUNT_TYPE_DOCTOR"})
-    public ResponseEntity<RestResponseDTO> getMedicalRecordsPaginated(@RequestParam(required = false) String search,
-                                                                      @RequestParam(defaultValue = "0") int page,
-                                                                      @RequestParam(defaultValue = "10") int perPage,
-                                                                      @RequestParam(defaultValue = "ASC")
-                                                                      String direction,
-                                                                      @RequestParam(defaultValue = "createdAt")
-                                                                      String orderBy,
-                                                                      Principal principal) {
-        Page<SimpleMedicalRecordDTO> response = medicalRecordService.getMedicalRecordsPaginated(search, page, perPage,
-                                                                                                direction, orderBy,
-                                                                                                principal);
-        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
-                                                     HttpStatus.OK.value(),
-                                                     "Medical record(s) retrieved successfully.",
-                                                     response));
+    public ResponseEntity<RestResponseDTO<Page<SimpleMedicalRecordDTO>>> getMedicalRecordsPaginated(
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int perPage,
+            @RequestParam(defaultValue = "ASC")
+            String direction,
+            @RequestParam(defaultValue = "createdAt")
+            String orderBy,
+            Principal principal) {
+
+        Page<SimpleMedicalRecordDTO> response = medicalRecordService
+                .getMedicalRecordsPaginated(search, page, perPage, direction, orderBy, principal);
+        return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
+                                                       HttpStatus.OK.value(),
+                                                       "Medical record(s) retrieved successfully.",
+                                                       response));
     }
 
     @Operation(summary = "Get medical record",
@@ -52,12 +53,13 @@ public class MedicalRecordController {
                tags = {"records"})
     @GetMapping("/{recordId}")
     @Secured({"ACCOUNT_TYPE_ASSISTANT", "ACCOUNT_TYPE_DOCTOR"})
-    public ResponseEntity<RestResponseDTO> getMedicalRecord(@PathVariable String recordId, Principal principal) {
+    public ResponseEntity<RestResponseDTO<MedicalRecordDTO>> getMedicalRecord(@PathVariable String recordId,
+                                                                              Principal principal) {
         MedicalRecordDTO response = medicalRecordService.getMedicalRecord(recordId, principal);
-        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
-                                                     HttpStatus.OK.value(),
-                                                     "Medical record retrieved successfully.",
-                                                     response));
+        return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
+                                                       HttpStatus.OK.value(),
+                                                       "Medical record retrieved successfully.",
+                                                       response));
     }
 
     @Operation(summary = "Register medical record",
@@ -65,13 +67,14 @@ public class MedicalRecordController {
                tags = {"records"})
     @PostMapping
     @Secured("ACCOUNT_TYPE_ASSISTANT")
-    public ResponseEntity<RestResponseDTO> registerMedicalRecord(@RequestBody @Valid MedicalRecordRegisterDTO body,
-                                                                 Principal principal) {
+    public ResponseEntity<RestResponseDTO<MedicalRecordDTO>> registerMedicalRecord(
+            @RequestBody @Valid MedicalRecordRegisterDTO body,
+            Principal principal) {
         MedicalRecordDTO response = medicalRecordService.registerMedicalRecord(principal, body);
-        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.CREATED,
-                                                     HttpStatus.CREATED.value(),
-                                                     "Medical record registered successfully.",
-                                                     response));
+        return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.CREATED,
+                                                       HttpStatus.CREATED.value(),
+                                                       "Medical record registered successfully.",
+                                                       response));
     }
 
     @Operation(summary = "Update medical record",
@@ -79,13 +82,14 @@ public class MedicalRecordController {
                tags = {"records"})
     @PutMapping("/{recordId}")
     @Secured("ACCOUNT_TYPE_DOCTOR")
-    public ResponseEntity<RestResponseDTO> updateMedicalRecord(@PathVariable String recordId,
-                                                               @RequestBody @Valid MedicalRecordRegisterDTO body,
-                                                               Principal principal) {
+    public ResponseEntity<RestResponseDTO<MedicalRecordDTO>> updateMedicalRecord(@PathVariable String recordId,
+                                                                                 @RequestBody @Valid
+                                                                                 MedicalRecordRegisterDTO body,
+                                                                                 Principal principal) {
         MedicalRecordDTO response = medicalRecordService.updateMedicalRecord(principal, body, recordId);
-        return ResponseEntity.ok(new RestResponseDTO(HttpStatus.OK,
-                                                     HttpStatus.OK.value(),
-                                                     "Medical record updated successfully.",
-                                                     response));
+        return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
+                                                       HttpStatus.OK.value(),
+                                                       "Medical record updated successfully.",
+                                                       response));
     }
 }
