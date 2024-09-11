@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.1.4",
+    "@microsoft/fetch-event-source": "^2.0.1",
     "@react-pdf/renderer": "^3.4.4",
     "@tiptap/extension-underline": "^2.6.6",
     "@tiptap/pm": "^2.6.6",
