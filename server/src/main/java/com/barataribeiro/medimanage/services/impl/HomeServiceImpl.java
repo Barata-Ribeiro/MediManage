@@ -5,19 +5,26 @@ import com.barataribeiro.medimanage.builders.PrescriptionMapper;
 import com.barataribeiro.medimanage.constants.ApplicationConstants;
 import com.barataribeiro.medimanage.dtos.raw.ConsultationDTO;
 import com.barataribeiro.medimanage.dtos.raw.SimplePrescriptionDTO;
+import com.barataribeiro.medimanage.dtos.responses.RestResponseDTO;
 import com.barataribeiro.medimanage.entities.models.Consultation;
 import com.barataribeiro.medimanage.entities.models.MedicalRecord;
 import com.barataribeiro.medimanage.entities.models.Notice;
 import com.barataribeiro.medimanage.entities.models.Prescription;
+import com.barataribeiro.medimanage.exceptions.MediManageException;
 import com.barataribeiro.medimanage.repositories.*;
 import com.barataribeiro.medimanage.services.HomeService;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Sinks;
 
 import java.security.Principal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -34,9 +41,18 @@ public class HomeServiceImpl implements HomeService {
     private final PrescriptionRepository prescriptionRepository;
     private final UserRepository userRepository;
     private final ConsultationMapper consultationMapper;
+    private final Sinks.Many<RestResponseDTO<Map<String, Object>>> administratorSink =
+            Sinks.many().multicast().onBackpressureBuffer();
+    private final Sinks.Many<RestResponseDTO<Map<String, Object>>> patientSink =
+            Sinks.many().multicast().onBackpressureBuffer();
+    private final Sinks.Many<RestResponseDTO<Map<String, Object>>> assistantSink =
+            Sinks.many().multicast().onBackpressureBuffer();
+    private final Sinks.Many<RestResponseDTO<Map<String, Object>>> doctorSink =
+            Sinks.many().multicast().onBackpressureBuffer();
+    private HomeService homeService;
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Map<String, Object> getAdministratorInfo(@NotNull Principal principal) {
         Notice latestNotice = noticeRepository.findDistinctFirstByOrderByCreatedAtDesc().orElse(null);
 
@@ -118,5 +134,86 @@ public class HomeServiceImpl implements HomeService {
 
                 ApplicationConstants.RECENT_PRESCRIPTIONS, recentPrescriptions
         );
+    }
+
+    @Override
+    public Flux<ServerSentEvent<RestResponseDTO<Map<String, Object>>>> streamAdministratorInfo(Principal principal) {
+        return Flux.interval(Duration.ofSeconds(5))
+                .map(seq -> {
+                    Map<String, Object> response = homeService.getAdministratorInfo(principal);
+                    RestResponseDTO<Map<String, Object>> restResponseDTO = new RestResponseDTO<>(
+                            HttpStatus.OK, HttpStatus.OK.value(),
+                            ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
+                            response);
+                    return ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
+                            .id(String.valueOf(seq))
+                            .event("admin-info")
+                            .data(restResponseDTO)
+                            .build();
+                }).doOnNext(event -> {
+                    if (event.data() != null) administratorSink.tryEmitNext(event.data());
+                    else administratorSink.tryEmitError(new MediManageException());
+                });
+
+    }
+
+    @Override
+    public Flux<ServerSentEvent<RestResponseDTO<Map<String, Object>>>> streamPatientInfo(Principal principal) {
+        return Flux.interval(Duration.ofSeconds(5))
+                .map(seq -> {
+                    Map<String, Object> response = homeService.getPatientInfo(principal);
+                    RestResponseDTO<Map<String, Object>> restResponseDTO = new RestResponseDTO<>(
+                            HttpStatus.OK, HttpStatus.OK.value(),
+                            ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
+                            response);
+                    return ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
+                            .id(String.valueOf(seq))
+                            .event("patient-info")
+                            .data(restResponseDTO)
+                            .build();
+                }).doOnNext(event -> {
+                    if (event.data() != null) patientSink.tryEmitNext(event.data());
+                    else patientSink.tryEmitError(new MediManageException());
+                });
+    }
+
+    @Override
+    public Flux<ServerSentEvent<RestResponseDTO<Map<String, Object>>>> streamAssistantInfo(Principal principal) {
+        return Flux.interval(Duration.ofSeconds(5))
+                .map(seq -> {
+                    Map<String, Object> response = homeService.getAssistantInfo(principal);
+                    RestResponseDTO<Map<String, Object>> restResponseDTO = new RestResponseDTO<>(
+                            HttpStatus.OK, HttpStatus.OK.value(),
+                            ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
+                            response);
+                    return ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
+                            .id(String.valueOf(seq))
+                            .event("assistant-info")
+                            .data(restResponseDTO)
+                            .build();
+                }).doOnNext(event -> {
+                    if (event.data() != null) assistantSink.tryEmitNext(event.data());
+                    else assistantSink.tryEmitError(new MediManageException());
+                });
+    }
+
+    @Override
+    public Flux<ServerSentEvent<RestResponseDTO<Map<String, Object>>>> streamDoctorInfo(Principal principal) {
+        return Flux.interval(Duration.ofSeconds(5))
+                .map(seq -> {
+                    Map<String, Object> response = homeService.getDoctorInfo(principal);
+                    RestResponseDTO<Map<String, Object>> restResponseDTO = new RestResponseDTO<>(
+                            HttpStatus.OK, HttpStatus.OK.value(),
+                            ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
+                            response);
+                    return ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
+                            .id(String.valueOf(seq))
+                            .event("doctor-info")
+                            .data(restResponseDTO)
+                            .build();
+                }).doOnNext(event -> {
+                    if (event.data() != null) doctorSink.tryEmitNext(event.data());
+                    else doctorSink.tryEmitError(new MediManageException());
+                });
     }
 }
