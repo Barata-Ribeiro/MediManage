@@ -10,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class SecurityFilter extends OncePerRequestFilter {
@@ -34,11 +36,11 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(final @NonNull HttpServletRequest request,
                                     final @NonNull HttpServletResponse response,
                                     final @NonNull FilterChain filterChain) throws ServletException, IOException {
-
+        log.info("Filtering request...");
         String token = recoverToken(request);
 
         if (token != null) {
-            var login = tokenService.validateToken(token);
+            String login = tokenService.validateToken(token);
 
             if (login != null) {
                 User user = userRepository.findByUsername(login)
@@ -61,8 +63,16 @@ public class SecurityFilter extends OncePerRequestFilter {
     }
 
     private @Nullable String recoverToken(@NotNull HttpServletRequest request) {
+        log.info("Recovering token from request...");
+
         String authHeader = request.getHeader("Authorization");
-        if (authHeader == null) return null;
-        return authHeader.replace("Bearer ", "");
+        if (authHeader != null) {
+            log.info("Token recovered successfully!");
+            return authHeader.replace("Bearer ", "");
+        }
+
+        log.warn("Token not found in request.");
+
+        return null;
     }
 }
