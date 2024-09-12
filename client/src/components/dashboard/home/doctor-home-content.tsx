@@ -8,63 +8,76 @@ import LatestNotice from "@/components/dashboard/home/latest-notice"
 import NextConsultation from "@/components/dashboard/home/next-consultation"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { BACKEND_URL } from "@/utils/api-urls"
-import { EventStreamContentType, fetchEventSource } from "@microsoft/fetch-event-source"
+import { fetchEventSource } from "@microsoft/fetch-event-source"
 import { useCookies } from "@/context/cookie-context-provider"
 import { ApiResponse } from "@/interfaces/actions"
 import { Consultation } from "@/interfaces/consultations"
 
 export default function DoctorHomeContent({ homeInfo }: Readonly<{ homeInfo: DoctorInfo }>) {
     const [homeInfoData, setHomeInfoData] = useState<DoctorInfo>(homeInfo)
-    const abortControllerRef = useRef(new AbortController())
+    const abortControllerRef = useRef<AbortController>(new AbortController())
     const URL = BACKEND_URL + "/api/v1/home/stream/doctor-info"
     const { cookie } = useCookies()
 
+    const stopResponseSSE = useCallback(() => {
+        if (abortControllerRef.current) {
+            abortControllerRef.current.abort()
+            abortControllerRef.current = new AbortController()
+        }
+    }, [])
+
     const listenToSseUpdates = useCallback(
         async (token: string) => {
-            if (abortControllerRef.current.signal.aborted) abortControllerRef.current = new AbortController()
-
             await fetchEventSource(URL, {
                 headers: {
+                    accept: "text/event-stream",
+                    "Content-type": "application/json",
                     Authorization: "Bearer " + token,
                 },
-                async onopen(res) {
-                    if (res.ok && res.headers.get("content-type") === EventStreamContentType) {
-                        console.log("SSE connection established.")
-                    } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
-                        console.error("SSE connection failed. Status code: " + res.status)
-                        console.error(await res.text())
-                    } else console.error("SSE connection failed. Status code: " + res.status)
+                onopen(res) {
+                    return new Promise<void>((resolve, reject) => {
+                        if (res.ok && res.status === 200) {
+                            console.log("SSE connection opened.")
+                            resolve()
+                        } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
+                            console.error("SSE connection error: ", res)
+                            reject(new Error("SSE connection error: " + res))
+                        }
+                    })
                 },
                 onmessage(event) {
-                    if (abortControllerRef.current.signal.aborted) console.log("SSE connection was aborted.")
                     const response = JSON.parse(event.data) as ApiResponse
-
-                    if (response.status === "success") setHomeInfoData(response.data as DoctorInfo)
-                    else console.error("SSE response error: ", response)
+                    console.log("DATA: ", response)
+                    if (response.code === 200) setHomeInfoData(response.data as DoctorInfo)
+                },
+                onclose() {
+                    console.log("SSE connection closed.")
+                    stopResponseSSE()
                 },
                 onerror(err) {
                     console.error("SSE connection error: ", err)
+                    throw new Error("SSE connection error: " + err)
                 },
                 signal: abortControllerRef.current.signal,
             })
         },
-        [URL],
+        [URL, stopResponseSSE],
     )
 
     useEffect(() => {
-        if (cookie) {
-            if (
-                !homeInfoData.nextConsultation ||
-                (homeInfoData.nextConsultation as Consultation).status === "SCHEDULED"
-            ) {
-                listenToSseUpdates(cookie).catch(console.error)
-            }
-        }
+        const isCookie = cookie && cookie !== "null" && cookie !== "undefined"
+        const isNextConsultationScheduled = (homeInfoData.nextConsultation as Consultation).status === "SCHEDULED"
 
-        return () => {
-            if (abortControllerRef.current) abortControllerRef.current.abort()
-        }
-    }, [cookie, homeInfoData.nextConsultation, listenToSseUpdates])
+        if (isCookie && isNextConsultationScheduled)
+            listenToSseUpdates(cookie).then(r => {
+                console.group("SSE connection")
+                console.log("SSE connection established.")
+                console.log(r)
+                console.groupEnd()
+            })
+
+        return () => stopResponseSSE()
+    }, [cookie, homeInfoData, listenToSseUpdates, stopResponseSSE])
 
     return (
         <>
