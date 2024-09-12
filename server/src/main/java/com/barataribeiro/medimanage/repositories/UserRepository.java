@@ -19,8 +19,14 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     Page<User> findDistinctByAccountType(AccountType accountType, Pageable pageable);
 
-    List<User> findDistinctAllByFullNameInIgnoreCaseAndAccountTypeIn(Collection<String> fullName,
-                                                                     Collection<AccountType> accountType);
+    @Query("""
+            SELECT u FROM User u
+            WHERE (u.fullName = :patientFullName AND u.accountType = 'PATIENT')
+            OR (u.fullName = :doctorFullName AND u.accountType = 'DOCTOR')
+           """)
+    List<User> findPatientAndDoctorByFullname(@Param("patientFullName") String patientFullName,
+                                              @Param("doctorFullName") String doctorFullName);
+
 
     // TESTING QUERY WITH DTO
     @Query("""

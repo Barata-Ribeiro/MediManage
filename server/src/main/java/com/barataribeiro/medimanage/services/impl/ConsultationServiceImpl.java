@@ -20,6 +20,7 @@ import com.barataribeiro.medimanage.repositories.NotificationRepository;
 import com.barataribeiro.medimanage.repositories.UserRepository;
 import com.barataribeiro.medimanage.services.ConsultationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ConsultationServiceImpl implements ConsultationService {
@@ -92,10 +94,11 @@ public class ConsultationServiceImpl implements ConsultationService {
     @Transactional
     public ConsultationDTO registerNewConsultationForPatient(@NotNull ConsultationRegisterDTO body,
                                                              Principal principal) {
-        List<User> users = userRepository.findDistinctAllByFullNameInIgnoreCaseAndAccountTypeIn(
-                List.of(body.patientFullName(), body.doctorFullName()),
-                List.of(AccountType.PATIENT, AccountType.DOCTOR)
-        );
+        log.atInfo().log("Registering new consultation for patient...");
+        log.atInfo().log("Patient: {}", body.patientFullName());
+        log.atInfo().log("Doctor: {}", body.doctorFullName());
+
+        List<User> users = userRepository.findPatientAndDoctorByFullname(body.patientFullName(), body.doctorFullName());
 
         User patient = users.stream()
                 .filter(user -> user.getFullName().equals(
