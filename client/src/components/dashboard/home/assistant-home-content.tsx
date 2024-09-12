@@ -1,3 +1,5 @@
+"use client"
+
 import ConsultationsStats from "@/components/dashboard/home/consultations-stats"
 import DividerWithContent from "@/components/helpers/divider-with-content"
 import { FaCircleInfo, FaUserClock } from "react-icons/fa6"

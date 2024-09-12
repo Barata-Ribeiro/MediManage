@@ -1,5 +1,3 @@
-"use client"
-
 import { FaUserDoctor, FaUserInjured, FaUserTie } from "react-icons/fa6"
 import Link from "next/link"
 import { useUser } from "@/context/user-context-provider"
