@@ -1,6 +1,7 @@
 package com.barataribeiro.medimanage.entities.models;
 
 import com.barataribeiro.medimanage.entities.enums.ConsultationStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -39,6 +40,7 @@ public class Consultation {
     @Column(name = "consultation_status", nullable = false)
     private ConsultationStatus status = ConsultationStatus.SCHEDULED;
 
+    @JsonIgnore
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "medical_record_id", nullable = false)

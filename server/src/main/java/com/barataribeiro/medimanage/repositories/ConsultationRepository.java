@@ -38,7 +38,7 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
 
     @EntityGraph(attributePaths = {"patient", "doctor"})
     @Query("""
-              SELECT c FROM Consultation c
+              SELECT DISTINCT c FROM Consultation c
               WHERE c.status = 'SCHEDULED'
               ORDER BY c.scheduledTo ASC
            """)
