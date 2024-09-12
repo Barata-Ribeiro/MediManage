@@ -22,7 +22,9 @@ import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Sinks;
 import reactor.core.scheduler.Schedulers;
+import reactor.util.context.Context;
 
 import java.security.Principal;
 import java.time.Duration;
@@ -43,6 +45,9 @@ public class HomeServiceImpl implements HomeService {
     private final PrescriptionRepository prescriptionRepository;
     private final UserRepository userRepository;
     private final ConsultationMapper consultationMapper;
+
+    private final Sinks.Many<RestResponseDTO<Map<String, Object>>> administratorSink =
+            Sinks.many().multicast().directBestEffort();
 
     @Override
     @Transactional
@@ -110,23 +115,7 @@ public class HomeServiceImpl implements HomeService {
     @Override
     @Transactional(readOnly = true)
     public Map<String, Object> getDoctorInfo(@NotNull Principal principal) {
-        Notice latestNotice = noticeRepository.findDistinctFirstByOrderByCreatedAtDesc().orElse(null);
-        Consultation nextConsultation = consultationRepository.findNextConsultationToBeAccepted().orElse(null);
-
-        List<Prescription> prescriptions =
-                prescriptionRepository.findTop5DistinctByDoctor_UsernameOrderByUpdatedAtDesc(principal.getName());
-        List<SimplePrescriptionDTO> recentPrescriptions = prescriptionMapper.toSimpleDTOList(prescriptions);
-
-        return Map.of(
-                ApplicationConstants.NEXT_CONSULTATION, nextConsultation != null ? nextConsultation : Map.of(),
-
-                ApplicationConstants.CONSULTATIONS_BY_STATUS,
-                consultationRepository.countGroupedConsultationsByStatus(),
-
-                ApplicationConstants.LATEST_NOTICE, latestNotice != null ? latestNotice : Map.of(),
-
-                ApplicationConstants.RECENT_PRESCRIPTIONS, recentPrescriptions
-        );
+        return retrieveDoctorInfo(principal);
     }
 
     @Override
@@ -148,21 +137,32 @@ public class HomeServiceImpl implements HomeService {
     public Flux<ServerSentEvent<RestResponseDTO<Map<String, Object>>>> streamDoctorInfo(Principal principal) {
         log.info("Streaming doctor info in HomeServiceImpl...");
 
-        return Flux.interval(Duration.ofSeconds(10))
-                .doOnNext(seq -> log.info("Emitting doctor info for stream..."))
-                .publishOn(Schedulers.boundedElastic())
-                .map(seq -> ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
-                        .id(String.valueOf(seq))
-                        .event("doctor-info")
-                        .data(new RestResponseDTO<>(HttpStatus.OK,
-                                                    HttpStatus.OK.value(),
-                                                    ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
-                                                    getDoctorInfoForStream(principal)))
-                        .build());
+        return Flux.deferContextual(ctx -> {
+            Principal ctxPrincipal = ctx.get("principal");
+            return Flux.interval(Duration.ofSeconds(10))
+                    .doOnNext(seq -> log.info("Emitting doctor info for stream..."))
+                    .publishOn(Schedulers.boundedElastic())
+                    .map(seq -> ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
+                            .id(String.valueOf(seq))
+                            .event("doctor-info")
+                            .data(new RestResponseDTO<>(HttpStatus.OK,
+                                                        HttpStatus.OK.value(),
+                                                        ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
+                                                        retrieveDoctorInfo(ctxPrincipal)))
+                            .build())
+                    .doOnNext(event -> {
+                        if (event.data() != null) administratorSink.tryEmitNext(event.data());
+                        log.atInfo().log("Doctor info emitted for stream.");
+                    })
+                    .onErrorResume(e -> {
+                        log.error("Error occurred while streaming doctor info: {}", e.getMessage());
+                        return Flux.empty();
+                    });
+        }).contextWrite(Context.of("principal", principal));
     }
 
-    private @NotNull @Unmodifiable Map<String, Object> getDoctorInfoForStream(@NotNull Principal principal) {
-        log.info("Getting doctor info for stream in HomeServiceImpl...");
+    private @NotNull @Unmodifiable Map<String, Object> retrieveDoctorInfo(@NotNull Principal principal) {
+        log.info("Retrieving doctor info in HomeServiceImpl...");
 
         Notice latestNotice = noticeRepository.findDistinctFirstByOrderByCreatedAtDesc().orElse(null);
         Consultation nextConsultation = consultationRepository.findNextConsultationToBeAccepted().orElse(null);

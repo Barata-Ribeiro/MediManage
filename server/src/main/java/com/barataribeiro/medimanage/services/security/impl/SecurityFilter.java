@@ -17,9 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import reactor.core.publisher.Mono;
+import reactor.util.context.Context;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,6 +35,8 @@ import java.util.List;
 public class SecurityFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
     private final UserRepository userRepository;
+    private final RequestAttributeSecurityContextRepository filterRepository =
+            new RequestAttributeSecurityContextRepository();
 
     @Override
     protected void doFilterInternal(final @NonNull HttpServletRequest request,
@@ -38,11 +44,13 @@ public class SecurityFilter extends OncePerRequestFilter {
                                     final @NonNull FilterChain filterChain) throws ServletException, IOException {
         log.info("Filtering request...");
         String token = recoverToken(request);
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
 
         if (token != null) {
             String login = tokenService.validateToken(token);
 
             if (login != null) {
+
                 User user = userRepository.findByUsername(login)
                         .orElseThrow(() -> new UserNotFoundException(
                                 String.format(ApplicationMessages.USER_NOT_FOUND_WITH_USERNAME, login)
@@ -55,7 +63,15 @@ public class SecurityFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(user.getUsername(), null, authorities);
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                context.setAuthentication(authentication);
+                SecurityContextHolder.setContext(context);
+                filterRepository.saveContext(context, request, response);
+
+                Mono.deferContextual(Mono::just)
+                        .contextWrite(contextView -> Context.of("principal", user))
+                        .subscribe();
+
+                log.info("User authenticated successfully!");
             }
         }
 
