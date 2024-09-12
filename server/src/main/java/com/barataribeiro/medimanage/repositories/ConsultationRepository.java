@@ -38,9 +38,10 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
 
     @EntityGraph(attributePaths = {"patient", "doctor"})
     @Query("""
-              SELECT DISTINCT c FROM Consultation c
-              WHERE c.status = 'SCHEDULED'
-              ORDER BY c.scheduledTo ASC
+           SELECT DISTINCT c FROM Consultation c
+           WHERE c.status NOT IN (com.barataribeiro.medimanage.entities.enums.ConsultationStatus.CANCELLED,
+                                  com.barataribeiro.medimanage.entities.enums.ConsultationStatus.MISSED)
+           ORDER BY c.scheduledTo ASC
            """)
     Optional<Consultation> findNextConsultationToBeAccepted();
 

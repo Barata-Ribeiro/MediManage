@@ -166,15 +166,15 @@ public class ConsultationServiceImpl implements ConsultationService {
         if (body.status() != null) {
             ConsultationStatus consultationStatus = ConsultationStatus.valueOf(body.status());
             consultation.setStatus(consultationStatus);
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy 'at' hh:mm a");
-            String formattedScheduledTo = LocalDateTime.parse(body.scheduledTo()).format(formatter);
-            changes.add("Status - " + formattedScheduledTo);
+            changes.add("Status - " + body.status());
         }
 
         if (body.scheduledTo() != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy 'at' hh:mm a");
+            String formattedScheduledTo = LocalDateTime.parse(body.scheduledTo()).format(formatter);
+
             consultation.setScheduledTo(LocalDateTime.parse(body.scheduledTo()));
-            changes.add("Scheduled To - " + body.scheduledTo());
+            changes.add("Scheduled to - " + formattedScheduledTo);
         }
 
         String doctorName = !consultation.getDoctor().getFullName().isEmpty() ? consultation.getDoctor().getFullName() :
