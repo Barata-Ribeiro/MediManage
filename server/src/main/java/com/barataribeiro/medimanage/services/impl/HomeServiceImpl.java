@@ -48,6 +48,12 @@ public class HomeServiceImpl implements HomeService {
 
     private final Sinks.Many<RestResponseDTO<Map<String, Object>>> administratorSink =
             Sinks.many().multicast().directBestEffort();
+    private final Sinks.Many<RestResponseDTO<Map<String, Object>>> patientSink =
+            Sinks.many().multicast().directBestEffort();
+    private final Sinks.Many<RestResponseDTO<Map<String, Object>>> assistantSink =
+            Sinks.many().multicast().directBestEffort();
+    private final Sinks.Many<RestResponseDTO<Map<String, Object>>> doctorSink =
+            Sinks.many().multicast().directBestEffort();
 
     @Override
     @Transactional
@@ -139,9 +145,7 @@ public class HomeServiceImpl implements HomeService {
 
         return Flux.deferContextual(ctx -> {
             Principal ctxPrincipal = ctx.get("principal");
-            return Flux.interval(Duration.ofSeconds(10))
-                    .doOnNext(seq -> log.info("Emitting doctor info for stream..."))
-                    .publishOn(Schedulers.boundedElastic())
+            return doctorSink.asFlux()
                     .map(seq -> ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
                             .id(String.valueOf(seq))
                             .event("doctor-info")
@@ -150,14 +154,20 @@ public class HomeServiceImpl implements HomeService {
                                                         ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
                                                         retrieveDoctorInfo(ctxPrincipal)))
                             .build())
-                    .doOnNext(event -> {
-                        if (event.data() != null) administratorSink.tryEmitNext(event.data());
-                        log.atInfo().log("Doctor info emitted for stream.");
+                    .timeout(Duration.ofMinutes(2),
+                             Flux.just(ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
+                                               .event("heartbeat")
+                                               .data(new RestResponseDTO<>(HttpStatus.NO_CONTENT,
+                                                                           HttpStatus.NO_CONTENT.value(),
+                                                                           "Heartbeat",
+                                                                           Map.of()))
+                                               .build()))
+                    .doOnCancel(() -> {
+                        log.info("Doctor info stream cancelled...");
+                        doctorSink.asFlux().subscribe().dispose();
                     })
-                    .onErrorResume(e -> {
-                        log.error("Error occurred while streaming doctor info: {}", e.getMessage());
-                        return Flux.empty();
-                    });
+                    .doFinally(signalType -> log.info("Doctor info stream finally... {}", signalType))
+                    .subscribeOn(Schedulers.boundedElastic());
         }).contextWrite(Context.of("principal", principal));
     }
 
