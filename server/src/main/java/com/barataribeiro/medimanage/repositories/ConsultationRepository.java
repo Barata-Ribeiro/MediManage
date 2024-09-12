@@ -41,7 +41,7 @@ public interface ConsultationRepository extends JpaRepository<Consultation, Long
            SELECT DISTINCT c FROM Consultation c
            WHERE c.status NOT IN (com.barataribeiro.medimanage.entities.enums.ConsultationStatus.CANCELLED,
                                   com.barataribeiro.medimanage.entities.enums.ConsultationStatus.MISSED)
-           ORDER BY c.scheduledTo ASC
+           AND CAST(c.scheduledTo AS DATE) >= CURRENT_DATE
            """)
     Optional<Consultation> findNextConsultationToBeAccepted();
 
