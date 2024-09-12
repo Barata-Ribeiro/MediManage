@@ -8,12 +8,23 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 
 import java.util.List;
 
-@RestControllerAdvice
 @Slf4j
+@RestControllerAdvice
 public class RestExceptionHandler {
+    @ExceptionHandler(AsyncRequestNotUsableException.class)
+    protected ProblemDetail handleAsyncRequestNotUsable(@NotNull AsyncRequestNotUsableException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        problemDetail.setTitle("Internal server error");
+        problemDetail.setDetail(
+                "The server encountered an unexpected condition which prevented it from fulfilling the request.");
+        log.atError().log("Async request not usable: {}", ex.getMessage());
+        return problemDetail;
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     protected ProblemDetail handleAccessDenied(@NotNull AccessDeniedException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
