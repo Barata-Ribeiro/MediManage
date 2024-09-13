@@ -3,6 +3,7 @@ package com.barataribeiro.medimanage.services.impl;
 import com.barataribeiro.medimanage.builders.ConsultationMapper;
 import com.barataribeiro.medimanage.builders.PrescriptionMapper;
 import com.barataribeiro.medimanage.constants.ApplicationConstants;
+import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.ConsultationDTO;
 import com.barataribeiro.medimanage.dtos.raw.SimplePrescriptionDTO;
 import com.barataribeiro.medimanage.dtos.responses.RestResponseDTO;
@@ -56,8 +57,174 @@ public class HomeServiceImpl implements HomeService {
             Sinks.many().multicast().directBestEffort();
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Map<String, Object> getAdministratorInfo(@NotNull Principal principal) {
+        return retrieveAdministratorInfo(principal);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> getPatientInfo(@NotNull Principal principal) {
+        return retrievePatientInfo(principal);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> getAssistantInfo(@NotNull Principal principal) {
+        return retrieveAssistantInfo(principal);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> getDoctorInfo(@NotNull Principal principal) {
+        return retrieveDoctorInfo(principal);
+    }
+
+    @Override
+    public Flux<ServerSentEvent<RestResponseDTO<Map<String, Object>>>> streamAdministratorInfo(
+            @NotNull Principal principal) {
+        log.atInfo().log("Streaming administrator info for Home. Requesting User: {}", principal.getName());
+
+        return Flux.deferContextual(ctx -> {
+            Principal ctxPrincipal = ctx.get(ApplicationConstants.PRINCIPAL);
+            Duration keepAliveDuration = Duration.ofMinutes(1);
+            return administratorSink.asFlux()
+                    .map(seq -> ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
+                            .id(String.valueOf(seq))
+                            .event("administrator-info")
+                            .data(new RestResponseDTO<>(HttpStatus.OK,
+                                                        HttpStatus.OK.value(),
+                                                        ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
+                                                        retrieveAdministratorInfo(ctxPrincipal)))
+                            .build())
+                    .timeout(keepAliveDuration,
+                             Flux.just(ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
+                                               .event(ApplicationConstants.HEARTBEAT)
+                                               .data(new RestResponseDTO<>(HttpStatus.NO_CONTENT,
+                                                                           HttpStatus.NO_CONTENT.value(),
+                                                                           String.format(
+                                                                                   ApplicationMessages.KEEP_ALIVE_FOR,
+                                                                                   keepAliveDuration.toMinutes()),
+                                                                           Map.of()))
+                                               .build()))
+                    .doOnCancel(() -> {
+                        log.atInfo().log("Administrator info stream cancelled...");
+                        administratorSink.asFlux().subscribe().dispose();
+                    })
+                    .doFinally(signalType -> log.atInfo().log("Administrator info stream finally... {}", signalType))
+                    .subscribeOn(Schedulers.boundedElastic());
+        }).contextWrite(Context.of(ApplicationConstants.PRINCIPAL, principal));
+    }
+
+    @Override
+    public Flux<ServerSentEvent<RestResponseDTO<Map<String, Object>>>> streamPatientInfo(@NotNull Principal principal) {
+        log.atInfo().log("Streaming patient info for Home. Requesting User: {}", principal.getName());
+
+        return Flux.deferContextual(ctx -> {
+            Principal ctxPrincipal = ctx.get(ApplicationConstants.PRINCIPAL);
+            Duration keepAliveDuration = Duration.ofMinutes(1);
+            return patientSink.asFlux()
+                    .map(seq -> ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
+                            .id(String.valueOf(seq))
+                            .event("patient-info")
+                            .data(new RestResponseDTO<>(HttpStatus.OK,
+                                                        HttpStatus.OK.value(),
+                                                        ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
+                                                        retrievePatientInfo(ctxPrincipal)))
+                            .build())
+                    .timeout(keepAliveDuration,
+                             Flux.just(ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
+                                               .event(ApplicationConstants.HEARTBEAT)
+                                               .data(new RestResponseDTO<>(HttpStatus.NO_CONTENT,
+                                                                           HttpStatus.NO_CONTENT.value(),
+                                                                           String.format(
+                                                                                   ApplicationMessages.KEEP_ALIVE_FOR,
+                                                                                   keepAliveDuration.toMinutes()),
+                                                                           Map.of()))
+                                               .build()))
+                    .doOnCancel(() -> {
+                        log.atInfo().log("Patient info stream cancelled...");
+                        patientSink.asFlux().subscribe().dispose();
+                    })
+                    .doFinally(signalType -> log.atInfo().log("Patient info stream finally... {}", signalType))
+                    .subscribeOn(Schedulers.boundedElastic());
+        }).contextWrite(Context.of(ApplicationConstants.PRINCIPAL, principal));
+    }
+
+    @Override
+    public Flux<ServerSentEvent<RestResponseDTO<Map<String, Object>>>> streamAssistantInfo(
+            @NotNull Principal principal) {
+        log.atInfo().log("Streaming assistant info for Home. Requesting User: {}", principal.getName());
+
+        return Flux.deferContextual(ctx -> {
+            Principal ctxPrincipal = ctx.get(ApplicationConstants.PRINCIPAL);
+            Duration keepAliveDuration = Duration.ofMinutes(1);
+            return assistantSink.asFlux()
+                    .map(seq -> ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
+                            .id(String.valueOf(seq))
+                            .event("assistant-info")
+                            .data(new RestResponseDTO<>(HttpStatus.OK,
+                                                        HttpStatus.OK.value(),
+                                                        ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
+                                                        retrieveAssistantInfo(ctxPrincipal)))
+                            .build())
+                    .timeout(keepAliveDuration,
+                             Flux.just(ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
+                                               .event(ApplicationConstants.HEARTBEAT)
+                                               .data(new RestResponseDTO<>(HttpStatus.NO_CONTENT,
+                                                                           HttpStatus.NO_CONTENT.value(),
+                                                                           String.format(
+                                                                                   ApplicationMessages.KEEP_ALIVE_FOR,
+                                                                                   keepAliveDuration.toMinutes()),
+                                                                           Map.of()))
+                                               .build()))
+                    .doOnCancel(() -> {
+                        log.atInfo().log("Assistant info stream cancelled...");
+                        assistantSink.asFlux().subscribe().dispose();
+                    })
+                    .doFinally(signalType -> log.atInfo().log("Assistant info stream finally... {}", signalType))
+                    .subscribeOn(Schedulers.boundedElastic());
+        }).contextWrite(Context.of(ApplicationConstants.PRINCIPAL, principal));
+    }
+
+    @Override
+    public Flux<ServerSentEvent<RestResponseDTO<Map<String, Object>>>> streamDoctorInfo(@NotNull Principal principal) {
+        log.atInfo().log("Streaming doctor info for Home. Requesting User: {}", principal.getName());
+
+        return Flux.deferContextual(ctx -> {
+            Principal ctxPrincipal = ctx.get(ApplicationConstants.PRINCIPAL);
+            Duration keepAliveDuration = Duration.ofMinutes(1);
+            return doctorSink.asFlux()
+                    .map(seq -> ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
+                            .id(String.valueOf(seq))
+                            .event("doctor-info")
+                            .data(new RestResponseDTO<>(HttpStatus.OK,
+                                                        HttpStatus.OK.value(),
+                                                        ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
+                                                        retrieveDoctorInfo(ctxPrincipal)))
+                            .build())
+                    .timeout(keepAliveDuration,
+                             Flux.just(ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
+                                               .event(ApplicationConstants.HEARTBEAT)
+                                               .data(new RestResponseDTO<>(HttpStatus.NO_CONTENT,
+                                                                           HttpStatus.NO_CONTENT.value(),
+                                                                           String.format(
+                                                                                   ApplicationMessages.KEEP_ALIVE_FOR,
+                                                                                   keepAliveDuration.toMinutes()),
+                                                                           Map.of()))
+                                               .build()))
+                    .doOnCancel(() -> {
+                        log.atInfo().log("Doctor info stream cancelled...");
+                        doctorSink.asFlux().subscribe().dispose();
+                    })
+                    .doFinally(signalType -> log.atInfo().log("Doctor info stream finally... {}", signalType))
+                    .subscribeOn(Schedulers.boundedElastic());
+        }).contextWrite(Context.of(ApplicationConstants.PRINCIPAL, principal));
+    }
+
+    private @NotNull @Unmodifiable Map<String, Object> retrieveAdministratorInfo(@NotNull Principal principal) {
+        log.atInfo().log("Retrieving administrator info for Home. Requesting User: {}", principal.getName());
+
         Notice latestNotice = noticeRepository.findDistinctFirstByOrderByCreatedAtDesc().orElse(null);
 
         return Map.of(
@@ -71,13 +238,12 @@ public class HomeServiceImpl implements HomeService {
                 ApplicationConstants.TOTAL_ARTICLES, articleRepository.count(),
 
                 ApplicationConstants.LATEST_NOTICE, latestNotice != null ? latestNotice : Map.of()
-
         );
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Map<String, Object> getPatientInfo(@NotNull Principal principal) {
+    private @NotNull @Unmodifiable Map<String, Object> retrievePatientInfo(@NotNull Principal principal) {
+        log.atInfo().log("Retrieving patient info for Home. Requesting User: {}", principal.getName());
+
         Prescription latestPrescription = prescriptionRepository
                 .findFirstByPatient_UsernameOrderByCreatedAtAsc(principal.getName()).orElse(null);
         Consultation nextConsultation = consultationRepository
@@ -91,13 +257,12 @@ public class HomeServiceImpl implements HomeService {
                 ApplicationConstants.MEDICAL_RECORD, medicalRecord != null ? medicalRecord : Map.of(),
 
                 ApplicationConstants.LATEST_NOTICE, latestNotice != null ? latestNotice : Map.of()
-
         );
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Map<String, Object> getAssistantInfo(@NotNull Principal principal) {
+    private @NotNull @Unmodifiable Map<String, Object> retrieveAssistantInfo(@NotNull Principal principal) {
+        log.atInfo().log("Retrieving assistant info for Home. Requesting User: {}", principal.getName());
+
         Notice latestNotice = noticeRepository.findDistinctFirstByOrderByCreatedAtDesc().orElse(null);
         List<ConsultationDTO> consultationsForToday = consultationMapper.toDTOList(
                 consultationRepository.findAllConsultationsForToday(
@@ -118,61 +283,8 @@ public class HomeServiceImpl implements HomeService {
         );
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Map<String, Object> getDoctorInfo(@NotNull Principal principal) {
-        return retrieveDoctorInfo(principal);
-    }
-
-    @Override
-    public Flux<ServerSentEvent<RestResponseDTO<Map<String, Object>>>> streamAdministratorInfo(Principal principal) {
-        return null;
-    }
-
-    @Override
-    public Flux<ServerSentEvent<RestResponseDTO<Map<String, Object>>>> streamPatientInfo(Principal principal) {
-        return null;
-    }
-
-    @Override
-    public Flux<ServerSentEvent<RestResponseDTO<Map<String, Object>>>> streamAssistantInfo(Principal principal) {
-        return null;
-    }
-
-    @Override
-    public Flux<ServerSentEvent<RestResponseDTO<Map<String, Object>>>> streamDoctorInfo(Principal principal) {
-        log.info("Streaming doctor info in HomeServiceImpl...");
-
-        return Flux.deferContextual(ctx -> {
-            Principal ctxPrincipal = ctx.get("principal");
-            return doctorSink.asFlux()
-                    .map(seq -> ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
-                            .id(String.valueOf(seq))
-                            .event("doctor-info")
-                            .data(new RestResponseDTO<>(HttpStatus.OK,
-                                                        HttpStatus.OK.value(),
-                                                        ApplicationConstants.HOME_INFORETRIEVED_SUCCESSFULLY,
-                                                        retrieveDoctorInfo(ctxPrincipal)))
-                            .build())
-                    .timeout(Duration.ofMinutes(2),
-                             Flux.just(ServerSentEvent.<RestResponseDTO<Map<String, Object>>>builder()
-                                               .event("heartbeat")
-                                               .data(new RestResponseDTO<>(HttpStatus.NO_CONTENT,
-                                                                           HttpStatus.NO_CONTENT.value(),
-                                                                           "Heartbeat",
-                                                                           Map.of()))
-                                               .build()))
-                    .doOnCancel(() -> {
-                        log.info("Doctor info stream cancelled...");
-                        doctorSink.asFlux().subscribe().dispose();
-                    })
-                    .doFinally(signalType -> log.info("Doctor info stream finally... {}", signalType))
-                    .subscribeOn(Schedulers.boundedElastic());
-        }).contextWrite(Context.of("principal", principal));
-    }
-
     private @NotNull @Unmodifiable Map<String, Object> retrieveDoctorInfo(@NotNull Principal principal) {
-        log.info("Retrieving doctor info in HomeServiceImpl...");
+        log.atInfo().log("Retrieving doctor info for Home. Requesting User: {}", principal.getName());
 
         Notice latestNotice = noticeRepository.findDistinctFirstByOrderByCreatedAtDesc().orElse(null);
         Consultation nextConsultation = consultationRepository.findNextConsultationToBeAccepted().orElse(null);
