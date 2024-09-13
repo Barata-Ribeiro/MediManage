@@ -66,15 +66,13 @@ export default function DoctorHomeContent({ homeInfo }: Readonly<{ homeInfo: Doc
 
     useEffect(() => {
         const isCookie = cookie && cookie !== "null" && cookie !== "undefined"
-        const isNextConsultationScheduled = (homeInfoData.nextConsultation as Consultation).status === "SCHEDULED"
+        const isNextConsultationValid =
+            (homeInfoData.nextConsultation as Consultation).scheduledTo > new Date().toISOString()
 
-        if (isCookie && isNextConsultationScheduled)
-            listenToSseUpdates(cookie).then(r => {
-                console.group("SSE connection")
-                console.log("SSE connection established.")
-                console.log(r)
-                console.groupEnd()
-            })
+        if (isCookie && isNextConsultationValid)
+            listenToSseUpdates(cookie)
+                .then(r => r)
+                .catch(e => console.error(e))
 
         return () => stopResponseSSE()
     }, [cookie, homeInfoData, listenToSseUpdates, stopResponseSSE])

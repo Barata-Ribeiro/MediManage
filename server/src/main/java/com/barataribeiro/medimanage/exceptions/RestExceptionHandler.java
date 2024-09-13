@@ -1,5 +1,6 @@
 package com.barataribeiro.medimanage.exceptions;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
@@ -10,19 +11,21 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
 @RestControllerAdvice
 public class RestExceptionHandler {
     @ExceptionHandler(AsyncRequestNotUsableException.class)
-    protected ProblemDetail handleAsyncRequestNotUsable(@NotNull AsyncRequestNotUsableException ex) {
+    protected void handleAsyncRequestNotUsable(@NotNull AsyncRequestNotUsableException ex,
+                                               HttpServletResponse response) throws IOException {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         problemDetail.setTitle("Internal server error");
         problemDetail.setDetail(
                 "The server encountered an unexpected condition which prevented it from fulfilling the request.");
         log.atError().log("Async request not usable: {}", ex.getMessage());
-        return problemDetail;
+        writeResponse(response, problemDetail);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -57,6 +60,13 @@ public class RestExceptionHandler {
         log.atError().log("Invalid request parameters: {}, {}", fieldErrors, ex.getMessage());
 
         return problemDetail;
+    }
+
+    private void writeResponse(@NotNull HttpServletResponse response,
+                               @NotNull ProblemDetail problemDetail) throws IOException {
+        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        response.setContentType("application/json");
+        response.getWriter().write(problemDetail.toString());
     }
 
     private record InvalidParam(String fieldName, String reason) {}

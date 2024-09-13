@@ -1,5 +1,3 @@
-"use client"
-
 import { Consultation } from "@/interfaces/consultations"
 import { FaPlus } from "react-icons/fa6"
 import Link from "next/link"

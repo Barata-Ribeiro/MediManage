@@ -1,57 +1,28 @@
 package com.barataribeiro.medimanage.constants;
 
-import org.jetbrains.annotations.NonNls;
-
 public class ApplicationConstants {
     // Messages
-    @NonNls
+    public static final String HOME_INFORETRIEVED_SUCCESSFULLY = "Home info retrieved successfully.";
     public static final String USER_REGISTERED_SUCCESSFULLY = "User registered successfully.";
 
-    @NonNls
-    public static final String HOME_INFORETRIEVED_SUCCESSFULLY = "Home info retrieved successfully.";
-
     // Attributes
-    @NonNls
     public static final String ALL_USERS = "allUsers";
-
-    @NonNls
     public static final String CONSULTATIONS_BY_STATUS = "consultationsByStatus";
-
-    @NonNls
     public static final String CONSULTATIONS_FOR_TODAY = "consultationsForToday";
-
-    @NonNls
     public static final String CREATED_AT = "createdAt";
-
-    @NonNls
-    public static final String LATEST_NOTICE = "latestNotice";
-
-    @NonNls
-    public static final String LATEST_PRESCRIPTION = "latestPrescription";
-
-    @NonNls
+    public static final String HEARTBEAT = "heartbeat";
     public static final String ISSUED_AT = "issuedAt";
-
-    @NonNls
+    public static final String LATEST_NOTICE = "latestNotice";
+    public static final String LATEST_PRESCRIPTION = "latestPrescription";
     public static final String MEDICAL_RECORD = "medicalRecord";
-
-    @NonNls
     public static final String NEXT_CONSULTATION = "nextConsultation";
-
-    @NonNls
+    public static final String PRINCIPAL = "principal";
     public static final String RECENT_PRESCRIPTIONS = "recentPrescriptions";
-
-    @NonNls
     public static final String TOTAL_ARTICLES = "totalArticles";
-
-    @NonNls
+    public static final String TOTAL_CONSULTATIONS_FOR_TODAY = "totalConsultationsForToday";
     public static final String TOTAL_PRESCRIPTIONS = "totalPrescriptions";
 
-    @NonNls
-    public static final String TOTAL_CONSULTATIONS_FOR_TODAY = "totalConsultationsForToday";
-
     // Description
-    @NonNls
     public static final String DEFAULT_CATEGORY_DESCRIPTION = "This is the %s category.";
 
     private ApplicationConstants() {
