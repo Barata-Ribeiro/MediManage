@@ -3,6 +3,7 @@ package com.barataribeiro.medimanage.services.impl;
 import com.barataribeiro.medimanage.builders.UserMapper;
 import com.barataribeiro.medimanage.constants.ApplicationConstants;
 import com.barataribeiro.medimanage.constants.ApplicationMessages;
+import com.barataribeiro.medimanage.dtos.raw.UserContextDTO;
 import com.barataribeiro.medimanage.dtos.raw.UserDTO;
 import com.barataribeiro.medimanage.dtos.requests.UpdateAccountRequestDTO;
 import com.barataribeiro.medimanage.dtos.requests.UpdateUserInformationDTO;
@@ -100,17 +101,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO getContext(@NotNull Principal principal) {
+    public UserContextDTO getContext(@NotNull Principal principal) {
         User user = userRepository.findByUsername(principal.getName()).orElseThrow(() -> new UserNotFoundException(
                 String.format(ApplicationMessages.USER_NOT_FOUND_WITH_USERNAME, principal.getName())
         ));
 
-        return userMapper.toDTO(user);
+        return userMapper.toContextDTO(user);
     }
 
     @Override
     @Transactional
-    public UserDTO updateAccount(@NotNull UpdateAccountRequestDTO body, @NotNull Principal principal) {
+    public UserContextDTO updateAccount(@NotNull UpdateAccountRequestDTO body, @NotNull Principal principal) {
         User user = userRepository.findByUsername(principal.getName()).orElseThrow(() -> new UserNotFoundException(
                 String.format(ApplicationMessages.USER_NOT_FOUND_WITH_USERNAME, principal.getName())
         ));
@@ -129,7 +130,7 @@ public class UserServiceImpl implements UserService {
 
         verifyIfBodyExistsThenSetProperties(body, user);
 
-        return userMapper.toDTO(userRepository.saveAndFlush(user));
+        return userMapper.toContextDTO(userRepository.saveAndFlush(user));
     }
 
     private void verifyIfBodyExistsThenSetProperties(@NotNull UpdateAccountRequestDTO body, User user) {

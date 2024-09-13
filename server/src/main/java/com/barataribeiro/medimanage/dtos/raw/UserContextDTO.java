@@ -20,7 +20,7 @@ import java.util.UUID;
 @Setter
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserDTO implements Serializable {
+public class UserContextDTO implements Serializable {
     UUID id;
     String username;
     String email;
@@ -31,6 +31,9 @@ public class UserDTO implements Serializable {
     String registrationNumber;
     String registrationOrigin;
     String specialization;
+    Long totalNotifications;
+    Long totalReadNotifications;
+    Long totalUnreadNotifications;
     AccountType accountType;
     UserRoles userRoles;
     Instant createdAt;

@@ -152,7 +152,7 @@ public class AuthServiceImpl implements AuthService {
 
         log.atInfo().log("User with username '{}' logged in successfully.", user.getUsername());
 
-        return new LoginResponseDTO(userMapper.toDTO(user),
+        return new LoginResponseDTO(userMapper.toContextDTO(user),
                                     tokenAndExpiration.getKey(),
                                     tokenAndExpiration.getValue());
     }

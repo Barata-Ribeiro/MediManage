@@ -1,5 +1,6 @@
 package com.barataribeiro.medimanage.controllers;
 
+import com.barataribeiro.medimanage.dtos.raw.UserContextDTO;
 import com.barataribeiro.medimanage.dtos.raw.UserDTO;
 import com.barataribeiro.medimanage.dtos.raw.simple.SimpleUserDTO;
 import com.barataribeiro.medimanage.dtos.requests.UpdateAccountRequestDTO;
@@ -99,8 +100,8 @@ public class UserController {
                description = "For the logged user, get the user context.",
                tags = {"users"})
     @GetMapping("/me/context")
-    public ResponseEntity<RestResponseDTO<UserDTO>> getContext(Principal principal) {
-        UserDTO response = userService.getContext(principal);
+    public ResponseEntity<RestResponseDTO<UserContextDTO>> getContext(Principal principal) {
+        UserContextDTO response = userService.getContext(principal);
         return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
                                                        HttpStatus.OK.value(),
                                                        "User context retrieved successfully.",
@@ -111,9 +112,10 @@ public class UserController {
                description = "Update the account information of the logged user.",
                tags = {"users"})
     @PatchMapping("/me")
-    public ResponseEntity<RestResponseDTO<UserDTO>> updateAccount(@RequestBody @Valid UpdateAccountRequestDTO body,
-                                                                  Principal principal) {
-        UserDTO response = userService.updateAccount(body, principal);
+    public ResponseEntity<RestResponseDTO<UserContextDTO>> updateAccount(
+            @RequestBody @Valid UpdateAccountRequestDTO body,
+            Principal principal) {
+        UserContextDTO response = userService.updateAccount(body, principal);
         return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
                                                        HttpStatus.OK.value(),
                                                        "Account updated successfully.",

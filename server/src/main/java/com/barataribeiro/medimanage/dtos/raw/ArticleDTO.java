@@ -1,5 +1,6 @@
 package com.barataribeiro.medimanage.dtos.raw;
 
+import com.barataribeiro.medimanage.dtos.raw.simple.SimpleDoctorDTO;
 import com.barataribeiro.medimanage.entities.models.Article;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -27,6 +28,6 @@ public class ArticleDTO implements Serializable {
     Boolean wasEdit = false;
     Instant createdAt;
     Instant updatedAt;
-    private UserDTO author;
+    private SimpleDoctorDTO author;
     private Set<CategoryDTO> categories;
 }

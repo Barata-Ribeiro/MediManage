@@ -1,5 +1,7 @@
 package com.barataribeiro.medimanage.dtos.raw;
 
+import com.barataribeiro.medimanage.dtos.raw.simple.SimpleDoctorDTO;
+import com.barataribeiro.medimanage.dtos.raw.simple.SimpleUserDTO;
 import com.barataribeiro.medimanage.entities.enums.ConsultationStatus;
 import com.barataribeiro.medimanage.entities.models.Consultation;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -20,8 +22,8 @@ import java.time.LocalDateTime;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConsultationDTO implements Serializable {
     Long id;
-    UserDTO patient;
-    UserDTO doctor;
+    SimpleUserDTO patient;
+    SimpleDoctorDTO doctor;
     LocalDateTime scheduledTo;
     ConsultationStatus status;
     Instant createdAt;

@@ -1,5 +1,6 @@
 package com.barataribeiro.medimanage.services;
 
+import com.barataribeiro.medimanage.dtos.raw.UserContextDTO;
 import com.barataribeiro.medimanage.dtos.raw.UserDTO;
 import com.barataribeiro.medimanage.dtos.requests.UpdateAccountRequestDTO;
 import com.barataribeiro.medimanage.dtos.requests.UpdateUserInformationDTO;
@@ -17,7 +18,7 @@ public interface UserService {
 
     void deleteUser(String userId, Principal principal);
 
-    UserDTO getContext(Principal principal);
+    UserContextDTO getContext(Principal principal);
 
-    UserDTO updateAccount(UpdateAccountRequestDTO body, Principal principal);
+    UserContextDTO updateAccount(UpdateAccountRequestDTO body, Principal principal);
 }

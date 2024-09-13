@@ -1,6 +1,8 @@
 package com.barataribeiro.medimanage.builders;
 
+import com.barataribeiro.medimanage.dtos.raw.UserContextDTO;
 import com.barataribeiro.medimanage.dtos.raw.UserDTO;
+import com.barataribeiro.medimanage.dtos.raw.simple.SimpleDoctorDTO;
 import com.barataribeiro.medimanage.dtos.raw.simple.SimpleUserDTO;
 import com.barataribeiro.medimanage.entities.models.User;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +24,16 @@ public class UserMapper {
         return modelMapper.map(user, UserDTO.class);
     }
 
+    public UserContextDTO toContextDTO(User user) {
+        return modelMapper.map(user, UserContextDTO.class);
+    }
+
     public SimpleUserDTO toSimpleDTO(User user) {
         return modelMapper.map(user, SimpleUserDTO.class);
+    }
+
+    public SimpleDoctorDTO toSimpleDoctorDTO(User user) {
+        return modelMapper.map(user, SimpleDoctorDTO.class);
     }
 
     public User toEntity(UserDTO userDTO) {
@@ -36,9 +46,21 @@ public class UserMapper {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
+    public List<UserContextDTO> toContextDTOList(@NotNull List<User> users) {
+        return users.stream()
+                .map(this::toContextDTO)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
     public List<SimpleUserDTO> toSimpleDTOList(@NotNull List<User> users) {
         return users.stream()
                 .map(this::toSimpleDTO)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public List<SimpleDoctorDTO> toSimpleDoctorDTOList(@NotNull List<User> users) {
+        return users.stream()
+                .map(this::toSimpleDoctorDTO)
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
