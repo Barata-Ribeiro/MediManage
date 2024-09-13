@@ -1,7 +1,7 @@
 package com.barataribeiro.medimanage.controllers;
 
-import com.barataribeiro.medimanage.dtos.raw.SimpleUserDTO;
 import com.barataribeiro.medimanage.dtos.raw.UserDTO;
+import com.barataribeiro.medimanage.dtos.raw.simple.SimpleUserDTO;
 import com.barataribeiro.medimanage.dtos.requests.UpdateAccountRequestDTO;
 import com.barataribeiro.medimanage.dtos.requests.UpdateUserInformationDTO;
 import com.barataribeiro.medimanage.dtos.responses.RestResponseDTO;

@@ -4,7 +4,7 @@ import com.barataribeiro.medimanage.builders.MedicalRecordMapper;
 import com.barataribeiro.medimanage.constants.ApplicationConstants;
 import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.MedicalRecordDTO;
-import com.barataribeiro.medimanage.dtos.raw.SimpleMedicalRecordDTO;
+import com.barataribeiro.medimanage.dtos.raw.simple.SimpleMedicalRecordDTO;
 import com.barataribeiro.medimanage.dtos.requests.MedicalRecordRegisterDTO;
 import com.barataribeiro.medimanage.entities.models.MedicalRecord;
 import com.barataribeiro.medimanage.entities.models.Notification;

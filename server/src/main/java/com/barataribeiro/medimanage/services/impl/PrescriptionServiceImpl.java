@@ -4,7 +4,7 @@ import com.barataribeiro.medimanage.builders.PrescriptionMapper;
 import com.barataribeiro.medimanage.constants.ApplicationConstants;
 import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.PrescriptionDTO;
-import com.barataribeiro.medimanage.dtos.raw.SimplePrescriptionDTO;
+import com.barataribeiro.medimanage.dtos.raw.simple.SimplePrescriptionDTO;
 import com.barataribeiro.medimanage.dtos.requests.PrescriptionCreateDTO;
 import com.barataribeiro.medimanage.entities.models.Notification;
 import com.barataribeiro.medimanage.entities.models.Prescription;

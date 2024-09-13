@@ -1,4 +1,4 @@
-package com.barataribeiro.medimanage.dtos.raw;
+package com.barataribeiro.medimanage.dtos.raw.simple;
 
 import com.barataribeiro.medimanage.entities.enums.AccountType;
 import com.barataribeiro.medimanage.entities.enums.UserRoles;
@@ -18,10 +18,13 @@ import java.util.UUID;
 @Setter
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SimpleUserDTO implements Serializable {
+public class SimpleDoctorDTO implements Serializable {
     UUID id;
     String username;
     String fullName;
+    String registrationNumber;
+    String registrationOrigin;
+    String specialization;
     AccountType accountType;
     UserRoles userRoles;
 }

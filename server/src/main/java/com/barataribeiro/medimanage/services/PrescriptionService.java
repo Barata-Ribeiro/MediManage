@@ -1,7 +1,7 @@
 package com.barataribeiro.medimanage.services;
 
 import com.barataribeiro.medimanage.dtos.raw.PrescriptionDTO;
-import com.barataribeiro.medimanage.dtos.raw.SimplePrescriptionDTO;
+import com.barataribeiro.medimanage.dtos.raw.simple.SimplePrescriptionDTO;
 import com.barataribeiro.medimanage.dtos.requests.PrescriptionCreateDTO;
 import org.springframework.data.domain.Page;
 

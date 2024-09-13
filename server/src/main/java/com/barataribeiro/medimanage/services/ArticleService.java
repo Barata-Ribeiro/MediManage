@@ -1,7 +1,7 @@
 package com.barataribeiro.medimanage.services;
 
 import com.barataribeiro.medimanage.dtos.raw.ArticleDTO;
-import com.barataribeiro.medimanage.dtos.raw.SimpleArticleDTO;
+import com.barataribeiro.medimanage.dtos.raw.simple.SimpleArticleDTO;
 import com.barataribeiro.medimanage.dtos.requests.ArticleRequestDTO;
 import com.barataribeiro.medimanage.dtos.requests.ArticleUpdateRequestDTO;
 import org.springframework.data.domain.Page;

@@ -1,7 +1,7 @@
 package com.barataribeiro.medimanage.builders;
 
-import com.barataribeiro.medimanage.dtos.raw.SimpleUserDTO;
 import com.barataribeiro.medimanage.dtos.raw.UserDTO;
+import com.barataribeiro.medimanage.dtos.raw.simple.SimpleUserDTO;
 import com.barataribeiro.medimanage.entities.models.User;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;

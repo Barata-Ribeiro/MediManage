@@ -1,6 +1,5 @@
-package com.barataribeiro.medimanage.dtos.raw;
+package com.barataribeiro.medimanage.dtos.raw.simple;
 
-import com.barataribeiro.medimanage.entities.models.Prescription;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
@@ -8,7 +7,7 @@ import java.io.Serializable;
 import java.time.Instant;
 
 /**
- * DTO for {@link Prescription}
+ * DTO for {@link com.barataribeiro.medimanage.entities.models.Article}
  */
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,10 +15,12 @@ import java.time.Instant;
 @Setter
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SimplePrescriptionDTO implements Serializable {
+public class SimpleArticleDTO implements Serializable {
     Long id;
-    SimpleUserDTO patient;
-    SimpleUserDTO doctor;
+    String title;
+    String subTitle;
+    String slug;
+    String mediaUrl;
+    SimpleUserDTO author;
     Instant createdAt;
-    Instant updatedAt;
 }

@@ -1,7 +1,7 @@
 package com.barataribeiro.medimanage.services;
 
 import com.barataribeiro.medimanage.dtos.raw.MedicalRecordDTO;
-import com.barataribeiro.medimanage.dtos.raw.SimpleMedicalRecordDTO;
+import com.barataribeiro.medimanage.dtos.raw.simple.SimpleMedicalRecordDTO;
 import com.barataribeiro.medimanage.dtos.requests.MedicalRecordRegisterDTO;
 import org.springframework.data.domain.Page;
 

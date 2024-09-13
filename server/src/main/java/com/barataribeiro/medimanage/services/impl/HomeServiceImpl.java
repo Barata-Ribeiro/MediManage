@@ -5,7 +5,7 @@ import com.barataribeiro.medimanage.builders.PrescriptionMapper;
 import com.barataribeiro.medimanage.constants.ApplicationConstants;
 import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.ConsultationDTO;
-import com.barataribeiro.medimanage.dtos.raw.SimplePrescriptionDTO;
+import com.barataribeiro.medimanage.dtos.raw.simple.SimplePrescriptionDTO;
 import com.barataribeiro.medimanage.dtos.responses.RestResponseDTO;
 import com.barataribeiro.medimanage.entities.models.Consultation;
 import com.barataribeiro.medimanage.entities.models.MedicalRecord;

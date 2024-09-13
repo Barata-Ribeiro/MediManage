@@ -4,7 +4,7 @@ import com.barataribeiro.medimanage.builders.ArticleMapper;
 import com.barataribeiro.medimanage.constants.ApplicationConstants;
 import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.ArticleDTO;
-import com.barataribeiro.medimanage.dtos.raw.SimpleArticleDTO;
+import com.barataribeiro.medimanage.dtos.raw.simple.SimpleArticleDTO;
 import com.barataribeiro.medimanage.dtos.requests.ArticleRequestDTO;
 import com.barataribeiro.medimanage.dtos.requests.ArticleUpdateRequestDTO;
 import com.barataribeiro.medimanage.entities.models.Article;

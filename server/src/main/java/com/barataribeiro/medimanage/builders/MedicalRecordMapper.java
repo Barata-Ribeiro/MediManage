@@ -1,7 +1,7 @@
 package com.barataribeiro.medimanage.builders;
 
 import com.barataribeiro.medimanage.dtos.raw.MedicalRecordDTO;
-import com.barataribeiro.medimanage.dtos.raw.SimpleMedicalRecordDTO;
+import com.barataribeiro.medimanage.dtos.raw.simple.SimpleMedicalRecordDTO;
 import com.barataribeiro.medimanage.entities.models.MedicalRecord;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;

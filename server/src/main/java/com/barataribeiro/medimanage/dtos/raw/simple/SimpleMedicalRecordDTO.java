@@ -1,5 +1,6 @@
-package com.barataribeiro.medimanage.dtos.raw;
+package com.barataribeiro.medimanage.dtos.raw.simple;
 
+import com.barataribeiro.medimanage.dtos.raw.UserDTO;
 import com.barataribeiro.medimanage.entities.models.MedicalRecord;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;

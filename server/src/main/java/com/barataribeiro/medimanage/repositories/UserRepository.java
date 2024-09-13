@@ -1,6 +1,6 @@
 package com.barataribeiro.medimanage.repositories;
 
-import com.barataribeiro.medimanage.dtos.raw.SimpleUserDTO;
+import com.barataribeiro.medimanage.dtos.raw.simple.SimpleUserDTO;
 import com.barataribeiro.medimanage.entities.enums.AccountType;
 import com.barataribeiro.medimanage.entities.models.User;
 import org.springframework.data.domain.Page;
@@ -30,7 +30,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     // TESTING QUERY WITH DTO
     @Query("""
-            SELECT DISTINCT new com.barataribeiro.medimanage.dtos.raw.SimpleUserDTO(
+            SELECT DISTINCT new com.barataribeiro.medimanage.dtos.raw.simple.SimpleUserDTO(
                     u.id,
                     u.username,
                     u.fullName,
@@ -40,7 +40,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             WHERE (LOWER(u.username) LIKE LOWER(CONCAT('%', :search, '%'))
                   OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :search, '%')))
             AND u.accountType = :accountType
-            ORDER BY u.fullName
+            ORDER BY u.fullName ASC
            """)
     Set<SimpleUserDTO> findUsersBySearchAndAccountType(
             @Param("search") String search, @Param("accountType") AccountType accountType);

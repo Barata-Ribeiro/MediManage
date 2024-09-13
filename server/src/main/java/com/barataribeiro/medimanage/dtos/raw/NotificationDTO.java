@@ -1,5 +1,6 @@
 package com.barataribeiro.medimanage.dtos.raw;
 
+import com.barataribeiro.medimanage.dtos.raw.simple.SimpleUserDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 

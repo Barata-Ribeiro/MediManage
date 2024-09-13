@@ -1,7 +1,7 @@
 package com.barataribeiro.medimanage.controllers;
 
 import com.barataribeiro.medimanage.dtos.raw.MedicalRecordDTO;
-import com.barataribeiro.medimanage.dtos.raw.SimpleMedicalRecordDTO;
+import com.barataribeiro.medimanage.dtos.raw.simple.SimpleMedicalRecordDTO;
 import com.barataribeiro.medimanage.dtos.requests.MedicalRecordRegisterDTO;
 import com.barataribeiro.medimanage.dtos.responses.RestResponseDTO;
 import com.barataribeiro.medimanage.services.MedicalRecordService;

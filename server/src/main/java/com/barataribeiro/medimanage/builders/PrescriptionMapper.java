@@ -1,7 +1,7 @@
 package com.barataribeiro.medimanage.builders;
 
 import com.barataribeiro.medimanage.dtos.raw.PrescriptionDTO;
-import com.barataribeiro.medimanage.dtos.raw.SimplePrescriptionDTO;
+import com.barataribeiro.medimanage.dtos.raw.simple.SimplePrescriptionDTO;
 import com.barataribeiro.medimanage.entities.models.Prescription;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
