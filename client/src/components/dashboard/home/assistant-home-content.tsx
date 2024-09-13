@@ -7,8 +7,53 @@ import LatestNotice from "@/components/dashboard/home/latest-notice"
 import { AssistantInfo } from "@/interfaces/home"
 import TodayConsultationsStats from "@/components/dashboard/home/today-consultations-stats"
 import TodayConsultationsList from "@/components/dashboard/home/today-consultations-list"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { BACKEND_URL } from "@/utils/api-urls"
+import { useCookies } from "@/context/cookie-context-provider"
+import listenToServerSentEvents from "@/utils/listen-to-server-sent-events"
+import { Consultation } from "@/interfaces/consultations"
+import SimpleErrorNotification from "@/components/helpers/simple-error-notification"
 
 export default function AssistantHomeContent({ homeInfo }: Readonly<{ homeInfo: AssistantInfo }>) {
+    const [homeInfoData, setHomeInfoData] = useState<AssistantInfo>(homeInfo)
+    const [error, setError] = useState<string | null>(null)
+    const abortControllerRef = useRef<AbortController>(new AbortController())
+    const URL = BACKEND_URL + "/api/v1/home/stream/assistant-info"
+    const { cookie } = useCookies()
+
+    const stopResponseSSE = useCallback(() => {
+        if (abortControllerRef.current) {
+            abortControllerRef.current.abort()
+            abortControllerRef.current = new AbortController()
+        }
+    }, [])
+
+    const sseCallback = useCallback(
+        async (token: string) => {
+            await listenToServerSentEvents<AssistantInfo>({
+                token,
+                url: URL,
+                setHomeInfoData,
+                stopResponseSSE,
+                abortControllerRef,
+                setError,
+            })
+        },
+        [URL, stopResponseSSE],
+    )
+
+    useEffect(() => {
+        const isCookie = cookie && cookie !== "null" && cookie !== "undefined"
+        const isTodayConsultations = (homeInfoData.consultationsForToday as Consultation[]).length > 0
+
+        if (isCookie && isTodayConsultations)
+            sseCallback(cookie)
+                .then(r => r)
+                .catch(e => setError(e.message))
+
+        return () => stopResponseSSE()
+    }, [cookie, homeInfoData, sseCallback, stopResponseSSE])
+
     return (
         <>
             <TodayConsultationsStats
@@ -28,6 +73,8 @@ export default function AssistantHomeContent({ homeInfo }: Readonly<{ homeInfo: 
                 </span>
             </DividerWithContent>
             <ConsultationsStats data={homeInfo.consultationsByStatus} />
+
+            {error && <SimpleErrorNotification error={error} />}
         </>
     )
 }

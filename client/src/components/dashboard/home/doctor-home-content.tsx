@@ -8,13 +8,14 @@ import LatestNotice from "@/components/dashboard/home/latest-notice"
 import NextConsultation from "@/components/dashboard/home/next-consultation"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { BACKEND_URL } from "@/utils/api-urls"
-import { fetchEventSource } from "@microsoft/fetch-event-source"
 import { useCookies } from "@/context/cookie-context-provider"
-import { ApiResponse } from "@/interfaces/actions"
 import { Consultation } from "@/interfaces/consultations"
+import listenToServerSentEvents from "@/utils/listen-to-server-sent-events"
+import SimpleErrorNotification from "@/components/helpers/simple-error-notification"
 
 export default function DoctorHomeContent({ homeInfo }: Readonly<{ homeInfo: DoctorInfo }>) {
     const [homeInfoData, setHomeInfoData] = useState<DoctorInfo>(homeInfo)
+    const [error, setError] = useState<string | null>(null)
     const abortControllerRef = useRef<AbortController>(new AbortController())
     const URL = BACKEND_URL + "/api/v1/home/stream/doctor-info"
     const { cookie } = useCookies()
@@ -26,39 +27,15 @@ export default function DoctorHomeContent({ homeInfo }: Readonly<{ homeInfo: Doc
         }
     }, [])
 
-    const listenToSseUpdates = useCallback(
+    const sseCallback = useCallback(
         async (token: string) => {
-            await fetchEventSource(URL, {
-                headers: {
-                    accept: "text/event-stream",
-                    "Content-type": "application/json",
-                    Authorization: "Bearer " + token,
-                },
-                onopen(res) {
-                    return new Promise<void>((resolve, reject) => {
-                        if (res.ok && res.status === 200) {
-                            console.log("SSE connection opened.")
-                            resolve()
-                        } else if (res.status >= 400 && res.status < 500 && res.status !== 429) {
-                            console.error("SSE connection error: ", res)
-                            reject(new Error("SSE connection error: " + res))
-                        }
-                    })
-                },
-                onmessage(event) {
-                    const response = JSON.parse(event.data) as ApiResponse
-                    console.log("DATA: ", response)
-                    if (response.code === 200) setHomeInfoData(response.data as DoctorInfo)
-                },
-                onclose() {
-                    console.log("SSE connection closed.")
-                    stopResponseSSE()
-                },
-                onerror(err) {
-                    console.error("SSE connection error: ", err)
-                    throw new Error("SSE connection error: " + err)
-                },
-                signal: abortControllerRef.current.signal,
+            await listenToServerSentEvents<DoctorInfo>({
+                token,
+                url: URL,
+                setHomeInfoData,
+                stopResponseSSE,
+                abortControllerRef,
+                setError,
             })
         },
         [URL, stopResponseSSE],
@@ -70,12 +47,12 @@ export default function DoctorHomeContent({ homeInfo }: Readonly<{ homeInfo: Doc
             (homeInfoData.nextConsultation as Consultation).scheduledTo > new Date().toISOString()
 
         if (isCookie && isNextConsultationValid)
-            listenToSseUpdates(cookie)
+            sseCallback(cookie)
                 .then(r => r)
-                .catch(e => console.error(e))
+                .catch(e => setError(e.message))
 
         return () => stopResponseSSE()
-    }, [cookie, homeInfoData, listenToSseUpdates, stopResponseSSE])
+    }, [cookie, homeInfoData, sseCallback, stopResponseSSE])
 
     return (
         <>
@@ -92,6 +69,8 @@ export default function DoctorHomeContent({ homeInfo }: Readonly<{ homeInfo: Doc
                 </span>
             </DividerWithContent>
             <NextConsultation data={homeInfoData.nextConsultation} />
+
+            {error && <SimpleErrorNotification error={error} />}
         </>
     )
 }
