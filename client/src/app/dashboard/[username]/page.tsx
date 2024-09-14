@@ -21,13 +21,18 @@ export default async function HomePage() {
     const homeState = await getHomeInfo(user.accountType)
     const homeInfo = homeState.response as AdministratorInfo | PatientInfo | AssistantInfo | DoctorInfo
 
-    console.log(homeInfo)
-
     return (
         <section id="home-section" className="grid gap-4">
             {user.accountType === "ADMINISTRATOR" && <AdminHomeContent homeInfo={homeInfo as AdministratorInfo} />}
             {user.accountType === "DOCTOR" && <DoctorHomeContent homeInfo={homeInfo as DoctorInfo} />}
             {user.accountType === "ASSISTANT" && <AssistantHomeContent homeInfo={homeInfo as AssistantInfo} />}
+            {user.accountType === "PATIENT" && (
+                <div>
+                    Placeholder for Patient home content.
+                    <br />
+                    <div>{JSON.stringify(homeInfo)}</div>
+                </div>
+            )}
         </section>
     )
 }
