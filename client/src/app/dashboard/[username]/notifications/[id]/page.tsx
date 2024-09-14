@@ -47,8 +47,11 @@ export default async function ViewNotifPage({ params, searchParams }: Readonly<V
                 id={"notification-" + params.id + "-section-content"}
                 className="mx-auto mt-6 max-w-2xl align-middle">
                 <header className="lg:py flex w-full flex-wrap items-center justify-between border-b border-neutral-200 py-2 sm:py-3">
-                    <h2 aria-hidden="true" title="YOUR LOGO" className="text-xl font-bold leading-7 text-neutral-900">
-                        YOUR LOGO!
+                    <h2
+                        aria-hidden="true"
+                        title={process.env.INSTITUTION_NAME ?? "YOUR LOGO!"}
+                        className="text-xl font-bold leading-7 text-neutral-900">
+                        {process.env.INSTITUTION_NAME ?? "YOUR LOGO!"}
                     </h2>
                     <time dateTime={notification.issuedAt} className="text-sm text-neutral-700">
                         Issued at {parseDate(notification.issuedAt)}
