@@ -78,9 +78,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional(readOnly = true)
     public List<NotificationDTO> getLatestUserNotifications(String userId, @NotNull Principal principal) {
         log.atInfo().log("Fetching latest 5 notifications for user with id: {}", userId);
-        List<Notification> notifications =
-                notificationRepository.findDistinctTop5ByUser_IdAndUser_UsernameOrderByIssuedAtAsc(
-                        UUID.fromString(userId), principal.getName());
+        List<Notification> notifications = notificationRepository
+                .findTop5ByUser_IdAndUser_UsernameOrderByIssuedAtDesc(UUID.fromString(userId), principal.getName());
         log.atInfo().log("{} of the latest notifications found and returned.", notifications.size());
         return notificationMapper.toDTOList(notifications);
     }

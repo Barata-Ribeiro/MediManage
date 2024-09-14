@@ -31,7 +31,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     Optional<Notification> findFirstByIdAndUser_IdAndUser_Username(Long notifId, UUID userId, String username);
 
     @EntityGraph(attributePaths = {"user"})
-    List<Notification> findDistinctTop5ByUser_IdAndUser_UsernameOrderByIssuedAtAsc(UUID id, String username);
+    List<Notification> findTop5ByUser_IdAndUser_UsernameOrderByIssuedAtDesc(UUID id, String username);
+
 
     @EntityGraph(attributePaths = {"user"})
     @Query("""
