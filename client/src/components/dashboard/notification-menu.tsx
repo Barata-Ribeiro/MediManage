@@ -14,6 +14,22 @@ import { FaCheckSquare } from "react-icons/fa"
 
 type StateError = string | ProblemDetails | Partial<Pick<ZodIssue, "path" | "message">>[]
 
+function NoNotif() {
+    return (
+        <MenuItem as="p" className="px-2 py-8 text-center font-heading text-sm text-neutral-600" disabled>
+            No notifications available
+        </MenuItem>
+    )
+}
+
+function LoadingNotif() {
+    return (
+        <MenuItem as="div" disabled>
+            <div className="px-2 py-8 text-center font-heading text-sm text-neutral-600">Loading notifications...</div>
+        </MenuItem>
+    )
+}
+
 export default function NotificationMenu({ disabled }: Readonly<{ disabled: boolean }>) {
     const [notifications, setNotifications] = useState<Notification[]>([])
     const [loading, setLoading] = useState(false)
@@ -23,17 +39,32 @@ export default function NotificationMenu({ disabled }: Readonly<{ disabled: bool
     const url = "/dashboard/" + dataUser.user?.username + "/notifications"
 
     useEffect(() => {
-        if (dataUser.user) {
-            setLoading(true)
-            getLatestUserNotifications(dataUser.user.id)
-                .then(state => {
-                    if (state.ok) setNotifications(state.response?.data as Notification[])
-                    else setError(state.error)
-                })
-                .catch(error => setError(error))
-                .finally(() => setLoading(false))
+        let isMounted = true
+
+        async function fetchNotifications() {
+            if (dataUser.user?.id) {
+                setLoading(true)
+
+                try {
+                    const state = await getLatestUserNotifications(dataUser.user.id)
+                    if (isMounted) {
+                        if (state.ok) setNotifications(state.response?.data as Notification[])
+                        else setError(state.error)
+                    }
+                } catch (error) {
+                    if (isMounted) setError(error as StateError)
+                } finally {
+                    if (isMounted) setLoading(false)
+                }
+            }
         }
-    }, [dataUser])
+
+        void fetchNotifications()
+
+        return () => {
+            isMounted = false
+        }
+    }, [dataUser.user?.id])
 
     return (
         <Menu as="div" className="relative ml-3">
@@ -53,60 +84,50 @@ export default function NotificationMenu({ disabled }: Readonly<{ disabled: bool
                 leave="transition ease-in duration-75"
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95">
-                <MenuItems className="absolute right-0 z-10 mt-2 w-72 origin-top-right rounded-md bg-neutral-50 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <MenuItems className="absolute right-0 z-50 mt-2 w-72 origin-top-right rounded-md bg-neutral-50 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     {error && (
                         <MenuItem as="div" disabled>
                             <RequisitionError error={error as string | ProblemDetails} />
                         </MenuItem>
                     )}
-                    {!loading && !error && notifications.length === 0 && (
-                        <MenuItem
-                            as="p"
-                            className="px-2 py-8 text-center font-heading text-sm text-neutral-600"
-                            disabled>
-                            No notifications available
-                        </MenuItem>
-                    )}
+                    {!loading && !error && notifications.length === 0 && <NoNotif />}
+                    {loading && <LoadingNotif />}
                     {!loading &&
                         !error &&
-                        notifications
-                            .toSorted((a, b) => new Date(b.issuedAt).getTime() - new Date(a.issuedAt).getTime())
-                            .map((notification, index) => (
-                                <MenuItem key={notification.id + "_" + index}>
-                                    {({ focus }) => (
-                                        <div className="inline-flex items-start gap-2 px-8 py-2">
-                                            <div className="flex-shrink-0">
-                                                <FaCheckSquare
-                                                    aria-hidden
-                                                    className={twMerge(
-                                                        "h-5 w-5",
-                                                        !notification.isRead
-                                                            ? "text-hello-spring-500"
-                                                            : "text-neutral-500",
-                                                    )}
-                                                />
-                                            </div>
-                                            <Link
-                                                className="grid text-sm text-neutral-700"
-                                                href={url + "/" + notification.id + "?user=" + dataUser.user?.id}>
-                                                <h3
-                                                    className={twMerge(
-                                                        "font-heading text-sm font-medium leading-5 tracking-wide transition-all",
-                                                        focus ? "underline underline-offset-2" : "",
-                                                    )}>
-                                                    {notification.title}
-                                                </h3>
-                                                <p className="text-sm">
-                                                    Sent on{" "}
-                                                    <time dateTime={notification.issuedAt}>
-                                                        {parseDate(notification.issuedAt)}
-                                                    </time>
-                                                </p>
-                                            </Link>
+                        notifications.map((notification, index) => (
+                            <MenuItem key={notification.id + "_" + index}>
+                                {({ focus }) => (
+                                    <div className="inline-flex items-start gap-2 px-8 py-2">
+                                        <div className="flex-shrink-0">
+                                            <FaCheckSquare
+                                                aria-hidden
+                                                className={twMerge(
+                                                    "h-5 w-5",
+                                                    !notification.isRead ? "text-hello-spring-500" : "text-neutral-500",
+                                                )}
+                                            />
                                         </div>
-                                    )}
-                                </MenuItem>
-                            ))}
+                                        <Link
+                                            className="grid text-sm text-neutral-700"
+                                            href={url + "/" + notification.id + "?user=" + dataUser.user?.id}>
+                                            <h3
+                                                className={twMerge(
+                                                    "font-heading text-sm font-medium leading-5 tracking-wide transition-all",
+                                                    focus ? "underline underline-offset-2" : "",
+                                                )}>
+                                                {notification.title}
+                                            </h3>
+                                            <p className="text-sm">
+                                                Sent on{" "}
+                                                <time dateTime={notification.issuedAt}>
+                                                    {parseDate(notification.issuedAt)}
+                                                </time>
+                                            </p>
+                                        </Link>
+                                    </div>
+                                )}
+                            </MenuItem>
+                        ))}
                     <MenuItem as="div" className="-mb-2 flex h-full w-full rounded-b-md">
                         <Link
                             href={url}
