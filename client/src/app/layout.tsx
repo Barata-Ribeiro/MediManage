@@ -9,6 +9,7 @@ import { twMerge } from "tailwind-merge"
 import SimpleErrorNotification from "@/components/helpers/simple-error-notification"
 import { CookieProvider } from "@/context/cookie-context-provider"
 import getCookie from "@/actions/get-cookie"
+import { ProblemDetails, State } from "@/interfaces/actions"
 
 const roboto = Roboto({
     weight: ["100", "300", "400", "500", "700", "900"],
@@ -32,7 +33,14 @@ export const metadata: Metadata = {
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
-    const context = await getUserContext()
+    let context: State
+
+    try {
+        context = await getUserContext()
+    } catch (error) {
+        context = { ok: false, response: null, error: error as ProblemDetails }
+    }
+
     let user: User | null = null
     if (context.ok) user = context.response?.data as User
 
