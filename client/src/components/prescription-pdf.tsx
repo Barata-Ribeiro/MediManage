@@ -1,4 +1,5 @@
 import { Prescription } from "@/interfaces/prescriptions"
+import getAge from "@/utils/get-age"
 import parseDate from "@/utils/parse-date"
 import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer"
 
@@ -96,17 +97,6 @@ const styles = StyleSheet.create({
     },
 })
 
-function getAge(birthday: string) {
-    const today = new Date()
-    const birthDate = new Date(birthday)
-    let age = today.getFullYear() - birthDate.getFullYear()
-    const m = today.getMonth() - birthDate.getMonth()
-
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--
-
-    return age
-}
-
 export default function PrescriptionPdf({ data }: PrescriptionPdfProps) {
     const institution = process.env.INSTITUTION_NAME
     console.log(data)
@@ -139,7 +129,7 @@ export default function PrescriptionPdf({ data }: PrescriptionPdfProps) {
 
                     <View style={styles.patientWrapper}>
                         <Text style={styles.info}>Patient Name: {data.patient.fullName}</Text>
-                        <Text style={styles.info}>Age: {getAge(data.patient.birthDate!)}</Text>
+                        <Text style={styles.info}>Age: {getAge(data.patient.birthDate)}</Text>
                         <Text style={styles.info}>Birthdate: {parseDate(data.patient.birthDate)}</Text>
                         <Text style={styles.info}>Phone: {data.patient.phone}</Text>
                         <Text style={styles.info}>Address: {data.patient.address}</Text>
