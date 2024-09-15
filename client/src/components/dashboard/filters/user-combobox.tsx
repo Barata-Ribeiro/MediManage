@@ -21,7 +21,7 @@ export default function UserCombobox({ type }: Readonly<UserComboboxProps>) {
     const entity = type.charAt(0) + type.slice(1).toLowerCase()
 
     useEffect(() => {
-        if (debouncedQuery.length > 0 ?? query === "") {
+        if (debouncedQuery.length > 0 || query === "") {
             getUserSearchSuggestions(query ?? debouncedQuery, type)
                 .then(res => {
                     if (res.ok) {
