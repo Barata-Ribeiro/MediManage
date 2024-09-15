@@ -6,6 +6,7 @@ import { AdministratorInfo, AssistantInfo, DoctorInfo, PatientInfo } from "@/int
 import DoctorHomeContent from "@/components/dashboard/home/doctor-home-content"
 import AdminHomeContent from "@/components/dashboard/home/admin-home-content"
 import AssistantHomeContent from "@/components/dashboard/home/assistant-home-content"
+import PatientHomeContent from "@/components/dashboard/home/patient-home-content"
 
 export async function generateMetadata({ params }: { params: { username: string } }): Promise<Metadata> {
     return {
@@ -21,18 +22,14 @@ export default async function HomePage() {
     const homeState = await getHomeInfo(user.accountType)
     const homeInfo = homeState.response as AdministratorInfo | PatientInfo | AssistantInfo | DoctorInfo
 
+    console.log("HOME INFO: ", homeInfo)
+
     return (
         <section id="home-section" className="grid gap-4">
             {user.accountType === "ADMINISTRATOR" && <AdminHomeContent homeInfo={homeInfo as AdministratorInfo} />}
             {user.accountType === "DOCTOR" && <DoctorHomeContent homeInfo={homeInfo as DoctorInfo} />}
             {user.accountType === "ASSISTANT" && <AssistantHomeContent homeInfo={homeInfo as AssistantInfo} />}
-            {user.accountType === "PATIENT" && (
-                <div>
-                    Placeholder for Patient home content.
-                    <br />
-                    <div>{JSON.stringify(homeInfo)}</div>
-                </div>
-            )}
+            {user.accountType === "PATIENT" && <PatientHomeContent homeInfo={homeInfo as PatientInfo} />}
         </section>
     )
 }
