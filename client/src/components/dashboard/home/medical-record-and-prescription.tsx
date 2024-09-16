@@ -8,17 +8,20 @@ import { useEffect, useState } from "react"
 import { pdf } from "@react-pdf/renderer"
 import { twMerge } from "tailwind-merge"
 import dynamic from "next/dynamic"
+import Link from "next/link"
+import { User } from "@/interfaces/users"
 
 interface MedicalRecordAndPrescriptionProps {
     medicalRecord: MedicalRecord | object
     prescription: Prescription | object
+    user: User
 }
 
 const PDFDownloadLink = dynamic(() => import("@react-pdf/renderer").then(mod => mod.PDFDownloadLink), {
     ssr: false,
     loading: () => (
-        <div role="status" className="max-w-sm animate-pulse">
-            <div className="h-3 w-48 rounded-full bg-mourning-blue-200">
+        <div role="status" className="w-full animate-pulse">
+            <div className="h-4 w-52 rounded-full bg-mourning-blue-200">
                 <span className="sr-only">Loading...</span>
             </div>
         </div>
@@ -28,6 +31,7 @@ const PDFDownloadLink = dynamic(() => import("@react-pdf/renderer").then(mod => 
 export default function MedicalRecordAndPrescription({
     medicalRecord,
     prescription,
+    user,
 }: Readonly<MedicalRecordAndPrescriptionProps>) {
     const [blob, setBlob] = useState<Blob | null>(null)
     const [isDownloading, setIsDownloading] = useState(false)
@@ -46,7 +50,7 @@ export default function MedicalRecordAndPrescription({
             }
         }
 
-        void generateBlob()
+        generateBlob().catch(console.error)
     }, [prescription])
 
     if (Object.keys(medicalRecord).length === 0) return <p>No data</p>
@@ -54,6 +58,7 @@ export default function MedicalRecordAndPrescription({
 
     const medicalRecordData = medicalRecord as MedicalRecord
     const prescriptionData = prescription as Prescription
+    const url = `/dashboard/${user.username}/prescriptions/`
 
     const fileName = `${prescriptionData.patient.username}_${new Date(prescriptionData.createdAt).toISOString()}_prescription.pdf`
 
@@ -140,7 +145,14 @@ export default function MedicalRecordAndPrescription({
                         </dd>
                     </div>
                     <div className="border-t border-neutral-200 px-4 py-6 sm:col-span-2 sm:px-0">
-                        <dt className="text-base font-semibold leading-6 text-neutral-900">Latest Prescription</dt>
+                        <dt className="flex items-center gap-4">
+                            <h2 className="text-base font-semibold leading-6 text-neutral-900">Latest Prescription</h2>
+                            <Link
+                                href={url}
+                                className="text-sm font-medium leading-6 text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
+                                List All
+                            </Link>
+                        </dt>
                         <dd className="mt-2 text-sm text-neutral-900">
                             <div className="divide-y divide-gray-100 rounded-md border border-neutral-200">
                                 <div className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
@@ -159,8 +171,8 @@ export default function MedicalRecordAndPrescription({
                                                 </div>
                                             </>
                                         ) : (
-                                            <div role="status" className="max-w-sm animate-pulse">
-                                                <div className="h-3 w-96 rounded-full bg-neutral-200">
+                                            <div role="status" className="w-full animate-pulse">
+                                                <div className="h-4 w-full rounded-full bg-neutral-200">
                                                     <span className="sr-only">Loading...</span>
                                                 </div>
                                             </div>
