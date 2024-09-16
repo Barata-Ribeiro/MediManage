@@ -109,4 +109,16 @@ export const PRESCRIPTIONS_GET_ALL_BY_PATIENT_ID = (
 export const PRESCRIPTION_GET_BY_ID_AND_USERNAME = (id: string, username: string) =>
     `${BACKEND_URL}/api/v1/prescriptions/${id}?username=${username}`
 
+export const PRESCRIPTIONS_GET_MY_PRESCRIPTIONS_PAGINATED_LIST = (
+    search: string | null,
+    page: number,
+    perPage: number,
+    direction: string,
+    orderBy: string,
+) => {
+    let url = `${BACKEND_URL}/api/v1/prescriptions/me?page=${page}&perPage=${perPage}&direction=${direction}&orderBy=${orderBy}`
+    if (search) url += `&search=${search}`
+    return url
+}
+
 export const PRESCRIPTION_CREATE = (id: string) => `${BACKEND_URL}/api/v1/prescriptions/patients/${id}`
