@@ -15,4 +15,7 @@ public interface PrescriptionService {
     PrescriptionDTO getPrescription(String username, String prescriptionId, Principal principal);
 
     PrescriptionDTO createPrescription(String patientId, PrescriptionCreateDTO body, Principal principal);
+
+    Page<SimplePrescriptionDTO> getMyPrescriptionsPaginatedList(String search, int page, int perPage, String direction,
+                                                                String orderBy, Principal principal);
 }

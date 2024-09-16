@@ -110,4 +110,25 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
         return prescriptionMapper.toDTO(prescriptionRepository.saveAndFlush(prescription));
     }
+
+    @Override
+    public Page<SimplePrescriptionDTO> getMyPrescriptionsPaginatedList(String search, int page, int perPage,
+                                                                       @NotNull String direction, String orderBy,
+                                                                       Principal principal) {
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        orderBy = orderBy.equalsIgnoreCase(ApplicationConstants.CREATED_AT) ? ApplicationConstants.CREATED_AT : orderBy;
+        PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
+
+        Page<Prescription> prescriptions;
+        if (search != null && !search.trim().isEmpty()) {
+            prescriptions = prescriptionRepository.findPrescriptionsBySearchParams(search, principal.getName(),
+                                                                                   pageable);
+        } else {
+            prescriptions = prescriptionRepository.findAll(pageable);
+        }
+
+        List<SimplePrescriptionDTO> prescriptionDTOS = prescriptionMapper.toSimpleDTOList(prescriptions.getContent());
+
+        return new PageImpl<>(prescriptionDTOS, pageable, prescriptions.getTotalElements());
+    }
 }
