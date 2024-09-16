@@ -26,6 +26,17 @@ interface SimpleUser {
     userRoles: UserRoles
 }
 
+interface SimpleDoctor {
+    id: string
+    username: string
+    fullName: string | null
+    registrationNumber: string | null
+    registrationOrigin: string | null
+    specialization: string | null
+    AccountType: UserAccountType
+    userRoles: UserRoles
+}
+
 enum UserAccountType {
     PATIENT = "PATIENT",
     ASSISTANT = "ASSISTANT",
@@ -50,4 +61,4 @@ interface PaginatedUsers {
     }
 }
 
-export type { User, SimpleUser, UserAccountType, UserRoles, PaginatedUsers }
+export type { User, SimpleUser, SimpleDoctor, UserAccountType, UserRoles, PaginatedUsers }
