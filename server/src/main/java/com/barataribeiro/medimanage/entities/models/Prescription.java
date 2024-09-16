@@ -14,7 +14,10 @@ import java.time.Instant;
 @Setter
 @ToString
 @Entity
-@Table(name = "tb_prescriptions")
+@Table(name = "tb_prescriptions", indexes = {
+        @Index(name = "idx_prescription_text_fulltext", columnList = "prescription_text"),
+        @Index(name = "idx_prescription_doctor_id", columnList = "doctor_id")
+})
 public class Prescription {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

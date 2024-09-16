@@ -19,7 +19,7 @@ import java.time.Instant;
 public class SimplePrescriptionDTO implements Serializable {
     Long id;
     SimpleUserDTO patient;
-    SimpleUserDTO doctor;
+    SimpleDoctorDTO doctor;
     Instant createdAt;
     Instant updatedAt;
 }
