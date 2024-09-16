@@ -1,11 +1,12 @@
 package com.barataribeiro.medimanage.services.impl;
 
 import com.barataribeiro.medimanage.builders.ConsultationMapper;
+import com.barataribeiro.medimanage.builders.MedicalRecordMapper;
+import com.barataribeiro.medimanage.builders.NoticeMapper;
 import com.barataribeiro.medimanage.builders.PrescriptionMapper;
 import com.barataribeiro.medimanage.constants.ApplicationConstants;
 import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.ConsultationDTO;
-import com.barataribeiro.medimanage.dtos.raw.simple.SimplePrescriptionDTO;
 import com.barataribeiro.medimanage.dtos.responses.RestResponseDTO;
 import com.barataribeiro.medimanage.entities.models.Consultation;
 import com.barataribeiro.medimanage.entities.models.MedicalRecord;
@@ -55,6 +56,8 @@ public class HomeServiceImpl implements HomeService {
             Sinks.many().multicast().directBestEffort();
     private final Sinks.Many<RestResponseDTO<Map<String, Object>>> doctorSink =
             Sinks.many().multicast().directBestEffort();
+    private final MedicalRecordMapper medicalRecordMapper;
+    private final NoticeMapper noticeMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -237,7 +240,7 @@ public class HomeServiceImpl implements HomeService {
 
                 ApplicationConstants.TOTAL_ARTICLES, articleRepository.count(),
 
-                ApplicationConstants.LATEST_NOTICE, latestNotice != null ? latestNotice : Map.of()
+                ApplicationConstants.LATEST_NOTICE, latestNotice != null ? noticeMapper.toDTO(latestNotice) : Map.of()
         );
     }
 
@@ -252,11 +255,16 @@ public class HomeServiceImpl implements HomeService {
         Notice latestNotice = noticeRepository.findDistinctFirstByOrderByCreatedAtDesc().orElse(null);
 
         return Map.of(
-                ApplicationConstants.LATEST_PRESCRIPTION, latestPrescription != null ? latestPrescription : Map.of(),
-                ApplicationConstants.NEXT_CONSULTATION, nextConsultation != null ? nextConsultation : Map.of(),
-                ApplicationConstants.MEDICAL_RECORD, medicalRecord != null ? medicalRecord : Map.of(),
+                ApplicationConstants.LATEST_PRESCRIPTION,
+                latestPrescription != null ? prescriptionMapper.toDTO(latestPrescription) : Map.of(),
 
-                ApplicationConstants.LATEST_NOTICE, latestNotice != null ? latestNotice : Map.of()
+                ApplicationConstants.NEXT_CONSULTATION,
+                nextConsultation != null ? consultationMapper.toDTO(nextConsultation) : Map.of(),
+
+                ApplicationConstants.MEDICAL_RECORD,
+                medicalRecord != null ? medicalRecordMapper.toDTO(medicalRecord) : Map.of(),
+
+                ApplicationConstants.LATEST_NOTICE, latestNotice != null ? noticeMapper.toDTO(latestNotice) : Map.of()
         );
     }
 
@@ -279,7 +287,7 @@ public class HomeServiceImpl implements HomeService {
 
                 ApplicationConstants.CONSULTATIONS_FOR_TODAY, consultationsForToday,
 
-                ApplicationConstants.LATEST_NOTICE, latestNotice != null ? latestNotice : Map.of()
+                ApplicationConstants.LATEST_NOTICE, latestNotice != null ? noticeMapper.toDTO(latestNotice) : Map.of()
         );
     }
 
@@ -289,19 +297,19 @@ public class HomeServiceImpl implements HomeService {
         Notice latestNotice = noticeRepository.findDistinctFirstByOrderByCreatedAtDesc().orElse(null);
         Consultation nextConsultation = consultationRepository.findNextConsultationToBeAccepted().orElse(null);
 
-        List<Prescription> prescriptions =
-                prescriptionRepository.findTop5DistinctByDoctor_UsernameOrderByUpdatedAtDesc(principal.getName());
-        List<SimplePrescriptionDTO> recentPrescriptions = prescriptionMapper.toSimpleDTOList(prescriptions);
+        List<Prescription> prescriptions = prescriptionRepository
+                .findTop5DistinctByDoctor_UsernameOrderByUpdatedAtDesc(principal.getName());
 
         return Map.of(
-                ApplicationConstants.NEXT_CONSULTATION, nextConsultation != null ? nextConsultation : Map.of(),
+                ApplicationConstants.NEXT_CONSULTATION,
+                nextConsultation != null ? consultationMapper.toDTO(nextConsultation) : Map.of(),
 
                 ApplicationConstants.CONSULTATIONS_BY_STATUS,
                 consultationRepository.countGroupedConsultationsByStatus(),
 
-                ApplicationConstants.LATEST_NOTICE, latestNotice != null ? latestNotice : Map.of(),
+                ApplicationConstants.LATEST_NOTICE, latestNotice != null ? noticeMapper.toDTO(latestNotice) : Map.of(),
 
-                ApplicationConstants.RECENT_PRESCRIPTIONS, recentPrescriptions
+                ApplicationConstants.RECENT_PRESCRIPTIONS, prescriptionMapper.toSimpleDTOList(prescriptions)
         );
     }
 }
