@@ -39,10 +39,11 @@ export default function Header() {
     const userIsAdmin = data.user?.accountType === "ADMINISTRATOR"
     const userIsDoctor = data.user?.accountType === "DOCTOR"
     const userIsAssistant = data.user?.accountType === "ASSISTANT"
-    // const userIsPatient = data.user?.accountType === "PATIENT"
+    const userIsPatient = data.user?.accountType === "PATIENT"
 
     const navigation = [
         { name: "Dashboard", href: "/dashboard/" + encodedName, condition: true },
+        { name: "Prescriptions", href: "/dashboard/" + encodedName + "/prescriptions", condition: userIsPatient },
         { name: "Users", href: "/dashboard/" + encodedName + "/users", condition: userIsAdmin },
         { name: "Notices", href: "/dashboard/" + encodedName + "/notices", condition: userIsAdmin },
         {
