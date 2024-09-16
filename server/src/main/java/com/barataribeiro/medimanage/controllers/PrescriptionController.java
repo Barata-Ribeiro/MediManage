@@ -25,8 +25,7 @@ public class PrescriptionController {
 
     @Operation(summary = "Get patient prescriptions paginated list",
                description = "Get a paginated list of prescriptions for a specific patient. The list can be ordered " +
-                             "by " +
-                             "createdAt or updatedAt, and ordered in ASC or DESC order.",
+                             "by createdAt or updatedAt, and ordered in ASC or DESC order.",
                tags = {"prescriptions"})
     @GetMapping("/patients/{patientId}")
     @Secured({"ACCOUNT_TYPE_ASSISTANT", "ACCOUNT_TYPE_DOCTOR"})
@@ -74,6 +73,29 @@ public class PrescriptionController {
         return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.CREATED,
                                                        HttpStatus.CREATED.value(),
                                                        "Prescription created successfully.",
+                                                       response));
+    }
+
+    @Operation(summary = "Get rquesting user'ss prescriptions paginated list",
+               description = "Get a paginated list of prescriptions for the authenticated patient. The list can be " +
+                             "ordered by createdAt or updatedAt, and ordered in ASC or DESC order. The user is " +
+                             "allowed to search either by the prescription's text or the doctor's name.",
+               tags = {"prescriptions"})
+    @GetMapping("/me")
+    @Secured({"ACCOUNT_TYPE_PATIENT"})
+    public ResponseEntity<RestResponseDTO<Page<SimplePrescriptionDTO>>> getMyPrescriptionsPaginatedList(
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int perPage,
+            @RequestParam(defaultValue = "ASC") String direction,
+            @RequestParam(defaultValue = "createdAt") String orderBy,
+            Principal principal) {
+
+        Page<SimplePrescriptionDTO> response = prescriptionService
+                .getMyPrescriptionsPaginatedList(search, page, perPage, direction, orderBy, principal);
+        return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
+                                                       HttpStatus.OK.value(),
+                                                       "Prescriptions retrieved successfully.",
                                                        response));
     }
 }
