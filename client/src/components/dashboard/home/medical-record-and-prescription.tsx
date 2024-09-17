@@ -144,7 +144,7 @@ export default function MedicalRecordAndPrescription({
                             </p>
                         </dd>
                     </div>
-                    <div className="border-t border-neutral-200 px-4 py-6 sm:col-span-2 sm:px-0">
+                    <div className="border-t border-neutral-200 px-4 pt-6 sm:col-span-2 sm:px-0">
                         <dt className="flex items-center gap-4">
                             <h2 className="text-base font-semibold leading-6 text-neutral-900">Latest Prescription</h2>
                             <Link
