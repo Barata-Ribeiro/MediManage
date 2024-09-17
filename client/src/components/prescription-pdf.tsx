@@ -98,8 +98,7 @@ const styles = StyleSheet.create({
 })
 
 export default function PrescriptionPdf({ data }: PrescriptionPdfProps) {
-    const institution = process.env.INSTITUTION_NAME
-    console.log(data)
+    const institution = process.env.NEXT_PUBLIC_INSTITUTION_NAME ?? "Clinic Management System"
     return (
         <Document
             title={`Prescription for ${data.patient.fullName} by Dr. ${data.doctor.fullName} - ${parseDate(data.createdAt)}`}
