@@ -10,6 +10,7 @@ import {
     Field,
     Input,
     Label,
+    Textarea,
 } from "@headlessui/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -18,13 +19,12 @@ import { useUser } from "@/context/user-context-provider"
 import { useForm } from "@/hooks/use-form"
 import postNewPrescription from "@/actions/prescriptions/post-new-prescription"
 import { DialogBody, DialogHeader } from "next/dist/client/components/react-dev-overlay/internal/components/Dialog"
-import Tiptap from "@/components/editor/tiptap"
 import InputValidationError from "@/components/helpers/input-validation-error"
 import RequisitionError from "@/components/helpers/requisition-error"
 import Spinner from "@/components/helpers/spinner"
+import { FaInfoCircle } from "react-icons/fa"
 
 export default function NewPrescriptionModal({ userId }: Readonly<{ userId: string }>) {
-    const [content, setContent] = useState<string>("")
     const [open, setOpen] = useState(true)
 
     const router = useRouter()
@@ -39,7 +39,6 @@ export default function NewPrescriptionModal({ userId }: Readonly<{ userId: stri
     useEffect(() => {
         if (formState.ok) {
             setOpen(false)
-            setContent("")
             router.push(`/dashboard/${data.user?.username}/records/prescriptions?user=${userId}`)
         }
     }, [formState, data, router, userId])
@@ -89,11 +88,22 @@ export default function NewPrescriptionModal({ userId }: Readonly<{ userId: stri
                                         <Field className="my-4 w-full">
                                             <Label
                                                 htmlFor="content"
-                                                className="block text-sm font-medium text-gray-700">
+                                                className="mb-1 block font-heading text-base font-medium text-neutral-700">
                                                 Content
                                             </Label>
-                                            <Tiptap onUpdate={setContent} />
-                                            <Input type="hidden" name="content" value={content} />
+                                            <Description className="mb-2 flex items-start gap-1 text-sm text-neutral-600">
+                                                <FaInfoCircle size={18} /> Write only the content of the prescription.
+                                                Do not include the patient&apos;s name or any other personal
+                                                information.
+                                            </Description>
+                                            <Textarea
+                                                id="content"
+                                                name="content"
+                                                rows={4}
+                                                className="block w-full rounded-md border-0 py-1.5 font-body text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-mourning-blue-600 sm:text-sm sm:leading-6"
+                                                defaultValue={""}
+                                                placeholder="Write the prescription content here..."
+                                            />
                                         </Field>
 
                                         {formState.error && Array.isArray(formState.error) && (
