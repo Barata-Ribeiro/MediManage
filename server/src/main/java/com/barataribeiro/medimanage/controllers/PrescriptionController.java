@@ -76,6 +76,24 @@ public class PrescriptionController {
                                                        response));
     }
 
+    @Operation(summary = "Update prescription",
+               description = "Update a specific prescription.",
+               tags = {"prescriptions"})
+    @PatchMapping("/patients/{patientUsername}/{prescriptionId}")
+    @Secured("ACCOUNT_TYPE_DOCTOR")
+    public ResponseEntity<RestResponseDTO<PrescriptionDTO>> updatePrescription(@PathVariable String patientUsername,
+                                                                               @PathVariable String prescriptionId,
+                                                                               @RequestBody @Valid
+                                                                               PrescriptionCreateDTO body,
+                                                                               Principal principal) {
+        PrescriptionDTO response = prescriptionService.updatePrescription(patientUsername, prescriptionId, body,
+                                                                          principal);
+        return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
+                                                       HttpStatus.OK.value(),
+                                                       "Prescription updated successfully.",
+                                                       response));
+    }
+
     @Operation(summary = "Get requesting user's prescriptions paginated list",
                description = "Get a paginated list of prescriptions for the authenticated patient. The list can be " +
                              "ordered by createdAt or updatedAt, and ordered in ASC or DESC order. The user is " +
