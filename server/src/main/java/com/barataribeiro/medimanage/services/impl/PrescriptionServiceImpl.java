@@ -150,4 +150,42 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
         return prescriptionMapper.toDTO(prescription);
     }
+
+    @Override
+    @Transactional
+    public PrescriptionDTO updatePrescription(String username, String prescriptionId,
+                                              @NotNull PrescriptionCreateDTO body,
+                                              @NotNull Principal principal) {
+        log.atInfo().log("Updating prescription with id '{}' for user '{}'", prescriptionId, username);
+
+        Prescription prescription = prescriptionRepository
+                .findByIdAndPatient_UsernameAndDoctor_Username(Long.valueOf(prescriptionId), username,
+                                                               principal.getName())
+                .orElseThrow(() -> new PrescriptionNotFoundException(
+                        String.format(ApplicationMessages.PRESCRIPTION_NOT_FOUND_WITH_ID, prescriptionId)));
+
+        prescription.setText(body.text());
+
+        String doctorName = prescription.getDoctor().getFullName().isEmpty()
+                            ? prescription.getDoctor().getUsername()
+                            : prescription.getDoctor().getFullName();
+
+        if (prescription.getPatient().getId().equals(prescription.getDoctor().getId())) {
+            throw new IllegalArgumentException("You can't update a prescription for yourself");
+        }
+
+        if (prescription.getDoctor().getUsername().equals(principal.getName())) {
+            throw new IllegalArgumentException("You can't update a prescription that you didn't issued.");
+        }
+        
+        Notification notification = Notification.builder()
+                .title("Prescription updated!")
+                .message(String.format("Your prescription '%s' has been updated by %s.", prescriptionId, doctorName))
+                .user(prescription.getPatient())
+                .build();
+
+        notificationRepository.save(notification);
+
+        return prescriptionMapper.toDTO(prescriptionRepository.saveAndFlush(prescription));
+    }
 }

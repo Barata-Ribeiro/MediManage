@@ -20,4 +20,7 @@ public interface PrescriptionService {
                                                                 String orderBy, Principal principal);
 
     PrescriptionDTO getMyPrescription(String prescriptionId, Principal principal);
+
+    PrescriptionDTO updatePrescription(String username, String prescriptionId, PrescriptionCreateDTO body,
+                                       Principal principal);
 }
