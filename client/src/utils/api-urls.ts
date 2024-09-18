@@ -124,3 +124,6 @@ export const PRESCRIPTIONS_GET_MY_PRESCRIPTIONS_PAGINATED_LIST = (
 export const PRESCRIPTIONS_GET_MINE_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/prescriptions/me/${id}`
 
 export const PRESCRIPTION_CREATE = (id: string) => `${BACKEND_URL}/api/v1/prescriptions/patients/${id}`
+
+export const PRESCRIPTION_UPDATE_BY_PATIENT_AND_ID = (id: string, username: string) =>
+    `${BACKEND_URL}/api/v1/prescriptions/patients/${username}/${id}`
