@@ -18,4 +18,6 @@ public interface PrescriptionService {
 
     Page<SimplePrescriptionDTO> getMyPrescriptionsPaginatedList(String search, int page, int perPage, String direction,
                                                                 String orderBy, Principal principal);
+
+    PrescriptionDTO getMyPrescription(String prescriptionId, Principal principal);
 }

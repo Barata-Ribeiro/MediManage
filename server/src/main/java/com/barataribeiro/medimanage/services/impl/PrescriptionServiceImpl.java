@@ -61,13 +61,14 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PrescriptionDTO getPrescription(String username, String prescriptionId, Principal principal) {
         log.atInfo().log("Fetching prescription with id '{}' for user '{}'", prescriptionId, username);
-        Prescription prescription = prescriptionRepository.findByIdAndPatient_Username(Long.valueOf(prescriptionId),
-                                                                                       username).orElseThrow(
-                () -> new PrescriptionNotFoundException(String.format(
-                        ApplicationMessages.PRESCRIPTION_NOT_FOUND_WITH_ID, prescriptionId)
-                ));
+        Prescription prescription = prescriptionRepository
+                .findByIdAndPatient_Username(Long.valueOf(prescriptionId), username).orElseThrow(
+                        () -> new PrescriptionNotFoundException(String.format(
+                                ApplicationMessages.PRESCRIPTION_NOT_FOUND_WITH_ID, prescriptionId)
+                        ));
         log.atInfo().log("Prescription with id '{}' for user '{}' has been found.", prescriptionId, username);
         return prescriptionMapper.toDTO(prescription);
     }
@@ -112,6 +113,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<SimplePrescriptionDTO> getMyPrescriptionsPaginatedList(String search, int page, int perPage,
                                                                        @NotNull String direction, String orderBy,
                                                                        Principal principal) {
@@ -121,8 +123,8 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
         Page<Prescription> prescriptions;
         if (search != null && !search.trim().isEmpty()) {
-            prescriptions = prescriptionRepository.findPrescriptionsBySearchParams(search, principal.getName(),
-                                                                                   pageable);
+            prescriptions = prescriptionRepository
+                    .findPrescriptionsBySearchParams(search, principal.getName(), pageable);
         } else {
             prescriptions = prescriptionRepository.findAll(pageable);
         }
@@ -130,5 +132,22 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         List<SimplePrescriptionDTO> prescriptionDTOS = prescriptionMapper.toSimpleDTOList(prescriptions.getContent());
 
         return new PageImpl<>(prescriptionDTOS, pageable, prescriptions.getTotalElements());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PrescriptionDTO getMyPrescription(String prescriptionId, @NotNull Principal principal) {
+        log.atInfo().log("Fetching prescription with id '{}' for user '{}'", prescriptionId, principal.getName());
+
+        Prescription prescription = prescriptionRepository
+                .findByIdAndPatient_Username(Long.valueOf(prescriptionId), principal.getName()).orElseThrow(
+                        () -> new PrescriptionNotFoundException(String.format(
+                                ApplicationMessages.PRESCRIPTION_NOT_FOUND_WITH_ID, prescriptionId)
+                        ));
+
+        log.atInfo().log("Prescription with id '{}' for user '{}' has been found.", prescriptionId,
+                         principal.getName());
+
+        return prescriptionMapper.toDTO(prescription);
     }
 }
