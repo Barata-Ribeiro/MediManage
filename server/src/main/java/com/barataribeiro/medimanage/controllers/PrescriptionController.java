@@ -76,7 +76,7 @@ public class PrescriptionController {
                                                        response));
     }
 
-    @Operation(summary = "Get rquesting user'ss prescriptions paginated list",
+    @Operation(summary = "Get requesting user's prescriptions paginated list",
                description = "Get a paginated list of prescriptions for the authenticated patient. The list can be " +
                              "ordered by createdAt or updatedAt, and ordered in ASC or DESC order. The user is " +
                              "allowed to search either by the prescription's text or the doctor's name.",
@@ -96,6 +96,20 @@ public class PrescriptionController {
         return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
                                                        HttpStatus.OK.value(),
                                                        "Prescriptions retrieved successfully.",
+                                                       response));
+    }
+
+    @Operation(summary = "Get requesting user's prescription by id",
+               description = "Get a specific prescription for the authenticated patient.",
+               tags = {"prescriptions"})
+    @GetMapping("/me/{prescriptionId}")
+    @Secured({"ACCOUNT_TYPE_PATIENT"})
+    public ResponseEntity<RestResponseDTO<PrescriptionDTO>> getMyPrescription(@PathVariable String prescriptionId,
+                                                                              Principal principal) {
+        PrescriptionDTO response = prescriptionService.getMyPrescription(prescriptionId, principal);
+        return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
+                                                       HttpStatus.OK.value(),
+                                                       "Prescription retrieved successfully.",
                                                        response));
     }
 }
