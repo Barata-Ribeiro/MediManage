@@ -6,6 +6,7 @@ import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import ResponseError from "@/actions/response-error"
 import { revalidateTag } from "next/cache"
 import { Notification } from "@/interfaces/notifications"
+import patchChangeNotificationStatus from "@/actions/notifications/patch-change-notification-status"
 
 interface GetNotificationById {
     userId: string
@@ -34,16 +35,28 @@ export default async function getNotificationById({ userId, notifId }: GetNotifi
             return ResponseError(problemDetails)
         }
 
-        const responseData = json as ApiResponse
+        let responseData = json as ApiResponse
+        let data = responseData.data as Notification
 
         revalidateTag("context")
 
-        const data = responseData.data as Notification
+        if (!data.isRead) {
+            const markResponseAsRead = await patchChangeNotificationStatus({
+                userId,
+                notifId: notifId.toString(),
+                currentStatus: data.isRead.toString(),
+            })
+
+            if (!markResponseAsRead.ok) return ResponseError(markResponseAsRead.error)
+
+            data = markResponseAsRead.response?.data as Notification
+            responseData = { ...responseData, data }
+        }
 
         return {
             ok: true,
             error: null,
-            response: { ...responseData, data },
+            response: responseData,
         }
     } catch (error) {
         return ResponseError(error)

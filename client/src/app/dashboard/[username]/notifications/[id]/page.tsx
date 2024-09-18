@@ -26,6 +26,8 @@ export default async function ViewNotifPage({ params, searchParams }: Readonly<V
         notifId: +params.id,
     })
 
+    if (!notifState.ok) return notFound()
+
     const notification = notifState.response?.data as Notification
 
     return (
