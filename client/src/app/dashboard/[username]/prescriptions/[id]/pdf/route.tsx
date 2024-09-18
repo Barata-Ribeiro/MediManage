@@ -6,14 +6,14 @@ import PrescriptionPdf from "@/components/prescription-pdf"
 import { Prescription } from "@/interfaces/prescriptions"
 
 interface PrescriptionPageProps {
-    params: { username: string; prescId: string; patientUsername: string }
+    params: { username: string; prescId: string }
 }
 
 export async function GET(req: Request, { params }: PrescriptionPageProps) {
-    if (!params.username || !params.prescId || !params.patientUsername) throw new Error("Missing params.")
+    if (!params.username || !params.prescId) throw new Error("Missing params.")
     if (isNaN(parseInt(params.prescId))) throw new Error("Invalid prescription Id")
 
-    const state = await getPrescriptionByIdAndUsername({ id: params.prescId, username: params.patientUsername })
+    const state = await getPrescriptionByIdAndUsername({ id: params.prescId, username: params.username })
     if (!state.ok || state.error) notFound()
     const prescription = state.response?.data as Prescription
 

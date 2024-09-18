@@ -128,7 +128,7 @@ export default async function PrescriptionsPage({ params, searchParams }: Prescr
                                                     "whitespace-nowrap py-4 pl-3 pr-4 font-body text-sm text-neutral-900 sm:pr-6 lg:pr-8",
                                                 )}>
                                                 <Link
-                                                    href={`/dashboard/${params.username}/prescriptions/${pres.id}`}
+                                                    href={`/dashboard/${params.username}/prescriptions/${pres.id}/pdf`}
                                                     className="font-heading font-semibold text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
                                                     View<span className="sr-only">, {pres.patient.username}</span>
                                                 </Link>
