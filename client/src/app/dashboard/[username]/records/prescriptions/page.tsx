@@ -145,11 +145,6 @@ export default async function PrescriptionsPage({ params, searchParams }: Readon
                                                     )}>
                                                     <div className="flex gap-2">
                                                         <Link
-                                                            href={baseUrl}
-                                                            className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
-                                                            View
-                                                        </Link>
-                                                        <Link
                                                             href={baseUrl + "/edit"}
                                                             className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
                                                             Edit
@@ -159,7 +154,7 @@ export default async function PrescriptionsPage({ params, searchParams }: Readon
                                                             target="_blank"
                                                             rel="noopener noreferrer"
                                                             className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
-                                                            Print
+                                                            View/Print
                                                         </Link>
                                                     </div>
                                                 </td>
