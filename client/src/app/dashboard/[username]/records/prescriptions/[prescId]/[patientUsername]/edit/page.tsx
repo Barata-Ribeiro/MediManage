@@ -10,6 +10,13 @@ interface EditPrescPageProps {
     params: { username: string; prescId: string; patientUsername: string }
 }
 
+export async function generateMetadata({ params }: Readonly<EditPrescPageProps>) {
+    return {
+        title: `Edit Prescription for ${params.patientUsername}`,
+        description: `Edit the prescription for the patient ${params.patientUsername}. Make the necessary changes and click the update button to save the changes.`,
+    }
+}
+
 export default async function EditPrescPage({ params }: Readonly<EditPrescPageProps>) {
     if (!params.username || !params.prescId || !params.patientUsername) return notFound()
 
