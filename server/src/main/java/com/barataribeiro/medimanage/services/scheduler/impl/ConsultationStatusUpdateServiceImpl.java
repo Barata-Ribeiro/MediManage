@@ -1,6 +1,7 @@
 package com.barataribeiro.medimanage.services.scheduler.impl;
 
 import com.barataribeiro.medimanage.services.scheduler.ConsultationStatusUpdateService;
+import com.barataribeiro.medimanage.services.scheduler.TransactionalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -11,17 +12,17 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ConsultationStatusUpdateServiceImpl implements ConsultationStatusUpdateService {
-    private final TransactionalServiceImpl transactionalServiceImpl;
+    private final TransactionalService transactionalService;
 
     @Override
     @Scheduled(cron = "0 0 0 * * ?")
     public void scheduleConsultationStatusUpdate() {
-        transactionalServiceImpl.updateConsultationStatuses();
+        transactionalService.updateConsultationStatuses();
     }
 
     @Override
     @EventListener(ContextRefreshedEvent.class)
     public void onApplicationEvent() {
-        transactionalServiceImpl.updateConsultationStatuses();
+        transactionalService.updateConsultationStatuses();
     }
 }
