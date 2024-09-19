@@ -8,9 +8,9 @@ import Spinner from "@/components/helpers/spinner"
 import { useEffect } from "react"
 import { useUser } from "@/context/user-context-provider"
 import { useRouter } from "next/navigation"
-import { FaInfoCircle } from "react-icons/fa"
 import patchPrescriptionByPatientAndId from "@/actions/prescriptions/patch-prescription-by-patient-and-id"
 import { Prescription } from "@/interfaces/prescriptions"
+import SimpleAlert from "@/components/helpers/simple-alert"
 
 interface EditPrescriptionFormprops {
     id: string
@@ -48,10 +48,14 @@ export default function EditPrescriptionForm({
                 <Label htmlFor="content" className="mb-1 block font-heading text-base font-medium text-neutral-700">
                     Content
                 </Label>
-                <Description className="mb-2 flex items-start gap-1 text-sm text-neutral-600">
-                    <FaInfoCircle aria-hidden="true" className="h-4 w-4" size={18} /> Write only the content of the
-                    prescription. Do not include the patient&apos;s name or any other personal information.
+                <Description className="mb-1 max-w-2xl">
+                    Rewrite the prescription content here. Make sure to include all the necessary information to which
+                    the patient&apos;s pharmacist will be able to understand and fulfill the prescription.
                 </Description>
+                <SimpleAlert>
+                    Do not include the patient&apos;s name or any other personal information. Only the prescription
+                    content is required here.
+                </SimpleAlert>
                 <Textarea
                     id="content"
                     name="content"
