@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,8 +55,8 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<SimpleArticleDTO> getAllArticles(String search, String category, int page, int perPage,
-                                                 @NotNull String direction, String orderBy) {
+    public Page<SimpleArticleDTO> getAllPublicArticles(String search, String category, int page, int perPage,
+                                                       @NotNull String direction, String orderBy) {
         Sort.Direction sortDirection = direction.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC;
         orderBy = orderBy.equalsIgnoreCase(ApplicationConstants.CREATED_AT) ? ApplicationConstants.CREATED_AT : orderBy;
         PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
@@ -72,6 +73,17 @@ public class ArticleServiceImpl implements ArticleService {
         List<SimpleArticleDTO> simpleArticleDTOS = articleMapper.toSimpleDTOList(articles.getContent());
 
         return new PageImpl<>(simpleArticleDTOS, pageable, articles.getTotalElements());
+    }
+
+    @Override
+    public Page<SimpleArticleDTO> getAllArticles(String search, String category, int page, int perPage,
+                                                 @NotNull String direction, String orderBy,
+                                                 Authentication authentication) {
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        orderBy = orderBy.equalsIgnoreCase(ApplicationConstants.CREATED_AT) ? ApplicationConstants.CREATED_AT : orderBy;
+        PageRequest pageable = PageRequest.of(page, perPage, Sort.by(sortDirection, orderBy));
+
+        return null;
     }
 
     @Override
