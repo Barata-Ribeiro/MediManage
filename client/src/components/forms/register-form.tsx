@@ -64,7 +64,7 @@ export default function RegisterForm() {
                 </div>
             </Field>
 
-            <div>
+            <Field>
                 <Label htmlFor="password" className="block text-sm font-medium leading-6 text-neutral-900">
                     Confirm Password
                 </Label>
@@ -77,7 +77,7 @@ export default function RegisterForm() {
                         required
                     />
                 </div>
-            </div>
+            </Field>
 
             {formState.error && Array.isArray(formState.error) && <InputValidationError errors={formState.error} />}
             {formState.error && !Array.isArray(formState.error) && <RequisitionError error={formState.error} />}
