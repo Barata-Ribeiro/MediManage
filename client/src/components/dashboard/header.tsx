@@ -17,18 +17,31 @@ import {
 import { Fragment, useState } from "react"
 import { twMerge } from "tailwind-merge"
 import { FaBars, FaBell, FaUserDoctor, FaUserInjured, FaUserNurse, FaUserTie, FaX } from "react-icons/fa6"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import Link from "next/link"
 import miniLogo from "../../../public/images/medimanage-mini.svg"
 import Image from "next/image"
 import NotificationButton from "@/components/dashboard/notification-button"
+import logout from "@/actions/auth/logout"
 
 export default function Header() {
     const data = useUser()
     const pathname = usePathname()
+    const router = useRouter()
 
     const [isNotifDisabled, setIsNotifDisabled] = useState(!data)
     if (!data) setIsNotifDisabled(true)
+
+    async function handleLogout() {
+        const response = await logout()
+        if (response.ok) {
+            setIsNotifDisabled(true)
+            router.push("/auth/login")
+        } else {
+            console.error(response.error)
+            router.refresh()
+        }
+    }
 
     const totalUnreadNotifications =
         data.user?.totalUnreadNotifications === undefined ? "X" : data.user.totalUnreadNotifications
@@ -57,7 +70,7 @@ export default function Header() {
 
     const userNavigation = [
         { name: "Settings", href: "/dashboard/" + encodedName + "/settings" },
-        { name: "Sign out", href: "/dashboard/" + encodedName + "/sign-out" },
+        { name: "Sign out", href: null, onClick: handleLogout },
     ]
 
     function getUserIcon(userIsAdmin: boolean, userIsDoctor: boolean, userIsAssistant: boolean) {
@@ -144,20 +157,42 @@ export default function Header() {
                                                         <MenuSeparator className="my-1 h-px bg-neutral-200" />
 
                                                         <MenuSection>
-                                                            {userNavigation.map(item => (
-                                                                <MenuItem key={item.name}>
-                                                                    {({ focus }) => (
-                                                                        <Link
-                                                                            href={item.href}
-                                                                            className={twMerge(
-                                                                                focus ? "bg-mourning-blue-100" : "",
-                                                                                "block px-4 py-2 text-sm text-neutral-700",
-                                                                            )}>
-                                                                            {item.name}
-                                                                        </Link>
-                                                                    )}
-                                                                </MenuItem>
-                                                            ))}
+                                                            {userNavigation.map(item => {
+                                                                if (item.href)
+                                                                    return (
+                                                                        <MenuItem key={item.name}>
+                                                                            {({ focus }) => (
+                                                                                <Link
+                                                                                    href={item.href}
+                                                                                    className={twMerge(
+                                                                                        focus
+                                                                                            ? "bg-mourning-blue-100"
+                                                                                            : "",
+                                                                                        "block w-full px-4 py-2 text-left text-sm text-neutral-700",
+                                                                                    )}>
+                                                                                    {item.name}
+                                                                                </Link>
+                                                                            )}
+                                                                        </MenuItem>
+                                                                    )
+                                                                else
+                                                                    return (
+                                                                        <MenuItem key={item.name}>
+                                                                            {({ focus }) => (
+                                                                                <button
+                                                                                    onClick={item.onClick}
+                                                                                    className={twMerge(
+                                                                                        focus
+                                                                                            ? "bg-mourning-blue-100"
+                                                                                            : "",
+                                                                                        "block w-full px-4 py-2 text-left text-sm text-neutral-700",
+                                                                                    )}>
+                                                                                    {item.name}
+                                                                                </button>
+                                                                            )}
+                                                                        </MenuItem>
+                                                                    )
+                                                            })}
                                                         </MenuSection>
                                                     </MenuItems>
                                                 </Transition>
@@ -235,15 +270,27 @@ export default function Header() {
                                     </div>
                                 </div>
                                 <div className="mt-3 space-y-1 px-2">
-                                    {userNavigation.map(item => (
-                                        <DisclosureButton
-                                            key={item.name}
-                                            as="a"
-                                            href={item.href}
-                                            className="block rounded-md px-3 py-2 text-base font-medium text-neutral-400 hover:bg-mourning-blue-700 hover:text-neutral-50">
-                                            {item.name}
-                                        </DisclosureButton>
-                                    ))}
+                                    {userNavigation.map(item => {
+                                        if (item.href)
+                                            return (
+                                                <DisclosureButton
+                                                    key={item.name}
+                                                    as="a"
+                                                    href={item.href}
+                                                    className="inline-block rounded-md px-3 py-2 text-base font-medium text-neutral-400 hover:bg-mourning-blue-700 hover:text-neutral-50">
+                                                    {item.name}
+                                                </DisclosureButton>
+                                            )
+                                        else
+                                            return (
+                                                <DisclosureButton
+                                                    key={item.name}
+                                                    onClick={item.onClick}
+                                                    className="block rounded-md px-3 py-2 text-base font-medium text-neutral-400 hover:bg-mourning-blue-700 hover:text-neutral-50">
+                                                    {item.name}
+                                                </DisclosureButton>
+                                            )
+                                    })}
                                 </div>
                             </div>
                         </DisclosurePanel>
