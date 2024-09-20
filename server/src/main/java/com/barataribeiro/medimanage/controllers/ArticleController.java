@@ -8,16 +8,20 @@ import com.barataribeiro.medimanage.dtos.responses.RestResponseDTO;
 import com.barataribeiro.medimanage.services.ArticleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/articles")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -34,16 +38,16 @@ public class ArticleController {
     }
 
     @GetMapping("/public")
-    public ResponseEntity<RestResponseDTO<Page<SimpleArticleDTO>>> getAllArticles(
+    public ResponseEntity<RestResponseDTO<Page<SimpleArticleDTO>>> getAllPublicArticles(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String category,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int perPage,
-            @RequestParam(defaultValue = "ASC") String direction,
+            @RequestParam(defaultValue = "DESC") String direction,
             @RequestParam(defaultValue = "createdAt") String orderBy) {
 
         Page<SimpleArticleDTO> response = articleService
-                .getAllArticles(search, category, page, perPage, direction, orderBy);
+                .getAllPublicArticles(search, category, page, perPage, direction, orderBy);
         return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
                                                        HttpStatus.OK.value(),
                                                        "All articles retrieved successfully.",
@@ -56,6 +60,38 @@ public class ArticleController {
         return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
                                                        HttpStatus.OK.value(),
                                                        "Article retrieved successfully.",
+                                                       response));
+    }
+
+    @GetMapping
+    @Secured({"ACCOUNT_TYPE_DOCTOR", "ACCOUNT_TYPE_ADMINISTRATOR"})
+    public ResponseEntity<RestResponseDTO<Page<SimpleArticleDTO>>> getAllArticles(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String category,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int perPage,
+            @RequestParam(defaultValue = "DESC") String direction,
+            @RequestParam(defaultValue = "createdAt") String orderBy,
+            Authentication authentication) {
+
+        String accountType = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(s -> s.startsWith("ACCOUNT_TYPE_"))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Account type not found."));
+
+        Page<SimpleArticleDTO> response;
+        if (accountType.equals("ACCOUNT_TYPE_DOCTOR")) {
+            response = articleService
+                    .getAllArticles(search, category, page, perPage, direction, orderBy, authentication);
+        } else {
+            response = articleService
+                    .getAllPublicArticles(search, category, page, perPage, direction, orderBy);
+        }
+
+        return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
+                                                       HttpStatus.OK.value(),
+                                                       "All articles retrieved successfully.",
                                                        response));
     }
 
