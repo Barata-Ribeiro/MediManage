@@ -11,6 +11,9 @@ import { useEffect, useState } from "react"
 import { Consultation } from "@/interfaces/consultations"
 import parseDate from "@/utils/parse-date"
 import Link from "next/link"
+import { useUser } from "@/context/user-context-provider"
+import { useRouter } from "next/navigation"
+import SimpleAlert from "@/components/helpers/simple-alert"
 
 export default function NewConsultForm() {
     const [newConsultation, setNewConsultation] = useState<Consultation | null>(null)
@@ -20,15 +23,18 @@ export default function NewConsultForm() {
         response: null,
     })
 
-    const currentDate = new Date()
-    const formattedDate = currentDate.toISOString().slice(0, 16)
-
     useEffect(() => {
         if (formState.ok) {
             const consultation = formState.response?.data as Consultation
             setNewConsultation(consultation)
         }
     }, [formState])
+
+    const router = useRouter()
+    const context = useUser()
+    if (!context) return null
+
+    const formattedDate = new Date().toISOString().slice(0, 16)
 
     return (
         <div className="my-8 grid grid-cols-1 items-center justify-between gap-6 lg:grid-cols-2">
@@ -63,10 +69,26 @@ export default function NewConsultForm() {
                 {formState.error && Array.isArray(formState.error) && <InputValidationError errors={formState.error} />}
                 {formState.error && !Array.isArray(formState.error) && <RequisitionError error={formState.error} />}
 
-                <div className="mt-4 flex">
+                {context.user?.accountType !== "ASSISTANT" && newConsultation === null && (
+                    <SimpleAlert>
+                        Only an <strong>assistant</strong> can schedule a consultation.
+                    </SimpleAlert>
+                )}
+
+                <div className="mt-2 flex items-center gap-x-6">
+                    <Button
+                        type="button"
+                        onClick={() => router.back()}
+                        className="rounded-md px-3 py-2 text-sm font-semibold leading-6 text-neutral-900 hover:bg-neutral-200">
+                        Cancel
+                    </Button>
                     <Button
                         type="submit"
-                        disabled={isPending || (formState.ok && newConsultation !== null)}
+                        disabled={
+                            isPending ||
+                            (formState.ok && newConsultation !== null) ||
+                            context.user?.accountType !== "ASSISTANT"
+                        }
                         className="inline-flex items-center rounded-md bg-mourning-blue-600 px-3 py-2 text-sm font-semibold text-neutral-50 shadow-sm hover:bg-mourning-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mourning-blue-600 active:bg-mourning-blue-800 disabled:opacity-50">
                         {isPending ? (
                             <>
@@ -78,6 +100,7 @@ export default function NewConsultForm() {
                     </Button>
                 </div>
             </form>
+
             {newConsultation && (
                 <div className="grid gap-2 rounded-lg border-2 border-dashed border-green-300 bg-green-50 p-12 text-center">
                     <h2 className="text-lg font-semibold capitalize text-neutral-900">
