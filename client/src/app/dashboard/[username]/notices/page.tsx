@@ -1,5 +1,12 @@
 import { notFound } from "next/navigation"
 import { Metadata } from "next"
+import getAllNoticesPaginated from "@/actions/notices/get-all-notices-paginated"
+import StateError from "@/components/helpers/state-error"
+import { ProblemDetails } from "@/interfaces/actions"
+import { PaginatedNotices } from "@/interfaces/notices"
+import NavigationPagination from "@/components/dashboard/filters/navigation-pagination"
+import { twMerge } from "tailwind-merge"
+import Link from "next/link"
 
 interface NoticesPageProps {
     params: { username: string }
@@ -8,17 +15,27 @@ interface NoticesPageProps {
 
 export const metadata: Metadata = {
     title: "Notices",
-    description: "List all of the system notices issued by the employees.",
+    description:
+        "List all of the system notices issued by administrators. This list is available for all " +
+        "employees and are public displayed to everyone who access the website or the application.",
 }
 
-export default function NoticesPage({ params, searchParams }: Readonly<NoticesPageProps>) {
+export default async function NoticesPage({ params, searchParams }: Readonly<NoticesPageProps>) {
     if (!params.username) return notFound()
     if (!searchParams) return null
 
     const page = parseInt(searchParams.page as string, 10) || 0
     const perPage = parseInt(searchParams.perPage as string, 10) || 10
-    const direction = (searchParams.direction as string) || "ASC"
+    const direction = (searchParams.direction as string) || "DESC"
     const orderBy = (searchParams.orderBy as string) || "createdAt"
+
+    const state = await getAllNoticesPaginated(page, perPage, direction, orderBy)
+    if (!state.ok) return <StateError error={state.error as ProblemDetails} />
+
+    const pagination = state.response?.data as PaginatedNotices
+    const content = pagination.content ?? []
+    const pageInfo = pagination.page
+
     return (
         <section id="notices-section" aria-labelledby="notices-section-title" className="px-4 sm:px-6 lg:px-8">
             <div className="flex flex-wrap items-center gap-4 md:justify-between">
@@ -29,8 +46,8 @@ export default function NoticesPage({ params, searchParams }: Readonly<NoticesPa
                         Notices
                     </h1>
                     <p className="mt-2 max-w-xl text-sm text-neutral-700">
-                        List all of the system notices issued by the employees. This list is available for all employees
-                        and are public displayed to everyone who access the website or the application.
+                        List all of the system notices issued by administrators. This list is available for all
+                        employees and are public displayed to everyone who access the website or the application.
                     </p>
                 </div>
 
@@ -75,8 +92,94 @@ export default function NoticesPage({ params, searchParams }: Readonly<NoticesPa
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody></tbody>
+                            <tbody>
+                                {content.length > 0 &&
+                                    content.map((notice, noticeIdx) => (
+                                        <tr
+                                            key={notice.id + "_" + noticeIdx}
+                                            className="border-b border-neutral-300 bg-white">
+                                            <td
+                                                className={twMerge(
+                                                    noticeIdx !== content.length - 1
+                                                        ? "border-b border-neutral-200"
+                                                        : "",
+                                                    "whitespace-nowrap py-4 pl-4 pr-3 font-body text-sm font-medium text-neutral-900 sm:pl-6 lg:pl-8",
+                                                )}>
+                                                {notice.id}
+                                            </td>
+                                            <td
+                                                className={twMerge(
+                                                    noticeIdx !== content.length - 1
+                                                        ? "border-b border-neutral-200"
+                                                        : "",
+                                                    "hidden whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900 sm:table-cell",
+                                                )}>
+                                                {notice.title}
+                                            </td>
+                                            <td
+                                                className={twMerge(
+                                                    noticeIdx !== content.length - 1
+                                                        ? "border-b border-neutral-200"
+                                                        : "",
+                                                    "hidden whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900 sm:table-cell",
+                                                )}>
+                                                {notice.issuer.fullName ?? notice.issuer.username}
+                                            </td>
+                                            <td
+                                                className={twMerge(
+                                                    noticeIdx !== content.length - 1
+                                                        ? "border-b border-neutral-200"
+                                                        : "",
+                                                    "whitespace-nowrap px-3 py-4 font-body text-sm capitalize text-neutral-900",
+                                                )}>
+                                                {notice.type.toLowerCase()}
+                                            </td>
+                                            <td
+                                                className={twMerge(
+                                                    noticeIdx !== content.length - 1
+                                                        ? "border-b border-neutral-200"
+                                                        : "",
+                                                    "whitespace-nowrap px-3 py-4 font-body text-sm capitalize text-neutral-900",
+                                                )}>
+                                                {notice.status.toLowerCase()}
+                                            </td>
+                                            <td
+                                                className={twMerge(
+                                                    noticeIdx !== content.length - 1
+                                                        ? "border-b border-neutral-200"
+                                                        : "",
+                                                    "whitespace-nowrap py-4 pl-3 pr-4 font-body text-sm text-neutral-900 sm:pr-6 lg:pr-8",
+                                                )}>
+                                                <div className="flex gap-2">
+                                                    <Link
+                                                        href={`/dashboard/${params.username}/notices/${notice.id}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
+                                                        View
+                                                    </Link>
+                                                    <Link
+                                                        href={`/dashboard/${params.username}/notices/${notice.id}/edit`}
+                                                        className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
+                                                        Edit
+                                                    </Link>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+
+                                {content.length < 1 && (
+                                    <tr className="border-b border-neutral-300 bg-white">
+                                        <td
+                                            colSpan={6}
+                                            className="py-4 pl-4 pr-3 text-sm font-bold text-neutral-900 sm:pl-6 lg:pl-8">
+                                            No notices found or available.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
                         </table>
+                        <NavigationPagination usePageInfo={pageInfo} contentSize={content.length} />
                     </div>
                 </div>
             </div>
