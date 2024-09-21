@@ -24,4 +24,14 @@ interface Notice {
     updatedAt: string
 }
 
-export type { Notice, NoticeType, NoticeStatus }
+interface PaginatedNotices {
+    content: Notice[]
+    page: {
+        size: number
+        number: number
+        totalElements: number
+        totalPages: number
+    }
+}
+
+export type { Notice, NoticeType, NoticeStatus, PaginatedNotices }
