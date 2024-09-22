@@ -131,3 +131,5 @@ export const PRESCRIPTION_UPDATE_BY_PATIENT_AND_ID = (id: string, username: stri
 // Notices
 export const NOTICES_GET_ALL = (page: number, perPage: number, direction: string, orderBy: string) =>
     `${BACKEND_URL}/api/v1/notices?page=${page}&perPage=${perPage}&direction=${direction}&orderBy=${orderBy}`
+
+export const NOTICES_PUBLIC_GET_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/notices/public/${id}`
