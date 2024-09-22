@@ -30,6 +30,15 @@ public class NoticeController {
                                                        response));
     }
 
+    @GetMapping("/public/{noticeId}")
+    public ResponseEntity<RestResponseDTO<NoticeDTO>> getLastPublished(@PathVariable Long noticeId) {
+        NoticeDTO response = noticeService.getNoticeById(noticeId);
+        return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
+                                                       HttpStatus.OK.value(),
+                                                       "Latest notices retrieved successfully.",
+                                                       response));
+    }
+
     @GetMapping
     @Secured("ACCOUNT_TYPE_ADMINISTRATOR")
     public ResponseEntity<RestResponseDTO<Page<NoticeDTO>>> getAllNotices(@RequestParam(defaultValue = "0") int page,
