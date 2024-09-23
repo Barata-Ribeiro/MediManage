@@ -7,7 +7,11 @@ import tw from "@/utils/tw"
 import { FaMagnifyingGlass, FaTrash } from "react-icons/fa6"
 import { twMerge } from "tailwind-merge"
 
-export default function SearchFilter() {
+interface SearchFilterProps {
+    allowSearch?: boolean
+}
+
+export default function SearchFilter({ allowSearch = true }: Readonly<SearchFilterProps>) {
     const pathname = usePathname()
     const router = useRouter()
     const searchParams = useSearchParams()
@@ -41,24 +45,26 @@ export default function SearchFilter() {
     const selectStyles = tw`mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-300 focus:ring-2 focus:ring-mourning-blue-600 sm:text-sm sm:leading-6`
 
     return (
-        <div className="flex h-auto w-auto items-end gap-2">
+        <div className="order-1 flex h-auto w-auto items-end gap-2 sm:order-2">
             <div className="order-1 flex flex-wrap justify-center gap-2 sm:order-2 sm:justify-normal">
-                <Field className="grid w-auto">
-                    <Label className={labelStyles}>Search</Label>
-                    <div className="relative mt-2 rounded-md">
-                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                            <FaMagnifyingGlass aria-hidden="true" className="h-5 w-5 text-neutral-400" />
+                {allowSearch && (
+                    <Field className="grid w-auto">
+                        <Label className={labelStyles}>Search</Label>
+                        <div className="relative mt-2 rounded-md">
+                            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                <FaMagnifyingGlass aria-hidden="true" className="h-5 w-5 text-neutral-400" />
+                            </div>
+                            <Input
+                                type="search"
+                                name="search"
+                                value={search}
+                                className={twMerge(selectStyles, "mt-0 pl-10 pr-3")}
+                                onChange={e => setSearch(e.target.value)}
+                                placeholder="Search..."
+                            />
                         </div>
-                        <Input
-                            type="search"
-                            name="search"
-                            value={search}
-                            className={twMerge(selectStyles, "mt-0 pl-10 pr-3")}
-                            onChange={e => setSearch(e.target.value)}
-                            placeholder="Search..."
-                        />
-                    </div>
-                </Field>
+                    </Field>
+                )}
                 <Field className="grid w-auto">
                     <Label className={labelStyles}>Direction</Label>
                     <Select
@@ -83,6 +89,10 @@ export default function SearchFilter() {
                         )}
                         {pathname.includes("consultations") && <option value="scheduledTo">Scheduled To</option>}
                         {pathname.includes("consultations") && <option value="status">Status</option>}
+                        {pathname.includes("notices") && <option value="title">Title</option>}
+                        {pathname.includes("notices") && <option value="type">Type</option>}
+                        {pathname.includes("notices") && <option value="status">Status</option>}
+                        {pathname.includes("notices") && <option value="issuer.username">Issuer</option>}
                         <option value="createdAt">Created At</option>
                         <option value="updatedAt">Updated At</option>
                     </Select>
