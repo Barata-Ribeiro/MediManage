@@ -4,6 +4,15 @@ const nextConfig = {
     swcMinify: true,
     trailingSlash: false,
     skipTrailingSlashRedirect: true,
+    images: {
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "**",
+                port: "",
+            },
+        ],
+    },
     experimental: {
         optimizePackageImports: ["tailwindcss", "@headlessui/react", "react-icons/fa6"],
         serverComponentsExternalPackages: ["@react-pdf/renderer"],
