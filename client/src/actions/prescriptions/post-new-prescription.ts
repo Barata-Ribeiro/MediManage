@@ -5,6 +5,7 @@ import ResponseError from "@/actions/response-error"
 import verifyAuthentication from "@/utils/verify-authentication"
 import { z } from "zod"
 import { PRESCRIPTION_CREATE } from "@/utils/api-urls"
+import { Prescription } from "@/interfaces/prescriptions"
 
 const prescriptionSchema = z.object({
     userId: z.string().uuid(),
@@ -41,7 +42,7 @@ export default async function postNewPrescription(state: State, formData: FormDa
 
         const responseData = json as ApiResponse
 
-        const data = responseData.data
+        const data = responseData.data as Prescription
 
         return {
             ok: true,
