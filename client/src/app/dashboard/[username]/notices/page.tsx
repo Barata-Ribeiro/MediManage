@@ -7,6 +7,8 @@ import { PaginatedNotices } from "@/interfaces/notices"
 import NavigationPagination from "@/components/dashboard/filters/navigation-pagination"
 import { twMerge } from "tailwind-merge"
 import Link from "next/link"
+import SearchFilter from "@/components/dashboard/filters/search-filter"
+import { FaPlus } from "react-icons/fa6"
 
 interface NoticesPageProps {
     params: { username: string }
@@ -51,7 +53,14 @@ export default async function NoticesPage({ params, searchParams }: Readonly<Not
                     </p>
                 </div>
 
-                {/*ADD FILTERS HERE*/}
+                <div className="grid w-max gap-4">
+                    <SearchFilter allowSearch={false} />
+                    <Link
+                        href={`/dashboard/${params.username}/notices/new`}
+                        className="order-2 inline-flex w-max items-center gap-2 rounded-md bg-mourning-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-mourning-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mourning-blue-600 active:bg-mourning-blue-800 sm:order-1 sm:justify-self-end">
+                        New Notice <FaPlus className="inline-block" />
+                    </Link>
+                </div>
             </div>
 
             <div className="mt-8 flow-root">
