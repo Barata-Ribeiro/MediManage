@@ -133,3 +133,5 @@ export const NOTICES_GET_ALL = (page: number, perPage: number, direction: string
     `${BACKEND_URL}/api/v1/notices?page=${page}&perPage=${perPage}&direction=${direction}&orderBy=${orderBy}`
 
 export const NOTICES_PUBLIC_GET_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/notices/public/${id}`
+
+export const NOTICES_CREATE = () => `${BACKEND_URL}/api/v1/notices`
