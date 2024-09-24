@@ -115,7 +115,13 @@ public class AuthServiceImpl implements AuthService {
                 .accountType(accountType)
                 .build();
 
-        User savedUser = userRepository.saveAndFlush(registration);
+        if (accountType.equals(AccountType.DOCTOR)) {
+            registration.setRegistrationNumber(body.registrationNumber());
+            registration.setRegistrationOrigin(body.registrationOrigin());
+            registration.setSpecialization(body.specialization());
+        }
+
+        User savedUser = userRepository.save(registration);
 
         log.atInfo().log(
                 "The administrator registered a new employee through the administrator panel. Employee full name: {}",
@@ -123,7 +129,7 @@ public class AuthServiceImpl implements AuthService {
 
         return Map.of("username", generatedUsername,
                       "password", generatedPassword,
-                      "registeredAt", savedUser.getCreatedAt(),
+                      "registeredAt", Instant.now().toString(),
                       "message", "Please, change your password after login.");
     }
 
