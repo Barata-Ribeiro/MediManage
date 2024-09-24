@@ -6,4 +6,11 @@ interface LoginResponse {
     tokenExpiresAt: string
 }
 
-export type { LoginResponse }
+interface NewEmployeeResponse {
+    username: string
+    password: string
+    registeredAt: string
+    message: string
+}
+
+export type { LoginResponse, NewEmployeeResponse }
