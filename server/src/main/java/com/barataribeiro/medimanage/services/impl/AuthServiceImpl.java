@@ -9,11 +9,13 @@ import com.barataribeiro.medimanage.dtos.requests.RegisterRequestDTO;
 import com.barataribeiro.medimanage.dtos.responses.LoginResponseDTO;
 import com.barataribeiro.medimanage.entities.enums.AccountType;
 import com.barataribeiro.medimanage.entities.enums.UserRoles;
+import com.barataribeiro.medimanage.entities.models.Notification;
 import com.barataribeiro.medimanage.entities.models.User;
 import com.barataribeiro.medimanage.exceptions.IllegalRequestException;
 import com.barataribeiro.medimanage.exceptions.users.InvalidUserCredentialsException;
 import com.barataribeiro.medimanage.exceptions.users.UserAlreadyExistsException;
 import com.barataribeiro.medimanage.exceptions.users.UserIsBannedException;
+import com.barataribeiro.medimanage.repositories.NotificationRepository;
 import com.barataribeiro.medimanage.repositories.UserRepository;
 import com.barataribeiro.medimanage.services.AuthService;
 import com.barataribeiro.medimanage.services.security.TokenService;
@@ -39,6 +41,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
     private final Random random = new Random();
+    private final NotificationRepository notificationRepository;
 
     @Override
     @Transactional
@@ -55,6 +58,15 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         log.atInfo().log("New user registered with username: {}", registration.getUsername());
+
+        Notification notification = Notification.builder()
+                .title("Welcome! Account created.")
+                .message("Your account has been created successfully. \n Please, follow the rules and enjoy our " +
+                         "services.")
+                .user(registration)
+                .build();
+
+        notificationRepository.save(notification);
 
         return userMapper.toDTO(userRepository.saveAndFlush(registration));
     }
@@ -80,14 +92,25 @@ public class AuthServiceImpl implements AuthService {
                 .accountType(AccountType.PATIENT)
                 .build();
 
-        User savedUser = userRepository.saveAndFlush(registration);
+        User savedUser = userRepository.save(registration);
 
         log.atInfo().log("The assistant registered a new user through the assistant panel. User full name: {}",
                          savedUser.getFullName());
 
+        Notification notification = Notification.builder()
+                .title("Account created!")
+                .message("Your account has been created successfully. \n\n" +
+                         "Username: " + generatedUsername + "\n" +
+                         "Password: " + generatedPassword + "\n" +
+                         "Please, change your credentials as soon as possible.")
+                .user(savedUser)
+                .build();
+
+        notificationRepository.save(notification);
+
         return Map.of("username", generatedUsername,
                       "password", generatedPassword,
-                      "registeredAt", savedUser.getCreatedAt(),
+                      "registeredAt", Instant.now().toString(),
                       "message", "Please, change your password after login.");
     }
 
@@ -126,6 +149,17 @@ public class AuthServiceImpl implements AuthService {
         log.atInfo().log(
                 "The administrator registered a new employee through the administrator panel. Employee full name: {}",
                 savedUser.getFullName());
+
+        Notification notification = Notification.builder()
+                .title("Account created!")
+                .message("Your account has been created successfully. \n\n" +
+                         "Username: " + generatedUsername + "\n" +
+                         "Password: " + generatedPassword + "\n" +
+                         "Please, change your credentials as soon as possible.")
+                .user(savedUser)
+                .build();
+
+        notificationRepository.save(notification);
 
         return Map.of("username", generatedUsername,
                       "password", generatedPassword,
