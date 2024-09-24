@@ -8,6 +8,7 @@ import UserFilter from "@/components/dashboard/filters/user-filter"
 import NavigationPagination from "@/components/dashboard/filters/navigation-pagination"
 import StateError from "@/components/helpers/state-error"
 import { ProblemDetails } from "@/interfaces/actions"
+import { FaPlus } from "react-icons/fa6"
 
 export interface UsersPageProps {
     params: { username: string }
@@ -15,8 +16,8 @@ export interface UsersPageProps {
 }
 
 export const metadata: Metadata = {
-    title: "Users",
-    description: "List and manage your content.",
+    title: "System Users",
+    description: "List all of the users in the system and manage their accounts.",
 }
 
 export default async function UsersPage({ params, searchParams }: Readonly<UsersPageProps>) {
@@ -33,7 +34,7 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
     if (!state.ok) return <StateError error={state.error as ProblemDetails} />
 
     const pagination = state.response?.data as PaginatedUsers
-    const content = pagination.content
+    const content = pagination.content ?? []
     const pageInfo = pagination.page
 
     return (
@@ -48,8 +49,17 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
                         account type, direction, and order by.
                     </p>
                 </div>
-                <UserFilter />
+                <div className="grid w-max gap-4">
+                    <UserFilter />
+
+                    <Link
+                        href={`/dashboard/${params.username}/users/register-employee`}
+                        className="order-2 inline-flex w-max items-center gap-2 rounded-md bg-mourning-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-mourning-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mourning-blue-600 active:bg-mourning-blue-800 sm:order-1 sm:justify-self-end">
+                        New Employee <FaPlus className="inline-block" />
+                    </Link>
+                </div>
             </div>
+
             <div className="mt-8 flow-root">
                 <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
                     <div className="inline-block min-w-full py-2 align-middle">
