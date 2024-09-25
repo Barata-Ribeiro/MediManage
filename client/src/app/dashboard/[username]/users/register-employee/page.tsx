@@ -1,16 +1,12 @@
 import NewEmployeeForm from "@/components/forms/new-employee-form"
 import { Metadata } from "next"
 
-interface RegisterEmployeePageProps {
-    params: { username: string }
-}
-
 export const metadata: Metadata = {
     title: "Register Employee",
     description: "Register a new employee in the company's system.",
 }
 
-export default function RegisterEmployeePage({ params }: RegisterEmployeePageProps) {
+export default function RegisterEmployeePage() {
     return (
         <section
             id="register-new-employee-section"
