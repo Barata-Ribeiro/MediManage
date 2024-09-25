@@ -6,9 +6,46 @@ import ResponseError from "@/actions/response-error"
 import { revalidateTag } from "next/cache"
 import verifyAuthentication from "@/utils/verify-authentication"
 import { z } from "zod"
-import { NewEmployeeResponse } from "@/interfaces/auth"
+import { NewAccountResponse } from "@/interfaces/auth"
 
-const newEmployeeSchema = z.object({})
+const newEmployeeSchema = z
+    .object({
+        fullName: z
+            .string()
+            .min(8, "Full name must be at least 8 characters")
+            .max(100, "Full name must be at most 100 characters"),
+        email: z.string().email("Invalid email address"),
+        phone: z
+            .string()
+            .regex(
+                /^(\+\d{1,3}( )?)?((\(\d{3}\))|\d{3})[- .]?\d{3}[- .]?\d{4}$/,
+                "You must provide a valid phone number. Example: (123) 456-7890",
+            ),
+        address: z.string(),
+        birthDate: z.string().date("Invalid date format"),
+        registrationNumber: z
+            .string()
+            .regex(/^\d{6}-\d{2}\/[A-Z]{2}$/, "Invalid registration number. Example: 123456-78/AB")
+            .nullish()
+            .or(z.literal("")),
+        registrationOrigin: z.string().min(3, "Registration Origin must not be empty").nullish().or(z.literal("")),
+        specialization: z.string().min(3, "Specialization must not be empty").nullish().or(z.literal("")),
+        accountType: z.enum(["ASSISTANT", "DOCTOR", "ADMINISTRATOR"]),
+    })
+    .transform((data, ctx) => {
+        if (data.accountType === "DOCTOR") {
+            if (data.registrationNumber === "" || data.registrationOrigin === "" || data.specialization === "") {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: "Registration number, origin, and specialization are required for doctors.",
+                })
+            }
+        } else {
+            delete data.registrationNumber
+            delete data.registrationOrigin
+            delete data.specialization
+        }
+    })
 
 export default async function postAuthRegisterEmployee(state: State, formData: FormData) {
     const authToken = verifyAuthentication()
@@ -41,7 +78,7 @@ export default async function postAuthRegisterEmployee(state: State, formData: F
 
         const responseData = json as ApiResponse
 
-        const registerResponse = responseData.data as NewEmployeeResponse
+        const registerResponse = responseData.data as NewAccountResponse
 
         revalidateTag("users")
 
