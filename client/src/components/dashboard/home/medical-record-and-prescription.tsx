@@ -5,9 +5,8 @@ import { FaPaperclip } from "react-icons/fa6"
 import getAge from "@/utils/get-age"
 import PrescriptionPdf from "@/components/prescription-pdf"
 import { useEffect, useState } from "react"
-import { pdf } from "@react-pdf/renderer"
+import { pdf, PDFDownloadLink } from "@react-pdf/renderer"
 import { twMerge } from "tailwind-merge"
-import dynamic from "next/dynamic"
 import Link from "next/link"
 import { User } from "@/interfaces/users"
 
@@ -17,16 +16,16 @@ interface MedicalRecordAndPrescriptionProps {
     user: User
 }
 
-const PDFDownloadLink = dynamic(() => import("@react-pdf/renderer").then(mod => mod.PDFDownloadLink), {
-    ssr: false,
-    loading: () => (
-        <div role="status" className="w-full animate-pulse">
-            <div className="h-4 w-52 rounded-full bg-mourning-blue-200">
-                <span className="sr-only">Loading...</span>
-            </div>
-        </div>
-    ),
-})
+// const PDFDownloadLink = dynamic(() => import("@react-pdf/renderer").then(mod => mod.PDFDownloadLink), {
+//     ssr: false,
+//     loading: () => (
+//         <div role="status" className="w-full animate-pulse">
+//             <div className="h-4 w-52 rounded-full bg-mourning-blue-200">
+//                 <span className="sr-only">Loading...</span>
+//             </div>
+//         </div>
+//     ),
+// })
 
 export default function MedicalRecordAndPrescription({
     medicalRecord,
