@@ -4,9 +4,12 @@ import { useUser } from "@/context/user-context-provider"
 import { NewAccountResponse } from "@/interfaces/auth"
 import parseDate from "@/utils/parse-date"
 import { Button, Description, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { FaCheck } from "react-icons/fa6"
 import { useRouter } from "next/navigation"
+import { usePDF } from "@react-pdf/renderer"
+import NewUserCredentialsPdf from "@/components/new-user-credentials-pdf"
+import Link from "next/link"
 
 interface NewAccountInfoModalProps {
     data: NewAccountResponse | null
@@ -15,8 +18,14 @@ interface NewAccountInfoModalProps {
 
 export default function NewAccountInfoModal({ data, showModal }: Readonly<NewAccountInfoModalProps>) {
     const [open, setOpen] = useState(showModal)
+    const [instance, updateInstance] = usePDF({ document: <NewUserCredentialsPdf data={data!} /> })
+
+    useEffect(() => {
+        if (data) updateInstance(<NewUserCredentialsPdf data={data!} />)
+    }, [data, updateInstance])
 
     const context = useUser()
+
     const router = useRouter()
 
     function handleClose() {
@@ -24,6 +33,8 @@ export default function NewAccountInfoModal({ data, showModal }: Readonly<NewAcc
         setOpen(false)
         router.replace(url)
     }
+
+    const filename = `new-account-credentials-${data?.username}_${new Date(data?.registeredAt ?? new Date()).toISOString()}.pdf`
 
     return (
         <Dialog open={open} onClose={handleClose} className="relative z-10">
@@ -54,35 +65,36 @@ export default function NewAccountInfoModal({ data, showModal }: Readonly<NewAcc
                                     <dl className="mt-2 grid gap-2">
                                         <div className="inline-flex gap-2">
                                             <dt className="text-sm font-semibold text-neutral-900">Username:</dt>
-                                            <dd className="text-sm text-neutral-800">DFD438</dd>
+                                            <dd className="text-sm text-neutral-800">{data?.username}</dd>
                                         </div>
                                         <div className="inline-flex gap-2">
                                             <dt className="text-sm font-semibold text-neutral-900">Password:</dt>
-                                            <dd className="text-sm text-neutral-800">ASD347</dd>
+                                            <dd className="text-sm text-neutral-800">{data?.password}</dd>
                                         </div>
                                         <div className="inline-flex gap-2">
                                             <dt className="text-sm font-semibold text-neutral-900">Registered At:</dt>
                                             <dd className="text-sm text-neutral-800">
-                                                {parseDate("2024-05-08T13:37:53.267843700Z")}
+                                                {parseDate(data?.registeredAt)}
                                             </dd>
                                         </div>
                                         <div className="inline-flex gap-2">
                                             <dt className="text-sm font-semibold text-neutral-900">Warning:</dt>
-                                            <dd className="text-sm text-neutral-800">
-                                                Please, change your password after login.
-                                            </dd>
+                                            <dd className="text-sm text-neutral-800">{data?.message}</dd>
                                         </div>
                                     </dl>
                                 </div>
                             </div>
                         </div>
                         <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-                            <Button
-                                type="button"
-                                onClick={() => setOpen(false)}
+                            <Link
+                                href={instance.url ?? "#"}
+                                download={filename}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="Print Credentials"
                                 className="inline-flex w-full justify-center rounded-md bg-mourning-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-mourning-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mourning-blue-600 active:bg-mourning-blue-800 sm:col-start-2">
                                 Print Credentials
-                            </Button>
+                            </Link>
                             <Button
                                 type="button"
                                 onClick={handleClose}

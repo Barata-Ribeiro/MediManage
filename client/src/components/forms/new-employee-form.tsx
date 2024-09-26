@@ -229,7 +229,9 @@ export default function NewEmployeeForm() {
                 </div>
             </form>
 
-            <NewAccountInfoModal data={formState.response?.data as NewAccountResponse} showModal={modal} />
+            {formState.ok && (
+                <NewAccountInfoModal data={formState.response?.data as NewAccountResponse} showModal={modal} />
+            )}
         </>
     )
 }
