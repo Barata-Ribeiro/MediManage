@@ -129,6 +129,8 @@ export default async function PrescriptionsPage({ params, searchParams }: Prescr
                                                 )}>
                                                 <Link
                                                     href={`/dashboard/${params.username}/prescriptions/${pres.id}/pdf`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
                                                     className="font-heading font-semibold text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
                                                     View<span className="sr-only">, {pres.patient.username}</span>
                                                 </Link>
