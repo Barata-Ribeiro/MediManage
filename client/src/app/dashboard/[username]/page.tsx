@@ -22,8 +22,6 @@ export default async function HomePage() {
     const homeState = await getHomeInfo(user.accountType)
     const homeInfo = homeState.response as AdministratorInfo | PatientInfo | AssistantInfo | DoctorInfo
 
-    console.log("HOME INFO: ", homeInfo)
-
     return (
         <section id="home-section" className="grid gap-4">
             {user.accountType === "ADMINISTRATOR" && <AdminHomeContent homeInfo={homeInfo as AdministratorInfo} />}

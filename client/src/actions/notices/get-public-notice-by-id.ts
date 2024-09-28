@@ -23,8 +23,6 @@ export default async function getPublicNoticeById({ id }: GetNoticeById) {
 
         const json = await response.json()
 
-        console.log("JSON: ", json)
-
         if (!response.ok) {
             const problemDetails = json as ProblemDetails
             return ResponseError(problemDetails)

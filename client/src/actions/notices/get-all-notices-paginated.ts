@@ -27,8 +27,6 @@ export default async function getAllNoticesPaginated(
 
         const json = await response.json()
 
-        console.log("JSON: ", json)
-
         if (!response.ok) {
             const problemDetails = json as ProblemDetails
             return ResponseError(problemDetails)

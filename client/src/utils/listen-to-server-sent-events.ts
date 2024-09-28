@@ -40,7 +40,6 @@ export default async function listenToServerSentEvents<T>({
         },
         onmessage(event) {
             const response = JSON.parse(event.data) as ApiResponse
-            console.log("DATA: ", response)
             if (response.code >= 200 || response.code < 400) setHomeInfoData(response.data as T)
         },
         onclose() {
