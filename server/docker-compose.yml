@@ -1,0 +1,36 @@
+name: medimanage-backend
+
+services:
+  medimanage-database:
+    image: postgres:latest
+    container_name: medimanage-database
+    restart: always
+    environment:
+      POSTGRES_DB: medimanage_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  medimanage-app:
+    build: .
+    container_name: medimanage-app
+    restart: always
+    environment:
+      DB_ORIGIN: medimanage-database
+      DB_PORT: 5432
+      DB_NAME: medimanage_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: secret
+      CORS_ORIGINS: http://localhost:3000
+    ports:
+      - "8080:8080"
+    depends_on:
+      - medimanage-database
+
+volumes:
+  pgdata:
