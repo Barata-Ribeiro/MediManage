@@ -73,8 +73,8 @@ export default async function ViewProfilePage({ params, searchParams }: Readonly
 
             <div className="grid grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
                 <div>
-                    <h2 className="font-heading text-base font-semibold leading-7 text-neutral-900">Delete account</h2>
-                    <p className="mt-1 font-body text-sm leading-6 text-neutral-700">
+                    <h2 className="text-base font-semibold leading-7 text-neutral-900">Delete account</h2>
+                    <p className="mt-1 text-sm leading-6 text-neutral-700">
                         Are you sure you want to delete this account? All of the user&apos;s data will be permanently
                         removed. This action cannot be undone.
                     </p>

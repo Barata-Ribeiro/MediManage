@@ -74,29 +74,29 @@ export default async function NotificationsPage({ params, searchParams }: Readon
                                 <tr>
                                     <th
                                         scope="col"
-                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 py-3.5 pl-4 pr-3 text-left font-heading text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8">
+                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8">
                                         <span className="sr-only">
                                             Check multiple notifications at once by selecting the checkbox
                                         </span>
                                     </th>
                                     <th
                                         scope="col"
-                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left font-heading text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter">
+                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter">
                                         Id
                                     </th>
                                     <th
                                         scope="col"
-                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left font-heading text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter">
+                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter">
                                         Title
                                     </th>
                                     <th
                                         scope="col"
-                                        className="sticky top-0 z-10 hidden border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left font-heading text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter sm:table-cell">
+                                        className="sticky top-0 z-10 hidden border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter sm:table-cell">
                                         Issued At
                                     </th>
                                     <th
                                         scope="col"
-                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 py-3.5 pl-3 pr-4 font-heading backdrop-blur backdrop-filter sm:pr-6 lg:pr-8">
+                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 py-3.5 pl-3 pr-4 backdrop-blur backdrop-filter sm:pr-6 lg:pr-8">
                                         <span className="sr-only">View/Delete</span>
                                     </th>
                                 </tr>
@@ -117,7 +117,7 @@ export default async function NotificationsPage({ params, searchParams }: Readon
                                                 <td
                                                     className={twMerge(
                                                         isLast ? "border-b border-neutral-200" : "",
-                                                        "whitespace-nowrap py-4 pl-4 pr-3 font-body text-sm font-medium text-neutral-900 sm:pl-6 lg:pl-8",
+                                                        "whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral-900 sm:pl-6 lg:pl-8",
                                                     )}>
                                                     {notif.id}
                                                 </td>
@@ -125,7 +125,7 @@ export default async function NotificationsPage({ params, searchParams }: Readon
                                                     className={twMerge(
                                                         isLast ? "border-b border-neutral-200" : "",
                                                         isRead ? "font-normal" : "font-medium",
-                                                        "inline-flex w-full gap-2 whitespace-nowrap px-3 py-4 font-heading text-sm text-neutral-900",
+                                                        "inline-flex w-full gap-2 whitespace-nowrap px-3 py-4 text-sm text-neutral-900",
                                                     )}>
                                                     {isRead ? (
                                                         <IoMailOpen className="h-5 w-5" aria-hidden title="Read" />
@@ -137,18 +137,18 @@ export default async function NotificationsPage({ params, searchParams }: Readon
                                                 <td
                                                     className={twMerge(
                                                         isLast ? "border-b border-neutral-200" : "",
-                                                        "hidden whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900 sm:table-cell",
+                                                        "hidden whitespace-nowrap px-3 py-4 text-sm text-neutral-900 sm:table-cell",
                                                     )}>
                                                     {parseDate(notif.issuedAt)}
                                                 </td>
                                                 <td
                                                     className={twMerge(
                                                         isLast ? "border-b border-neutral-200" : "",
-                                                        "flex gap-2 whitespace-nowrap py-4 pl-3 pr-4 font-body text-sm text-neutral-900 sm:pr-6 lg:pr-8",
+                                                        "flex gap-2 whitespace-nowrap py-4 pl-3 pr-4 text-sm text-neutral-900 sm:pr-6 lg:pr-8",
                                                     )}>
                                                     <Link
                                                         href={`/dashboard/${params.username}/notifications/${notif.id}?user=${notif.user.id}`}
-                                                        className="font-heading font-semibold text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
+                                                        className="font-semibold text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
                                                         View
                                                     </Link>
                                                     <NotificationDeleteModal notif={notif} />

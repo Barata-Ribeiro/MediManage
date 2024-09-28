@@ -68,27 +68,27 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
                                 <tr>
                                     <th
                                         scope="col"
-                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 py-3.5 pl-4 pr-3 text-left font-heading text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8">
+                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8">
                                         Id
                                     </th>
                                     <th
                                         scope="col"
-                                        className="sticky top-0 z-10 hidden border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left font-heading text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter sm:table-cell">
+                                        className="sticky top-0 z-10 hidden border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter sm:table-cell">
                                         Username
                                     </th>
                                     <th
                                         scope="col"
-                                        className="sticky top-0 z-10 hidden border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left font-heading text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter lg:table-cell">
+                                        className="sticky top-0 z-10 hidden border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter lg:table-cell">
                                         Email
                                     </th>
                                     <th
                                         scope="col"
-                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left font-heading text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter">
+                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter">
                                         Account Type
                                     </th>
                                     <th
                                         scope="col"
-                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 py-3.5 pl-3 pr-4 font-heading backdrop-blur backdrop-filter sm:pr-6 lg:pr-8">
+                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 py-3.5 pl-3 pr-4 backdrop-blur backdrop-filter sm:pr-6 lg:pr-8">
                                         <span className="sr-only">View/Edit</span>
                                     </th>
                                 </tr>
@@ -100,39 +100,39 @@ export default async function UsersPage({ params, searchParams }: Readonly<Users
                                             <td
                                                 className={twMerge(
                                                     userIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
-                                                    "whitespace-nowrap py-4 pl-4 pr-3 font-body text-sm font-medium text-neutral-900 sm:pl-6 lg:pl-8",
+                                                    "whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral-900 sm:pl-6 lg:pl-8",
                                                 )}>
                                                 {user.id}
                                             </td>
                                             <td
                                                 className={twMerge(
                                                     userIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
-                                                    "hidden whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900 sm:table-cell",
+                                                    "hidden whitespace-nowrap px-3 py-4 text-sm text-neutral-900 sm:table-cell",
                                                 )}>
                                                 {user.username}
                                             </td>
                                             <td
                                                 className={twMerge(
                                                     userIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
-                                                    "hidden whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900 lg:table-cell",
+                                                    "hidden whitespace-nowrap px-3 py-4 text-sm text-neutral-900 lg:table-cell",
                                                 )}>
                                                 {user.email}
                                             </td>
                                             <td
                                                 className={twMerge(
                                                     userIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
-                                                    "whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900",
+                                                    "whitespace-nowrap px-3 py-4 text-sm text-neutral-900",
                                                 )}>
                                                 {user.accountType}
                                             </td>
                                             <td
                                                 className={twMerge(
                                                     userIdx !== content.length - 1 ? "border-b border-neutral-200" : "",
-                                                    "relative whitespace-nowrap py-4 pl-3 pr-4 text-right font-body text-sm font-medium sm:pr-8 lg:pr-8",
+                                                    "relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-8 lg:pr-8",
                                                 )}>
                                                 <Link
                                                     href={`/dashboard/${params.username}/users/profile?id=${user.id}`}
-                                                    className="font-heading text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
+                                                    className="text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
                                                     View<span className="sr-only">, {user.username}</span>
                                                 </Link>
                                             </td>

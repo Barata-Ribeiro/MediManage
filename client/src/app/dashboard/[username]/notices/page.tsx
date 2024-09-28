@@ -71,32 +71,32 @@ export default async function NoticesPage({ params, searchParams }: Readonly<Not
                                 <tr>
                                     <th
                                         scope="col"
-                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 py-3.5 pl-4 pr-3 text-left font-heading text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8">
+                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8">
                                         Id
                                     </th>
                                     <th
                                         scope="col"
-                                        className="sticky top-0 z-10 hidden border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left font-heading text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter sm:table-cell">
+                                        className="sticky top-0 z-10 hidden border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter sm:table-cell">
                                         Title
                                     </th>
                                     <th
                                         scope="col"
-                                        className="sticky top-0 z-10 hidden border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left font-heading text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter sm:table-cell">
+                                        className="sticky top-0 z-10 hidden border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter sm:table-cell">
                                         Issuer
                                     </th>
                                     <th
                                         scope="col"
-                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left font-heading text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter">
+                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter">
                                         Notice Type
                                     </th>
                                     <th
                                         scope="col"
-                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left font-heading text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter">
+                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-neutral-900 backdrop-blur backdrop-filter">
                                         Status
                                     </th>
                                     <th
                                         scope="col"
-                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 py-3.5 pl-3 pr-4 font-heading backdrop-blur backdrop-filter sm:pr-6 lg:pr-8">
+                                        className="sticky top-0 z-10 border-b border-neutral-300 bg-white bg-opacity-75 py-3.5 pl-3 pr-4 backdrop-blur backdrop-filter sm:pr-6 lg:pr-8">
                                         <span className="sr-only">View/Edit</span>
                                     </th>
                                 </tr>
@@ -112,7 +112,7 @@ export default async function NoticesPage({ params, searchParams }: Readonly<Not
                                                     noticeIdx !== content.length - 1
                                                         ? "border-b border-neutral-200"
                                                         : "",
-                                                    "whitespace-nowrap py-4 pl-4 pr-3 font-body text-sm font-medium text-neutral-900 sm:pl-6 lg:pl-8",
+                                                    "whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral-900 sm:pl-6 lg:pl-8",
                                                 )}>
                                                 {notice.id}
                                             </td>
@@ -121,7 +121,7 @@ export default async function NoticesPage({ params, searchParams }: Readonly<Not
                                                     noticeIdx !== content.length - 1
                                                         ? "border-b border-neutral-200"
                                                         : "",
-                                                    "hidden whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900 sm:table-cell",
+                                                    "hidden whitespace-nowrap px-3 py-4 text-sm text-neutral-900 sm:table-cell",
                                                 )}>
                                                 {notice.title}
                                             </td>
@@ -130,7 +130,7 @@ export default async function NoticesPage({ params, searchParams }: Readonly<Not
                                                     noticeIdx !== content.length - 1
                                                         ? "border-b border-neutral-200"
                                                         : "",
-                                                    "hidden whitespace-nowrap px-3 py-4 font-body text-sm text-neutral-900 sm:table-cell",
+                                                    "hidden whitespace-nowrap px-3 py-4 text-sm text-neutral-900 sm:table-cell",
                                                 )}>
                                                 {notice.issuer.fullName ?? notice.issuer.username}
                                             </td>
@@ -139,7 +139,7 @@ export default async function NoticesPage({ params, searchParams }: Readonly<Not
                                                     noticeIdx !== content.length - 1
                                                         ? "border-b border-neutral-200"
                                                         : "",
-                                                    "whitespace-nowrap px-3 py-4 font-body text-sm capitalize text-neutral-900",
+                                                    "whitespace-nowrap px-3 py-4 text-sm capitalize text-neutral-900",
                                                 )}>
                                                 {notice.type.toLowerCase()}
                                             </td>
@@ -148,7 +148,7 @@ export default async function NoticesPage({ params, searchParams }: Readonly<Not
                                                     noticeIdx !== content.length - 1
                                                         ? "border-b border-neutral-200"
                                                         : "",
-                                                    "whitespace-nowrap px-3 py-4 font-body text-sm capitalize text-neutral-900",
+                                                    "whitespace-nowrap px-3 py-4 text-sm capitalize text-neutral-900",
                                                 )}>
                                                 {notice.status.toLowerCase()}
                                             </td>
@@ -157,19 +157,19 @@ export default async function NoticesPage({ params, searchParams }: Readonly<Not
                                                     noticeIdx !== content.length - 1
                                                         ? "border-b border-neutral-200"
                                                         : "",
-                                                    "whitespace-nowrap py-4 pl-3 pr-4 font-body text-sm text-neutral-900 sm:pr-6 lg:pr-8",
+                                                    "whitespace-nowrap py-4 pl-3 pr-4 text-sm text-neutral-900 sm:pr-6 lg:pr-8",
                                                 )}>
                                                 <div className="flex gap-2">
                                                     <Link
                                                         href={`/dashboard/${params.username}/notices/${notice.id}`}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
+                                                        className="font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
                                                         View
                                                     </Link>
                                                     <Link
                                                         href={`/dashboard/${params.username}/notices/${notice.id}/edit`}
-                                                        className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
+                                                        className="font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
                                                         Edit
                                                     </Link>
                                                 </div>
