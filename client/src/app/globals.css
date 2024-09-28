@@ -16,7 +16,10 @@
     h5,
     h6,
     a,
-    button {
+    th,
+    dt,
+    button,
+    label {
         @apply font-heading;
         @apply text-neutral-900;
         @apply dark:text-neutral-50;

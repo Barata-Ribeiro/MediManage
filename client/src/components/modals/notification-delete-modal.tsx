@@ -91,7 +91,7 @@ export default function NotifDeleteModal({ notif }: Readonly<NotifDeleteModalPro
                             </div>
 
                             {error && !Array.isArray(error) && <RequisitionError error={error} />}
-                            
+
                             <div className="mt-3 sm:mt-4 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                                 <Button
                                     type="button"
