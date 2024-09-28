@@ -33,7 +33,7 @@ export default function Breadcrumbs() {
                     const active = isLast
                         ? tw`font-bold text-hello-spring-600 hover:text-hello-spring-700 active:text-hello-spring-800`
                         : tw`font-semibold text-neutral-400 hover:text-neutral-600 active:text-neutral-700`
-                    const sortedClasses = twMerge(active, "ml-2 text-sm font-heading capitalize")
+                    const sortedClasses = twMerge(active, "ml-2 text-sm  capitalize")
                     const includeParams = isLast && existingParams ? savedParams : ""
                     return (
                         <li key={crumb + "_" + index}>

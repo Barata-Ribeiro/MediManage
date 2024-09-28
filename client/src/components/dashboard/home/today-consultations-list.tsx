@@ -30,27 +30,27 @@ export default function TodayConsultationsList({ data }: Readonly<TodayConsultat
                         <tr>
                             <th
                                 scope="col"
-                                className="px-6 py-3 text-left font-heading text-xs font-semibold uppercase tracking-wider text-neutral-600">
+                                className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-600">
                                 ID
                             </th>
                             <th
                                 scope="col"
-                                className="px-6 py-3 text-left font-heading text-xs font-semibold uppercase tracking-wider text-neutral-600">
+                                className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-600">
                                 Patient
                             </th>
                             <th
                                 scope="col"
-                                className="hidden px-6 py-3 text-left font-heading text-xs font-semibold uppercase tracking-wider text-neutral-600 lg:table-cell">
+                                className="hidden px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-600 lg:table-cell">
                                 Doctor
                             </th>
                             <th
                                 scope="col"
-                                className="w-max px-6 py-3 text-left font-heading text-xs font-semibold uppercase tracking-wider text-neutral-600">
+                                className="w-max px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-600">
                                 Scheduled To
                             </th>
                             <th
                                 scope="col"
-                                className="px-6 py-3 text-left font-heading text-xs font-semibold uppercase tracking-wider text-neutral-600">
+                                className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-600">
                                 Status
                             </th>
                         </tr>

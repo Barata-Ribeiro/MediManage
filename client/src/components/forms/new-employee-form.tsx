@@ -33,9 +33,7 @@ export default function NewEmployeeForm() {
         <>
             <form action={formAction} onSubmit={onSubmit} className="space-y-6">
                 <Field className="border-b border-neutral-300 pb-6">
-                    <Label
-                        htmlFor="accountType"
-                        className="block font-heading text-sm font-medium leading-6 text-neutral-900">
+                    <Label htmlFor="accountType" className="block text-sm font-medium leading-6 text-neutral-900">
                         Employee
                     </Label>
                     <Description className="max-w-lg text-sm text-neutral-700">
@@ -61,9 +59,7 @@ export default function NewEmployeeForm() {
                 </Field>
 
                 <Field>
-                    <Label
-                        htmlFor="fullName"
-                        className="block font-heading text-sm font-medium leading-6 text-neutral-900">
+                    <Label htmlFor="fullName" className="block text-sm font-medium leading-6 text-neutral-900">
                         Full Name
                     </Label>
                     <Input
@@ -80,9 +76,7 @@ export default function NewEmployeeForm() {
                 </Field>
 
                 <Field>
-                    <Label
-                        htmlFor="email"
-                        className="block font-heading text-sm font-medium leading-6 text-neutral-900">
+                    <Label htmlFor="email" className="block text-sm font-medium leading-6 text-neutral-900">
                         Email
                     </Label>
                     <Input
@@ -97,9 +91,7 @@ export default function NewEmployeeForm() {
                 </Field>
 
                 <Field>
-                    <Label
-                        htmlFor="phone"
-                        className="block font-heading text-sm font-medium leading-6 text-neutral-900">
+                    <Label htmlFor="phone" className="block text-sm font-medium leading-6 text-neutral-900">
                         Phone
                     </Label>
                     <Input
@@ -113,9 +105,7 @@ export default function NewEmployeeForm() {
                 </Field>
 
                 <Field>
-                    <Label
-                        htmlFor="address"
-                        className="block font-heading text-sm font-medium leading-6 text-neutral-900">
+                    <Label htmlFor="address" className="block text-sm font-medium leading-6 text-neutral-900">
                         Address
                     </Label>
                     <Input
@@ -130,9 +120,7 @@ export default function NewEmployeeForm() {
                 </Field>
 
                 <Field>
-                    <Label
-                        htmlFor="birthDate"
-                        className="block font-heading text-sm font-medium leading-6 text-neutral-900">
+                    <Label htmlFor="birthDate" className="block text-sm font-medium leading-6 text-neutral-900">
                         Birth Date
                     </Label>
                     <Input
@@ -160,7 +148,7 @@ export default function NewEmployeeForm() {
                     <Field>
                         <Label
                             htmlFor="registrationNumber"
-                            className="block font-heading text-sm font-medium leading-6 text-neutral-900">
+                            className="block text-sm font-medium leading-6 text-neutral-900">
                             Registration Number
                         </Label>
                         <Input
@@ -175,7 +163,7 @@ export default function NewEmployeeForm() {
                     <Field>
                         <Label
                             htmlFor="registrationOrigin"
-                            className="block font-heading text-sm font-medium leading-6 text-neutral-900">
+                            className="block text-sm font-medium leading-6 text-neutral-900">
                             Registration Origin
                         </Label>
                         <Input
@@ -190,7 +178,7 @@ export default function NewEmployeeForm() {
                     <Field>
                         <Label
                             htmlFor="specialization"
-                            className="block font-heading text-sm font-medium leading-6 text-neutral-900">
+                            className="block text-sm font-medium leading-6 text-neutral-900">
                             Specialization
                         </Label>
                         <Input

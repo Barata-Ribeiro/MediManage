@@ -9,7 +9,7 @@ export default function RequisitionError({ error }: Readonly<{ error: string | P
                     <FaTriangleExclamation className="h-5 w-5 text-yellow-400" aria-hidden="true" />
                 </div>
                 <div className="ml-3">
-                    <h3 className="font-heading text-sm font-medium text-yellow-800">Failed Request</h3>
+                    <h3 className="text-sm font-medium text-yellow-800">Failed Request</h3>
                     <div className="mt-2 font-body text-sm text-yellow-700">
                         <p>{error}</p>
                     </div>
@@ -23,7 +23,7 @@ export default function RequisitionError({ error }: Readonly<{ error: string | P
                     <FaTriangleExclamation className="h-5 w-5 text-yellow-400" aria-hidden="true" />
                 </div>
                 <div className="ml-3">
-                    <h3 className="font-heading text-sm font-semibold text-yellow-800">
+                    <h3 className="text-sm font-semibold text-yellow-800">
                         <span className="font-bold">{error.status}</span> - {error.title}
                     </h3>
                     <div className="mt-2 font-body text-sm text-yellow-700">

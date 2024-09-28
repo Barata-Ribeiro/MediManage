@@ -56,7 +56,7 @@ export default function NotifDeleteModal({ notif }: Readonly<NotifDeleteModalPro
             <Button
                 type="button"
                 onClick={() => setOpen(true)}
-                className="font-heading font-semibold text-red-600 hover:text-red-700 active:text-red-800">
+                className="font-semibold text-red-600 hover:text-red-700 active:text-red-800">
                 Delete
             </Button>
             <Dialog open={open} onClose={setOpen} className="relative z-10">
@@ -75,9 +75,7 @@ export default function NotifDeleteModal({ notif }: Readonly<NotifDeleteModalPro
                                     <FaExclamationTriangle aria-hidden="true" className="h-6 w-6 text-red-600" />
                                 </div>
                                 <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                                    <DialogTitle
-                                        as="h3"
-                                        className="font-heading text-base font-semibold leading-6 text-neutral-900">
+                                    <DialogTitle as="h3" className="text-base font-semibold leading-6 text-neutral-900">
                                         Delete Notification
                                     </DialogTitle>
                                     <Description className="prose my-2 text-base text-neutral-700">

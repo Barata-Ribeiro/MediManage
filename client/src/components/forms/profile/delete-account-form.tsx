@@ -38,7 +38,7 @@ export default function DeleteAccountForm({ user }: Readonly<{ user: User }>) {
             <Button
                 type="submit"
                 disabled={isPending || user.id === data.user?.id}
-                className="inline-flex items-center rounded-md bg-red-600 px-3 py-2 font-heading text-sm font-semibold text-neutral-50 shadow-sm hover:bg-red-700 active:bg-red-800 disabled:opacity-50">
+                className="inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-neutral-50 shadow-sm hover:bg-red-700 active:bg-red-800 disabled:opacity-50">
                 {isPending ? (
                     <>
                         <Spinner /> Loading...

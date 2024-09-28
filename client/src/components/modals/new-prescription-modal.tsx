@@ -88,7 +88,7 @@ export default function NewPrescriptionModal({ userId }: Readonly<{ userId: stri
                                         <Field className="my-4 w-full">
                                             <Label
                                                 htmlFor="content"
-                                                className="mb-1 block font-heading text-base font-medium text-neutral-700">
+                                                className="mb-1 block text-base font-medium text-neutral-700">
                                                 Content
                                             </Label>
                                             <Description className="mb-2 flex items-start gap-1 text-sm text-neutral-600">

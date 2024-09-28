@@ -15,7 +15,7 @@ export default async function DashboardLayout({ children, modal }: Readonly<Dash
             <Header />
 
             <div className="-mt-32">
-                <div className="container px-4 pb-12 font-body sm:px-6 lg:px-8">
+                <div className="container px-4 pb-12 sm:px-6 lg:px-8">
                     <main className="h-full overflow-auto rounded-md bg-neutral-50 p-4 shadow-derek">
                         <Breadcrumbs />
                         {children}

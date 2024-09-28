@@ -24,7 +24,7 @@ export default function TodayConsultationsStats({ data, totalData }: Readonly<To
             <dl className="mt-5 grid grid-cols-1 divide-y divide-gray-200 overflow-hidden rounded-md bg-white shadow md:grid-cols-3 md:divide-y-0">
                 {todayConsultations.map(([status, consultations]) => (
                     <div key={status} className="px-4 py-5 sm:p-6">
-                        <dt className="font-heading text-base font-medium capitalize text-neutral-800">
+                        <dt className="text-base font-medium capitalize text-neutral-800">
                             {status === "inProgress" ? "in progress" : status}
                         </dt>
                         <dd className="mt-1 flex items-baseline justify-between md:block lg:flex">

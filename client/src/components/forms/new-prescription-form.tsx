@@ -29,7 +29,7 @@ export default function NewPrescriptionForm({ userId }: Readonly<{ userId: strin
             <Input type="hidden" name="userId" value={userId} />
 
             <Field className="my-4">
-                <Label htmlFor="content" className="mb-1 block font-heading text-base font-medium text-neutral-700">
+                <Label htmlFor="content" className="mb-1 block text-base font-medium text-neutral-700">
                     Content
                 </Label>
                 <Description className="mb-1 max-w-2xl">

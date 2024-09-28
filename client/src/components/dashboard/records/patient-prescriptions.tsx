@@ -23,7 +23,7 @@ export default function PatientPrescriptions({ prescriptionsPage, patient }: Rea
                     <PatientNewPrescriptionButton userId={patient.id} />
                     <Link
                         href={baseUrl + "?user=" + patient.id}
-                        className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
+                        className="font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
                         List all
                     </Link>
                 </div>
@@ -48,14 +48,14 @@ export default function PatientPrescriptions({ prescriptionsPage, patient }: Rea
                             <div className="flex gap-2">
                                 <Link
                                     href={baseUrl + `/${prescription.id}/${prescription.patient.username}/edit`}
-                                    className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
+                                    className="font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
                                     Edit
                                 </Link>
                                 <Link
                                     href={baseUrl + `/${prescription.id}/${prescription.patient.username}/pdf`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="font-heading font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
+                                    className="font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800">
                                     View/Print
                                 </Link>
                             </div>

@@ -300,7 +300,7 @@ export default function Header() {
 
             <header className="py-10">
                 <div className="container px-4 sm:px-6 lg:px-8">
-                    <h1 className="font-heading text-3xl font-bold tracking-tight text-neutral-50">
+                    <h1 className="text-3xl font-bold tracking-tight text-neutral-50">
                         Wellcome, {data.user?.fullName ?? data.user?.username}
                     </h1>
                 </div>

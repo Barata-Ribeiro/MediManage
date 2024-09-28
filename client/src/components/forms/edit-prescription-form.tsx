@@ -45,7 +45,7 @@ export default function EditPrescriptionForm({
             <Input type="hidden" name="patientUsername" value={patientUsername} />
 
             <Field className="my-4">
-                <Label htmlFor="content" className="mb-1 block font-heading text-base font-medium text-neutral-700">
+                <Label htmlFor="content" className="mb-1 block text-base font-medium text-neutral-700">
                     Content
                 </Label>
                 <Description className="mb-1 max-w-2xl">

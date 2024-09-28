@@ -17,7 +17,7 @@ export default function InputValidationError({ errors }: Readonly<ValidationErro
                     <FaCircleXmark className="h-5 w-5 text-red-400" aria-hidden="true" />
                 </div>
                 <div className="ml-3">
-                    <h3 className="font-heading text-sm font-medium text-red-800">
+                    <h3 className="text-sm font-medium text-red-800">
                         There {verb} {errorCount} {errorText} with your submission
                     </h3>
                     <ul className="list-disc space-y-1 pl-5 font-body">
