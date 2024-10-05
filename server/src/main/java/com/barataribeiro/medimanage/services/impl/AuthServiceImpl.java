@@ -30,10 +30,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Map;
-import java.util.Random;
 
 @Slf4j
 @Service
@@ -43,7 +43,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
-    private final Random random = new Random();
+    private final SecureRandom random = new SecureRandom();
     private final NotificationRepository notificationRepository;
     private final BlacklistedTokenRepository blacklistedTokenRepository;
 
