@@ -1,9 +1,7 @@
 package com.barataribeiro.medimanage.services.security.impl;
 
-import com.barataribeiro.medimanage.constants.ApplicationMessages;
-import com.barataribeiro.medimanage.entities.models.User;
-import com.barataribeiro.medimanage.exceptions.users.UserNotFoundException;
-import com.barataribeiro.medimanage.repositories.UserRepository;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.barataribeiro.medimanage.repositories.BlacklistedTokenRepository;
 import com.barataribeiro.medimanage.services.security.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -34,9 +32,9 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class SecurityFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
-    private final UserRepository userRepository;
     private final RequestAttributeSecurityContextRepository filterRepository =
             new RequestAttributeSecurityContextRepository();
+    private final BlacklistedTokenRepository blacklistedTokenRepository;
 
     @Override
     protected void doFilterInternal(final @NonNull HttpServletRequest request,
@@ -47,28 +45,34 @@ public class SecurityFilter extends OncePerRequestFilter {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
 
         if (token != null) {
-            String login = tokenService.validateToken(token);
+            DecodedJWT decodedJWT = tokenService.validateToken(token);
 
-            if (login != null) {
+            if (decodedJWT != null) {
+                String jti = decodedJWT.getId();
+                String username = decodedJWT.getSubject();
 
-                User user = userRepository.findByUsername(login)
-                        .orElseThrow(() -> new UserNotFoundException(
-                                String.format(ApplicationMessages.USER_NOT_FOUND_WITH_USERNAME, login)
-                        ));
+                if (blacklistedTokenRepository.existsById(jti)) {
+                    log.atWarn().log("Token {} has been blacklisted!", jti);
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
+                }
+
+                String role = decodedJWT.getClaim("role").asString();
+                String accountType = decodedJWT.getClaim("accountType").asString();
 
                 List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getUserRoles().name()));
-                authorities.add(new SimpleGrantedAuthority("ACCOUNT_TYPE_" + user.getAccountType().name()));
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+                authorities.add(new SimpleGrantedAuthority("ACCOUNT_TYPE_" + accountType));
 
                 UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(user.getUsername(), null, authorities);
+                        new UsernamePasswordAuthenticationToken(username, null, authorities);
 
                 context.setAuthentication(authentication);
                 SecurityContextHolder.setContext(context);
                 filterRepository.saveContext(context, request, response);
 
                 Mono.deferContextual(Mono::just)
-                        .contextWrite(contextView -> Context.of("principal", user))
+                        .contextWrite(contextView -> Context.of("principal", username))
                         .subscribe();
 
                 log.info("User authenticated successfully!");

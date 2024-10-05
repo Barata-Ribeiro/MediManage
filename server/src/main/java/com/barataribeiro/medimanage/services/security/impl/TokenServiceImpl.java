@@ -1,9 +1,11 @@
 package com.barataribeiro.medimanage.services.security.impl;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.barataribeiro.medimanage.entities.models.User;
 import com.barataribeiro.medimanage.exceptions.MediManageException;
 import com.barataribeiro.medimanage.services.security.TokenService;
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.AbstractMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -32,6 +35,7 @@ public class TokenServiceImpl implements TokenService {
     public Map.Entry<String, Instant> generateToken(@NotNull User user, Boolean rememberMe) {
         Instant expirationDate;
         String token;
+        String tokenId = UUID.randomUUID().toString();
 
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretKey);
@@ -41,6 +45,9 @@ public class TokenServiceImpl implements TokenService {
                     .withIssuer("auth0")
                     .withSubject(user.getUsername())
                     .withExpiresAt(expirationDate)
+                    .withClaim("role", user.getUserRoles().name())
+                    .withClaim("accountType", user.getAccountType().name())
+                    .withJWTId(tokenId)
                     .sign(algorithm);
 
             return new AbstractMap.SimpleEntry<>(token, expirationDate);
@@ -51,15 +58,12 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public String validateToken(String token) {
+    public DecodedJWT validateToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretKey);
+            JWTVerifier verifier = JWT.require(algorithm).withIssuer("auth0").build();
 
-            return JWT.require(algorithm)
-                    .withIssuer("auth0")
-                    .build()
-                    .verify(token)
-                    .getSubject();
+            return verifier.verify(token);
         } catch (JWTVerificationException exception) {
             log.atError().log(exception.getMessage());
             return null;
