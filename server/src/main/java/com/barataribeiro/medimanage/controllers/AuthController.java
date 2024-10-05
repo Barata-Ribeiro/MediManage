@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -73,5 +70,15 @@ public class AuthController {
                                                        HttpStatus.OK.value(),
                                                        "Login successful.",
                                                        response));
+    }
+
+    @Operation(summary = "Sign out of the application")
+    @DeleteMapping("/logout")
+    public ResponseEntity<RestResponseDTO<Void>> logout(@RequestHeader("X-Blacklist-Token") String blacklistToken) {
+        authService.logout(blacklistToken);
+        return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
+                                                       HttpStatus.OK.value(),
+                                                       "Logout successful.",
+                                                       null));
     }
 }

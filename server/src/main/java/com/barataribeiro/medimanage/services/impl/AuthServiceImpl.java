@@ -1,5 +1,6 @@
 package com.barataribeiro.medimanage.services.impl;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.barataribeiro.medimanage.builders.UserMapper;
 import com.barataribeiro.medimanage.dtos.raw.UserDTO;
 import com.barataribeiro.medimanage.dtos.requests.LoginRequestDTO;
@@ -9,12 +10,14 @@ import com.barataribeiro.medimanage.dtos.requests.RegisterRequestDTO;
 import com.barataribeiro.medimanage.dtos.responses.LoginResponseDTO;
 import com.barataribeiro.medimanage.entities.enums.AccountType;
 import com.barataribeiro.medimanage.entities.enums.UserRoles;
+import com.barataribeiro.medimanage.entities.models.BlacklistedToken;
 import com.barataribeiro.medimanage.entities.models.Notification;
 import com.barataribeiro.medimanage.entities.models.User;
 import com.barataribeiro.medimanage.exceptions.IllegalRequestException;
 import com.barataribeiro.medimanage.exceptions.users.InvalidUserCredentialsException;
 import com.barataribeiro.medimanage.exceptions.users.UserAlreadyExistsException;
 import com.barataribeiro.medimanage.exceptions.users.UserIsBannedException;
+import com.barataribeiro.medimanage.repositories.BlacklistedTokenRepository;
 import com.barataribeiro.medimanage.repositories.NotificationRepository;
 import com.barataribeiro.medimanage.repositories.UserRepository;
 import com.barataribeiro.medimanage.services.AuthService;
@@ -42,6 +45,7 @@ public class AuthServiceImpl implements AuthService {
     private final TokenService tokenService;
     private final Random random = new Random();
     private final NotificationRepository notificationRepository;
+    private final BlacklistedTokenRepository blacklistedTokenRepository;
 
     @Override
     @Transactional
@@ -195,6 +199,30 @@ public class AuthServiceImpl implements AuthService {
         return new LoginResponseDTO(userMapper.toContextDTO(user),
                                     tokenAndExpiration.getKey(),
                                     tokenAndExpiration.getValue());
+    }
+
+    @Override
+    public void logout(String blacklistToken) {
+        DecodedJWT decodedJWT = tokenService.validateToken(blacklistToken);
+
+        if (decodedJWT == null) {
+            throw new IllegalRequestException("Invalid token.");
+        }
+
+        String jti = decodedJWT.getId();
+        String username = decodedJWT.getSubject();
+        Instant expirationDate = decodedJWT.getExpiresAt().toInstant();
+
+        BlacklistedToken token = BlacklistedToken.builder()
+                .id(jti)
+                .token(blacklistToken)
+                .ownerUsername(username)
+                .expirationDate(expirationDate)
+                .build();
+
+        blacklistedTokenRepository.save(token);
+
+        log.atInfo().log("User with username '{}' logged out successfully.", username);
     }
 
     private @NotNull String generateRandomString() {
