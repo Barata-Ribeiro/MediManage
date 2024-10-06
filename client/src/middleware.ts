@@ -15,7 +15,7 @@ export async function middleware(request: NextRequest) {
 
     if (isAuthenticated && (clonedUrl.pathname === "/" || pathname.startsWith("/auth"))) {
         const jwtPayload = await decodeToken(authToken)
-        return NextResponse.redirect(new URL("/dashboard/" + jwtPayload, request.url))
+        return NextResponse.redirect(new URL("/dashboard/" + jwtPayload.sub, request.url))
     }
 
     return NextResponse.next()
