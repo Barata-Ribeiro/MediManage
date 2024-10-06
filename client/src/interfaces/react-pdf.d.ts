@@ -3,6 +3,9 @@ declare module "@react-pdf/renderer" {
     /* eslint-disable no-unused-vars */
     /* eslint-disable max-classes-per-file */
     /* eslint-disable  @typescript-eslint/no-explicit-any */
+    /* eslint-disable  @typescript-eslint/no-empty-interface */
+    /* eslint-disable  @typescript-eslint/no-empty-object-type */
+    /* eslint-disable  @typescript-eslint/no-namespace */
     import * as React from "react"
     import {
         Bookmark,
@@ -456,7 +459,7 @@ declare module "@react-pdf/renderer" {
          */
         export class PDFViewer extends React.Component<PDFViewerProps> {}
 
-        // @ts-ignore
+        // @ts-expect-error required for compatibility reasons
         interface PDFDownloadLinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href"> {
             /** PDF filename. Alias for anchor tag `download` attribute. */
             fileName?: string
