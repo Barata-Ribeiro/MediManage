@@ -3,6 +3,7 @@ package com.barataribeiro.medimanage.config.security;
 import com.barataribeiro.medimanage.services.security.impl.SecurityFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -15,7 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -26,6 +27,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableScheduling
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class SecurityConfig {
+
     private static final String[] AUTH_WHITELIST = {
             // -- Swagger UI v2
             "/v2/api-docs",
@@ -45,14 +47,23 @@ public class SecurityConfig {
             "/api/v1/articles/public/**",
             "/api/v1/notices/public/**"
     };
-
     private static final String CONTENT_SECURITY_POLICY_VALUE = "default-src 'self'; base-uri 'self'; " +
                                                                 "font-src 'self' https: data:; form-action 'self'; " +
                                                                 "frame-ancestors 'self'; img-src 'self' data:; " +
                                                                 "object-src 'none'; script-src 'self'; style-src " +
                                                                 "'self' https:; upgrade-insecure-requests";
-
     private final SecurityFilter securityFilter;
+
+    @Value("${api.security.argon2.salt}")
+    private int salt;
+    @Value("${api.security.argon2.length}")
+    private int length;
+    @Value("${api.security.argon2.parallelism}")
+    private int parallelism;
+    @Value("${api.security.argon2.memory}")
+    private int memory;
+    @Value("${api.security.argon2.iterations}")
+    private int iterations;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -74,7 +85,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new Argon2PasswordEncoder(salt, length, parallelism, memory, iterations);
     }
 
     @Bean
