@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 @Builder
@@ -18,7 +19,7 @@ import java.time.Instant;
         @Index(name = "idx_prescription_text_fulltext", columnList = "prescription_text"),
         @Index(name = "idx_prescription_doctor_id", columnList = "doctor_id")
 })
-public class Prescription {
+public class Prescription implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(nullable = false)

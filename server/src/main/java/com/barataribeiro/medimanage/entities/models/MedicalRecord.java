@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @ToString
 @Entity
 @Table(name = "tb_medical_records")
-public class MedicalRecord {
+public class MedicalRecord implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(nullable = false)

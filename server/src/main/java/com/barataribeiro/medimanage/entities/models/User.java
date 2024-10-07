@@ -7,12 +7,14 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Builder
 @AllArgsConstructor
@@ -26,7 +28,7 @@ import java.util.UUID;
         @Index(name = "idx_user_email_unq", columnList = "email", unique = true),
         @Index(name = "idx_user_full_name_unq", columnList = "full_name", unique = true)
 })
-public class User {
+public class User implements UserDetails, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(nullable = false)
@@ -125,6 +127,39 @@ public class User {
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Prescription> prescriptionsAsDoctor = new LinkedHashSet<>();
 
+    @Override
+    @JsonIgnore
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + this.userRoles.name()));
+        authorities.add(new SimpleGrantedAuthority("ACCOUNT_TYPE_" + this.accountType.name()));
+        return authorities;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonLocked() {
+        return !this.userRoles.equals(UserRoles.BANNED);
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isEnabled() {
+        return !this.userRoles.equals(UserRoles.BANNED);
+    }
+
 
     // Lifecycle methods
     @PostLoad
@@ -135,4 +170,6 @@ public class User {
         this.totalReadNotifications = this.notifications.stream().filter(Notification::getIsRead).count();
         this.totalUnreadNotifications = this.totalNotifications - this.totalReadNotifications;
     }
+
+
 }

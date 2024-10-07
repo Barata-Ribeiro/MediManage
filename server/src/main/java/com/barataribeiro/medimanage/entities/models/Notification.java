@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 @Builder
@@ -14,7 +15,7 @@ import java.time.Instant;
 @ToString
 @Entity
 @Table(name = "tb_notifications")
-public class Notification {
+public class Notification implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
