@@ -2,14 +2,13 @@ package com.barataribeiro.medimanage.services.impl;
 
 import com.barataribeiro.medimanage.builders.ArticleMapper;
 import com.barataribeiro.medimanage.constants.ApplicationConstants;
-import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.ArticleDTO;
 import com.barataribeiro.medimanage.dtos.raw.simple.SimpleArticleDTO;
 import com.barataribeiro.medimanage.dtos.requests.ArticleRequestDTO;
 import com.barataribeiro.medimanage.dtos.requests.ArticleUpdateRequestDTO;
 import com.barataribeiro.medimanage.entities.models.Article;
 import com.barataribeiro.medimanage.entities.models.Category;
-import com.barataribeiro.medimanage.exceptions.articles.ArticleNotFoundException;
+import com.barataribeiro.medimanage.exceptions.EntityNotFoundException;
 import com.barataribeiro.medimanage.repositories.ArticleRepository;
 import com.barataribeiro.medimanage.repositories.CategoryRepository;
 import com.barataribeiro.medimanage.services.ArticleService;
@@ -47,9 +46,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional(readOnly = true)
     public ArticleDTO getArticleById(Long articleId) {
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new ArticleNotFoundException(
-                        String.format(ApplicationMessages.ARTICLE_NOT_FOUND_WITH_ID, articleId)
-                ));
+                .orElseThrow(() -> new EntityNotFoundException(Article.class.getSimpleName(), articleId.toString()));
         return articleMapper.toDTO(article);
     }
 
@@ -114,9 +111,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     public ArticleDTO updateArticle(Long articleId, @NotNull ArticleUpdateRequestDTO body, Principal principal) {
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new ArticleNotFoundException(
-                        String.format(ApplicationMessages.ARTICLE_NOT_FOUND_WITH_ID, articleId)
-                ));
+                .orElseThrow(() -> new EntityNotFoundException(Article.class.getSimpleName(), articleId.toString()));
 
         if (body.title() != null && !body.title().trim().isEmpty()) {
             article.setTitle(body.title());

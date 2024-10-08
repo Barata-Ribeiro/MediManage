@@ -2,15 +2,13 @@ package com.barataribeiro.medimanage.services.impl;
 
 import com.barataribeiro.medimanage.builders.NoticeMapper;
 import com.barataribeiro.medimanage.constants.ApplicationConstants;
-import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.NoticeDTO;
 import com.barataribeiro.medimanage.dtos.requests.NoticeRequestDTO;
 import com.barataribeiro.medimanage.entities.enums.NoticeStatus;
 import com.barataribeiro.medimanage.entities.enums.NoticeType;
 import com.barataribeiro.medimanage.entities.models.Notice;
 import com.barataribeiro.medimanage.entities.models.User;
-import com.barataribeiro.medimanage.exceptions.notices.NoticeNotFoundException;
-import com.barataribeiro.medimanage.exceptions.users.UserNotFoundException;
+import com.barataribeiro.medimanage.exceptions.EntityNotFoundException;
 import com.barataribeiro.medimanage.repositories.NoticeRepository;
 import com.barataribeiro.medimanage.repositories.UserRepository;
 import com.barataribeiro.medimanage.services.NoticeService;
@@ -57,19 +55,16 @@ public class NoticeServiceImpl implements NoticeService {
 
     @Override
     public NoticeDTO getNoticeById(Long noticeId) {
-        Notice notice = noticeRepository.findById(noticeId).orElseThrow(
-                () -> new NoticeNotFoundException(String.format(ApplicationMessages.NOTICE_NOT_FOUND_WITH_ID, noticeId))
-        );
+        Notice notice = noticeRepository.findById(noticeId)
+                .orElseThrow(() -> new EntityNotFoundException(Notice.class.getSimpleName(), noticeId.toString()));
         return noticeMapper.toDTO(notice);
     }
 
     @Override
     @Transactional
     public NoticeDTO createNotice(@NotNull NoticeRequestDTO body, @NotNull Principal principal) {
-        User user = userRepository.findByUsername(principal.getName()).orElseThrow(
-                () -> new UserNotFoundException(
-                        String.format(ApplicationMessages.USER_NOT_FOUND_WITH_ID, principal.getName()))
-        );
+        User user = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName(), principal.getName()));
 
         Notice newNotice = Notice.builder()
                 .title(body.title())
@@ -85,9 +80,8 @@ public class NoticeServiceImpl implements NoticeService {
     @Override
     @Transactional
     public NoticeDTO updateNotice(Long noticeId, @NotNull NoticeRequestDTO body, Principal principal) {
-        Notice notice = noticeRepository.findById(noticeId).orElseThrow(
-                () -> new NoticeNotFoundException(String.format(ApplicationMessages.NOTICE_NOT_FOUND_WITH_ID, noticeId))
-        );
+        Notice notice = noticeRepository.findById(noticeId)
+                .orElseThrow(() -> new EntityNotFoundException(Notice.class.getSimpleName(), noticeId.toString()));
 
         if (body.title() != null && !body.title().isEmpty()) {
             notice.setTitle(body.title());

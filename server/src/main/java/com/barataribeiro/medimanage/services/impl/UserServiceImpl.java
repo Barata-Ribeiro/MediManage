@@ -2,15 +2,14 @@ package com.barataribeiro.medimanage.services.impl;
 
 import com.barataribeiro.medimanage.builders.UserMapper;
 import com.barataribeiro.medimanage.constants.ApplicationConstants;
-import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.UserContextDTO;
 import com.barataribeiro.medimanage.dtos.raw.UserDTO;
 import com.barataribeiro.medimanage.dtos.requests.UpdateAccountRequestDTO;
 import com.barataribeiro.medimanage.dtos.requests.UpdateUserInformationDTO;
 import com.barataribeiro.medimanage.entities.enums.AccountType;
 import com.barataribeiro.medimanage.entities.models.User;
+import com.barataribeiro.medimanage.exceptions.EntityNotFoundException;
 import com.barataribeiro.medimanage.exceptions.IllegalRequestException;
-import com.barataribeiro.medimanage.exceptions.users.UserNotFoundException;
 import com.barataribeiro.medimanage.repositories.UserRepository;
 import com.barataribeiro.medimanage.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -60,9 +59,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getUserInformation(String userId, Principal principal) {
-        User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new UserNotFoundException(
-                String.format(ApplicationMessages.USER_NOT_FOUND_WITH_ID, userId))
-        );
+        User user = userRepository.findById(UUID.fromString(userId))
+                .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName(), userId));
 
         return userMapper.toDTO(user);
     }
@@ -71,9 +69,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDTO updateUserInformation(String userId, @NotNull UpdateUserInformationDTO body,
                                          Principal principal) {
-        User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new UserNotFoundException(
-                String.format(ApplicationMessages.USER_NOT_FOUND_WITH_ID, userId))
-        );
+        User user = userRepository.findById(UUID.fromString(userId))
+                .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName(), userId));
 
         user.setUsername(body.username());
         user.setEmail(body.email());
@@ -89,9 +86,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void deleteUser(String userId, @NotNull Principal principal) {
-        User user = userRepository.findById(UUID.fromString(userId)).orElseThrow(() -> new UserNotFoundException(
-                String.format(ApplicationMessages.USER_NOT_FOUND_WITH_ID, userId))
-        );
+        User user = userRepository.findById(UUID.fromString(userId))
+                .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName(), userId));
 
         if (user.getUsername().equals(principal.getName())) {
             throw new IllegalRequestException("You cannot delete your own account.");
@@ -102,9 +98,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserContextDTO getContext(@NotNull Principal principal) {
-        User user = userRepository.findByUsername(principal.getName()).orElseThrow(() -> new UserNotFoundException(
-                String.format(ApplicationMessages.USER_NOT_FOUND_WITH_USERNAME, principal.getName())
-        ));
+        User user = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName(), principal.getName()));
 
         return userMapper.toContextDTO(user);
     }
@@ -112,9 +107,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserContextDTO updateAccount(@NotNull UpdateAccountRequestDTO body, @NotNull Principal principal) {
-        User user = userRepository.findByUsername(principal.getName()).orElseThrow(() -> new UserNotFoundException(
-                String.format(ApplicationMessages.USER_NOT_FOUND_WITH_USERNAME, principal.getName())
-        ));
+        User user = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName(), principal.getName()));
 
         if (!user.getUsername().equals(principal.getName())) {
             throw new IllegalRequestException("You cannot update another user's account.");

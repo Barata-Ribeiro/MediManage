@@ -2,16 +2,14 @@ package com.barataribeiro.medimanage.services.impl;
 
 import com.barataribeiro.medimanage.builders.MedicalRecordMapper;
 import com.barataribeiro.medimanage.constants.ApplicationConstants;
-import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.MedicalRecordDTO;
 import com.barataribeiro.medimanage.dtos.raw.simple.SimpleMedicalRecordDTO;
 import com.barataribeiro.medimanage.dtos.requests.MedicalRecordRegisterDTO;
 import com.barataribeiro.medimanage.entities.models.MedicalRecord;
 import com.barataribeiro.medimanage.entities.models.Notification;
 import com.barataribeiro.medimanage.entities.models.User;
+import com.barataribeiro.medimanage.exceptions.EntityNotFoundException;
 import com.barataribeiro.medimanage.exceptions.IllegalRequestException;
-import com.barataribeiro.medimanage.exceptions.records.MedicalRecordNotFoundException;
-import com.barataribeiro.medimanage.exceptions.users.UserNotFoundException;
 import com.barataribeiro.medimanage.repositories.MedicalRecordRepository;
 import com.barataribeiro.medimanage.repositories.NotificationRepository;
 import com.barataribeiro.medimanage.repositories.UserRepository;
@@ -81,9 +79,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     @Override
     public MedicalRecordDTO getMedicalRecord(String recordId, Principal principal) {
         MedicalRecord medicalRecord = medicalRecordRepository.findById(UUID.fromString(recordId))
-                .orElseThrow(() -> new MedicalRecordNotFoundException(
-                        String.format(ApplicationMessages.MEDICAL_RECORD_NOT_FOUND_WITH_ID, recordId)
-                ));
+                .orElseThrow(() -> new EntityNotFoundException(MedicalRecord.class.getSimpleName(), recordId));
         return medicalRecordMapper.toDTO(medicalRecord);
     }
 
@@ -92,9 +88,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     public MedicalRecordDTO registerMedicalRecord(@NotNull Principal principal,
                                                   @NotNull MedicalRecordRegisterDTO body) {
         User user = userRepository.findById(UUID.fromString(body.patientId()))
-                .orElseThrow(() -> new UserNotFoundException(
-                        String.format(ApplicationMessages.USER_NOT_FOUND_WITH_ID, body.patientId())
-                ));
+                .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName(), body.patientId()));
 
         if (user.getUsername().equals(principal.getName())) {
             throw new IllegalRequestException("You cannot register a medical record for yourself.");
@@ -124,9 +118,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     public MedicalRecordDTO updateMedicalRecord(@NotNull Principal principal, MedicalRecordRegisterDTO body,
                                                 String recordId) {
         MedicalRecord medicalRecord = medicalRecordRepository.findById(UUID.fromString(recordId))
-                .orElseThrow(() -> new IllegalRequestException(
-                        String.format(ApplicationMessages.MEDICAL_RECORD_NOT_FOUND_WITH_ID, recordId)
-                ));
+                .orElseThrow(() -> new EntityNotFoundException(MedicalRecord.class.getSimpleName(), recordId));
 
         if (medicalRecord.getPatient().getUsername().equals(principal.getName())) {
             throw new IllegalRequestException("You cannot update a medical record for yourself.");

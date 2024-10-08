@@ -2,12 +2,11 @@ package com.barataribeiro.medimanage.services.impl;
 
 import com.barataribeiro.medimanage.builders.NotificationMapper;
 import com.barataribeiro.medimanage.constants.ApplicationConstants;
-import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.NotificationDTO;
 import com.barataribeiro.medimanage.dtos.requests.UpdateNotificationDTO;
 import com.barataribeiro.medimanage.entities.models.Notification;
+import com.barataribeiro.medimanage.exceptions.EntityNotFoundException;
 import com.barataribeiro.medimanage.exceptions.IllegalRequestException;
-import com.barataribeiro.medimanage.exceptions.notifications.NotificationNotFoundException;
 import com.barataribeiro.medimanage.repositories.NotificationRepository;
 import com.barataribeiro.medimanage.services.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -67,9 +66,7 @@ public class NotificationServiceImpl implements NotificationService {
         Notification notification = notificationRepository
                 .findFirstByIdAndUser_IdAndUser_Username(Long.parseLong(notificationId), UUID.fromString(userId),
                                                          principal.getName())
-                .orElseThrow(() -> new NotificationNotFoundException(
-                        String.format(ApplicationMessages.NOTIFICATION_NOT_FOUND_WITH_ID, notificationId)
-                ));
+                .orElseThrow(() -> new EntityNotFoundException(Notification.class.getSimpleName(), notificationId));
         log.atInfo().log("Notification with id: {} found and returned.", notificationId);
         return notificationMapper.toDTO(notification);
     }
@@ -93,9 +90,7 @@ public class NotificationServiceImpl implements NotificationService {
         Notification notification = notificationRepository
                 .findFirstByIdAndUser_IdAndUser_Username(Long.parseLong(notificationId), UUID.fromString(userId),
                                                          principal.getName())
-                .orElseThrow(() -> new NotificationNotFoundException(
-                        String.format(ApplicationMessages.NOTIFICATION_NOT_FOUND_WITH_ID, notificationId)
-                ));
+                .orElseThrow(() -> new EntityNotFoundException(Notification.class.getSimpleName(), notificationId));
 
         notification.setIsRead(isRead);
         notification.setReadAt(Boolean.TRUE.equals(isRead) ? Instant.now() : null);
@@ -127,9 +122,9 @@ public class NotificationServiceImpl implements NotificationService {
                     updateNotification -> updateNotification.notificationId().equals(
                             String.valueOf(notification.getId())
                     )
-            ).findFirst().orElseThrow(() -> new NotificationNotFoundException(
-                    String.format(ApplicationMessages.NOTIFICATION_NOT_FOUND_WITH_ID, notification.getId())
-            ));
+            ).findFirst().orElseThrow(
+                    () -> new EntityNotFoundException(Notification.class.getSimpleName(),
+                                                      notification.getId().toString()));
 
             notification.setIsRead(updateNotificationDTO.newStatus());
             notification.setReadAt(Boolean.TRUE.equals(updateNotificationDTO.newStatus()) ? Instant.now() : null);
@@ -147,9 +142,7 @@ public class NotificationServiceImpl implements NotificationService {
         Notification notification = notificationRepository
                 .findFirstByIdAndUser_IdAndUser_Username(Long.parseLong(notificationId), UUID.fromString(userId),
                                                          principal.getName())
-                .orElseThrow(() -> new NotificationNotFoundException(
-                        String.format(ApplicationMessages.NOTIFICATION_NOT_FOUND_WITH_ID, notificationId)
-                ));
+                .orElseThrow(() -> new EntityNotFoundException(Notification.class.getSimpleName(), notificationId));
         notificationRepository.delete(notification);
     }
 

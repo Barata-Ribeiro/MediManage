@@ -2,15 +2,13 @@ package com.barataribeiro.medimanage.services.impl;
 
 import com.barataribeiro.medimanage.builders.PrescriptionMapper;
 import com.barataribeiro.medimanage.constants.ApplicationConstants;
-import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.PrescriptionDTO;
 import com.barataribeiro.medimanage.dtos.raw.simple.SimplePrescriptionDTO;
 import com.barataribeiro.medimanage.dtos.requests.PrescriptionCreateDTO;
 import com.barataribeiro.medimanage.entities.models.Notification;
 import com.barataribeiro.medimanage.entities.models.Prescription;
 import com.barataribeiro.medimanage.entities.models.User;
-import com.barataribeiro.medimanage.exceptions.prescriptions.PrescriptionNotFoundException;
-import com.barataribeiro.medimanage.exceptions.users.UserNotFoundException;
+import com.barataribeiro.medimanage.exceptions.EntityNotFoundException;
 import com.barataribeiro.medimanage.repositories.NotificationRepository;
 import com.barataribeiro.medimanage.repositories.PrescriptionRepository;
 import com.barataribeiro.medimanage.repositories.UserRepository;
@@ -65,10 +63,8 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     public PrescriptionDTO getPrescription(String username, String prescriptionId, Principal principal) {
         log.atInfo().log("Fetching prescription with id '{}' for user '{}'", prescriptionId, username);
         Prescription prescription = prescriptionRepository
-                .findByIdAndPatient_Username(Long.valueOf(prescriptionId), username).orElseThrow(
-                        () -> new PrescriptionNotFoundException(String.format(
-                                ApplicationMessages.PRESCRIPTION_NOT_FOUND_WITH_ID, prescriptionId)
-                        ));
+                .findByIdAndPatient_Username(Long.valueOf(prescriptionId), username)
+                .orElseThrow(() -> new EntityNotFoundException(Prescription.class.getSimpleName(), prescriptionId));
         log.atInfo().log("Prescription with id '{}' for user '{}' has been found.", prescriptionId, username);
         return prescriptionMapper.toDTO(prescription);
     }
@@ -80,13 +76,10 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         log.atInfo().log("Doctor {} is creating a prescription for patient with id '{}'", principal.getName(),
                          patientId);
 
-        User patient = userRepository.findById(UUID.fromString(patientId)).orElseThrow(
-                () -> new UserNotFoundException(String.format(ApplicationMessages.USER_NOT_FOUND_WITH_ID, patientId))
-        );
-        User doctor = userRepository.findByUsername(principal.getName()).orElseThrow(
-                () -> new UserNotFoundException(String.format(ApplicationMessages.USER_NOT_FOUND_WITH_USERNAME,
-                                                              principal.getName())
-                ));
+        User patient = userRepository.findById(UUID.fromString(patientId))
+                .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName(), patientId));
+        User doctor = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName(), principal.getName()));
 
         if (patient.getId().equals(doctor.getId())) {
             throw new IllegalArgumentException("You can't create a prescription for yourself");
@@ -140,10 +133,8 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         log.atInfo().log("Fetching prescription with id '{}' for user '{}'", prescriptionId, principal.getName());
 
         Prescription prescription = prescriptionRepository
-                .findByIdAndPatient_Username(Long.valueOf(prescriptionId), principal.getName()).orElseThrow(
-                        () -> new PrescriptionNotFoundException(String.format(
-                                ApplicationMessages.PRESCRIPTION_NOT_FOUND_WITH_ID, prescriptionId)
-                        ));
+                .findByIdAndPatient_Username(Long.valueOf(prescriptionId), principal.getName())
+                .orElseThrow(() -> new EntityNotFoundException(Prescription.class.getSimpleName(), prescriptionId));
 
         log.atInfo().log("Prescription with id '{}' for user '{}' has been found.", prescriptionId,
                          principal.getName());
@@ -161,8 +152,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         Prescription prescription = prescriptionRepository
                 .findByIdAndPatient_UsernameAndDoctor_Username(Long.valueOf(prescriptionId), username,
                                                                principal.getName())
-                .orElseThrow(() -> new PrescriptionNotFoundException(
-                        String.format(ApplicationMessages.PRESCRIPTION_NOT_FOUND_WITH_ID, prescriptionId)));
+                .orElseThrow(() -> new EntityNotFoundException(Prescription.class.getSimpleName(), prescriptionId));
 
         prescription.setText(body.text());
 
@@ -177,7 +167,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         if (prescription.getDoctor().getUsername().equals(principal.getName())) {
             throw new IllegalArgumentException("You can't update a prescription that you didn't issued.");
         }
-        
+
         Notification notification = Notification.builder()
                 .title("Prescription updated!")
                 .message(String.format("Your prescription '%s' has been updated by %s.", prescriptionId, doctorName))

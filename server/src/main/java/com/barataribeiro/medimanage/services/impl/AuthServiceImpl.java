@@ -13,9 +13,9 @@ import com.barataribeiro.medimanage.entities.enums.UserRoles;
 import com.barataribeiro.medimanage.entities.models.BlacklistedToken;
 import com.barataribeiro.medimanage.entities.models.Notification;
 import com.barataribeiro.medimanage.entities.models.User;
+import com.barataribeiro.medimanage.exceptions.EntityAlreadyExistsException;
 import com.barataribeiro.medimanage.exceptions.IllegalRequestException;
 import com.barataribeiro.medimanage.exceptions.users.InvalidUserCredentialsException;
-import com.barataribeiro.medimanage.exceptions.users.UserAlreadyExistsException;
 import com.barataribeiro.medimanage.exceptions.users.UserIsBannedException;
 import com.barataribeiro.medimanage.repositories.BlacklistedTokenRepository;
 import com.barataribeiro.medimanage.repositories.NotificationRepository;
@@ -51,7 +51,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public UserDTO register(@NotNull RegisterRequestDTO body) {
         if (userRepository.existsByUsernameOrEmail(body.username(), body.email())) {
-            throw new UserAlreadyExistsException();
+            throw new EntityAlreadyExistsException(User.class.getSimpleName());
         }
 
         User registration = User.builder()
@@ -79,7 +79,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public Map<String, Object> registerByAssistant(@NotNull RegisterByAssistantDTO body) {
         if (userRepository.existsByEmailOrFullName(body.email(), body.fullName())) {
-            throw new UserAlreadyExistsException();
+            throw new EntityAlreadyExistsException(User.class.getSimpleName());
         }
 
         String generatedUsername = this.generateUniqueUsername();
@@ -122,7 +122,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public Map<String, Object> registerNewEmployee(@NotNull RegisterNewEmployeeDTO body) {
         if (userRepository.existsByEmailOrFullName(body.email(), body.fullName())) {
-            throw new UserAlreadyExistsException();
+            throw new EntityAlreadyExistsException(User.class.getSimpleName());
         }
 
         String generatedUsername = this.generateUniqueUsername();

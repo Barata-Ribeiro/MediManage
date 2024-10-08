@@ -2,7 +2,6 @@ package com.barataribeiro.medimanage.services.impl;
 
 import com.barataribeiro.medimanage.builders.ConsultationMapper;
 import com.barataribeiro.medimanage.constants.ApplicationConstants;
-import com.barataribeiro.medimanage.constants.ApplicationMessages;
 import com.barataribeiro.medimanage.dtos.raw.ConsultationDTO;
 import com.barataribeiro.medimanage.dtos.requests.ConsultationRegisterDTO;
 import com.barataribeiro.medimanage.dtos.requests.ConsultationUpdateDTO;
@@ -12,8 +11,7 @@ import com.barataribeiro.medimanage.entities.models.Consultation;
 import com.barataribeiro.medimanage.entities.models.MedicalRecord;
 import com.barataribeiro.medimanage.entities.models.Notification;
 import com.barataribeiro.medimanage.entities.models.User;
-import com.barataribeiro.medimanage.exceptions.consultations.ConsultationNotFoundException;
-import com.barataribeiro.medimanage.exceptions.users.UserNotFoundException;
+import com.barataribeiro.medimanage.exceptions.EntityNotFoundException;
 import com.barataribeiro.medimanage.repositories.ConsultationRepository;
 import com.barataribeiro.medimanage.repositories.MedicalRecordRepository;
 import com.barataribeiro.medimanage.repositories.NotificationRepository;
@@ -104,22 +102,16 @@ public class ConsultationServiceImpl implements ConsultationService {
                 .filter(user -> user.getFullName().equals(
                         body.patientFullName()) && user.getAccountType() == AccountType.PATIENT)
                 .findFirst()
-                .orElseThrow(() -> new UserNotFoundException(
-                        String.format(ApplicationMessages.USER_NOT_FOUND_WITH_NAME, body.patientFullName())
-                ));
+                .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName(), body.patientFullName()));
 
         User doctor = users.stream()
                 .filter(user -> user.getFullName().equals(
                         body.doctorFullName()) && user.getAccountType() == AccountType.DOCTOR)
                 .findFirst()
-                .orElseThrow(() -> new UserNotFoundException(
-                        String.format(ApplicationMessages.USER_NOT_FOUND_WITH_NAME, body.doctorFullName())
-                ));
+                .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName(), body.doctorFullName()));
 
         MedicalRecord medicalRecord = medicalRecordRepository.findByPatient(patient)
-                .orElseThrow(() -> new UserNotFoundException(
-                        String.format(ApplicationMessages.MEDICAL_RECORD_NOT_FOUND_WITH_NAME, patient.getFullName())
-                ));
+                .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName(), patient.getFullName()));
 
         Consultation consultation = Consultation.builder()
                 .patient(patient)
@@ -146,9 +138,7 @@ public class ConsultationServiceImpl implements ConsultationService {
     @Override
     public ConsultationDTO getConsultation(String consultationId, Principal principal) {
         Consultation consultation = consultationRepository.findById(Long.valueOf(consultationId))
-                .orElseThrow(() -> new ConsultationNotFoundException(
-                        String.format(ApplicationMessages.CONSULTATION_NOT_FOUND_WITH_ID, consultationId)
-                ));
+                .orElseThrow(() -> new EntityNotFoundException(Consultation.class.getSimpleName(), consultationId));
         return consultationMapper.toDTO(consultation);
     }
 
@@ -157,9 +147,7 @@ public class ConsultationServiceImpl implements ConsultationService {
     public ConsultationDTO updateConsultation(String consultationId, @NotNull ConsultationUpdateDTO body,
                                               Principal principal) {
         Consultation consultation = consultationRepository.findById(Long.valueOf(consultationId))
-                .orElseThrow(() -> new ConsultationNotFoundException(
-                        String.format(ApplicationMessages.CONSULTATION_NOT_FOUND_WITH_ID, consultationId)
-                ));
+                .orElseThrow(() -> new EntityNotFoundException(Consultation.class.getSimpleName(), consultationId));
 
         List<String> changes = new ArrayList<>();
 
