@@ -6,13 +6,20 @@ import InputValidationError from "@/components/helpers/input-validation-error"
 import RequisitionError from "@/components/helpers/requisition-error"
 import { Button, Field, Input, Label } from "@headlessui/react"
 import Spinner from "@/components/helpers/spinner"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 export default function RegisterForm() {
+    const router = useRouter()
     const { isPending, formState, formAction, onSubmit } = useForm(postAuthRegister, {
         ok: false,
         error: null,
         response: null,
     })
+
+    useEffect(() => {
+        if (formState.ok) router.replace("/auth/login")
+    }, [formState, router])
 
     return (
         <form action={formAction} onSubmit={onSubmit} className="space-y-6">
