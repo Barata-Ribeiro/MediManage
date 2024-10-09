@@ -2,7 +2,7 @@ package com.barataribeiro.medimanage.services.impl;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.barataribeiro.medimanage.builders.UserMapper;
-import com.barataribeiro.medimanage.dtos.raw.UserDTO;
+import com.barataribeiro.medimanage.dtos.raw.UserContextDTO;
 import com.barataribeiro.medimanage.dtos.requests.LoginRequestDTO;
 import com.barataribeiro.medimanage.dtos.requests.RegisterByAssistantDTO;
 import com.barataribeiro.medimanage.dtos.requests.RegisterNewEmployeeDTO;
@@ -49,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public UserDTO register(@NotNull RegisterRequestDTO body) {
+    public UserContextDTO register(@NotNull RegisterRequestDTO body) {
         if (userRepository.existsByUsernameOrEmail(body.username(), body.email())) {
             throw new EntityAlreadyExistsException(User.class.getSimpleName());
         }
@@ -60,6 +60,8 @@ public class AuthServiceImpl implements AuthService {
                 .password(passwordEncoder.encode(body.password()))
                 .accountType(AccountType.PATIENT)
                 .build();
+
+        userRepository.save(registration);
 
         log.atInfo().log("New user registered with username: {}", registration.getUsername());
 
@@ -72,7 +74,7 @@ public class AuthServiceImpl implements AuthService {
 
         notificationRepository.save(notification);
 
-        return userMapper.toDTO(userRepository.saveAndFlush(registration));
+        return userMapper.toContextDTO(registration);
     }
 
     @Override

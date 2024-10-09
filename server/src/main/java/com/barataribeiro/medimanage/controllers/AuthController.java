@@ -1,7 +1,7 @@
 package com.barataribeiro.medimanage.controllers;
 
 import com.barataribeiro.medimanage.constants.ApplicationConstants;
-import com.barataribeiro.medimanage.dtos.raw.UserDTO;
+import com.barataribeiro.medimanage.dtos.raw.UserContextDTO;
 import com.barataribeiro.medimanage.dtos.requests.LoginRequestDTO;
 import com.barataribeiro.medimanage.dtos.requests.RegisterByAssistantDTO;
 import com.barataribeiro.medimanage.dtos.requests.RegisterNewEmployeeDTO;
@@ -28,8 +28,8 @@ public class AuthController {
 
     @Operation(summary = "Register a new user")
     @PostMapping("/register")
-    public ResponseEntity<RestResponseDTO<UserDTO>> register(@RequestBody @Valid RegisterRequestDTO body) {
-        UserDTO response = authService.register(body);
+    public ResponseEntity<RestResponseDTO<UserContextDTO>> register(@RequestBody @Valid RegisterRequestDTO body) {
+        UserContextDTO response = authService.register(body);
         return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.CREATED,
                                                        HttpStatus.CREATED.value(),
                                                        ApplicationConstants.USER_REGISTERED_SUCCESSFULLY,
