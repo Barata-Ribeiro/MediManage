@@ -177,15 +177,14 @@ public class AuthServiceImpl implements AuthService {
         log.atInfo().log("User with email or username '{}' is trying to log in.", body.emailOrUsername());
 
         User user = userRepository.findByUsernameOrEmail(body.emailOrUsername())
-                .orElseThrow(() -> new InvalidUserCredentialsException("The credential '" + body.emailOrUsername() +
-                                                                       "' is invalid."));
+                .orElseThrow(() -> new InvalidUserCredentialsException("Login failed; User not found."));
 
         boolean passwordMatches = passwordEncoder.matches(body.password(), user.getPassword());
         boolean userBannedOrNone =
                 user.getUserRoles().equals(UserRoles.BANNED) || user.getUserRoles().equals(UserRoles.NONE);
 
         if (!passwordMatches) {
-            throw new InvalidUserCredentialsException("The provided password is incorrect.");
+            throw new InvalidUserCredentialsException("Login failed; Invalid username/email or password.");
         }
 
         if (userBannedOrNone) {
