@@ -22,7 +22,7 @@ const registerSchema = z
             .min(8, "Password must be at least 8 characters")
             .max(100, "Password must be at most 100 characters")
             .regex(
-                /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\S+$).{8,}$/,
+                /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%¨^&*()-_+=])(?=\S+$).{8,}$/,
                 "Password must contain at least one digit, one lowercase letter, " +
                     "one uppercase letter, one special character and no whitespace.",
             ),
