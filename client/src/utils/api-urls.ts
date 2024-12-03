@@ -5,6 +5,7 @@ export const AUTH_REGISTER = () => `${BACKEND_URL}/api/v1/auth/register`
 export const AUTH_REGISTER_BY_ASSISTANT = () => `${BACKEND_URL}/api/v1/auth/register-by-assistant`
 export const AUTH_REGISTER_NEW_EMPLOYEE = () => `${BACKEND_URL}/api/v1/auth/register-new-employee`
 export const AUTH_LOGIN = () => `${BACKEND_URL}/api/v1/auth/login`
+export const AUTH_REFRESH_TOKEN = () => `${BACKEND_URL}/api/v1/auth/refresh-token`
 
 // Home
 export const HOME_GET_ADMIN_INFO = () => `${BACKEND_URL}/api/v1/home/administrator-info`

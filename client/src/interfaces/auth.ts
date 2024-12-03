@@ -2,8 +2,10 @@ import { User, UserAccountType, UserRoles } from "@/interfaces/users"
 
 interface LoginResponse {
     user: User
-    token: string
-    tokenExpiresAt: string
+    accessToken: string
+    accessTokenExpiresAt: string
+    refreshToken?: string
+    refreshTokenExpiresAt?: string
 }
 
 interface NewAccountResponse {
