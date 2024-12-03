@@ -14,6 +14,7 @@ import com.barataribeiro.medimanage.entities.models.BlacklistedToken;
 import com.barataribeiro.medimanage.entities.models.Notification;
 import com.barataribeiro.medimanage.entities.models.User;
 import com.barataribeiro.medimanage.exceptions.EntityAlreadyExistsException;
+import com.barataribeiro.medimanage.exceptions.EntityNotFoundException;
 import com.barataribeiro.medimanage.exceptions.IllegalRequestException;
 import com.barataribeiro.medimanage.exceptions.users.InvalidUserCredentialsException;
 import com.barataribeiro.medimanage.exceptions.users.UserIsBannedException;
@@ -173,6 +174,26 @@ public class AuthServiceImpl implements AuthService {
                       "password", generatedPassword,
                       "registeredAt", Instant.now().toString(),
                       "message", "Please, change your password after login.");
+    }
+
+    @Override
+    @Transactional
+    public LoginResponseDTO refreshToken(String refreshToken) {
+        DecodedJWT decodedJWT = tokenService.validateToken(refreshToken);
+
+        if (decodedJWT == null) {
+            throw new IllegalRequestException("Invalid token.");
+        }
+
+        String username = decodedJWT.getSubject();
+        User user = userRepository.findByUsername(username)
+                                  .orElseThrow(() -> new EntityNotFoundException(User.class.getSimpleName(), username));
+
+        Map.Entry<String, Instant> accessTokenEntry = tokenService.generateAccessToken(user);
+
+        return new LoginResponseDTO(userMapper.toContextDTO(user), accessTokenEntry.getKey(),
+                                    accessTokenEntry.getValue(),
+                                    null, null);
     }
 
     @Override
