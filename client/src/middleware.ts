@@ -1,30 +1,29 @@
+import { auth } from "auth"
 import { NextRequest, NextResponse } from "next/server"
-import verifyToken from "@/utils/verify-token"
-import decodeToken from "@/utils/decode-token"
-import { tokenName } from "@/constants"
 
-export async function middleware(request: NextRequest) {
-    const authToken = request.cookies.get(tokenName)?.value
+export default auth((request: NextRequest) => {
+    // @ts-expect-error `auth` is added to the request object by the `auth` middleware
+    const { auth } = request
     const { pathname } = request.nextUrl
-    const clonedUrl = request.nextUrl.clone()
-    const isAuthenticated = authToken ? await verifyToken(authToken) : false
+    const isAuthenticated = !!auth && !auth.error
 
-    if (!isAuthenticated && (clonedUrl.pathname === "/" || pathname.startsWith("/dashboard"))) {
-        return NextResponse.redirect(new URL("/auth/login", request.url))
+    if (!isAuthenticated && (pathname === "/" || pathname.startsWith("/dashboard"))) {
+        const loginUrl = new URL("/auth/login", request.nextUrl)
+        loginUrl.searchParams.set("callbackUrl", request.nextUrl.href)
+        return NextResponse.redirect(loginUrl)
     }
 
-    if (isAuthenticated && (clonedUrl.pathname === "/" || pathname.startsWith("/auth"))) {
-        const jwtPayload = await decodeToken(authToken)
-        return NextResponse.redirect(new URL("/dashboard/" + jwtPayload.sub, request.url))
+    if (isAuthenticated && (pathname === "/" || pathname.startsWith("/auth"))) {
+        return NextResponse.redirect(new URL("/dashboard" + auth.user.username, request.nextUrl))
     }
 
     return NextResponse.next()
-}
+})
 
 export const config = {
     matcher: [
         "/((?!_next|[^?]*\\\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-        "/(api|trpc)(.*)",
+        "/((?!api|trpc|_next/static|_next/image|favicon.ico).*)",
         "/dashboard/:path*",
         "/auth/:path*",
     ],

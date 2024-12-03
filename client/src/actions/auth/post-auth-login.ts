@@ -1,12 +1,9 @@
 "use server"
 
-import { ApiResponse, ProblemDetails, State } from "@/interfaces/actions"
 import ResponseError from "@/actions/response-error"
+import { signIn } from "@/auth"
+import { State } from "@/interfaces/actions"
 import { z } from "zod"
-import { LoginResponse } from "@/interfaces/auth"
-import { cookies } from "next/headers"
-import { AUTH_LOGIN } from "@/utils/api-urls"
-import { tokenName } from "@/constants"
 
 const loginSchema = z.object({
     emailOrUsername: z
@@ -19,10 +16,6 @@ const loginSchema = z.object({
 
 export default async function postAuthLogin(state: State, formData: FormData) {
     try {
-        const URL = AUTH_LOGIN()
-        const ONE_DAY = 24 * 60 * 60 * 1000
-        const ONE_YEAR = 365 * ONE_DAY
-
         const rawFormData = Object.fromEntries(formData.entries())
         const parsedFormData = loginSchema.safeParse(rawFormData)
 
@@ -30,38 +23,20 @@ export default async function postAuthLogin(state: State, formData: FormData) {
             return ResponseError(parsedFormData.error)
         }
 
-        const response = await fetch(URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(parsedFormData.data),
-        })
-
-        const json = await response.json()
-
-        if (!response.ok) {
-            const problemDetails = json as ProblemDetails
-            return ResponseError(problemDetails)
-        }
-
-        const responseData = json as ApiResponse
-
-        const loginResponse = responseData.data as LoginResponse
-
-        cookies().set(tokenName, loginResponse.token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "lax",
-            expires: Date.now() + (parsedFormData.data.rememberMe ? ONE_YEAR : ONE_DAY),
+        const response = await signIn("credentials", {
+            username: parsedFormData.data.emailOrUsername,
+            password: parsedFormData.data.password,
+            rememberMe: parsedFormData.data.rememberMe,
+            redirect: false,
         })
 
         return {
-            ok: true,
-            error: null,
-            response: { ...responseData, loginResponse },
+            ok: !response.error,
+            error: response.error,
+            response: null,
         }
     } catch (error) {
+        console.log("CALLBACK ERROR: ", error)
         return ResponseError(error)
     }
 }

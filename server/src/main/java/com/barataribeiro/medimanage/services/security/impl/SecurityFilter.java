@@ -40,44 +40,57 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(final @NonNull HttpServletRequest request,
                                     final @NonNull HttpServletResponse response,
                                     final @NonNull FilterChain filterChain) throws ServletException, IOException {
+        if (request.getServletPath().startsWith("/api/v1/auth/") || request.getServletPath().contains("/ws")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         log.info("Filtering request...");
-        String token = recoverToken(request);
+
         SecurityContext context = SecurityContextHolder.createEmptyContext();
 
-        if (token != null) {
-            DecodedJWT decodedJWT = tokenService.validateToken(token);
-
-            if (decodedJWT != null) {
-                String jti = decodedJWT.getId();
-                String username = decodedJWT.getSubject();
-
-                if (blacklistedTokenRepository.existsById(jti)) {
-                    log.atWarn().log("Token {} has been blacklisted!", jti);
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    return;
-                }
-
-                String role = decodedJWT.getClaim("role").asString();
-                String accountType = decodedJWT.getClaim("accountType").asString();
-
-                List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
-                authorities.add(new SimpleGrantedAuthority("ACCOUNT_TYPE_" + accountType));
-
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(username, null, authorities);
-
-                context.setAuthentication(authentication);
-                SecurityContextHolder.setContext(context);
-                filterRepository.saveContext(context, request, response);
-
-                Mono.deferContextual(Mono::just)
-                        .contextWrite(contextView -> Context.of("principal", username))
-                        .subscribe();
-
-                log.info("User authenticated successfully!");
-            }
+        String token = recoverToken(request);
+        if (token == null || token.isBlank()) {
+            log.atWarn().log("Token not found in servlet request");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
+
+
+        DecodedJWT decodedJWT = tokenService.validateToken(token);
+        if (decodedJWT == null) {
+            log.atWarn().log("Invalid token");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        String jti = decodedJWT.getId();
+        if (blacklistedTokenRepository.existsById(jti)) {
+            log.atWarn().log("Token {} has been blacklisted!", jti);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        String username = decodedJWT.getSubject();
+        String role = decodedJWT.getClaim("role").asString();
+        String accountType = decodedJWT.getClaim("accountType").asString();
+
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+        authorities.add(new SimpleGrantedAuthority("ACCOUNT_TYPE_" + accountType));
+
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(username, null, authorities);
+
+        context.setAuthentication(authentication);
+        SecurityContextHolder.setContext(context);
+        filterRepository.saveContext(context, request, response);
+
+        Mono.deferContextual(Mono::just)
+            .contextWrite(contextView -> Context.of("principal", username))
+            .subscribe();
+
+        log.info("User authenticated successfully!");
 
         filterChain.doFilter(request, response);
     }

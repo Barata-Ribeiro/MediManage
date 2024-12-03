@@ -62,6 +62,17 @@ public class AuthController {
                                                        response));
     }
 
+    @Operation(summary = "Refresh the token of a logged in user")
+    @PostMapping("/refresh-token")
+    public ResponseEntity<RestResponseDTO<LoginResponseDTO>> refreshToken(@RequestHeader("X-Refresh-Token")
+                                                                          String refreshToken) {
+        LoginResponseDTO response = authService.refreshToken(refreshToken);
+        return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
+                                                       HttpStatus.OK.value(),
+                                                       "Token refreshed",
+                                                       response));
+    }
+
     @Operation(summary = "Sign in to the application")
     @PostMapping("/login")
     public ResponseEntity<RestResponseDTO<LoginResponseDTO>> login(@RequestBody @Valid LoginRequestDTO body) {

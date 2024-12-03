@@ -24,6 +24,7 @@ public class ApplicationConstants {
 
     // Description
     public static final String DEFAULT_CATEGORY_DESCRIPTION = "This is the %s category.";
+    public static final String AUTH_0 = "auth0";
 
     private ApplicationConstants() {
         throw new UnsupportedOperationException("This class cannot be instantiated.");

@@ -22,7 +22,7 @@ import Link from "next/link"
 import miniLogo from "../../../public/images/medimanage-mini.svg"
 import Image from "next/image"
 import NotificationButton from "@/components/dashboard/notification-button"
-import logout from "@/actions/auth/logout"
+import deleteAuthLogout from "@/actions/auth/delete-auth-logout"
 
 export default function Header() {
     const data = useUser()
@@ -33,7 +33,7 @@ export default function Header() {
     if (!data) setIsNotifDisabled(true)
 
     async function handleLogout() {
-        const response = await logout()
+        const response = await deleteAuthLogout()
         if (response.ok) {
             setIsNotifDisabled(true)
             router.push("/auth/login")

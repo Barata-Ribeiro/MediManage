@@ -16,7 +16,10 @@ public interface AuthService {
 
     Map<String, Object> registerNewEmployee(RegisterNewEmployeeDTO body);
 
+    LoginResponseDTO refreshToken(String refreshToken);
+
     LoginResponseDTO login(LoginRequestDTO body);
 
     void logout(String blacklistToken);
+
 }
