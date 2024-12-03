@@ -67,9 +67,9 @@ export const config = {
         Credentials({
             credentials: {
                 username: {
-                    label: "Username",
+                    label: "Email/Username",
                     type: "text",
-                    placeholder: "johndoe/janedoe",
+                    placeholder: "johndoe/janedoe or contact@example.com",
                 },
                 password: {
                     label: "Password",
@@ -83,7 +83,7 @@ export const config = {
             },
             async authorize(credentials, _req) {
                 const payload = {
-                    username: credentials.username,
+                    emailOrUsername: credentials.username,
                     password: credentials.password,
                     rememberMe: credentials.rememberMe,
                 }
