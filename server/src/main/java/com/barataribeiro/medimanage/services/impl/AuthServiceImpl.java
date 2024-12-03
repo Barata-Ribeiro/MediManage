@@ -55,22 +55,24 @@ public class AuthServiceImpl implements AuthService {
         }
 
         User registration = User.builder()
-                .username(body.username())
-                .email(body.email())
-                .password(passwordEncoder.encode(body.password()))
-                .accountType(AccountType.PATIENT)
-                .build();
+                                .username(body.username())
+                                .email(body.email())
+                                .password(passwordEncoder.encode(body.password()))
+                                .accountType(AccountType.PATIENT)
+                                .build();
 
         userRepository.save(registration);
 
         log.atInfo().log("New user registered with username: {}", registration.getUsername());
 
         Notification notification = Notification.builder()
-                .title("Welcome! Account created.")
-                .message("Your account has been created successfully. \n Please, follow the rules and enjoy our " +
-                         "services.")
-                .user(registration)
-                .build();
+                                                .title("Welcome! Account created.")
+                                                .message(
+                                                        "Your account has been created successfully. \n Please, " +
+                                                                "follow the rules and enjoy our " +
+                                                                "services.")
+                                                .user(registration)
+                                                .build();
 
         notificationRepository.save(notification);
 
@@ -88,15 +90,15 @@ public class AuthServiceImpl implements AuthService {
         String generatedPassword = this.generatePassword();
 
         User registration = User.builder()
-                .username(generatedUsername)
-                .email(body.email())
-                .password(passwordEncoder.encode(generatedPassword))
-                .fullName(body.fullName())
-                .phone(body.phone())
-                .address(body.address())
-                .birthDate(LocalDate.parse(body.birthDate()))
-                .accountType(AccountType.PATIENT)
-                .build();
+                                .username(generatedUsername)
+                                .email(body.email())
+                                .password(passwordEncoder.encode(generatedPassword))
+                                .fullName(body.fullName())
+                                .phone(body.phone())
+                                .address(body.address())
+                                .birthDate(LocalDate.parse(body.birthDate()))
+                                .accountType(AccountType.PATIENT)
+                                .build();
 
         User savedUser = userRepository.save(registration);
 
@@ -104,13 +106,13 @@ public class AuthServiceImpl implements AuthService {
                          savedUser.getFullName());
 
         Notification notification = Notification.builder()
-                .title("Account created!")
-                .message("Your account has been created successfully. \n\n" +
-                         "Username: " + generatedUsername + "\n" +
-                         "Password: " + generatedPassword + "\n" +
-                         "Please, change your credentials as soon as possible.")
-                .user(savedUser)
-                .build();
+                                                .title("Account created!")
+                                                .message("Your account has been created successfully. \n\n" +
+                                                                 "Username: " + generatedUsername + "\n" +
+                                                                 "Password: " + generatedPassword + "\n" +
+                                                                 "Please, change your credentials as soon as possible.")
+                                                .user(savedUser)
+                                                .build();
 
         notificationRepository.save(notification);
 
@@ -133,16 +135,16 @@ public class AuthServiceImpl implements AuthService {
         UserRoles role = accountType.equals(AccountType.ADMINISTRATOR) ? UserRoles.ADMIN : UserRoles.USER;
 
         User registration = User.builder()
-                .username(generatedUsername)
-                .email(body.email())
-                .password(passwordEncoder.encode(generatedPassword))
-                .fullName(body.fullName())
-                .phone(body.phone())
-                .address(body.address())
-                .birthDate(LocalDate.parse(body.birthDate()))
-                .userRoles(role)
-                .accountType(accountType)
-                .build();
+                                .username(generatedUsername)
+                                .email(body.email())
+                                .password(passwordEncoder.encode(generatedPassword))
+                                .fullName(body.fullName())
+                                .phone(body.phone())
+                                .address(body.address())
+                                .birthDate(LocalDate.parse(body.birthDate()))
+                                .userRoles(role)
+                                .accountType(accountType)
+                                .build();
 
         if (accountType.equals(AccountType.DOCTOR)) {
             registration.setRegistrationNumber(body.registrationNumber());
@@ -157,13 +159,13 @@ public class AuthServiceImpl implements AuthService {
                 savedUser.getFullName());
 
         Notification notification = Notification.builder()
-                .title("Account created!")
-                .message("Your account has been created successfully. \n\n" +
-                         "Username: " + generatedUsername + "\n" +
-                         "Password: " + generatedPassword + "\n" +
-                         "Please, change your credentials as soon as possible.")
-                .user(savedUser)
-                .build();
+                                                .title("Account created!")
+                                                .message("Your account has been created successfully. \n\n" +
+                                                                 "Username: " + generatedUsername + "\n" +
+                                                                 "Password: " + generatedPassword + "\n" +
+                                                                 "Please, change your credentials as soon as possible.")
+                                                .user(savedUser)
+                                                .build();
 
         notificationRepository.save(notification);
 
@@ -178,7 +180,8 @@ public class AuthServiceImpl implements AuthService {
     public LoginResponseDTO login(@NotNull LoginRequestDTO body) {
         log.atInfo().log("User with email or username '{}' is trying to log in.", body.emailOrUsername());
 
-        User user = userRepository.findByUsernameOrEmail(body.emailOrUsername())
+        User user = userRepository
+                .findByUsernameOrEmail(body.emailOrUsername())
                 .orElseThrow(() -> new InvalidUserCredentialsException("Login failed; User not found."));
 
         boolean passwordMatches = passwordEncoder.matches(body.password(), user.getPassword());
@@ -193,13 +196,11 @@ public class AuthServiceImpl implements AuthService {
             throw new UserIsBannedException();
         }
 
-        Map.Entry<String, Instant> tokenAndExpiration = tokenService.generateToken(user, body.rememberMe());
+        Map.Entry<String, Instant> accessToken = tokenService.generateAccessToken(user);
+        Map.Entry<String, Instant> refreshToken = tokenService.generateRefreshToken(user, body.rememberMe());
 
-        log.atInfo().log("User with username '{}' logged in successfully.", user.getUsername());
-
-        return new LoginResponseDTO(userMapper.toContextDTO(user),
-                                    tokenAndExpiration.getKey(),
-                                    tokenAndExpiration.getValue());
+        return new LoginResponseDTO(userMapper.toContextDTO(user), accessToken.getKey(), accessToken.getValue(),
+                                    refreshToken.getKey(), refreshToken.getValue());
     }
 
     @Override
@@ -215,11 +216,11 @@ public class AuthServiceImpl implements AuthService {
         Instant expirationDate = decodedJWT.getExpiresAt().toInstant();
 
         BlacklistedToken token = BlacklistedToken.builder()
-                .id(jti)
-                .token(blacklistToken)
-                .ownerUsername(username)
-                .expirationDate(expirationDate)
-                .build();
+                                                 .id(jti)
+                                                 .token(blacklistToken)
+                                                 .ownerUsername(username)
+                                                 .expirationDate(expirationDate)
+                                                 .build();
 
         blacklistedTokenRepository.save(token);
 
