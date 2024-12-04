@@ -1,11 +1,11 @@
 "use server"
 
-import { ApiResponse, ProblemDetails, State } from "@/interfaces/actions"
 import ResponseError from "@/actions/response-error"
-import { AUTH_REGISTER } from "@/utils/api-urls"
-import { z } from "zod"
+import { ApiResponse, ProblemDetails, State } from "@/interfaces/actions"
 import { User } from "@/interfaces/users"
+import { AUTH_REGISTER } from "@/utils/api-urls"
 import { revalidateTag } from "next/cache"
+import { z } from "zod"
 
 const registerSchema = z
     .object({

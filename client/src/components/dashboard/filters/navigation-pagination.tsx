@@ -1,8 +1,8 @@
 "use client"
 
+import tw from "@/utils/tw"
 import { useRouter, useSearchParams } from "next/navigation"
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6"
-import tw from "@/utils/tw"
 
 interface NavigationPaginationProps {
     usePageInfo: {

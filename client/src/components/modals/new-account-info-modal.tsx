@@ -1,15 +1,15 @@
 "use client"
 
+import NewUserCredentialsPdf from "@/components/new-user-credentials-pdf"
 import { useUser } from "@/context/user-context-provider"
 import { NewAccountResponse } from "@/interfaces/auth"
 import parseDate from "@/utils/parse-date"
 import { Button, Description, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
+import { usePDF } from "@react-pdf/renderer"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { FaCheck } from "react-icons/fa6"
-import { useRouter } from "next/navigation"
-import { usePDF } from "@react-pdf/renderer"
-import NewUserCredentialsPdf from "@/components/new-user-credentials-pdf"
-import Link from "next/link"
 
 interface NewAccountInfoModalProps {
     data: NewAccountResponse | null
@@ -34,7 +34,9 @@ export default function NewAccountInfoModal({ data, showModal }: Readonly<NewAcc
         router.replace(url)
     }
 
-    const filename = `new-account-credentials-${data?.username}_${new Date(data?.registeredAt ?? new Date()).toISOString()}.pdf`
+    const filename = `new-account-credentials-${data?.username}_${new Date(
+        data?.registeredAt ?? new Date(),
+    ).toISOString()}.pdf`
 
     return (
         <Dialog open={open} onClose={handleClose} className="relative z-10">

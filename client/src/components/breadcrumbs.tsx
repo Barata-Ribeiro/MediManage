@@ -1,11 +1,11 @@
 "use client"
 
-import { usePathname, useSearchParams } from "next/navigation"
+import tw from "@/utils/tw"
 import Link from "next/link"
+import { usePathname, useSearchParams } from "next/navigation"
 import { FaHome } from "react-icons/fa"
 import { FaChevronRight } from "react-icons/fa6"
 import { twMerge } from "tailwind-merge"
-import tw from "@/utils/tw"
 
 export default function Breadcrumbs() {
     const pathname = usePathname()

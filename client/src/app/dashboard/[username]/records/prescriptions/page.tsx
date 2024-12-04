@@ -1,14 +1,14 @@
-import { RecordsPageProps } from "@/app/dashboard/[username]/records/page"
-import { notFound } from "next/navigation"
-import { Metadata } from "next"
 import getAllPatientPrescriptionsPaginated from "@/actions/prescriptions/get-all-patient-prescriptions-paginated"
-import { PaginatedSimplePrescriptions } from "@/interfaces/prescriptions"
+import { RecordsPageProps } from "@/app/dashboard/[username]/records/page"
 import NavigationPagination from "@/components/dashboard/filters/navigation-pagination"
-import { twMerge } from "tailwind-merge"
-import parseDate from "@/utils/parse-date"
-import Link from "next/link"
 import StateError from "@/components/helpers/state-error"
 import { ProblemDetails } from "@/interfaces/actions"
+import { PaginatedSimplePrescriptions } from "@/interfaces/prescriptions"
+import parseDate from "@/utils/parse-date"
+import { Metadata } from "next"
+import Link from "next/link"
+import { notFound } from "next/navigation"
+import { twMerge } from "tailwind-merge"
 
 export async function generateMetadata({ searchParams }: Readonly<RecordsPageProps>): Promise<Metadata> {
     if (!searchParams?.user) return notFound()

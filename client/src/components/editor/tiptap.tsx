@@ -1,7 +1,7 @@
-import { StarterKit } from "@tiptap/starter-kit"
-import { EditorContent, useEditor } from "@tiptap/react"
-import { Underline } from "@tiptap/extension-underline"
 import Toolbar from "@/components/editor/toolbar"
+import { Underline } from "@tiptap/extension-underline"
+import { EditorContent, useEditor } from "@tiptap/react"
+import { StarterKit } from "@tiptap/starter-kit"
 import { Dispatch, SetStateAction } from "react"
 
 interface TiptapProps {

@@ -1,7 +1,7 @@
 import { Metadata } from "next"
+import Image from "next/image"
 import Link from "next/link"
 import notFoundImage from "../../public/images/not-found.jpg"
-import Image from "next/image"
 
 export const metadata: Metadata = {
     title: "404 - Not Found",

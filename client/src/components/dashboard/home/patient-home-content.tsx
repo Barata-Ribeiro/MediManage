@@ -1,12 +1,12 @@
 "use client"
 
-import { PatientInfo } from "@/interfaces/home"
 import LatestNotice from "@/components/dashboard/home/latest-notice"
-import { FaCircleInfo, FaUserClock } from "react-icons/fa6"
-import DividerWithContent from "@/components/helpers/divider-with-content"
-import { useUser } from "@/context/user-context-provider"
 import MedicalRecordAndPrescription from "@/components/dashboard/home/medical-record-and-prescription"
 import NextConsultation from "@/components/dashboard/home/next-consultation"
+import DividerWithContent from "@/components/helpers/divider-with-content"
+import { useUser } from "@/context/user-context-provider"
+import { PatientInfo } from "@/interfaces/home"
+import { FaCircleInfo, FaUserClock } from "react-icons/fa6"
 
 export default function PatientHomeContent({ homeInfo }: Readonly<{ homeInfo: PatientInfo }>) {
     const userData = useUser()

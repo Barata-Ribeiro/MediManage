@@ -101,7 +101,9 @@ export default function PrescriptionPdf({ data }: PrescriptionPdfProps) {
     const institution = process.env.NEXT_PUBLIC_INSTITUTION_NAME ?? "Clinic Management System"
     return (
         <Document
-            title={`Prescription for ${data.patient.fullName} by Dr. ${data.doctor.fullName} - ${parseDate(data.createdAt)}`}
+            title={`Prescription for ${data.patient.fullName} by Dr. ${data.doctor.fullName} - ${parseDate(
+                data.createdAt,
+            )}`}
             author={data.doctor.fullName!}
             subject={data.patient.fullName!}
             keywords={[data.doctor.fullName!, data.patient.fullName!, "prescription"].join(", ")}

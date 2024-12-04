@@ -1,14 +1,14 @@
+import PrescriptionPdf from "@/components/prescription-pdf"
 import { Prescription } from "@/interfaces/prescriptions"
 import { MedicalRecord } from "@/interfaces/records"
-import parseDate from "@/utils/parse-date"
-import { FaPaperclip } from "react-icons/fa6"
-import getAge from "@/utils/get-age"
-import PrescriptionPdf from "@/components/prescription-pdf"
-import { useEffect, useState } from "react"
-import { pdf, PDFDownloadLink } from "@react-pdf/renderer"
-import { twMerge } from "tailwind-merge"
-import Link from "next/link"
 import { User } from "@/interfaces/users"
+import getAge from "@/utils/get-age"
+import parseDate from "@/utils/parse-date"
+import { pdf, PDFDownloadLink } from "@react-pdf/renderer"
+import Link from "next/link"
+import { useEffect, useState } from "react"
+import { FaPaperclip } from "react-icons/fa6"
+import { twMerge } from "tailwind-merge"
 
 interface MedicalRecordAndPrescriptionProps {
     medicalRecord: MedicalRecord | object
@@ -59,7 +59,9 @@ export default function MedicalRecordAndPrescription({
     const prescriptionData = prescription as Prescription
     const url = `/dashboard/${user.username}/prescriptions/`
 
-    const fileName = `${prescriptionData.patient.username}_${new Date(prescriptionData.createdAt).toISOString()}_prescription.pdf`
+    const fileName = `${prescriptionData.patient.username}_${new Date(
+        prescriptionData.createdAt,
+    ).toISOString()}_prescription.pdf`
 
     return (
         <div>

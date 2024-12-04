@@ -1,17 +1,17 @@
-import { notFound } from "next/navigation"
-import { RecordsPageProps } from "@/app/dashboard/[username]/records/page"
-import { Metadata } from "next"
-import getRecordById from "@/actions/records/get-record-by-id"
-import { MedicalRecord } from "@/interfaces/records"
-import PatientMedicalRecords from "@/components/dashboard/records/patient-medical-records"
-import PatientConsultations from "@/components/dashboard/records/patient-consultations"
-import PatientPrescriptions from "@/components/dashboard/records/patient-prescriptions"
 import getAllPatientConsultationsPaginated from "@/actions/consultations/get-all-patient-consultations-paginated"
-import { PaginatedConsultations } from "@/interfaces/consultations"
 import getAllPatientPrescriptionsPaginated from "@/actions/prescriptions/get-all-patient-prescriptions-paginated"
-import { PaginatedSimplePrescriptions } from "@/interfaces/prescriptions"
+import getRecordById from "@/actions/records/get-record-by-id"
+import { RecordsPageProps } from "@/app/dashboard/[username]/records/page"
+import PatientConsultations from "@/components/dashboard/records/patient-consultations"
+import PatientMedicalRecords from "@/components/dashboard/records/patient-medical-records"
+import PatientPrescriptions from "@/components/dashboard/records/patient-prescriptions"
 import StateError from "@/components/helpers/state-error"
 import { ProblemDetails } from "@/interfaces/actions"
+import { PaginatedConsultations } from "@/interfaces/consultations"
+import { PaginatedSimplePrescriptions } from "@/interfaces/prescriptions"
+import { MedicalRecord } from "@/interfaces/records"
+import { Metadata } from "next"
+import { notFound } from "next/navigation"
 
 export async function generateMetadata({ searchParams }: Readonly<RecordsPageProps>): Promise<Metadata> {
     if (!searchParams?.id || !searchParams?.user) return notFound()
@@ -36,18 +36,19 @@ export async function generateMetadata({ searchParams }: Readonly<RecordsPagePro
 export default async function ViewMedicalRecordsPage({ params, searchParams }: Readonly<RecordsPageProps>) {
     if (!params.username || !searchParams?.id || !searchParams?.user) return notFound()
 
+    const recordStatePromise = getRecordById(searchParams.id.toString())
+    const consultationsStatePromise = getAllPatientConsultationsPaginated(searchParams.user.toString())
+    const prescriptionStatePromise = getAllPatientPrescriptionsPaginated(searchParams.user.toString())
+
     const [recordState, consultationsState, prescriptionState] = await Promise.all([
-        await getRecordById(searchParams.id.toString()),
-        await getAllPatientConsultationsPaginated(searchParams.user.toString()),
-        await getAllPatientPrescriptionsPaginated(searchParams.user.toString()),
+        recordStatePromise,
+        consultationsStatePromise,
+        prescriptionStatePromise,
     ])
 
     if (!recordState.ok || !consultationsState.ok || !prescriptionState.ok) {
-        return (
-            <StateError
-                error={(recordState.error ?? consultationsState.error ?? prescriptionState.error) as ProblemDetails}
-            />
-        )
+        const error = (recordState.error ?? consultationsState.error ?? prescriptionState.error) as ProblemDetails
+        return <StateError error={error} />
     }
 
     const record = recordState.response?.data as MedicalRecord

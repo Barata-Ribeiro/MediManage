@@ -1,11 +1,11 @@
 "use client"
 
+import PatientNewPrescriptionButton from "@/components/dashboard/records/patient-new-prescription-button"
+import { useUser } from "@/context/user-context-provider"
 import { PaginatedSimplePrescriptions } from "@/interfaces/prescriptions"
+import { User } from "@/interfaces/users"
 import parseDate from "@/utils/parse-date"
 import Link from "next/link"
-import PatientNewPrescriptionButton from "@/components/dashboard/records/patient-new-prescription-button"
-import { User } from "@/interfaces/users"
-import { useUser } from "@/context/user-context-provider"
 
 interface PatientPrescriptionsProps {
     prescriptionsPage: PaginatedSimplePrescriptions

@@ -1,5 +1,5 @@
-import { Consultation } from "@/interfaces/consultations"
 import ConsultationEmptySkeleton from "@/components/dashboard/skeletons/consultation-empty-skeleton"
+import { Consultation } from "@/interfaces/consultations"
 
 interface NextConsultationProps {
     data: Consultation | object

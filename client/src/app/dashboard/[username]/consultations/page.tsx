@@ -1,14 +1,14 @@
-import { Metadata } from "next"
-import { notFound } from "next/navigation"
 import getAllConsultationsPaginated from "@/actions/consultations/get-all-consultations-paginated"
-import { PaginatedConsultations } from "@/interfaces/consultations"
+import ConsultationTableRow from "@/components/dashboard/consultation-table-row"
 import NavigationPagination from "@/components/dashboard/filters/navigation-pagination"
 import SearchFilter from "@/components/dashboard/filters/search-filter"
-import ConsultationTableRow from "@/components/dashboard/consultation-table-row"
-import { FaPlus } from "react-icons/fa6"
-import Link from "next/link"
-import { ProblemDetails } from "@/interfaces/actions"
 import StateError from "@/components/helpers/state-error"
+import { ProblemDetails } from "@/interfaces/actions"
+import { PaginatedConsultations } from "@/interfaces/consultations"
+import { Metadata } from "next"
+import Link from "next/link"
+import { notFound } from "next/navigation"
+import { FaPlus } from "react-icons/fa6"
 
 interface ConsultationsPageProps {
     params: { username: string }

@@ -1,8 +1,8 @@
-import type { Consultation } from "@/interfaces/consultations"
-import { twMerge } from "tailwind-merge"
-import SelectConsultStatus from "@/components/dashboard/select-consult-status"
-import React from "react"
 import SelectConsultDate from "@/components/dashboard/select-consult-date"
+import SelectConsultStatus from "@/components/dashboard/select-consult-status"
+import type { Consultation } from "@/interfaces/consultations"
+import React from "react"
+import { twMerge } from "tailwind-merge"
 
 interface ConsultationTableRowProps {
     index: number

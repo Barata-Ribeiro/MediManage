@@ -1,8 +1,8 @@
-import { renderToStream } from "@react-pdf/renderer"
-import { NextResponse } from "next/server"
+import getMyPrescriptionById from "@/actions/prescriptions/get-my-prescription-by-id"
 import PrescriptionPdf from "@/components/prescription-pdf"
 import { Prescription } from "@/interfaces/prescriptions"
-import getMyPrescriptionById from "@/actions/prescriptions/get-my-prescription-by-id"
+import { renderToStream } from "@react-pdf/renderer"
+import { NextResponse } from "next/server"
 
 interface PrescriptionPageProps {
     params: { username: string; prescId: string }

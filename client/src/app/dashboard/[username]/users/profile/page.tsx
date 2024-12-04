@@ -1,14 +1,14 @@
-import { UsersPageProps } from "@/app/dashboard/[username]/users/page"
-import { notFound } from "next/navigation"
 import getUserProfileById from "@/actions/users/get-user-profile-by-id"
-import { User } from "@/interfaces/users"
-import { Metadata } from "next"
-import EditAccountVitalForm from "@/components/forms/profile/edit-account-vital-form"
-import EditPersonalInformationForm from "@/components/forms/profile/edit-personal-information-form"
-import EditDoctorInformationForm from "@/components/forms/profile/edit-doctor-information-form"
+import { UsersPageProps } from "@/app/dashboard/[username]/users/page"
 import DeleteAccountForm from "@/components/forms/profile/delete-account-form"
+import EditAccountVitalForm from "@/components/forms/profile/edit-account-vital-form"
+import EditDoctorInformationForm from "@/components/forms/profile/edit-doctor-information-form"
+import EditPersonalInformationForm from "@/components/forms/profile/edit-personal-information-form"
 import StateError from "@/components/helpers/state-error"
 import { ProblemDetails } from "@/interfaces/actions"
+import { User } from "@/interfaces/users"
+import { Metadata } from "next"
+import { notFound } from "next/navigation"
 
 export async function generateMetadata({ searchParams }: Readonly<UsersPageProps>): Promise<Metadata> {
     if (!searchParams?.id) return notFound()

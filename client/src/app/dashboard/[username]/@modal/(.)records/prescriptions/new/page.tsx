@@ -1,6 +1,6 @@
+import { RecordsPageProps } from "@/app/dashboard/[username]/records/page"
 import NewPrescriptionModal from "@/components/modals/new-prescription-modal"
 import { Metadata } from "next"
-import { RecordsPageProps } from "@/app/dashboard/[username]/records/page"
 import { notFound } from "next/navigation"
 
 export async function generateMetadata(): Promise<Metadata> {

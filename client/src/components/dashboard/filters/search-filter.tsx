@@ -1,9 +1,9 @@
 "use client"
 
+import tw from "@/utils/tw"
+import { Button, Field, Input, Label, Select } from "@headlessui/react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Button, Field, Input, Label, Select } from "@headlessui/react"
-import tw from "@/utils/tw"
 import { FaMagnifyingGlass, FaTrash } from "react-icons/fa6"
 import { twMerge } from "tailwind-merge"
 

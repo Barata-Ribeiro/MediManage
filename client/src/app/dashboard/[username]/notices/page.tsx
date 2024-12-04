@@ -1,14 +1,14 @@
-import { notFound } from "next/navigation"
-import { Metadata } from "next"
 import getAllNoticesPaginated from "@/actions/notices/get-all-notices-paginated"
+import NavigationPagination from "@/components/dashboard/filters/navigation-pagination"
+import SearchFilter from "@/components/dashboard/filters/search-filter"
 import StateError from "@/components/helpers/state-error"
 import { ProblemDetails } from "@/interfaces/actions"
 import { PaginatedNotices } from "@/interfaces/notices"
-import NavigationPagination from "@/components/dashboard/filters/navigation-pagination"
-import { twMerge } from "tailwind-merge"
+import { Metadata } from "next"
 import Link from "next/link"
-import SearchFilter from "@/components/dashboard/filters/search-filter"
+import { notFound } from "next/navigation"
 import { FaPlus } from "react-icons/fa6"
+import { twMerge } from "tailwind-merge"
 
 interface NoticesPageProps {
     params: { username: string }

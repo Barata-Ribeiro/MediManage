@@ -1,9 +1,9 @@
 import getPrescriptionByIdAndUsername from "@/actions/prescriptions/get-prescription-by-id-and-username"
-import { notFound } from "next/navigation"
-import { renderToStream } from "@react-pdf/renderer"
-import { NextResponse } from "next/server"
 import PrescriptionPdf from "@/components/prescription-pdf"
 import { Prescription } from "@/interfaces/prescriptions"
+import { renderToStream } from "@react-pdf/renderer"
+import { notFound } from "next/navigation"
+import { NextResponse } from "next/server"
 
 interface PrescriptionPageProps {
     params: { username: string; prescId: string; patientUsername: string }

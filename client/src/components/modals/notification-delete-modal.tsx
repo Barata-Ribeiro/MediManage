@@ -1,16 +1,16 @@
 "use client"
 
-import { Notification } from "@/interfaces/notifications"
-import { ProblemDetails } from "@/interfaces/actions"
-import { ZodIssue } from "zod"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { useUser } from "@/context/user-context-provider"
-import { Button, Description, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
-import { FaExclamationTriangle } from "react-icons/fa"
-import Spinner from "@/components/helpers/spinner"
-import RequisitionError from "@/components/helpers/requisition-error"
 import deleteUserNotification from "@/actions/notifications/delete-user-notification"
+import RequisitionError from "@/components/helpers/requisition-error"
+import Spinner from "@/components/helpers/spinner"
+import { useUser } from "@/context/user-context-provider"
+import { ProblemDetails } from "@/interfaces/actions"
+import { Notification } from "@/interfaces/notifications"
+import { Button, Description, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { FaExclamationTriangle } from "react-icons/fa"
+import { ZodIssue } from "zod"
 
 interface NotifDeleteModalProps {
     notif: Notification

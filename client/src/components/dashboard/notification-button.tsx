@@ -1,9 +1,9 @@
 "use client"
 
+import NotificationMenu from "@/components/dashboard/notification-menu"
 import { useUser } from "@/context/user-context-provider"
 import { useState } from "react"
 import { twMerge } from "tailwind-merge"
-import NotificationMenu from "@/components/dashboard/notification-menu"
 
 export default function NotificationButton() {
     const dataUser = useUser()

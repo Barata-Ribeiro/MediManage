@@ -1,17 +1,17 @@
 "use client"
 
 import ConsultationsStats from "@/components/dashboard/home/consultations-stats"
-import { DoctorInfo } from "@/interfaces/home"
-import DividerWithContent from "@/components/helpers/divider-with-content"
-import { FaCircleInfo, FaUserClock } from "react-icons/fa6"
 import LatestNotice from "@/components/dashboard/home/latest-notice"
 import NextConsultation from "@/components/dashboard/home/next-consultation"
-import { useCallback, useEffect, useRef, useState } from "react"
-import { BACKEND_URL } from "@/utils/api-urls"
+import DividerWithContent from "@/components/helpers/divider-with-content"
+import SimpleErrorNotification from "@/components/helpers/simple-error-notification"
 import { useCookies } from "@/context/cookie-context-provider"
 import { Consultation } from "@/interfaces/consultations"
+import { DoctorInfo } from "@/interfaces/home"
+import { BACKEND_URL } from "@/utils/api-urls"
 import listenToServerSentEvents from "@/utils/listen-to-server-sent-events"
-import SimpleErrorNotification from "@/components/helpers/simple-error-notification"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { FaCircleInfo, FaUserClock } from "react-icons/fa6"
 
 export default function DoctorHomeContent({ homeInfo }: Readonly<{ homeInfo: DoctorInfo }>) {
     const [homeInfoData, setHomeInfoData] = useState<DoctorInfo>(homeInfo)

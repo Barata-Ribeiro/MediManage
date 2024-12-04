@@ -1,9 +1,9 @@
-import { notFound } from "next/navigation"
 import getNotificationById from "@/actions/notifications/get-notification-by-id"
 import { Notification } from "@/interfaces/notifications"
 import parseDate from "@/utils/parse-date"
-import notifImage from "../../../../../../public/images/notif-image.jpg"
 import Image from "next/image"
+import { notFound } from "next/navigation"
+import notifImage from "../../../../../../public/images/notif-image.jpg"
 
 interface ViewNotifPageProps {
     params: { id: string }

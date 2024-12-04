@@ -1,14 +1,14 @@
-import { Metadata } from "next"
-import SearchFilter from "@/components/dashboard/filters/search-filter"
-import { notFound } from "next/navigation"
-import { twMerge } from "tailwind-merge"
-import NavigationPagination from "@/components/dashboard/filters/navigation-pagination"
-import Link from "next/link"
 import { getAllRecordsPaginated } from "@/actions/records/get-all-records-paginated"
-import { PaginatedSimpleRecords } from "@/interfaces/records"
-import parseDate from "@/utils/parse-date"
+import NavigationPagination from "@/components/dashboard/filters/navigation-pagination"
+import SearchFilter from "@/components/dashboard/filters/search-filter"
 import StateError from "@/components/helpers/state-error"
 import { ProblemDetails } from "@/interfaces/actions"
+import { PaginatedSimpleRecords } from "@/interfaces/records"
+import parseDate from "@/utils/parse-date"
+import { Metadata } from "next"
+import Link from "next/link"
+import { notFound } from "next/navigation"
+import { twMerge } from "tailwind-merge"
 
 export interface RecordsPageProps {
     params: { username: string }

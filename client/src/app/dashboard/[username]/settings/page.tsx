@@ -1,10 +1,9 @@
-import getUserContext from "@/actions/users/get-user-context"
+import { User } from "@/interfaces/users"
+import parseDate from "@/utils/parse-date"
 import { auth, signOut } from "auth"
 import type { Metadata } from "next"
 import Link from "next/link"
-import parseDate from "@/utils/parse-date"
-import { notFound, redirect } from "next/navigation"
-import { User } from "@/interfaces/users"
+import { redirect } from "next/navigation"
 
 export const metadata: Metadata = {
     title: "Settings",
@@ -20,7 +19,6 @@ export default async function SettingsPage() {
     }
 
     const user = session.user as User
-    if (!user) return notFound()
 
     const basePath = "/dashboard/" + user.username
 

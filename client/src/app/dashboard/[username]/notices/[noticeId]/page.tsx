@@ -1,8 +1,8 @@
-import { notFound } from "next/navigation"
 import getPublicNoticeById from "@/actions/notices/get-public-notice-by-id"
 import StateError from "@/components/helpers/state-error"
 import { ProblemDetails } from "@/interfaces/actions"
 import { Notice } from "@/interfaces/notices"
+import { notFound } from "next/navigation"
 
 interface NoticePageProps {
     params: { username: string; noticeId: string }

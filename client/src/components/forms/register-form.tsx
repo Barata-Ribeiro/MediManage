@@ -1,13 +1,13 @@
 "use client"
 
-import { useForm } from "@/hooks/use-form"
 import postAuthRegister from "@/actions/auth/post-auth-register"
 import InputValidationError from "@/components/helpers/input-validation-error"
 import RequisitionError from "@/components/helpers/requisition-error"
-import { Button, Field, Input, Label } from "@headlessui/react"
 import Spinner from "@/components/helpers/spinner"
-import { useEffect } from "react"
+import { useForm } from "@/hooks/use-form"
+import { Button, Field, Input, Label } from "@headlessui/react"
 import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 
 export default function RegisterForm() {
     const router = useRouter()

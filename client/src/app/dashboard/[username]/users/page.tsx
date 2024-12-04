@@ -1,14 +1,14 @@
-import { Metadata } from "next"
-import { notFound } from "next/navigation"
-import { twMerge } from "tailwind-merge"
-import Link from "next/link"
 import getAllUsersPaginated from "@/actions/users/get-all-users-paginated"
-import { PaginatedUsers } from "@/interfaces/users"
-import UserFilter from "@/components/dashboard/filters/user-filter"
 import NavigationPagination from "@/components/dashboard/filters/navigation-pagination"
+import UserFilter from "@/components/dashboard/filters/user-filter"
 import StateError from "@/components/helpers/state-error"
 import { ProblemDetails } from "@/interfaces/actions"
+import { PaginatedUsers } from "@/interfaces/users"
+import { Metadata } from "next"
+import Link from "next/link"
+import { notFound } from "next/navigation"
 import { FaPlus } from "react-icons/fa6"
+import { twMerge } from "tailwind-merge"
 
 export interface UsersPageProps {
     params: { username: string }

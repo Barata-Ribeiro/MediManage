@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react"
-import { Transition } from "@headlessui/react"
-import { FaTriangleExclamation, FaX } from "react-icons/fa6"
 import { ProblemDetails } from "@/interfaces/actions"
+import { Transition } from "@headlessui/react"
+import { useState } from "react"
+import { FaTriangleExclamation, FaX } from "react-icons/fa6"
 
 interface NotificationProps {
     error: string | ProblemDetails

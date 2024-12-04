@@ -1,6 +1,7 @@
 "use client"
 
 import { type Editor } from "@tiptap/react"
+import { FaRedo, FaUndo } from "react-icons/fa"
 import {
     FaBold,
     FaHeading,
@@ -11,7 +12,6 @@ import {
     FaStrikethrough,
     FaUnderline,
 } from "react-icons/fa6"
-import { FaRedo, FaUndo } from "react-icons/fa"
 
 export default function Toolbar({ editor }: Readonly<{ editor: Editor | null }>) {
     if (!editor) return null

@@ -1,8 +1,8 @@
-import { Consultation } from "@/interfaces/consultations"
-import { FaPlus } from "react-icons/fa6"
-import Link from "next/link"
-import { useUser } from "@/context/user-context-provider"
 import ConsultationTableRow from "@/components/dashboard/consultation-table-row"
+import { useUser } from "@/context/user-context-provider"
+import { Consultation } from "@/interfaces/consultations"
+import Link from "next/link"
+import { FaPlus } from "react-icons/fa6"
 
 interface TodayConsultationsListProps {
     data: Consultation[]

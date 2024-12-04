@@ -1,5 +1,5 @@
-import { FaTriangleExclamation } from "react-icons/fa6"
 import { ProblemDetails } from "@/interfaces/actions"
+import { FaTriangleExclamation } from "react-icons/fa6"
 
 export default function RequisitionError({ error }: Readonly<{ error: string | ProblemDetails }>) {
     return typeof error === "string" ? (

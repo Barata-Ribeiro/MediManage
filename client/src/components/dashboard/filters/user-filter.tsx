@@ -1,9 +1,9 @@
 "use client"
 
+import tw from "@/utils/tw"
+import { Field, Label, Select } from "@headlessui/react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { Field, Label, Select } from "@headlessui/react"
-import tw from "@/utils/tw"
 
 export default function UserFilter() {
     const router = useRouter()

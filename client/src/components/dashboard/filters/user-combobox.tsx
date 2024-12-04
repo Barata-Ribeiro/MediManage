@@ -1,12 +1,12 @@
 "use client"
 
+import getUserSearchSuggestions from "@/actions/users/get-user-search-suggestions"
+import { useDebounce } from "@/hooks/use-debounce"
+import { SimpleUser } from "@/interfaces/users"
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions, Label } from "@headlessui/react"
 import { useEffect, useState } from "react"
-import { SimpleUser } from "@/interfaces/users"
-import { HiMiniChevronUpDown } from "react-icons/hi2"
-import getUserSearchSuggestions from "@/actions/users/get-user-search-suggestions"
 import { FaCheck } from "react-icons/fa6"
-import { useDebounce } from "@/hooks/use-debounce"
+import { HiMiniChevronUpDown } from "react-icons/hi2"
 
 interface UserComboboxProps {
     type: "DOCTOR" | "ASSISTANT" | "PATIENT"

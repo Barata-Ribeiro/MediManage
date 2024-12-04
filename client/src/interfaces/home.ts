@@ -1,7 +1,7 @@
 import { Consultation } from "@/interfaces/consultations"
-import { MedicalRecord } from "@/interfaces/records"
-import { Prescription, SimplePrescription } from "@/interfaces/prescriptions"
 import { Notice } from "@/interfaces/notices"
+import { Prescription, SimplePrescription } from "@/interfaces/prescriptions"
+import { MedicalRecord } from "@/interfaces/records"
 
 interface AdministratorInfo {
     allUsers: Record<string, number>

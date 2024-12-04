@@ -1,14 +1,14 @@
-import { notFound } from "next/navigation"
+import getMyPrescriptionsPaginatedList from "@/actions/prescriptions/get-my-prescriptions-paginated-list"
+import NavigationPagination from "@/components/dashboard/filters/navigation-pagination"
+import SearchFilter from "@/components/dashboard/filters/search-filter"
 import StateError from "@/components/helpers/state-error"
 import { ProblemDetails } from "@/interfaces/actions"
 import { PaginatedSimplePrescriptions } from "@/interfaces/prescriptions"
-import SearchFilter from "@/components/dashboard/filters/search-filter"
-import { Metadata } from "next"
-import getMyPrescriptionsPaginatedList from "@/actions/prescriptions/get-my-prescriptions-paginated-list"
-import { twMerge } from "tailwind-merge"
 import parseDate from "@/utils/parse-date"
+import { Metadata } from "next"
 import Link from "next/link"
-import NavigationPagination from "@/components/dashboard/filters/navigation-pagination"
+import { notFound } from "next/navigation"
+import { twMerge } from "tailwind-merge"
 
 interface PrescriptionsPageProps {
     params: { username: string }

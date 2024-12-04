@@ -1,13 +1,13 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Field, Input, Label } from "@headlessui/react"
 import patchUpdateConsultation from "@/actions/consultations/patch-update-consultation"
-import { Consultation } from "@/interfaces/consultations"
-import parseDate from "@/utils/parse-date"
-import { ProblemDetails } from "@/interfaces/actions"
 import SimpleErrorNotification from "@/components/helpers/simple-error-notification"
 import { useUser } from "@/context/user-context-provider"
+import { ProblemDetails } from "@/interfaces/actions"
+import { Consultation } from "@/interfaces/consultations"
+import parseDate from "@/utils/parse-date"
+import { Field, Input, Label } from "@headlessui/react"
+import { useEffect, useState } from "react"
 
 interface Props {
     id: number

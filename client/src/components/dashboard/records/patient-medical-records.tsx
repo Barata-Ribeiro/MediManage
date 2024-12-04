@@ -1,6 +1,6 @@
-import Link from "next/link"
-import parseDate from "@/utils/parse-date"
 import { MedicalRecord } from "@/interfaces/records"
+import parseDate from "@/utils/parse-date"
+import Link from "next/link"
 
 interface PatientMedicalRecordsProps {
     displayName: string

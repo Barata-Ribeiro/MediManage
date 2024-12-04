@@ -1,9 +1,9 @@
 "use server"
 
-import { NOTICES_PUBLIC_GET_BY_ID } from "@/utils/api-urls"
-import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import ResponseError from "@/actions/response-error"
+import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import { Notice } from "@/interfaces/notices"
+import { NOTICES_PUBLIC_GET_BY_ID } from "@/utils/api-urls"
 
 interface GetNoticeById {
     id: string

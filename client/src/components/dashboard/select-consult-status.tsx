@@ -1,14 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import patchUpdateConsultation from "@/actions/consultations/patch-update-consultation"
+import SimpleErrorNotification from "@/components/helpers/simple-error-notification"
+import { useUser } from "@/context/user-context-provider"
+import { ProblemDetails } from "@/interfaces/actions"
+import { Consultation } from "@/interfaces/consultations"
 import { Button, Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
+import { useEffect, useState } from "react"
 import { FaChevronDown } from "react-icons/fa6"
 import { twMerge } from "tailwind-merge"
-import patchUpdateConsultation from "@/actions/consultations/patch-update-consultation"
-import { Consultation } from "@/interfaces/consultations"
-import SimpleErrorNotification from "@/components/helpers/simple-error-notification"
-import { ProblemDetails } from "@/interfaces/actions"
-import { useUser } from "@/context/user-context-provider"
 
 type ConsultStatus = "SCHEDULED" | "ACCEPTED" | "IN_PROGRESS" | "DONE" | "MISSED" | "CANCELLED"
 

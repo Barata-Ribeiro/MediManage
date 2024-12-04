@@ -1,7 +1,7 @@
-import { PaginatedConsultations } from "@/interfaces/consultations"
-import parseDate from "@/utils/parse-date"
-import { User } from "@/interfaces/users"
 import PatientListConsultationButton from "@/components/dashboard/records/patient-list-consultation-button"
+import { PaginatedConsultations } from "@/interfaces/consultations"
+import { User } from "@/interfaces/users"
+import parseDate from "@/utils/parse-date"
 
 interface PatientConsultationsProps {
     consultationsPage: PaginatedConsultations

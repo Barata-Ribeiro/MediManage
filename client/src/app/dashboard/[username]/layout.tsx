@@ -1,7 +1,7 @@
-import { type ReactNode } from "react"
-import Header from "@/components/dashboard/header"
-import Footer from "@/components/dashboard/footer"
 import Breadcrumbs from "@/components/breadcrumbs"
+import Footer from "@/components/dashboard/footer"
+import Header from "@/components/dashboard/header"
+import { type ReactNode } from "react"
 
 interface DashboardLayoutProps {
     children: ReactNode

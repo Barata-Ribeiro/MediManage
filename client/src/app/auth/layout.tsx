@@ -1,6 +1,6 @@
+import Image from "next/image"
 import { type ReactNode } from "react"
 import authImage from "../../../public/images/auth-image.jpg"
-import Image from "next/image"
 
 export default function AuthLayout({ children }: Readonly<{ children: ReactNode }>) {
     return (

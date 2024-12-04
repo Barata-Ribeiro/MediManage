@@ -1,6 +1,6 @@
-import { FaUserDoctor, FaUserInjured, FaUserTie } from "react-icons/fa6"
-import Link from "next/link"
 import { useUser } from "@/context/user-context-provider"
+import Link from "next/link"
+import { FaUserDoctor, FaUserInjured, FaUserTie } from "react-icons/fa6"
 
 interface UsersStatsProps {
     data: Record<string, number>

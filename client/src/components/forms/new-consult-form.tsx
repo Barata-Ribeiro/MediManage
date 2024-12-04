@@ -1,19 +1,19 @@
 "use client"
 
-import { useForm } from "@/hooks/use-form"
+import postScheduleNewConsultation from "@/actions/consultations/post-schedule-new-consultation"
 import UserCombobox from "@/components/dashboard/filters/user-combobox"
-import { Button, Field, Input, Label } from "@headlessui/react"
 import InputValidationError from "@/components/helpers/input-validation-error"
 import RequisitionError from "@/components/helpers/requisition-error"
+import SimpleAlert from "@/components/helpers/simple-alert"
 import Spinner from "@/components/helpers/spinner"
-import postScheduleNewConsultation from "@/actions/consultations/post-schedule-new-consultation"
-import { useEffect, useState } from "react"
+import { useUser } from "@/context/user-context-provider"
+import { useForm } from "@/hooks/use-form"
 import { Consultation } from "@/interfaces/consultations"
 import parseDate from "@/utils/parse-date"
+import { Button, Field, Input, Label } from "@headlessui/react"
 import Link from "next/link"
-import { useUser } from "@/context/user-context-provider"
 import { useRouter } from "next/navigation"
-import SimpleAlert from "@/components/helpers/simple-alert"
+import { useEffect, useState } from "react"
 
 export default function NewConsultForm() {
     const [newConsultation, setNewConsultation] = useState<Consultation | null>(null)

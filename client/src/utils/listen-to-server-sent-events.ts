@@ -1,6 +1,6 @@
-import { Dispatch, MutableRefObject, SetStateAction } from "react"
-import { fetchEventSource } from "@microsoft/fetch-event-source"
 import { ApiResponse } from "@/interfaces/actions"
+import { fetchEventSource } from "@microsoft/fetch-event-source"
+import { Dispatch, MutableRefObject, SetStateAction } from "react"
 
 interface ServerSentEventFnParams<T> {
     token: string

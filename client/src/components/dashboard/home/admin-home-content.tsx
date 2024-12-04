@@ -1,11 +1,11 @@
 "use client"
 
-import { AdministratorInfo } from "@/interfaces/home"
 import ConsultationsStats from "@/components/dashboard/home/consultations-stats"
-import UsersStats from "@/components/dashboard/home/users-stats"
-import { FaCalendar, FaCircleInfo } from "react-icons/fa6"
-import DividerWithContent from "@/components/helpers/divider-with-content"
 import LatestNotice from "@/components/dashboard/home/latest-notice"
+import UsersStats from "@/components/dashboard/home/users-stats"
+import DividerWithContent from "@/components/helpers/divider-with-content"
+import { AdministratorInfo } from "@/interfaces/home"
+import { FaCalendar, FaCircleInfo } from "react-icons/fa6"
 
 export default function AdminHomeContent({ homeInfo }: Readonly<{ homeInfo: AdministratorInfo }>) {
     return (
