@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { User as Context } from "@/interfaces/user"
+import { User as Context } from "@/interfaces/users"
 import { DefaultSession } from "next-auth"
 import NextAuth from "next-auth"
 import { JWT } from "next-auth/jwt"
