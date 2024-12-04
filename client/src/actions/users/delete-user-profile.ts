@@ -1,13 +1,13 @@
 "use server"
 
-import { ApiResponse, ProblemDetails, State } from "@/interfaces/actions"
 import ResponseError from "@/actions/response-error"
-import { revalidateTag } from "next/cache"
-import verifyAuthentication from "@/utils/verify-authentication"
+import { auth } from "@/auth"
+import { ApiResponse, ProblemDetails, State } from "@/interfaces/actions"
 import { USER_DELETE_PROFILE_BY_ID } from "@/utils/api-urls"
+import { revalidateTag } from "next/cache"
 
 export default async function deleteUserProfile(state: State, formData: FormData) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
     try {
         const id = formData.get("userId") as string
         if (!id) return ResponseError(new Error("User ID is required"))
@@ -18,7 +18,7 @@ export default async function deleteUserProfile(state: State, formData: FormData
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
         })
 

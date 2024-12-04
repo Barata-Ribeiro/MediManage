@@ -1,10 +1,10 @@
 "use server"
 
-import verifyAuthentication from "@/utils/verify-authentication"
-import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import ResponseError from "@/actions/response-error"
-import { CONSULTATIONS_GET_ALL } from "@/utils/api-urls"
+import { auth } from "@/auth"
+import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import { PaginatedConsultations } from "@/interfaces/consultations"
+import { CONSULTATIONS_GET_ALL } from "@/utils/api-urls"
 
 export default async function getAllConsultationsPaginated(
     page = 0,
@@ -13,7 +13,7 @@ export default async function getAllConsultationsPaginated(
     direction = "ASC",
     orderBy = "updatedAt",
 ) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
     try {
         const URL = CONSULTATIONS_GET_ALL(page, perPage, search, direction, orderBy)
 
@@ -21,7 +21,7 @@ export default async function getAllConsultationsPaginated(
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             next: { revalidate: 30, tags: ["consultations"] },
         })

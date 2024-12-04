@@ -1,12 +1,12 @@
 "use server"
 
-import { NOTIFICATION_GET_BY_ID } from "@/utils/api-urls"
-import verifyAuthentication from "@/utils/verify-authentication"
-import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
-import ResponseError from "@/actions/response-error"
-import { revalidateTag } from "next/cache"
-import { Notification } from "@/interfaces/notifications"
 import patchChangeNotificationStatus from "@/actions/notifications/patch-change-notification-status"
+import ResponseError from "@/actions/response-error"
+import { auth } from "@/auth"
+import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
+import { Notification } from "@/interfaces/notifications"
+import { NOTIFICATION_GET_BY_ID } from "@/utils/api-urls"
+import { revalidateTag } from "next/cache"
 
 interface GetNotificationById {
     userId: string
@@ -14,7 +14,7 @@ interface GetNotificationById {
 }
 
 export default async function getNotificationById({ userId, notifId }: GetNotificationById) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
 
     try {
         const URL = NOTIFICATION_GET_BY_ID(userId, notifId)
@@ -23,7 +23,7 @@ export default async function getNotificationById({ userId, notifId }: GetNotifi
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             cache: "no-cache",
         })

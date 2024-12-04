@@ -1,10 +1,10 @@
 "use server"
 
-import { PRESCRIPTIONS_GET_MY_PRESCRIPTIONS_PAGINATED_LIST } from "@/utils/api-urls"
-import verifyAuthentication from "@/utils/verify-authentication"
-import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import ResponseError from "@/actions/response-error"
+import { auth } from "@/auth"
+import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import { PaginatedSimplePrescriptions } from "@/interfaces/prescriptions"
+import { PRESCRIPTIONS_GET_MY_PRESCRIPTIONS_PAGINATED_LIST } from "@/utils/api-urls"
 
 export default async function getMyPrescriptionsPaginatedList(
     search: string | null,
@@ -13,7 +13,7 @@ export default async function getMyPrescriptionsPaginatedList(
     direction = "ASC",
     orderBy = "createdAt",
 ) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
 
     try {
         const URL = PRESCRIPTIONS_GET_MY_PRESCRIPTIONS_PAGINATED_LIST(search, page, perPage, direction, orderBy)
@@ -22,7 +22,7 @@ export default async function getMyPrescriptionsPaginatedList(
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             next: { tags: ["prescriptions"] },
         })

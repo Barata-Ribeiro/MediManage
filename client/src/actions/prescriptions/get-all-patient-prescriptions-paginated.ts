@@ -1,10 +1,10 @@
 "use server"
 
 import ResponseError from "@/actions/response-error"
-import { PRESCRIPTIONS_GET_ALL_BY_PATIENT_ID } from "@/utils/api-urls"
-import verifyAuthentication from "@/utils/verify-authentication"
+import { auth } from "@/auth"
 import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import { PaginatedSimplePrescriptions } from "@/interfaces/prescriptions"
+import { PRESCRIPTIONS_GET_ALL_BY_PATIENT_ID } from "@/utils/api-urls"
 
 export default async function getAllPatientPrescriptionsPaginated(
     patientId: string,
@@ -13,7 +13,7 @@ export default async function getAllPatientPrescriptionsPaginated(
     direction = "ASC",
     orderBy = "createdAt",
 ) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
     try {
         const URL = PRESCRIPTIONS_GET_ALL_BY_PATIENT_ID(patientId, page, perPage, direction, orderBy)
 
@@ -21,7 +21,7 @@ export default async function getAllPatientPrescriptionsPaginated(
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             next: { revalidate: 30, tags: ["prescriptions"] },
         })

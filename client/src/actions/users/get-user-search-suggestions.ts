@@ -1,13 +1,13 @@
 "use server"
 
-import verifyAuthentication from "@/utils/verify-authentication"
-import { USER_GET_SEARCH_SUGGESTIONS } from "@/utils/api-urls"
-import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import ResponseError from "@/actions/response-error"
+import { auth } from "@/auth"
+import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import { SimpleUser } from "@/interfaces/users"
+import { USER_GET_SEARCH_SUGGESTIONS } from "@/utils/api-urls"
 
 export default async function getUserSearchSuggestions(query: string, type: string) {
-    const authToken = String(verifyAuthentication())
+    const session = await auth()
     try {
         const URL = USER_GET_SEARCH_SUGGESTIONS(query, type)
 
@@ -15,7 +15,7 @@ export default async function getUserSearchSuggestions(query: string, type: stri
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             next: { tags: ["context", "users"] },
         })

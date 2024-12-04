@@ -1,11 +1,11 @@
 "use server"
 
-import { ApiResponse, ProblemDetails, State } from "@/interfaces/actions"
-import { NOTICES_CREATE } from "@/utils/api-urls"
-import verifyAuthentication from "@/utils/verify-authentication"
-import { z } from "zod"
 import ResponseError from "@/actions/response-error"
+import { auth } from "@/auth"
+import { ApiResponse, ProblemDetails, State } from "@/interfaces/actions"
 import { Notice } from "@/interfaces/notices"
+import { NOTICES_CREATE } from "@/utils/api-urls"
+import { z } from "zod"
 
 const noticeSchema = z.object({
     title: z
@@ -20,7 +20,7 @@ const noticeSchema = z.object({
 })
 
 export default async function postNewNotice(state: State, formData: FormData) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
     try {
         const rawFormData = Object.fromEntries(formData.entries())
         const parsedFormData = noticeSchema.safeParse(rawFormData)
@@ -35,7 +35,7 @@ export default async function postNewNotice(state: State, formData: FormData) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             body: JSON.stringify(parsedFormData.data),
         })

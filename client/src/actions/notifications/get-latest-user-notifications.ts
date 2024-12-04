@@ -1,13 +1,13 @@
 "use server"
 
-import verifyAuthentication from "@/utils/verify-authentication"
 import ResponseError from "@/actions/response-error"
-import { NOTIFICATIONS_GET_LATEST } from "@/utils/api-urls"
+import { auth } from "@/auth"
 import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import { Notification } from "@/interfaces/notifications"
+import { NOTIFICATIONS_GET_LATEST } from "@/utils/api-urls"
 
 export default async function getLatestUserNotifications(userId: string) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
 
     try {
         const URL = NOTIFICATIONS_GET_LATEST(userId)
@@ -16,7 +16,7 @@ export default async function getLatestUserNotifications(userId: string) {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             cache: "no-store",
         })

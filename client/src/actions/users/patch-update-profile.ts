@@ -1,11 +1,11 @@
 "use server"
 
-import { ApiResponse, ProblemDetails, State } from "@/interfaces/actions"
 import ResponseError from "@/actions/response-error"
-import verifyAuthentication from "@/utils/verify-authentication"
+import { ApiResponse, ProblemDetails, State } from "@/interfaces/actions"
 import { User } from "@/interfaces/users"
-import { revalidateTag } from "next/cache"
 import { USER_UPDATE_PROFILE_BY_ID } from "@/utils/api-urls"
+import { auth } from "auth"
+import { revalidateTag } from "next/cache"
 import { z } from "zod"
 
 const updateProfileSchema = z
@@ -55,7 +55,8 @@ const updateProfileSchema = z
     })
 
 export default async function patchUpdateProfile(state: State, formData: FormData) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
+
     try {
         const id = formData.get("userId") as string
         if (!id) return ResponseError(new Error("User ID is required"))
@@ -73,7 +74,7 @@ export default async function patchUpdateProfile(state: State, formData: FormDat
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             body: JSON.stringify(parsedFormData.data),
         })

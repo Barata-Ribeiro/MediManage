@@ -1,12 +1,12 @@
 "use server"
 
+import { auth } from "@/auth"
 import { ApiResponse, ProblemDetails, State } from "@/interfaces/actions"
-import ResponseError from "../response-error"
-import { CONSULTATION_CREATE } from "@/utils/api-urls"
-import verifyAuthentication from "../../utils/verify-authentication"
 import { Consultation } from "@/interfaces/consultations"
+import { CONSULTATION_CREATE } from "@/utils/api-urls"
 import { revalidateTag } from "next/cache"
 import { z } from "zod"
+import ResponseError from "../response-error"
 
 const consultationSchema = z.object({
     "patient[fullName]": z
@@ -21,7 +21,7 @@ const consultationSchema = z.object({
 })
 
 export default async function postScheduleNewConsultation(state: State, formData: FormData) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
     try {
         const URL = CONSULTATION_CREATE()
 
@@ -36,7 +36,7 @@ export default async function postScheduleNewConsultation(state: State, formData
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             body: JSON.stringify({
                 patientFullName: parsedFormData.data["patient[fullName]"],

@@ -1,10 +1,10 @@
 "use server"
 
-import { USER_GET_ALL } from "@/utils/api-urls"
-import verifyAuthentication from "@/utils/verify-authentication"
-import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import ResponseError from "@/actions/response-error"
+import { auth } from "@/auth"
+import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import { PaginatedUsers } from "@/interfaces/users"
+import { USER_GET_ALL } from "@/utils/api-urls"
 
 export default async function getAllUsersPaginated(
     page = 0,
@@ -13,7 +13,7 @@ export default async function getAllUsersPaginated(
     direction = "ASC",
     orderBy = "createdAt",
 ) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
     try {
         const URL = USER_GET_ALL(page, perPage, type, direction, orderBy)
 
@@ -21,7 +21,7 @@ export default async function getAllUsersPaginated(
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             next: { revalidate: 30, tags: ["users"] },
         })

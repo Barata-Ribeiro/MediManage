@@ -1,13 +1,13 @@
 "use server"
 
-import { USER_GET_PROFILE_BY_ID } from "@/utils/api-urls"
-import verifyAuthentication from "@/utils/verify-authentication"
-import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import ResponseError from "@/actions/response-error"
+import { auth } from "@/auth"
+import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import { User } from "@/interfaces/users"
+import { USER_GET_PROFILE_BY_ID } from "@/utils/api-urls"
 
 export default async function getUserProfileById(id: string) {
-    const authToken = String(verifyAuthentication())
+    const session = await auth()
     try {
         if (!id) return ResponseError(new Error("User ID is required"))
 
@@ -17,7 +17,7 @@ export default async function getUserProfileById(id: string) {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             next: { revalidate: 30, tags: ["context", "users"] },
         })

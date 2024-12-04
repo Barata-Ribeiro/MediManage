@@ -1,11 +1,11 @@
 "use server"
 
-import { PRESCRIPTION_UPDATE_BY_PATIENT_AND_ID } from "@/utils/api-urls"
-import verifyAuthentication from "@/utils/verify-authentication"
 import ResponseError from "@/actions/response-error"
+import { auth } from "@/auth"
 import { ApiResponse, ProblemDetails, State } from "@/interfaces/actions"
-import { z } from "zod"
 import { Prescription } from "@/interfaces/prescriptions"
+import { PRESCRIPTION_UPDATE_BY_PATIENT_AND_ID } from "@/utils/api-urls"
+import { z } from "zod"
 
 const prescriptionSchema = z.object({
     presId: z.string({ message: "Prescription ID is required." }),
@@ -14,7 +14,7 @@ const prescriptionSchema = z.object({
 })
 
 export default async function patchPrescriptionByPatientAndId(state: State, formData: FormData) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
 
     try {
         const rawFormData = Object.fromEntries(formData.entries())
@@ -33,7 +33,7 @@ export default async function patchPrescriptionByPatientAndId(state: State, form
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             body: JSON.stringify({ text: parsedFormData.data.content }),
         })

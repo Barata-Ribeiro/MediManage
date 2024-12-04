@@ -1,17 +1,17 @@
 "use server"
 
-import verifyAuthentication from "@/utils/verify-authentication"
-import { PRESCRIPTIONS_GET_MINE_BY_ID } from "@/utils/api-urls"
-import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import ResponseError from "@/actions/response-error"
+import { auth } from "@/auth"
+import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import { Prescription } from "@/interfaces/prescriptions"
+import { PRESCRIPTIONS_GET_MINE_BY_ID } from "@/utils/api-urls"
 
 interface GetMyPrescriptionById {
     id: string
 }
 
 export default async function getMyPrescriptionById({ id }: GetMyPrescriptionById) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
 
     try {
         const URL = PRESCRIPTIONS_GET_MINE_BY_ID(id)
@@ -20,7 +20,7 @@ export default async function getMyPrescriptionById({ id }: GetMyPrescriptionByI
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             next: { tags: ["prescriptions"] },
         })

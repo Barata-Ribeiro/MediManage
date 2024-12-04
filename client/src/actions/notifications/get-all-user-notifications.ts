@@ -1,10 +1,10 @@
 "use server"
 
 import ResponseError from "@/actions/response-error"
-import verifyAuthentication from "@/utils/verify-authentication"
-import { NOTIFICATIONS_GET_ALL } from "@/utils/api-urls"
+import { auth } from "@/auth"
 import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import { PaginatedNotifications } from "@/interfaces/notifications"
+import { NOTIFICATIONS_GET_ALL } from "@/utils/api-urls"
 
 export default async function getAllUserNotifications(
     userId: string,
@@ -14,7 +14,7 @@ export default async function getAllUserNotifications(
     orderBy = "issuedAt",
     isRead: string | null = null,
 ) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
     try {
         const URL = NOTIFICATIONS_GET_ALL(userId, page, perPage, direction, orderBy, isRead)
 
@@ -22,7 +22,7 @@ export default async function getAllUserNotifications(
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             cache: "no-store",
         })

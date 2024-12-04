@@ -1,10 +1,10 @@
 "use server"
 
 import ResponseError from "@/actions/response-error"
-import { CONSULTATIONS_UPDATE_BY_ID } from "@/utils/api-urls"
-import verifyAuthentication from "@/utils/verify-authentication"
+import { auth } from "@/auth"
 import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import { Consultation } from "@/interfaces/consultations"
+import { CONSULTATIONS_UPDATE_BY_ID } from "@/utils/api-urls"
 import { revalidateTag } from "next/cache"
 
 export default async function patchUpdateConsultation(
@@ -12,7 +12,7 @@ export default async function patchUpdateConsultation(
     consultStatus?: string | null,
     consultScheduleTo?: string | null,
 ) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
     try {
         if (!consultId) return ResponseError(new Error("Consultation ID is required."))
         if (!consultStatus && !consultScheduleTo) {
@@ -25,7 +25,7 @@ export default async function patchUpdateConsultation(
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             body: JSON.stringify({ status: consultStatus, scheduledTo: consultScheduleTo }),
         })

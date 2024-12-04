@@ -1,10 +1,10 @@
 "use server"
 
 import ResponseError from "@/actions/response-error"
-import verifyAuthentication from "@/utils/verify-authentication"
-import { NOTIFICATION_CHANGE_STATUS } from "@/utils/api-urls"
+import { auth } from "@/auth"
 import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import { Notification } from "@/interfaces/notifications"
+import { NOTIFICATION_CHANGE_STATUS } from "@/utils/api-urls"
 import { revalidateTag } from "next/cache"
 
 interface NotificationParams {
@@ -14,7 +14,7 @@ interface NotificationParams {
 }
 
 export default async function patchChangeNotificationStatus({ userId, notifId, currentStatus }: NotificationParams) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
 
     try {
         const URL = NOTIFICATION_CHANGE_STATUS(userId, notifId, currentStatus !== "true")
@@ -23,7 +23,7 @@ export default async function patchChangeNotificationStatus({ userId, notifId, c
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             body: JSON.stringify({}),
         })

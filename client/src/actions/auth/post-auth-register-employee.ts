@@ -1,12 +1,12 @@
 "use server"
 
-import { ApiResponse, ProblemDetails, State } from "@/interfaces/actions"
-import { AUTH_REGISTER_NEW_EMPLOYEE } from "@/utils/api-urls"
 import ResponseError from "@/actions/response-error"
-import { revalidateTag } from "next/cache"
-import verifyAuthentication from "@/utils/verify-authentication"
-import { z } from "zod"
+import { auth } from "@/auth"
+import { ApiResponse, ProblemDetails, State } from "@/interfaces/actions"
 import { NewAccountResponse } from "@/interfaces/auth"
+import { AUTH_REGISTER_NEW_EMPLOYEE } from "@/utils/api-urls"
+import { revalidateTag } from "next/cache"
+import { z } from "zod"
 
 const newEmployeeSchema = z
     .object({
@@ -48,7 +48,7 @@ const newEmployeeSchema = z
     })
 
 export default async function postAuthRegisterEmployee(state: State, formData: FormData) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
 
     try {
         const URL = AUTH_REGISTER_NEW_EMPLOYEE()
@@ -64,7 +64,7 @@ export default async function postAuthRegisterEmployee(state: State, formData: F
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                authorization: "Bearer " + authToken,
+                authorization: "Bearer " + session?.accessToken,
             },
             body: JSON.stringify(parsedFormData.data),
         })

@@ -1,18 +1,18 @@
 "use server"
 
 import ResponseError from "@/actions/response-error"
+import { auth } from "@/auth"
+import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
+import { AdministratorInfo, AssistantInfo, DoctorInfo, PatientInfo } from "@/interfaces/home"
 import {
     HOME_GET_ADMIN_INFO,
     HOME_GET_ASSISTANT_INFO,
     HOME_GET_DOCTOR_INFO,
     HOME_GET_PATIENT_INFO,
 } from "@/utils/api-urls"
-import verifyAuthentication from "@/utils/verify-authentication"
-import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
-import { AdministratorInfo, AssistantInfo, DoctorInfo, PatientInfo } from "@/interfaces/home"
 
 export default async function getHomeInfo(accountType: string) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
     try {
         let URL
 
@@ -35,7 +35,7 @@ export default async function getHomeInfo(accountType: string) {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             next: { revalidate: 30 },
         })

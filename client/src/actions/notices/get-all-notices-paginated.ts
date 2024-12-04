@@ -1,10 +1,10 @@
 "use server"
 
-import verifyAuthentication from "@/utils/verify-authentication"
-import { NOTICES_GET_ALL } from "@/utils/api-urls"
-import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import ResponseError from "@/actions/response-error"
+import { auth } from "@/auth"
+import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import { PaginatedNotices } from "@/interfaces/notices"
+import { NOTICES_GET_ALL } from "@/utils/api-urls"
 
 export default async function getAllNoticesPaginated(
     page: number,
@@ -12,7 +12,7 @@ export default async function getAllNoticesPaginated(
     direction: string,
     orderBy: string,
 ) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
 
     try {
         const URL = NOTICES_GET_ALL(page, perPage, direction, orderBy)
@@ -20,7 +20,7 @@ export default async function getAllNoticesPaginated(
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             next: { revalidate: 60, tags: ["notices"] },
         })

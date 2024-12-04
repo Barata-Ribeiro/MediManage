@@ -1,10 +1,10 @@
 "use server"
 
-import { PRESCRIPTION_GET_BY_ID_AND_USERNAME } from "@/utils/api-urls"
-import verifyAuthentication from "@/utils/verify-authentication"
 import ResponseError from "@/actions/response-error"
+import { auth } from "@/auth"
 import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import { Prescription } from "@/interfaces/prescriptions"
+import { PRESCRIPTION_GET_BY_ID_AND_USERNAME } from "@/utils/api-urls"
 
 interface GetPrescriptionByIdAndUsername {
     id: string
@@ -12,7 +12,7 @@ interface GetPrescriptionByIdAndUsername {
 }
 
 export default async function getPrescriptionByIdAndUsername({ id, username }: GetPrescriptionByIdAndUsername) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
     try {
         const URL = PRESCRIPTION_GET_BY_ID_AND_USERNAME(id, username)
 
@@ -20,7 +20,7 @@ export default async function getPrescriptionByIdAndUsername({ id, username }: G
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             next: { tags: ["prescriptions"] },
         })

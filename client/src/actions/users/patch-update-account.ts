@@ -1,12 +1,12 @@
 "use server"
 
-import { ApiResponse, ProblemDetails, State } from "@/interfaces/actions"
-import { USER_UPDATE_ACCOUNT } from "@/utils/api-urls"
-import verifyAuthentication from "@/utils/verify-authentication"
 import ResponseError from "@/actions/response-error"
-import { z } from "zod"
+import { ApiResponse, ProblemDetails, State } from "@/interfaces/actions"
 import { User } from "@/interfaces/users"
+import { USER_UPDATE_ACCOUNT } from "@/utils/api-urls"
+import { auth, unstable_update } from "auth"
 import { revalidateTag } from "next/cache"
+import { z } from "zod"
 
 const updateAccountSchema = z
     .object({
@@ -62,7 +62,20 @@ const updateAccountSchema = z
     })
 
 export default async function patchUpdateAccount(state: State, formData: FormData) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
+    if (!session)
+        return {
+            ok: false,
+            error: {
+                type: "https://httpstatuses.com/401",
+                title: "Not Authenticated",
+                status: 401,
+                detail: "User is not authenticated.",
+                instance: "_Blank",
+            },
+            response: null,
+        }
+
     try {
         const URL = USER_UPDATE_ACCOUNT()
 
@@ -77,7 +90,7 @@ export default async function patchUpdateAccount(state: State, formData: FormDat
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             body: JSON.stringify(parsedFormData.data),
         })
@@ -95,6 +108,14 @@ export default async function patchUpdateAccount(state: State, formData: FormDat
 
         revalidateTag("users")
         revalidateTag("context")
+
+        await unstable_update({
+            ...session,
+            user: {
+                ...session?.user,
+                ...updateAccountResponse,
+            },
+        })
 
         return {
             ok: true,

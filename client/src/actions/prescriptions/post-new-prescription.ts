@@ -1,11 +1,11 @@
 "use server"
 
-import { ApiResponse, ProblemDetails, State } from "@/interfaces/actions"
 import ResponseError from "@/actions/response-error"
-import verifyAuthentication from "@/utils/verify-authentication"
-import { z } from "zod"
-import { PRESCRIPTION_CREATE } from "@/utils/api-urls"
+import { auth } from "@/auth"
+import { ApiResponse, ProblemDetails, State } from "@/interfaces/actions"
 import { Prescription } from "@/interfaces/prescriptions"
+import { PRESCRIPTION_CREATE } from "@/utils/api-urls"
+import { z } from "zod"
 
 const prescriptionSchema = z.object({
     userId: z.string().uuid(),
@@ -13,7 +13,7 @@ const prescriptionSchema = z.object({
 })
 
 export default async function postNewPrescription(state: State, formData: FormData) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
     try {
         const rawFormData = Object.fromEntries(formData.entries())
         const parsedFormData = prescriptionSchema.safeParse(rawFormData)
@@ -28,7 +28,7 @@ export default async function postNewPrescription(state: State, formData: FormDa
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             body: JSON.stringify({ text: parsedFormData.data.content }),
         })

@@ -1,13 +1,13 @@
 "use server"
 
-import { MEDICAL_RECORDS_GET_BY_ID } from "@/utils/api-urls"
 import ResponseError from "@/actions/response-error"
+import { auth } from "@/auth"
 import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
-import verifyAuthentication from "@/utils/verify-authentication"
 import { MedicalRecord } from "@/interfaces/records"
+import { MEDICAL_RECORDS_GET_BY_ID } from "@/utils/api-urls"
 
 export default async function getRecordById(id: string) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
     try {
         const URL = MEDICAL_RECORDS_GET_BY_ID(id)
 
@@ -15,7 +15,7 @@ export default async function getRecordById(id: string) {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             next: { revalidate: 60, tags: ["medicalRecord"] },
         })

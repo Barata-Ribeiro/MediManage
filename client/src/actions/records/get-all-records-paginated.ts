@@ -1,10 +1,10 @@
 "use server"
 
-import { MEDICAL_RECORDS_GET_ALL } from "@/utils/api-urls"
-import verifyAuthentication from "@/utils/verify-authentication"
-import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import ResponseError from "@/actions/response-error"
+import { auth } from "@/auth"
+import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
 import { PaginatedSimpleRecords } from "@/interfaces/records"
+import { MEDICAL_RECORDS_GET_ALL } from "@/utils/api-urls"
 
 export async function getAllRecordsPaginated(
     page: number,
@@ -13,7 +13,7 @@ export async function getAllRecordsPaginated(
     direction: string,
     orderBy: string,
 ) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
     try {
         const URL = MEDICAL_RECORDS_GET_ALL(page, perPage, search, direction, orderBy)
 
@@ -21,7 +21,7 @@ export async function getAllRecordsPaginated(
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
             next: { revalidate: 30, tags: ["medicalRecords"] },
         })

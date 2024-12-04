@@ -1,9 +1,9 @@
 "use server"
 
-import verifyAuthentication from "@/utils/verify-authentication"
 import ResponseError from "@/actions/response-error"
-import { NOTIFICATION_DELETE_BY_ID } from "@/utils/api-urls"
+import { auth } from "@/auth"
 import { ApiResponse, ProblemDetails } from "@/interfaces/actions"
+import { NOTIFICATION_DELETE_BY_ID } from "@/utils/api-urls"
 import { revalidateTag } from "next/cache"
 
 interface DeleteNotificationParams {
@@ -12,7 +12,7 @@ interface DeleteNotificationParams {
 }
 
 export default async function deleteUserNotification({ userId, notifId }: DeleteNotificationParams) {
-    const authToken = verifyAuthentication()
+    const session = await auth()
 
     try {
         const URL = NOTIFICATION_DELETE_BY_ID(userId, notifId)
@@ -21,7 +21,7 @@ export default async function deleteUserNotification({ userId, notifId }: Delete
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: "Bearer " + authToken,
+                Authorization: "Bearer " + session?.accessToken,
             },
         })
 
