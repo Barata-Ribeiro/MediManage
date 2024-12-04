@@ -1,11 +1,11 @@
 "use client"
 
-import { useUser } from "@/context/user-context-provider"
+import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { FaArrowRightLong } from "react-icons/fa6"
 
 export default function PatientListConsultationButton({ name }: Readonly<{ name: string }>) {
-    const data = useUser()
+    const { data } = useSession()
     const encodedName = encodeURIComponent(name).replace(/%20/g, "+")
     const url = `/dashboard/${data?.user?.username}/consultations?search=${encodedName}`
 

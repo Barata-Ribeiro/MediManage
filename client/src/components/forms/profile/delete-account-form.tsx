@@ -1,18 +1,18 @@
 "use client"
 
-import { Button, Input } from "@headlessui/react"
-import { useRouter } from "next/navigation"
-import { useUser } from "@/context/user-context-provider"
+import deleteUserProfile from "@/actions/users/delete-user-profile"
+import RequisitionError from "@/components/helpers/requisition-error"
+import Spinner from "@/components/helpers/spinner"
 import { useForm } from "@/hooks/use-form"
 import { User } from "@/interfaces/users"
-import RequisitionError from "@/components/helpers/requisition-error"
+import { Button, Input } from "@headlessui/react"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import { useEffect } from "react"
-import Spinner from "@/components/helpers/spinner"
-import deleteUserProfile from "@/actions/users/delete-user-profile"
 
 export default function DeleteAccountForm({ user }: Readonly<{ user: User }>) {
     const router = useRouter()
-    const data = useUser()
+    const { data } = useSession()
     const { isPending, formState, formAction, onSubmit } = useForm(deleteUserProfile, {
         ok: false,
         error: null,
@@ -21,7 +21,7 @@ export default function DeleteAccountForm({ user }: Readonly<{ user: User }>) {
 
     useEffect(() => {
         if (formState.ok) {
-            router.push("/dashboard/" + data.user?.username + "/users")
+            router.push("/dashboard/" + data?.user?.username + "/users")
         }
     }, [data, formState, router, user])
 
@@ -37,7 +37,7 @@ export default function DeleteAccountForm({ user }: Readonly<{ user: User }>) {
 
             <Button
                 type="submit"
-                disabled={isPending || user.id === data.user?.id}
+                disabled={isPending || user.id === data?.user?.id}
                 className="inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-neutral-50 shadow-sm hover:bg-red-700 active:bg-red-800 disabled:opacity-50">
                 {isPending ? (
                     <>

@@ -1,15 +1,9 @@
 import type { Metadata } from "next"
+import { SessionProvider } from "next-auth/react"
 import { Nunito, Roboto } from "next/font/google"
 import "./globals.css"
 import { type ReactNode } from "react"
-import { UserContextProvider } from "@/context/user-context-provider"
-import { User } from "@/interfaces/users"
-import getUserContext from "@/actions/users/get-user-context"
 import { twMerge } from "tailwind-merge"
-import SimpleErrorNotification from "@/components/helpers/simple-error-notification"
-import { CookieProvider } from "@/context/cookie-context-provider"
-import getCookie from "@/actions/get-cookie"
-import { ProblemDetails, State } from "@/interfaces/actions"
 
 const roboto = Roboto({
     weight: ["100", "300", "400", "500", "700", "900"],
@@ -33,27 +27,13 @@ export const metadata: Metadata = {
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
-    let context: State
-
-    try {
-        context = await getUserContext()
-    } catch (error) {
-        context = { ok: false, response: null, error: error as ProblemDetails }
-    }
-
-    let user: User | null = null
-    if (context.ok) user = context.response?.data as User
-
     const fontVariables = `${roboto.variable} ${nunito.variable}`
     const bodyClasses = twMerge(fontVariables, "h-full")
 
     return (
         <html lang="en" className="h-full bg-neutral-200">
             <body className={bodyClasses}>
-                <CookieProvider cookie={await getCookie()}>
-                    <UserContextProvider user={user}>{children}</UserContextProvider>
-                </CookieProvider>
-                {context.error && <SimpleErrorNotification error={JSON.parse(JSON.stringify(context.error))} />}
+                <SessionProvider>{children}</SessionProvider>
             </body>
         </html>
     )

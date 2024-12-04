@@ -1,18 +1,18 @@
 "use client"
 
-import { useForm } from "@/hooks/use-form"
 import postNewPrescription from "@/actions/prescriptions/post-new-prescription"
 import InputValidationError from "@/components/helpers/input-validation-error"
 import RequisitionError from "@/components/helpers/requisition-error"
-import { Button, Description, Field, Input, Label, Textarea } from "@headlessui/react"
-import Spinner from "@/components/helpers/spinner"
-import { useEffect } from "react"
-import { useUser } from "@/context/user-context-provider"
-import { useRouter } from "next/navigation"
 import SimpleAlert from "@/components/helpers/simple-alert"
+import Spinner from "@/components/helpers/spinner"
+import { useForm } from "@/hooks/use-form"
+import { Button, Description, Field, Input, Label, Textarea } from "@headlessui/react"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 
 export default function NewPrescriptionForm({ userId }: Readonly<{ userId: string }>) {
-    const data = useUser()
+    const { data } = useSession()
     const router = useRouter()
     const { isPending, formState, formAction, onSubmit } = useForm(postNewPrescription, {
         ok: false,
@@ -21,7 +21,7 @@ export default function NewPrescriptionForm({ userId }: Readonly<{ userId: strin
     })
 
     useEffect(() => {
-        if (formState.ok) router.push(`/dashboard/${data.user?.username}/records/prescriptions?user=${userId}`)
+        if (formState.ok) router.push(`/dashboard/${data?.user?.username}/records/prescriptions?user=${userId}`)
     }, [formState, data, router, userId])
 
     return (

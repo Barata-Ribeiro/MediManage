@@ -1,16 +1,16 @@
 "use client"
 
-import { useForm } from "@/hooks/use-form"
+import patchPrescriptionByPatientAndId from "@/actions/prescriptions/patch-prescription-by-patient-and-id"
 import InputValidationError from "@/components/helpers/input-validation-error"
 import RequisitionError from "@/components/helpers/requisition-error"
-import { Button, Description, Field, Input, Label, Textarea } from "@headlessui/react"
-import Spinner from "@/components/helpers/spinner"
-import { useEffect } from "react"
-import { useUser } from "@/context/user-context-provider"
-import { useRouter } from "next/navigation"
-import patchPrescriptionByPatientAndId from "@/actions/prescriptions/patch-prescription-by-patient-and-id"
-import { Prescription } from "@/interfaces/prescriptions"
 import SimpleAlert from "@/components/helpers/simple-alert"
+import Spinner from "@/components/helpers/spinner"
+import { useForm } from "@/hooks/use-form"
+import { Prescription } from "@/interfaces/prescriptions"
+import { Button, Description, Field, Input, Label, Textarea } from "@headlessui/react"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 
 interface EditPrescriptionFormprops {
     id: string
@@ -23,7 +23,7 @@ export default function EditPrescriptionForm({
     patientUsername,
     prevContent,
 }: Readonly<EditPrescriptionFormprops>) {
-    const data = useUser()
+    const { data } = useSession()
     const router = useRouter()
 
     const { isPending, formState, formAction, onSubmit } = useForm(patchPrescriptionByPatientAndId, {
@@ -35,7 +35,9 @@ export default function EditPrescriptionForm({
     useEffect(() => {
         if (formState.ok) {
             const response = formState.response?.data as Prescription
-            router.push(`/dashboard/${data.user?.username}/records/prescriptions/${response.id}/${patientUsername}/pdf`)
+            router.push(
+                `/dashboard/${data?.user?.username}/records/prescriptions/${response.id}/${patientUsername}/pdf`,
+            )
         }
     }, [formState, data, router, patientUsername])
 

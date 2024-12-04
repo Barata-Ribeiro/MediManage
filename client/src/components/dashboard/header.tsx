@@ -1,6 +1,7 @@
 "use client"
 
-import { useUser } from "@/context/user-context-provider"
+import deleteAuthLogout from "@/actions/auth/delete-auth-logout"
+import NotificationButton from "@/components/dashboard/notification-button"
 import {
     Disclosure,
     DisclosureButton,
@@ -14,18 +15,17 @@ import {
     MenuSeparator,
     Transition,
 } from "@headlessui/react"
-import { Fragment, useState } from "react"
-import { twMerge } from "tailwind-merge"
-import { FaBars, FaBell, FaUserDoctor, FaUserInjured, FaUserNurse, FaUserTie, FaX } from "react-icons/fa6"
-import { usePathname, useRouter } from "next/navigation"
-import Link from "next/link"
-import miniLogo from "../../../public/images/medimanage-mini.svg"
+import { useSession } from "next-auth/react"
 import Image from "next/image"
-import NotificationButton from "@/components/dashboard/notification-button"
-import deleteAuthLogout from "@/actions/auth/delete-auth-logout"
+import Link from "next/link"
+import { usePathname, useRouter } from "next/navigation"
+import { Fragment, useState } from "react"
+import { FaBars, FaBell, FaUserDoctor, FaUserInjured, FaUserNurse, FaUserTie, FaX } from "react-icons/fa6"
+import { twMerge } from "tailwind-merge"
+import miniLogo from "../../../public/images/medimanage-mini.svg"
 
 export default function Header() {
-    const data = useUser()
+    const { data } = useSession()
     const pathname = usePathname()
     const router = useRouter()
 
@@ -44,15 +44,15 @@ export default function Header() {
     }
 
     const totalUnreadNotifications =
-        data.user?.totalUnreadNotifications === undefined ? "X" : data.user.totalUnreadNotifications
+        data?.user?.totalUnreadNotifications === undefined ? "X" : data?.user.totalUnreadNotifications
     const displayNotifications =
         typeof totalUnreadNotifications === "number" && totalUnreadNotifications > 99 ? "99+" : totalUnreadNotifications
 
-    const encodedName = encodeURIComponent(data.user?.username ?? "")
-    const userIsAdmin = data.user?.accountType === "ADMINISTRATOR"
-    const userIsDoctor = data.user?.accountType === "DOCTOR"
-    const userIsAssistant = data.user?.accountType === "ASSISTANT"
-    const userIsPatient = data.user?.accountType === "PATIENT"
+    const encodedName = encodeURIComponent(data?.user?.username ?? "")
+    const userIsAdmin = data?.user?.accountType === "ADMINISTRATOR"
+    const userIsDoctor = data?.user?.accountType === "DOCTOR"
+    const userIsAssistant = data?.user?.accountType === "ASSISTANT"
+    const userIsPatient = data?.user?.accountType === "PATIENT"
 
     const navigation = [
         { name: "Dashboard", href: "/dashboard/" + encodedName, condition: true },
@@ -147,10 +147,10 @@ export default function Header() {
                                                     <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-neutral-50 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                                         <MenuSection className="grid gap-1 px-4 py-2 font-heading">
                                                             <MenuHeading className="text-base font-medium leading-none">
-                                                                {data.user?.username}
+                                                                {data?.user?.username}
                                                             </MenuHeading>
                                                             <p className="text-sm leading-none text-neutral-500">
-                                                                {data.user?.email}
+                                                                {data?.user?.email}
                                                             </p>
                                                         </MenuSection>
 
@@ -245,10 +245,10 @@ export default function Header() {
                                     </div>
                                     <p className="ml-3 grid gap-1">
                                         <span className="text-base font-medium leading-none text-neutral-50">
-                                            {data.user?.username}
+                                            {data?.user?.username}
                                         </span>
                                         <span className="text-sm font-medium leading-none text-neutral-400">
-                                            {data.user?.email}
+                                            {data?.user?.email}
                                         </span>
                                     </p>
                                     <div className="relative ml-3 inline-flex w-fit">
@@ -301,7 +301,7 @@ export default function Header() {
             <header className="py-10">
                 <div className="container px-4 sm:px-6 lg:px-8">
                     <h1 className="text-3xl font-bold tracking-tight text-neutral-50">
-                        Wellcome, {data.user?.fullName ?? data.user?.username}
+                        Wellcome, {data?.user?.fullName ?? data?.user?.username}
                     </h1>
                 </div>
             </header>

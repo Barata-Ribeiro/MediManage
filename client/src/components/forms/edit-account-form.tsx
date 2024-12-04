@@ -1,18 +1,18 @@
 "use client"
 
+import patchUpdateAccount from "@/actions/users/patch-update-account"
+import InputValidationError from "@/components/helpers/input-validation-error"
+import RequisitionError from "@/components/helpers/requisition-error"
 import { useForm } from "@/hooks/use-form"
+import { User } from "@/interfaces/users"
+import { Button, Field, Input, Label } from "@headlessui/react"
+import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
-import { useUser } from "@/context/user-context-provider"
-import RequisitionError from "@/components/helpers/requisition-error"
-import patchUpdateAccount from "@/actions/users/patch-update-account"
-import { Button, Field, Input, Label } from "@headlessui/react"
-import InputValidationError from "@/components/helpers/input-validation-error"
-import { User } from "@/interfaces/users"
 
 export default function EditAccountForm() {
     const router = useRouter()
-    const data = useUser()
+    const { data } = useSession()
     const { isPending, formState, formAction, onSubmit } = useForm(patchUpdateAccount, {
         ok: false,
         error: null,
@@ -62,7 +62,7 @@ export default function EditAccountForm() {
                             autoComplete="email"
                             className="block w-full rounded-md border-0 py-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-400 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-mourning-blue-600 sm:text-sm sm:leading-6"
                         />
-                        <p className="mt-1 text-sm font-bold text-neutral-500">{data.user?.email}</p>
+                        <p className="mt-1 text-sm font-bold text-neutral-500">{data?.user?.email}</p>
                     </dd>
                 </Field>
 
@@ -78,8 +78,8 @@ export default function EditAccountForm() {
                             autoComplete="given-name"
                             className="block w-full rounded-md border-0 py-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-400 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-mourning-blue-600 sm:text-sm sm:leading-6"
                         />
-                        {data.user?.fullName && (
-                            <p className="mt-1 text-sm font-bold text-neutral-500">{data.user?.fullName}</p>
+                        {data?.user?.fullName && (
+                            <p className="mt-1 text-sm font-bold text-neutral-500">{data?.user?.fullName}</p>
                         )}
                     </dd>
                 </Field>
@@ -97,7 +97,7 @@ export default function EditAccountForm() {
                             placeholder="123-456-7890"
                             className="block w-full rounded-md border-0 py-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-400 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-mourning-blue-600 sm:text-sm sm:leading-6"
                         />
-                        <p className="mt-1 text-sm font-bold text-neutral-500">{data.user?.phone}</p>
+                        <p className="mt-1 text-sm font-bold text-neutral-500">{data?.user?.phone}</p>
                     </dd>
                 </Field>
 
@@ -114,7 +114,7 @@ export default function EditAccountForm() {
                             placeholder="1234 Main St"
                             className="block w-full rounded-md border-0 py-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-400 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-mourning-blue-600 sm:text-sm sm:leading-6"
                         />
-                        <p className="mt-1 text-sm font-bold text-neutral-500">{data.user?.address}</p>
+                        <p className="mt-1 text-sm font-bold text-neutral-500">{data?.user?.address}</p>
                     </dd>
                 </Field>
 
@@ -129,7 +129,7 @@ export default function EditAccountForm() {
                             name="birthDate"
                             className="block w-full rounded-md border-0 py-1.5 text-neutral-900 shadow-sm ring-1 ring-inset ring-neutral-400 placeholder:text-neutral-400 focus:ring-2 focus:ring-inset focus:ring-mourning-blue-600 sm:text-sm sm:leading-6"
                         />
-                        <p className="mt-1 text-sm font-bold text-neutral-500">{data.user?.birthDate}</p>
+                        <p className="mt-1 text-sm font-bold text-neutral-500">{data?.user?.birthDate}</p>
                     </dd>
                 </Field>
             </dl>

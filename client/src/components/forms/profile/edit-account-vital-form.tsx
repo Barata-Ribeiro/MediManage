@@ -1,19 +1,19 @@
 "use client"
 
-import { User } from "@/interfaces/users"
-import { Button, Description, Field, Input, Label, Select } from "@headlessui/react"
-import Spinner from "@/components/helpers/spinner"
-import { useForm } from "@/hooks/use-form"
-import { useRouter } from "next/navigation"
+import patchUpdateProfile from "@/actions/users/patch-update-profile"
 import InputValidationError from "@/components/helpers/input-validation-error"
 import RequisitionError from "@/components/helpers/requisition-error"
-import { useUser } from "@/context/user-context-provider"
+import Spinner from "@/components/helpers/spinner"
+import { useForm } from "@/hooks/use-form"
+import { User } from "@/interfaces/users"
+import { Button, Description, Field, Input, Label, Select } from "@headlessui/react"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import { useEffect } from "react"
-import patchUpdateProfile from "@/actions/users/patch-update-profile"
 
 export default function EditAccountVitalForm({ user }: Readonly<{ user: User }>) {
     const router = useRouter()
-    const data = useUser()
+    const { data } = useSession()
     const { isPending, formState, formAction, onSubmit } = useForm(patchUpdateProfile, {
         ok: false,
         error: null,
@@ -22,7 +22,7 @@ export default function EditAccountVitalForm({ user }: Readonly<{ user: User }>)
 
     useEffect(() => {
         if (formState.ok) {
-            router.push("/dashboard/" + data.user?.username + "/users/profile?id=" + user.id)
+            router.push("/dashboard/" + data?.user?.username + "/users/profile?id=" + user.id)
         }
     }, [data, formState, router, user])
 

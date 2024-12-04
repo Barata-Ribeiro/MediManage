@@ -1,5 +1,10 @@
 "use client"
 
+import postNewPrescription from "@/actions/prescriptions/post-new-prescription"
+import InputValidationError from "@/components/helpers/input-validation-error"
+import RequisitionError from "@/components/helpers/requisition-error"
+import Spinner from "@/components/helpers/spinner"
+import { useForm } from "@/hooks/use-form"
 import {
     Button,
     Description,
@@ -12,23 +17,18 @@ import {
     Label,
     Textarea,
 } from "@headlessui/react"
+import { useSession } from "next-auth/react"
+import { DialogBody, DialogHeader } from "next/dist/client/components/react-dev-overlay/internal/components/Dialog"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { FaPrescriptionBottleMedical } from "react-icons/fa6"
-import { useUser } from "@/context/user-context-provider"
-import { useForm } from "@/hooks/use-form"
-import postNewPrescription from "@/actions/prescriptions/post-new-prescription"
-import { DialogBody, DialogHeader } from "next/dist/client/components/react-dev-overlay/internal/components/Dialog"
-import InputValidationError from "@/components/helpers/input-validation-error"
-import RequisitionError from "@/components/helpers/requisition-error"
-import Spinner from "@/components/helpers/spinner"
 import { FaInfoCircle } from "react-icons/fa"
+import { FaPrescriptionBottleMedical } from "react-icons/fa6"
 
 export default function NewPrescriptionModal({ userId }: Readonly<{ userId: string }>) {
     const [open, setOpen] = useState(true)
 
     const router = useRouter()
-    const data = useUser()
+    const { data } = useSession()
 
     const { isPending, formState, formAction, onSubmit } = useForm(postNewPrescription, {
         ok: false,
@@ -39,7 +39,7 @@ export default function NewPrescriptionModal({ userId }: Readonly<{ userId: stri
     useEffect(() => {
         if (formState.ok) {
             setOpen(false)
-            router.push(`/dashboard/${data.user?.username}/records/prescriptions?user=${userId}`)
+            router.push(`/dashboard/${data?.user?.username}/records/prescriptions?user=${userId}`)
         }
     }, [formState, data, router, userId])
 

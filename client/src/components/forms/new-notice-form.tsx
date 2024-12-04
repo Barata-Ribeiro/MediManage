@@ -1,20 +1,20 @@
 "use client"
 
-import { useUser } from "@/context/user-context-provider"
-import { useRouter } from "next/navigation"
 import postNewNotice from "@/actions/notices/post-new-notice"
-import { useForm } from "@/hooks/use-form"
-import { useEffect, useState } from "react"
-import { Notice } from "@/interfaces/notices"
 import InputValidationError from "@/components/helpers/input-validation-error"
 import RequisitionError from "@/components/helpers/requisition-error"
-import { Button, Field, Input, Label, Select, Textarea } from "@headlessui/react"
-import Image from "next/image"
 import Spinner from "@/components/helpers/spinner"
+import { useForm } from "@/hooks/use-form"
+import { Notice } from "@/interfaces/notices"
+import { Button, Field, Input, Label, Select, Textarea } from "@headlessui/react"
+import { useSession } from "next-auth/react"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 export default function NewNoticeForm() {
     const [inputMediaUrl, setInputMediaUrl] = useState<string | null>(null)
-    const data = useUser()
+    const { data } = useSession()
     const router = useRouter()
     const { isPending, formState, formAction, onSubmit } = useForm(postNewNotice, {
         ok: false,
@@ -24,7 +24,7 @@ export default function NewNoticeForm() {
 
     useEffect(() => {
         if (formState.ok) {
-            router.push(`/dashboard/${data.user?.username}/notices/${(formState.response?.data as Notice).id}`)
+            router.push(`/dashboard/${data?.user?.username}/notices/${(formState.response?.data as Notice).id}`)
         }
     }, [formState, data, router])
 

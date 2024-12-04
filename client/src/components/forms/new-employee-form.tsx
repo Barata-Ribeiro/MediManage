@@ -1,17 +1,17 @@
 "use client"
 
-import { useUser } from "@/context/user-context-provider"
-import { useRouter } from "next/navigation"
-import { useForm } from "@/hooks/use-form"
 import postAuthRegisterEmployee from "@/actions/auth/post-auth-register-employee"
-import { NewAccountResponse } from "@/interfaces/auth"
-import { useEffect, useState } from "react"
-import { Button, Description, Field, Fieldset, Input, Label, Legend, Select } from "@headlessui/react"
 import InputValidationError from "@/components/helpers/input-validation-error"
 import RequisitionError from "@/components/helpers/requisition-error"
 import SimpleAlert from "@/components/helpers/simple-alert"
 import Spinner from "@/components/helpers/spinner"
 import NewAccountInfoModal from "@/components/modals/new-account-info-modal"
+import { useForm } from "@/hooks/use-form"
+import { NewAccountResponse } from "@/interfaces/auth"
+import { Button, Description, Field, Fieldset, Input, Label, Legend, Select } from "@headlessui/react"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 export default function NewEmployeeForm() {
     const [modal, setModal] = useState(false)
@@ -22,7 +22,7 @@ export default function NewEmployeeForm() {
         response: null,
     })
 
-    const context = useUser()
+    const { data: context } = useSession()
     const router = useRouter()
 
     useEffect(() => {
