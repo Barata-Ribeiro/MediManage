@@ -1,8 +1,9 @@
 import getUserContext from "@/actions/users/get-user-context"
+import { auth, signOut } from "auth"
 import type { Metadata } from "next"
 import Link from "next/link"
 import parseDate from "@/utils/parse-date"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import { User } from "@/interfaces/users"
 
 export const metadata: Metadata = {
@@ -12,8 +13,13 @@ export const metadata: Metadata = {
 }
 
 export default async function SettingsPage() {
-    const context = await getUserContext()
-    const user = context.response?.data as User
+    const session = await auth()
+    if (!session) {
+        await signOut({ redirect: false })
+        return redirect("/auth/login")
+    }
+
+    const user = session.user as User
     if (!user) return notFound()
 
     const basePath = "/dashboard/" + user.username

@@ -1,19 +1,18 @@
-import { notFound } from "next/navigation"
 import getAllUserNotifications from "@/actions/notifications/get-all-user-notifications"
-import getUserContext from "@/actions/users/get-user-context"
-import StateError from "@/components/helpers/state-error"
-import { ProblemDetails } from "@/interfaces/actions"
-import { User } from "@/interfaces/users"
-import { PaginatedNotifications } from "@/interfaces/notifications"
 import NavigationPagination from "@/components/dashboard/filters/navigation-pagination"
-import { twMerge } from "tailwind-merge"
-import { IoMailOpen, IoMailUnread } from "react-icons/io5"
-import type { Metadata } from "next"
-import parseDate from "@/utils/parse-date"
-import NotificationMessageModal from "@/components/modals/notification-message-modal"
 import NotifFilter from "@/components/dashboard/filters/notif-filter"
-import Link from "next/link"
+import StateError from "@/components/helpers/state-error"
 import NotificationDeleteModal from "@/components/modals/notification-delete-modal"
+import NotificationMessageModal from "@/components/modals/notification-message-modal"
+import { ProblemDetails } from "@/interfaces/actions"
+import { PaginatedNotifications } from "@/interfaces/notifications"
+import parseDate from "@/utils/parse-date"
+import { auth, signOut } from "auth"
+import type { Metadata } from "next"
+import Link from "next/link"
+import { notFound, redirect } from "next/navigation"
+import { IoMailOpen, IoMailUnread } from "react-icons/io5"
+import { twMerge } from "tailwind-merge"
 
 interface NotificationsPageProps {
     params: { username: string }
@@ -35,11 +34,13 @@ export default async function NotificationsPage({ params, searchParams }: Readon
     const orderBy = (searchParams.orderBy as string) || "issuedAt"
     const isRead = (searchParams.isRead as string) || ""
 
-    const contextState = await getUserContext()
-    if (!contextState.ok) return <StateError error={contextState.error as ProblemDetails} />
-    const user = contextState.response?.data as User
+    const session = await auth()
+    if (!session) {
+        await signOut({ redirect: false })
+        return redirect("/auth/login")
+    }
 
-    const notifState = await getAllUserNotifications(user.id, page, perPage, direction, orderBy, isRead)
+    const notifState = await getAllUserNotifications(session?.user.id, page, perPage, direction, orderBy, isRead)
     if (!notifState.ok) return <StateError error={notifState.error as ProblemDetails} />
 
     const pagination = notifState.response?.data as PaginatedNotifications

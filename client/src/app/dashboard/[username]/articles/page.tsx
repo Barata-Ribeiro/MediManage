@@ -1,7 +1,6 @@
-import { notFound } from "next/navigation"
-import getUserContext from "@/actions/users/get-user-context"
-import deleteAuthLogout from "@/actions/auth/delete-auth-logout"
 import ArticleListingheader from "@/components/dashboard/articles/articles-listing-header"
+import { auth, signOut } from "auth"
+import { notFound, redirect } from "next/navigation"
 
 interface ArticlePageProps {
     params: { username: string }
@@ -18,8 +17,11 @@ export default async function ArticlePage({ params, searchParams }: Readonly<Art
     const direction = (searchParams.direction as string) ?? "DESC"
     const orderBy = (searchParams.orderBy as string) ?? "createdAt"
 
-    const context = await getUserContext()
-    if (!context.ok) await deleteAuthLogout()
+    const session = await auth()
+    if (!session) {
+        await signOut({ redirect: false })
+        return redirect("/auth/login")
+    }
 
     const state = ""
 
