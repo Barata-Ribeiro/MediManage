@@ -4,20 +4,20 @@ import LatestNotice from "@/components/dashboard/home/latest-notice"
 import MedicalRecordAndPrescription from "@/components/dashboard/home/medical-record-and-prescription"
 import NextConsultation from "@/components/dashboard/home/next-consultation"
 import DividerWithContent from "@/components/helpers/divider-with-content"
-import { useUser } from "@/context/user-context-provider"
 import { PatientInfo } from "@/interfaces/home"
+import { User } from "@/interfaces/users"
+import { useSession } from "next-auth/react"
 import { FaCircleInfo, FaUserClock } from "react-icons/fa6"
 
 export default function PatientHomeContent({ homeInfo }: Readonly<{ homeInfo: PatientInfo }>) {
-    const userData = useUser()
-    if (!userData.user) return null
+    const { data: session } = useSession()
 
     return (
         <>
             <MedicalRecordAndPrescription
                 medicalRecord={homeInfo.medicalRecord}
                 prescription={homeInfo.latestPrescription}
-                user={userData.user}
+                user={session?.user as User}
             />
             <DividerWithContent>
                 <span className="bg-neutral-50 px-2 text-neutral-600">

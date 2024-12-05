@@ -1,10 +1,10 @@
 "use client"
 
 import PatientNewPrescriptionButton from "@/components/dashboard/records/patient-new-prescription-button"
-import { useUser } from "@/context/user-context-provider"
 import { PaginatedSimplePrescriptions } from "@/interfaces/prescriptions"
 import { User } from "@/interfaces/users"
 import parseDate from "@/utils/parse-date"
+import { useSession } from "next-auth/react"
 import Link from "next/link"
 
 interface PatientPrescriptionsProps {
@@ -13,8 +13,9 @@ interface PatientPrescriptionsProps {
 }
 
 export default function PatientPrescriptions({ prescriptionsPage, patient }: Readonly<PatientPrescriptionsProps>) {
-    const userData = useUser()
-    const baseUrl = "/dashboard/" + userData.user?.username + "/records/prescriptions"
+    const { data: session } = useSession()
+
+    const baseUrl = "/dashboard/" + session?.user?.username + "/records/prescriptions"
     return (
         <div className="w-full px-4 py-6 sm:px-6 lg:px-8">
             <div className="flex flex-wrap justify-between gap-2">

@@ -1,7 +1,7 @@
 "use client"
 
 import NavigationPagination from "@/components/dashboard/filters/navigation-pagination"
-import { useUser } from "@/context/user-context-provider"
+import { useSession } from "next-auth/react"
 
 interface PageInfo {
     size: number
@@ -16,11 +16,10 @@ interface ArticlesListingProps {
 }
 
 export default function ArticlesListing({ content, pageInfo }: Readonly<ArticlesListingProps>) {
-    const { user } = useUser()
-    if (!user) return null
+    const { data: session } = useSession()
 
-    const isDoctor = user.accountType === "DOCTOR"
-    const isAdministrator = user.accountType === "ADMINISTRATOR"
+    const isDoctor = session?.user?.accountType === "DOCTOR"
+    const isAdministrator = session?.user?.accountType === "ADMINISTRATOR"
 
     return (
         <div className="mt-8 flow-root">

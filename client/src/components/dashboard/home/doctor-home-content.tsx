@@ -5,11 +5,11 @@ import LatestNotice from "@/components/dashboard/home/latest-notice"
 import NextConsultation from "@/components/dashboard/home/next-consultation"
 import DividerWithContent from "@/components/helpers/divider-with-content"
 import SimpleErrorNotification from "@/components/helpers/simple-error-notification"
-import { useCookies } from "@/context/cookie-context-provider"
 import { Consultation } from "@/interfaces/consultations"
 import { DoctorInfo } from "@/interfaces/home"
 import { BACKEND_URL } from "@/utils/api-urls"
 import listenToServerSentEvents from "@/utils/listen-to-server-sent-events"
+import { useSession } from "next-auth/react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { FaCircleInfo, FaUserClock } from "react-icons/fa6"
 
@@ -18,7 +18,7 @@ export default function DoctorHomeContent({ homeInfo }: Readonly<{ homeInfo: Doc
     const [error, setError] = useState<string | null>(null)
     const abortControllerRef = useRef<AbortController>(new AbortController())
     const URL = BACKEND_URL + "/api/v1/home/stream/doctor-info"
-    const { cookie } = useCookies()
+    const { data } = useSession()
 
     const stopResponseSSE = useCallback(() => {
         if (abortControllerRef.current) {
@@ -42,17 +42,14 @@ export default function DoctorHomeContent({ homeInfo }: Readonly<{ homeInfo: Doc
     )
 
     useEffect(() => {
-        const isCookie = cookie && cookie !== "null" && cookie !== "undefined"
         const isNextConsultationValid =
             (homeInfoData.nextConsultation as Consultation).scheduledTo > new Date().toISOString()
 
-        if (isCookie && isNextConsultationValid)
-            sseCallback(cookie)
-                .then(r => r)
-                .catch(e => setError(e.message))
+        if (data && !data.error && isNextConsultationValid)
+            sseCallback(data.accessToken).catch(e => setError(e.message))
 
         return () => stopResponseSSE()
-    }, [cookie, homeInfoData, sseCallback, stopResponseSSE])
+    }, [data, homeInfoData, sseCallback, stopResponseSSE])
 
     return (
         <>

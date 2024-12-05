@@ -3,10 +3,10 @@
 import patchChangeNotificationStatus from "@/actions/notifications/patch-change-notification-status"
 import RequisitionError from "@/components/helpers/requisition-error"
 import Spinner from "@/components/helpers/spinner"
-import { useUser } from "@/context/user-context-provider"
 import { ProblemDetails } from "@/interfaces/actions"
 import { Notification } from "@/interfaces/notifications"
 import { Button, Description, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
+import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { IoMail } from "react-icons/io5"
@@ -25,8 +25,7 @@ export default function NotificationMessageModal({ notif }: Readonly<Notificatio
 
     const router = useRouter()
 
-    const { user } = useUser()
-    if (!user) return null
+    const { data: session } = useSession()
 
     const isRead = notif.isRead
     const buttonAction = isRead ? "unread" : "read"
@@ -35,10 +34,10 @@ export default function NotificationMessageModal({ notif }: Readonly<Notificatio
         setLoading(true)
 
         try {
-            if (!user) return
+            if (!session?.user) return
 
             const state = await patchChangeNotificationStatus({
-                userId: user.id,
+                userId: session.user.id,
                 notifId: notif.id.toString(),
                 currentStatus: isRead.toString(),
             })

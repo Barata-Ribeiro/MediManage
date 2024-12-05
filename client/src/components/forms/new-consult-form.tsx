@@ -6,11 +6,11 @@ import InputValidationError from "@/components/helpers/input-validation-error"
 import RequisitionError from "@/components/helpers/requisition-error"
 import SimpleAlert from "@/components/helpers/simple-alert"
 import Spinner from "@/components/helpers/spinner"
-import { useUser } from "@/context/user-context-provider"
 import { useForm } from "@/hooks/use-form"
 import { Consultation } from "@/interfaces/consultations"
 import parseDate from "@/utils/parse-date"
 import { Button, Field, Input, Label } from "@headlessui/react"
+import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -31,8 +31,7 @@ export default function NewConsultForm() {
     }, [formState])
 
     const router = useRouter()
-    const context = useUser()
-    if (!context) return null
+    const { data: session } = useSession()
 
     const formattedDate = new Date().toISOString().slice(0, 16)
 
@@ -69,7 +68,7 @@ export default function NewConsultForm() {
                 {formState.error && Array.isArray(formState.error) && <InputValidationError errors={formState.error} />}
                 {formState.error && !Array.isArray(formState.error) && <RequisitionError error={formState.error} />}
 
-                {context.user?.accountType !== "ASSISTANT" && newConsultation === null && (
+                {session?.user?.accountType !== "ASSISTANT" && newConsultation === null && (
                     <SimpleAlert>
                         Only an <strong>assistant</strong> can schedule a consultation.
                     </SimpleAlert>
@@ -87,7 +86,7 @@ export default function NewConsultForm() {
                         disabled={
                             isPending ||
                             (formState.ok && newConsultation !== null) ||
-                            context.user?.accountType !== "ASSISTANT"
+                            session?.user?.accountType !== "ASSISTANT"
                         }
                         className="inline-flex items-center rounded-md bg-mourning-blue-600 px-3 py-2 text-sm font-semibold text-neutral-50 shadow-sm hover:bg-mourning-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mourning-blue-600 active:bg-mourning-blue-800 disabled:opacity-50">
                         {isPending ? (

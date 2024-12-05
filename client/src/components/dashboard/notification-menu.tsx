@@ -1,10 +1,10 @@
 import getLatestUserNotifications from "@/actions/notifications/get-latest-user-notifications"
 import RequisitionError from "@/components/helpers/requisition-error"
-import { useUser } from "@/context/user-context-provider"
 import { ProblemDetails } from "@/interfaces/actions"
 import { Notification } from "@/interfaces/notifications"
 import parseDate from "@/utils/parse-date"
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react"
+import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { Fragment, useEffect, useState } from "react"
 import { FaCheckSquare } from "react-icons/fa"
@@ -34,19 +34,19 @@ export default function NotificationMenu({ disabled }: Readonly<{ disabled: bool
     const [notifications, setNotifications] = useState<Notification[]>([])
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<StateError | null>(null)
-    const dataUser = useUser()
+    const { data: session } = useSession()
 
-    const url = "/dashboard/" + dataUser.user?.username + "/notifications"
+    const url = "/dashboard/" + session?.user?.username + "/notifications"
 
     useEffect(() => {
         let isMounted = true
 
         async function fetchNotifications() {
-            if (dataUser.user?.id) {
+            if (session?.user?.id) {
                 setLoading(true)
 
                 try {
-                    const state = await getLatestUserNotifications(dataUser.user.id)
+                    const state = await getLatestUserNotifications(session?.user.id)
                     if (isMounted) {
                         if (state.ok) setNotifications(state.response?.data as Notification[])
                         else setError(state.error)
@@ -64,7 +64,7 @@ export default function NotificationMenu({ disabled }: Readonly<{ disabled: bool
         return () => {
             isMounted = false
         }
-    }, [dataUser.user?.id])
+    }, [session?.user?.id])
 
     return (
         <Menu as="div" className="relative ml-3">
@@ -109,7 +109,7 @@ export default function NotificationMenu({ disabled }: Readonly<{ disabled: bool
                                         </div>
                                         <Link
                                             className="grid text-sm text-neutral-700"
-                                            href={url + "/" + notification.id + "?user=" + dataUser.user?.id}>
+                                            href={url + "/" + notification.id + "?user=" + session?.user?.id}>
                                             <h3
                                                 className={twMerge(
                                                     "font-heading text-sm font-medium leading-5 tracking-wide transition-all",
@@ -132,7 +132,7 @@ export default function NotificationMenu({ disabled }: Readonly<{ disabled: bool
                         <Link
                             href={url}
                             className="w-full rounded-b-md bg-mourning-blue-600 py-2 text-center font-heading text-sm font-medium leading-7 tracking-wide text-neutral-50 hover:bg-mourning-blue-700 active:bg-mourning-blue-800">
-                            See All Notifications ({dataUser.user?.totalNotifications})
+                            See All Notifications ({session?.user?.totalNotifications})
                         </Link>
                     </MenuItem>
                 </MenuItems>

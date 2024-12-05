@@ -1,14 +1,14 @@
 "use client"
 
 import SearchFilter from "@/components/dashboard/filters/search-filter"
-import { useUser } from "@/context/user-context-provider"
+import { useSession } from "next-auth/react"
 
 export default function ArticleListingHeader() {
-    const { user } = useUser()
+    const { data: session } = useSession()
 
-    const heading = user?.accountType === "DOCTOR" ? "Your Written Articles" : "Written Articles"
+    const heading = session?.user?.accountType === "DOCTOR" ? "Your Written Articles" : "Written Articles"
     const description =
-        user?.accountType === "DOCTOR"
+        session?.user?.accountType === "DOCTOR"
             ? "List all of your written articles in the system and manage them. These are the articles that you have written and published in the system and are available for the public to read, if the clinic made a public area for the articles."
             : "List and manage all of the written articles in the system. These are the articles that are written and published by doctors and are available for the public to read, if the clinic made a public area for the articles."
 

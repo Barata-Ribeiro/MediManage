@@ -1,4 +1,4 @@
-import { useUser } from "@/context/user-context-provider"
+import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { FaUserDoctor, FaUserInjured, FaUserTie } from "react-icons/fa6"
 
@@ -7,8 +7,8 @@ interface UsersStatsProps {
 }
 
 export default function UsersStats({ data }: Readonly<UsersStatsProps>) {
-    const dataUser = useUser()
-    const dashboardUrl = "/dashboard/" + dataUser.user?.username
+    const { data: session } = useSession()
+    const dashboardUrl = "/dashboard/" + session?.user.username
 
     const userTypeMapping = {
         doctors: { type: "Doctors", icon: FaUserDoctor },

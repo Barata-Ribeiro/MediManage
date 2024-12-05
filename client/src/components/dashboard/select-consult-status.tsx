@@ -2,10 +2,10 @@
 
 import patchUpdateConsultation from "@/actions/consultations/patch-update-consultation"
 import SimpleErrorNotification from "@/components/helpers/simple-error-notification"
-import { useUser } from "@/context/user-context-provider"
 import { ProblemDetails } from "@/interfaces/actions"
 import { Consultation } from "@/interfaces/consultations"
 import { Button, Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
+import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { FaChevronDown } from "react-icons/fa6"
 import { twMerge } from "tailwind-merge"
@@ -22,7 +22,7 @@ export default function SelectConsultStatus({ id, currentStatus }: Readonly<Sele
     const [isPending, setIsPending] = useState(false)
     const [error, setError] = useState<ProblemDetails | string | null>(null)
 
-    const dataUser = useUser()
+    const { data: session } = useSession()
 
     const statusList: ConsultStatus[] = ["SCHEDULED", "ACCEPTED", "IN_PROGRESS", "DONE", "MISSED", "CANCELLED"]
     const statusColor = {
@@ -65,7 +65,7 @@ export default function SelectConsultStatus({ id, currentStatus }: Readonly<Sele
             <div>
                 <MenuButton
                     className="group inline-flex items-center justify-center text-sm font-medium text-neutral-800 hover:text-neutral-900 disabled:opacity-50"
-                    disabled={isPending || dataUser.user?.accountType !== "ASSISTANT"}>
+                    disabled={isPending || session?.user?.accountType !== "ASSISTANT"}>
                     <div className="inline-flex items-center gap-2">
                         <div aria-hidden="true" className={twMerge(statusColor[status], "flex-none rounded-full p-1")}>
                             <div className="h-1.5 w-1.5 rounded-full bg-current" />

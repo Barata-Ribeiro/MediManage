@@ -2,11 +2,11 @@
 
 import patchUpdateConsultation from "@/actions/consultations/patch-update-consultation"
 import SimpleErrorNotification from "@/components/helpers/simple-error-notification"
-import { useUser } from "@/context/user-context-provider"
 import { ProblemDetails } from "@/interfaces/actions"
 import { Consultation } from "@/interfaces/consultations"
 import parseDate from "@/utils/parse-date"
 import { Field, Input, Label } from "@headlessui/react"
+import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 
 interface Props {
@@ -21,7 +21,7 @@ export default function SelectConsultDate({ id, currentScheduledTo }: Readonly<P
     const [isPending, setIsPending] = useState(false)
     const [error, setError] = useState<ProblemDetails | string | null>(null)
 
-    const dataUser = useUser()
+    const { data: session } = useSession()
 
     async function handleScheduledToUpdate() {
         if (scheduledTo === inputDateTime || !inputDateTime) return
@@ -70,7 +70,7 @@ export default function SelectConsultDate({ id, currentScheduledTo }: Readonly<P
                         setIsFocused(false)
                         await handleScheduledToUpdate()
                     }}
-                    disabled={isPending || dataUser.user?.accountType !== "ASSISTANT"}
+                    disabled={isPending || session?.user?.accountType !== "ASSISTANT"}
                     className="peer block w-full border-0 bg-transparent py-1.5 text-neutral-700 focus:ring-0 disabled:opacity-50 sm:text-sm sm:leading-6"
                 />
             </Field>

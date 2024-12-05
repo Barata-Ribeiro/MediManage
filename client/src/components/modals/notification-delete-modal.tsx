@@ -3,10 +3,10 @@
 import deleteUserNotification from "@/actions/notifications/delete-user-notification"
 import RequisitionError from "@/components/helpers/requisition-error"
 import Spinner from "@/components/helpers/spinner"
-import { useUser } from "@/context/user-context-provider"
 import { ProblemDetails } from "@/interfaces/actions"
 import { Notification } from "@/interfaces/notifications"
 import { Button, Description, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
+import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { FaExclamationTriangle } from "react-icons/fa"
@@ -25,17 +25,16 @@ export default function NotifDeleteModal({ notif }: Readonly<NotifDeleteModalPro
 
     const router = useRouter()
 
-    const { user } = useUser()
-    if (!user) return null
+    const { data: session } = useSession()
 
     async function handleNotifDeletion() {
         setLoading(true)
 
         try {
-            if (!user) return
+            if (!session?.user) return
 
             const state = await deleteUserNotification({
-                userId: user.id,
+                userId: session.user.id,
                 notifId: notif.id.toString(),
             })
 

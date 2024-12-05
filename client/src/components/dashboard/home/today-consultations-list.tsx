@@ -1,6 +1,6 @@
 import ConsultationTableRow from "@/components/dashboard/consultation-table-row"
-import { useUser } from "@/context/user-context-provider"
 import { Consultation } from "@/interfaces/consultations"
+import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { FaPlus } from "react-icons/fa6"
 
@@ -9,7 +9,7 @@ interface TodayConsultationsListProps {
 }
 
 export default function TodayConsultationsList({ data }: Readonly<TodayConsultationsListProps>) {
-    const userData = useUser()
+    const { data: session } = useSession()
     return (
         <div className="rounded-md bg-white px-4 py-5 shadow sm:px-6">
             <div className="-ml-4 -mt-2 flex flex-wrap items-center justify-between sm:flex-nowrap">
@@ -18,7 +18,7 @@ export default function TodayConsultationsList({ data }: Readonly<TodayConsultat
                 </div>
                 <div className="ml-4 mt-2 flex-shrink-0">
                     <Link
-                        href={`/dashboard/${userData.user?.username}/consultations/schedule`}
+                        href={`/dashboard/${session?.user?.username}/consultations/schedule`}
                         className="order-2 inline-flex w-max items-center gap-2 rounded-md bg-mourning-blue-600 px-3 py-2 text-center font-heading text-sm font-semibold text-white shadow-sm hover:bg-mourning-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-mourning-blue-600 active:bg-mourning-blue-800 sm:order-1 sm:justify-self-end">
                         New Consultation <FaPlus className="inline-block" />
                     </Link>

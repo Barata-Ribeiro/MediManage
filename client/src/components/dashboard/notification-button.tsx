@@ -1,18 +1,19 @@
 "use client"
 
 import NotificationMenu from "@/components/dashboard/notification-menu"
-import { useUser } from "@/context/user-context-provider"
+import { useSession } from "next-auth/react"
 import { useState } from "react"
 import { twMerge } from "tailwind-merge"
 
 export default function NotificationButton() {
-    const dataUser = useUser()
-    const [isNotifDisabled, setIsNotifDisabled] = useState(!dataUser)
+    const { data: session } = useSession()
 
-    if (!dataUser) setIsNotifDisabled(true)
+    const [isNotifDisabled, setIsNotifDisabled] = useState(!session?.user)
+
+    if (!session?.user) setIsNotifDisabled(true)
 
     const totalUnreadNotifications =
-        dataUser.user?.totalUnreadNotifications === undefined ? "X" : dataUser.user.totalUnreadNotifications
+        session?.user?.totalUnreadNotifications === undefined ? "X" : session?.user.totalUnreadNotifications
     const displayNotifications =
         typeof totalUnreadNotifications === "number" && totalUnreadNotifications > 99 ? "99+" : totalUnreadNotifications
 

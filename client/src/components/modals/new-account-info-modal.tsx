@@ -1,11 +1,11 @@
 "use client"
 
 import NewUserCredentialsPdf from "@/components/new-user-credentials-pdf"
-import { useUser } from "@/context/user-context-provider"
 import { NewAccountResponse } from "@/interfaces/auth"
 import parseDate from "@/utils/parse-date"
 import { Button, Description, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react"
 import { usePDF } from "@react-pdf/renderer"
+import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -24,12 +24,12 @@ export default function NewAccountInfoModal({ data, showModal }: Readonly<NewAcc
         if (data) updateInstance(<NewUserCredentialsPdf data={data!} />)
     }, [data, updateInstance])
 
-    const context = useUser()
+    const { data: session } = useSession()
 
     const router = useRouter()
 
     function handleClose() {
-        const url = `/dashboard/${context.user?.username}`
+        const url = `/dashboard/${session?.user?.username}`
         setOpen(false)
         router.replace(url)
     }
