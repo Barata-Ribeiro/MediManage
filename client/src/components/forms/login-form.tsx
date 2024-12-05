@@ -5,14 +5,16 @@ import InputValidationError from "@/components/helpers/input-validation-error"
 import RequisitionError from "@/components/helpers/requisition-error"
 import Spinner from "@/components/helpers/spinner"
 import { useForm } from "@/hooks/use-form"
-import { LoginResponse } from "@/interfaces/auth"
 import { Button, Field, Input, Label } from "@headlessui/react"
+import { useSession } from "next-auth/react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect } from "react"
 
 export default function LoginForm() {
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const session = useSession()
     const { isPending, formState, formAction, onSubmit } = useForm(postAuthLogin, {
         ok: false,
         error: null,
@@ -21,9 +23,11 @@ export default function LoginForm() {
 
     useEffect(() => {
         if (formState.ok) {
-            router.push("/dashboard/" + (formState.response?.data as LoginResponse).user.username)
+            session.update().then(_s => _s)
+            const callbackUrl = searchParams.get("callbackUrl") ?? `/dashboard/${session.data?.user.username}`
+            router.push(callbackUrl)
         }
-    }, [formState, router])
+    }, [formState, router, searchParams, session])
 
     return (
         <form action={formAction} onSubmit={onSubmit} className="space-y-6">
