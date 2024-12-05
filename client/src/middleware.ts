@@ -14,7 +14,7 @@ export default auth((request: NextRequest) => {
     }
 
     if (isAuthenticated && (pathname === "/" || pathname.startsWith("/auth"))) {
-        return NextResponse.redirect(new URL("/dashboard" + auth.user.username, request.nextUrl))
+        return NextResponse.redirect(new URL("/dashboard/" + auth.user.username, request.nextUrl))
     }
 
     return NextResponse.next()
