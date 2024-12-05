@@ -2,6 +2,7 @@
 
 import deleteAuthLogout from "@/actions/auth/delete-auth-logout"
 import NotificationButton from "@/components/dashboard/notification-button"
+import SessionVerifier from "@/components/helpers/session-verifier"
 import {
     Disclosure,
     DisclosureButton,
@@ -82,6 +83,8 @@ export default function Header() {
 
     return (
         <div className="bg-mourning-blue-800 pb-32">
+            <SessionVerifier />
+
             <Disclosure as="nav" className="bg-mourning-blue-800">
                 {({ open }) => (
                     <>
