@@ -98,6 +98,10 @@ const styles = StyleSheet.create({
 })
 
 export default function PrescriptionPdf({ data }: PrescriptionPdfProps) {
+    if (!data || !data.patient || !data.doctor) {
+        return null
+    }
+
     const institution = process.env.NEXT_PUBLIC_INSTITUTION_NAME ?? "Clinic Management System"
     return (
         <Document
