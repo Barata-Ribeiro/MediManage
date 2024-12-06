@@ -2,7 +2,7 @@
 
 import NotificationMenu from "@/components/dashboard/notification-menu"
 import { useSession } from "next-auth/react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { twMerge } from "tailwind-merge"
 
 export default function NotificationButton() {
@@ -10,7 +10,9 @@ export default function NotificationButton() {
 
     const [isNotifDisabled, setIsNotifDisabled] = useState(!session?.user)
 
-    if (!session?.user) setIsNotifDisabled(true)
+    useEffect(() => {
+        setIsNotifDisabled(!session?.user)
+    }, [session])
 
     const totalUnreadNotifications =
         session?.user?.totalUnreadNotifications === undefined ? "X" : session?.user.totalUnreadNotifications

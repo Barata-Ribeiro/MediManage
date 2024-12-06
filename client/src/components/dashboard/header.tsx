@@ -20,7 +20,7 @@ import { useSession } from "next-auth/react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Fragment, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
 import { FaBars, FaBell, FaUserDoctor, FaUserInjured, FaUserNurse, FaUserTie, FaX } from "react-icons/fa6"
 import { twMerge } from "tailwind-merge"
 import miniLogo from "../../../public/images/medimanage-mini.svg"
@@ -31,7 +31,12 @@ export default function Header() {
     const router = useRouter()
 
     const [isNotifDisabled, setIsNotifDisabled] = useState(!data)
-    if (!data) setIsNotifDisabled(true)
+
+    useEffect(() => {
+        if (!data) {
+            setIsNotifDisabled(true)
+        }
+    }, [data])
 
     async function handleLogout() {
         const response = await deleteAuthLogout()
