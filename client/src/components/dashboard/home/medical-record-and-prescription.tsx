@@ -1,3 +1,4 @@
+import MedicalRecordAndPrescriptionEmptySkeleton from "@/components/dashboard/skeletons/medical-record-and-prescription-empty-skeleton"
 import PrescriptionPdf from "@/components/prescription-pdf"
 import { Prescription } from "@/interfaces/prescriptions"
 import { MedicalRecord } from "@/interfaces/records"
@@ -16,17 +17,6 @@ interface MedicalRecordAndPrescriptionProps {
     user: User
 }
 
-// const PDFDownloadLink = dynamic(() => import("@react-pdf/renderer").then(mod => mod.PDFDownloadLink), {
-//     ssr: false,
-//     loading: () => (
-//         <div role="status" className="w-full animate-pulse">
-//             <div className="h-4 w-52 rounded-full bg-mourning-blue-200">
-//                 <span className="sr-only">Loading...</span>
-//             </div>
-//         </div>
-//     ),
-// })
-
 export default function MedicalRecordAndPrescription({
     medicalRecord,
     prescription,
@@ -36,6 +26,8 @@ export default function MedicalRecordAndPrescription({
     const [isDownloading, setIsDownloading] = useState(false)
 
     useEffect(() => {
+        if (Object.keys(prescription).length === 0) return
+
         async function generateBlob() {
             setIsDownloading(true)
 
@@ -52,16 +44,13 @@ export default function MedicalRecordAndPrescription({
         generateBlob().catch(console.error)
     }, [prescription])
 
-    if (Object.keys(medicalRecord).length === 0) return <p>No data</p>
-    if (Object.keys(prescription).length === 0) return <p>No data</p>
+    if (Object.keys(medicalRecord).length === 0) {
+        return <MedicalRecordAndPrescriptionEmptySkeleton />
+    }
 
     const medicalRecordData = medicalRecord as MedicalRecord
     const prescriptionData = prescription as Prescription
     const url = `/dashboard/${user.username}/prescriptions/`
-
-    const fileName = `${prescriptionData.patient.username}_${new Date(
-        prescriptionData.createdAt,
-    ).toISOString()}_prescription.pdf`
 
     return (
         <div>
@@ -82,7 +71,7 @@ export default function MedicalRecordAndPrescription({
                     <div className="border-t border-neutral-200 px-4 py-6 sm:col-span-1 sm:px-0">
                         <dt className="text-sm font-medium leading-6 text-neutral-900">Phone</dt>
                         <dd className="mt-1 text-sm leading-6 text-neutral-700 sm:mt-2">
-                            {medicalRecordData.patient.phone}
+                            {medicalRecordData.patient.phone ?? "Not Issued"}
                         </dd>
                     </div>
                     <div className="border-t border-neutral-200 px-4 py-6 sm:col-span-1 sm:px-0">
@@ -157,41 +146,60 @@ export default function MedicalRecordAndPrescription({
                         <dd className="mt-2 text-sm text-neutral-900">
                             <div className="divide-y divide-gray-100 rounded-md border border-neutral-200">
                                 <div className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
-                                    <div className="flex w-0 flex-1 items-center">
-                                        {!isDownloading && blob ? (
-                                            <>
-                                                <FaPaperclip
-                                                    aria-hidden="true"
-                                                    className="h-5 w-5 flex-shrink-0 text-neutral-400"
-                                                />
-                                                <div className="ml-4 flex min-w-0 flex-1 gap-2">
-                                                    <span className="truncate font-medium">{fileName}</span>
-                                                    <span className="flex-shrink-0 text-neutral-400">
-                                                        {(blob.size / 1024).toFixed(2)} KB
-                                                    </span>
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <div role="status" className="w-full animate-pulse">
-                                                <div className="h-4 w-full rounded-full bg-neutral-200">
-                                                    <span className="sr-only">Loading...</span>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="ml-4 flex-shrink-0">
-                                        <PDFDownloadLink
-                                            document={<PrescriptionPdf data={prescriptionData} />}
-                                            fileName={fileName}
-                                            className={twMerge(
-                                                "font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800",
-                                                isDownloading && "cursor-default opacity-50",
-                                            )}>
-                                            {({ loading, error }) =>
-                                                loading ? "Loading document..." : error ? "Error" : "Download"
-                                            }
-                                        </PDFDownloadLink>
-                                    </div>
+                                    {Object.keys(prescriptionData).length > 0 ? (
+                                        (() => {
+                                            const fileName = `${prescriptionData.patient.username}_${new Date(
+                                                prescriptionData.createdAt,
+                                            ).toISOString()}_prescription.pdf`
+
+                                            return (
+                                                <>
+                                                    <div className="flex w-0 flex-1 items-center">
+                                                        {!isDownloading && blob ? (
+                                                            <>
+                                                                <FaPaperclip
+                                                                    aria-hidden="true"
+                                                                    className="h-5 w-5 flex-shrink-0 text-neutral-400"
+                                                                />
+                                                                <div className="ml-4 flex min-w-0 flex-1 gap-2">
+                                                                    <span className="truncate font-medium">
+                                                                        {fileName}
+                                                                    </span>
+                                                                    <span className="flex-shrink-0 text-neutral-400">
+                                                                        {(blob.size / 1024).toFixed(2)} KB
+                                                                    </span>
+                                                                </div>
+                                                            </>
+                                                        ) : (
+                                                            <output className="w-full animate-pulse">
+                                                                <div className="h-4 w-full rounded-full bg-neutral-200">
+                                                                    <span className="sr-only">Loading...</span>
+                                                                </div>
+                                                            </output>
+                                                        )}
+                                                    </div>
+                                                    <div className="ml-4 flex-shrink-0">
+                                                        <PDFDownloadLink
+                                                            document={<PrescriptionPdf data={prescriptionData} />}
+                                                            fileName={fileName}
+                                                            className={twMerge(
+                                                                "font-medium text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800",
+                                                                isDownloading && "cursor-default opacity-50",
+                                                            )}>
+                                                            {({ loading, error }) => {
+                                                                const isErrorOrDownload = error ? "Error" : "Download"
+                                                                return loading
+                                                                    ? "Loading document..."
+                                                                    : isErrorOrDownload
+                                                            }}
+                                                        </PDFDownloadLink>
+                                                    </div>
+                                                </>
+                                            )
+                                        })()
+                                    ) : (
+                                        <p className="text-neutral-400">No prescription issued yet.</p>
+                                    )}
                                 </div>
                             </div>
                         </dd>
