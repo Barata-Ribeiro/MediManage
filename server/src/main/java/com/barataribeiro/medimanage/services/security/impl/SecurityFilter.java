@@ -56,17 +56,16 @@ public class SecurityFilter extends OncePerRequestFilter {
             return;
         }
 
-
         DecodedJWT decodedJWT = tokenService.validateToken(token);
         if (decodedJWT == null) {
-            log.atWarn().log("Invalid token");
+            log.atWarn().log("Token is invalid");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
         String jti = decodedJWT.getId();
-        if (blacklistedTokenRepository.existsById(jti)) {
-            log.atWarn().log("Token {} has been blacklisted!", jti);
+        if (jti != null && blacklistedTokenRepository.existsById(jti)) {
+            log.atWarn().log("Token {} has been blacklisted", jti);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
