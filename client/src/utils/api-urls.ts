@@ -137,3 +137,18 @@ export const NOTICES_GET_ALL = (page: number, perPage: number, direction: string
 export const NOTICES_PUBLIC_GET_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/notices/public/${id}`
 
 export const NOTICES_CREATE = () => `${BACKEND_URL}/api/v1/notices`
+
+// Articles
+export const ARTICLES_GET_ALL_PAGINATED = (
+    page: number,
+    perPage: number,
+    search: string | null,
+    category: string | null,
+    direction: string,
+    orderBy: string,
+) => {
+    let url = `${BACKEND_URL}/api/v1/articles?page=${page}&perPage=${perPage}&direction=${direction}&orderBy=${orderBy}`
+    if (search) url += `&search=${search}`
+    if (category) url += `&category=${category}`
+    return url
+}
