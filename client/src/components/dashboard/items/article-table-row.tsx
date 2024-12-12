@@ -1,3 +1,4 @@
+import ArticleDeleteModal from "@/components/modals/article-delete-modal"
 import { SimpleArticle } from "@/interfaces/articles"
 import parseDate from "@/utils/parse-date"
 import React from "react"
@@ -51,9 +52,11 @@ export default function ArticleTableRow(props: Readonly<ArticleTableRowProps>) {
             <td
                 className={twMerge(
                     props.index !== props.length - 1 ? "border-b border-neutral-200" : "",
-                    "whitespace-nowrap py-4 pl-3 pr-4 text-sm text-neutral-900 sm:pr-6 lg:pr-8",
+                    "inline-flex items-center gap-x-2 whitespace-nowrap py-4 pl-3 pr-4 sm:pr-6 lg:pr-8",
                 )}>
-                {/* TODO: ADD BUTTONS */}
+                <ArticleDeleteModal article={props.article} />
+
+                {/*TODO: ADD MANAGE BUTTON*/}
             </td>
         </tr>
     )
