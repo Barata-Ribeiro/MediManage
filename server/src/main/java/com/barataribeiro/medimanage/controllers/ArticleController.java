@@ -75,10 +75,10 @@ public class ArticleController {
             Authentication authentication) {
 
         String accountType = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .filter(s -> s.startsWith("ACCOUNT_TYPE_"))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Account type not found."));
+                                           .map(GrantedAuthority::getAuthority)
+                                           .filter(s -> s.startsWith("ACCOUNT_TYPE_"))
+                                           .findFirst()
+                                           .orElseThrow(() -> new RuntimeException("Account type not found."));
 
         Page<SimpleArticleDTO> response;
         if (accountType.equals("ACCOUNT_TYPE_DOCTOR")) {
@@ -116,5 +116,16 @@ public class ArticleController {
                                                        HttpStatus.OK.value(),
                                                        "Article updated successfully.",
                                                        response));
+    }
+
+    @DeleteMapping("/{articleId}")
+    @Secured({"ACCOUNT_TYPE_DOCTOR", "ACCOUNT_TYPE_ADMINISTRATOR"})
+    public ResponseEntity<RestResponseDTO<ArticleDTO>> deleteArticle(@PathVariable Long articleId,
+                                                                     Authentication authentication) {
+        articleService.deleteArticle(articleId, authentication);
+        return ResponseEntity.ok(new RestResponseDTO<>(HttpStatus.OK,
+                                                       HttpStatus.OK.value(),
+                                                       "Article deleted successfully.",
+                                                       null));
     }
 }

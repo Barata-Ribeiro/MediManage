@@ -13,6 +13,7 @@ import com.barataribeiro.medimanage.repositories.ArticleRepository;
 import com.barataribeiro.medimanage.repositories.CategoryRepository;
 import com.barataribeiro.medimanage.services.ArticleService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ArticleServiceImpl implements ArticleService {
@@ -46,7 +48,8 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional(readOnly = true)
     public ArticleDTO getArticleById(Long articleId) {
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new EntityNotFoundException(Article.class.getSimpleName(), articleId.toString()));
+                                           .orElseThrow(() -> new EntityNotFoundException(Article.class.getSimpleName(),
+                                                                                          articleId.toString()));
         return articleMapper.toDTO(article);
     }
 
@@ -87,22 +90,24 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     public ArticleDTO createArticle(@NotNull ArticleRequestDTO body, Principal principal) {
         Set<Category> categories = body.categories().stream()
-                .map(categoryName -> categoryRepository.findByName(categoryName).orElseGet(() -> {
-                    Category category = Category.builder()
-                            .name(categoryName)
-                            .description(categoryName)
-                            .build();
-                    return categoryRepository.saveAndFlush(category);
-                }))
-                .collect(Collectors.toSet());
+                                       .map(categoryName -> categoryRepository
+                                               .findByName(categoryName)
+                                               .orElseGet(() -> {
+                                                   Category category = Category.builder()
+                                                                               .name(categoryName)
+                                                                               .description(categoryName)
+                                                                               .build();
+                                                   return categoryRepository.saveAndFlush(category);
+                                               }))
+                                       .collect(Collectors.toSet());
 
         Article article = Article.builder()
-                .title(body.title())
-                .subTitle(body.subTitle())
-                .content(body.content())
-                .slug(generateSlug(body.title()))
-                .categories(categories)
-                .build();
+                                 .title(body.title())
+                                 .subTitle(body.subTitle())
+                                 .content(body.content())
+                                 .slug(generateSlug(body.title()))
+                                 .categories(categories)
+                                 .build();
 
         return articleMapper.toDTO(articleRepository.saveAndFlush(article));
     }
@@ -111,7 +116,8 @@ public class ArticleServiceImpl implements ArticleService {
     @Transactional
     public ArticleDTO updateArticle(Long articleId, @NotNull ArticleUpdateRequestDTO body, Principal principal) {
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new EntityNotFoundException(Article.class.getSimpleName(), articleId.toString()));
+                                           .orElseThrow(() -> new EntityNotFoundException(Article.class.getSimpleName(),
+                                                                                          articleId.toString()));
 
         if (body.title() != null && !body.title().trim().isEmpty()) {
             article.setTitle(body.title());
@@ -133,6 +139,27 @@ public class ArticleServiceImpl implements ArticleService {
         article.setWasEdit(true);
 
         return articleMapper.toDTO(articleRepository.saveAndFlush(article));
+    }
+
+    @Override
+    @Transactional
+    public void deleteArticle(Long articleId, @NotNull Authentication authentication) {
+        String accountType = authentication.getAuthorities().stream()
+                                           .map(Object::toString)
+                                           .filter(s -> s.startsWith("ACCOUNT_TYPE_"))
+                                           .findFirst()
+                                           .orElseThrow(() -> new RuntimeException("Account type not found."));
+
+        log.atInfo().log("The user {} with account type {} is trying to delete the article with id: {}.",
+                         authentication.getName(), accountType, articleId);
+
+        if (accountType.equals("ACCOUNT_TYPE_ADMINISTRATOR")) {
+            articleRepository.deleteById(articleId);
+        }
+
+        articleRepository.deleteByIdAndAuthor_Username(articleId, authentication.getName());
+
+        log.atInfo().log("The article with id: {} was deleted successfully.", articleId);
     }
 
     private @NotNull String generateSlug(@NotNull String title) {

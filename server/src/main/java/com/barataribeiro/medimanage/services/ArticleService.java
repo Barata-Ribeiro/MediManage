@@ -24,4 +24,6 @@ public interface ArticleService {
     ArticleDTO createArticle(ArticleRequestDTO body, Principal principal);
 
     ArticleDTO updateArticle(Long articleId, ArticleUpdateRequestDTO body, Principal principal);
+
+    void deleteArticle(Long articleId, Authentication authentication);
 }
