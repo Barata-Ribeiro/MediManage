@@ -152,3 +152,4 @@ export const ARTICLES_GET_ALL_PAGINATED = (
     if (category) url += `&category=${category}`
     return url
 }
+export const ARTICLES_DELETE_BY_ID = (id: number) => `${BACKEND_URL}/api/v1/articles/${id}`
