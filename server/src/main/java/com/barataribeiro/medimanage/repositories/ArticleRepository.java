@@ -24,4 +24,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     @EntityGraph("Article.author.categories")
     Page<Article> findDistinctByCategories_Name(String name, Pageable pageable);
+
+    long deleteByIdAndAuthor_Username(Long id, String username);
 }
