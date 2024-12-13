@@ -1,7 +1,9 @@
 import ArticleDeleteModal from "@/components/modals/article-delete-modal"
 import { SimpleArticle } from "@/interfaces/articles"
 import parseDate from "@/utils/parse-date"
+import Link from "next/link"
 import React from "react"
+import { FaRegEdit } from "react-icons/fa"
 import { twMerge } from "tailwind-merge"
 
 interface ArticleTableRowProps {
@@ -56,7 +58,15 @@ export default function ArticleTableRow(props: Readonly<ArticleTableRowProps>) {
                 )}>
                 <ArticleDeleteModal article={props.article} />
 
-                {/*TODO: ADD MANAGE BUTTON*/}
+                <Link
+                    href={`/dashboard/articles/${props.article.id}/edit`}
+                    aria-label={`Edit ${props.article.title} article`}
+                    title={`Edit ${props.article.title} article`}>
+                    <FaRegEdit
+                        aria-hidden
+                        className="size-4 text-mourning-blue-600 hover:text-mourning-blue-700 active:text-mourning-blue-800"
+                    />
+                </Link>
             </td>
         </tr>
     )
