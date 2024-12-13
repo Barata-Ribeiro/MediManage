@@ -1,4 +1,24 @@
-import { SimpleUser } from "@/interfaces/users"
+import { SimpleDoctor, SimpleUser } from "@/interfaces/users"
+
+interface Article {
+    id: number
+    title: string
+    subTitle: string
+    content: string
+    slug: string
+    mediaUrl: string
+    wasEdit: boolean
+    createdAt: string
+    updatedAt: string
+    author: SimpleDoctor
+    categories: ArticleCategory[]
+}
+
+interface ArticleCategory {
+    id: number
+    name: string
+    description: string
+}
 
 interface SimpleArticle {
     id: number
@@ -20,4 +40,4 @@ interface PaginatedSimpleArticles {
     }
 }
 
-export type { SimpleArticle, PaginatedSimpleArticles }
+export type { Article, ArticleCategory, SimpleArticle, PaginatedSimpleArticles }

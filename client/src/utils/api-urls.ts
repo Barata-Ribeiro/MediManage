@@ -139,6 +139,7 @@ export const NOTICES_PUBLIC_GET_BY_ID = (id: string) => `${BACKEND_URL}/api/v1/n
 export const NOTICES_CREATE = () => `${BACKEND_URL}/api/v1/notices`
 
 // Articles
+export const ARTICLES_GET_PUBLIC_BY_ID = (id: number) => `${BACKEND_URL}/api/v1/articles/public/${id}`
 export const ARTICLES_GET_ALL_PAGINATED = (
     page: number,
     perPage: number,
