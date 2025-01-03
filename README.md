@@ -2,7 +2,7 @@
     <img alt="The main logo of MediManage" width="400" src="client/public/images/medimanage-logo.svg" title="MediManage Logo"/>
 </div>
 
-**MediManage** is a full-stack application designed to streamline the management of small clinics. It provides an intuitive interface for handling patient records, scheduling appointments, and overseeing other essential administrative tasks. With its robust features and user-friendly design, MediManage ensures efficient and organized clinic operations.
+**MediManage** is a full-stack application designed to streamline the management of small clinics. It provides an intuitive interface for handling patient records, scheduling appointments, and overseeing other essential administrative tasks. With its robust features and user-friendly design, MediManage ensures efficient and organized clinic operations. This project was developed with a focus on Java Spring Boot studies. Therefore, the Front End may not be fully implemented.
 
 ## 📚 Features
 
