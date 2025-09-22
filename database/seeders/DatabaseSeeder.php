@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         if (App::environment('local', 'testing', 'staging')) {
-            $this->call([UserSeeder::class]);
+            $this->call([RoleSeeder::class, UserSeeder::class]);
         }
     }
 }
