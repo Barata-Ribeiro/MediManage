@@ -1,7 +1,9 @@
 <?php
 
-Route::middleware(['auth', 'role:Super Admin'])->group(function () {
-    Route::get('/admin/test', function () {
-        return response()->json(['status' => 'You are an admin.', 'timestamp' => now()->toDateTimeString()]);
+use App\Http\Controllers\Admin\RoleController;
+
+Route::middleware(['auth', 'role:Super Admin'])->prefix('admin')->group(function () {
+    Route::prefix('roles')->group(function () {
+        Route::get('/', [RoleController::class, 'index'])->name('admin.roles.index');
     });
 });
