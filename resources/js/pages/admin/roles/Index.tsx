@@ -1,4 +1,6 @@
-import AppLayout from '@/layouts/app-layout';
+import { DataTable } from '@/components/data-table';
+import Layout from '@/layouts/app-layout';
+import { columns } from '@/pages/admin/roles/column';
 import roles from '@/routes/admin/roles';
 import { BreadcrumbItem } from '@/types';
 import { PaginationRoles } from '@/types/admin/roles';
@@ -13,11 +15,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Index({ roles }: Readonly<{ roles: PaginationRoles }>) {
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <Layout breadcrumbs={breadcrumbs}>
             <Head title="Roles" />
 
-            {/*TODO: Implement role table*/}
-            {JSON.stringify(roles)}
-        </AppLayout>
+            <DataTable columns={columns} data={roles.data} pagination={roles} />
+        </Layout>
     );
 }
