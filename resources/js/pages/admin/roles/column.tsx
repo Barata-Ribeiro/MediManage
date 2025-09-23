@@ -12,6 +12,7 @@ import roles from '@/routes/admin/roles';
 import { Role } from '@/types/admin/roles';
 import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
+import { format } from 'date-fns';
 import { MoreHorizontal } from 'lucide-react';
 
 export const columns: ColumnDef<Role>[] = [
@@ -33,6 +34,7 @@ export const columns: ColumnDef<Role>[] = [
     {
         accessorKey: 'created_at',
         header: ({ column }) => <DataTableColumnHeader column={column} title="Created At" />,
+        cell: ({ row }) => format(row.original.created_at, 'PPpp'),
         enableSorting: true,
     },
     {
