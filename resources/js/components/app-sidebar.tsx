@@ -11,6 +11,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import roles from '@/routes/admin/roles';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { BriefcaseBusinessIcon, FolderIcon, LayoutGrid, NotebookIcon } from 'lucide-react';
@@ -24,7 +25,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Roles',
-        href: dashboard(),
+        href: roles.index(),
         icon: NotebookIcon,
     },
 ];

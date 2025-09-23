@@ -11,7 +11,6 @@ import { Link, usePage } from '@inertiajs/react';
 export function NavMain({ items = [] }: Readonly<{ items: NavItem[] }>) {
     const { props, url } = usePage<SharedData>();
     const auth = props.auth;
-
     const isSuperAdmin = auth.roles.includes('Super Admin');
 
     return (
@@ -19,7 +18,7 @@ export function NavMain({ items = [] }: Readonly<{ items: NavItem[] }>) {
             <SidebarGroupLabel>Platform</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item) => {
-                    if (isSuperAdmin && item.title === 'Roles') return null;
+                    if (!isSuperAdmin && item.title === 'Roles') return null;
 
                     return (
                         <SidebarMenuItem key={item.title}>
