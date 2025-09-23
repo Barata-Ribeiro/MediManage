@@ -3,17 +3,47 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
     //
-    public function index()
+    public function index(Request $request)
     {
-        $roles = Role::orderBy('id', 'DESC')->paginate(10);
+        $perPage = (int)$request->input('per_page', 10);
+        $search = $request->input('search');
+        $sortBy = $request->input('sort_by', 'id');
+        $sortDir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+
+        $allowedSorts = ['id', 'name', 'guard_name', 'created_at'];
+        if (!in_array($sortBy, $allowedSorts)) {
+            $sortBy = 'id';
+        }
+
+        $query = Role::query();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('guard_name', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $roles = $query->orderBy($sortBy, $sortDir)
+            ->paginate($perPage)
+            ->withQueryString();
+
         return Inertia::render('admin/roles/Index', [
             'roles' => $roles
+        ]);
+    }
+
+    public function edit(Role $role)
+    {
+        return Inertia::render('admin/roles/Edit', [
+            'role' => $role
         ]);
     }
 }
