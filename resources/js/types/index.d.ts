@@ -3,6 +3,8 @@ import { LucideIcon } from 'lucide-react';
 
 export interface Auth {
     user: User;
+    roles: string[];
+    permissions: string[];
 }
 
 export interface BreadcrumbItem {
@@ -35,6 +37,7 @@ export interface User {
     name: string;
     email: string;
     avatar?: string;
+    bio?: string;
     email_verified_at: string | null;
     two_factor_enabled?: boolean;
     created_at: string;
