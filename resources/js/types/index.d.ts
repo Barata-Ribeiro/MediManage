@@ -1,3 +1,4 @@
+import { User } from '@/types/admin/users';
 import { InertiaLinkProps } from '@inertiajs/react';
 import { LucideIcon } from 'lucide-react';
 
@@ -53,17 +54,4 @@ export interface PaginationMeta<T> {
     prev_page_url: string | null;
     to: number;
     total: number;
-}
-
-export interface User {
-    id: number;
-    name: string;
-    email: string;
-    avatar?: string;
-    bio?: string;
-    email_verified_at: string | null;
-    two_factor_enabled?: boolean;
-    created_at: string;
-    updated_at: string;
-    [key: string]: unknown; // This allows for additional properties...
 }
