@@ -18,7 +18,7 @@ import { useEffect, useRef, useState } from 'react';
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: PaginationMeta<TData[]>['data'];
-    pagination: PaginationMeta<TData>;
+    pagination: PaginationMeta<TData[]>;
 }
 
 export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly<DataTableProps<TData, TValue>>) {
