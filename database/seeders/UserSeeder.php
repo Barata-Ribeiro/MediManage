@@ -15,14 +15,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         try {
-            User::firstOrCreate(
-                ['email' => config('app.admin_email')],
-                [
-                    'name' => config('app.admin_name'),
-                    'email' => config('app.admin_email'),
-                    'password' => config('app.admin_password'),
-                ]
-            )->assignRole('Super Admin');
+            User::factory()->count(50)->create();
         } catch (Exception $e) {
             Log::error('Error seeding users!', ['error' => $e->getMessage()]);
         }
