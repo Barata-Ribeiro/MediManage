@@ -31,6 +31,8 @@ class RoleSeeder extends Seeder
                 'Attendant' => ['patient_info', 'appointment', 'prescription'],
                 // Patient can view/list their own info, appointments and prescriptions/records
                 'Patient' => ['patient_info', 'appointment', 'prescription', 'medical_record'],
+                // Other Staff have no special permissions by default
+                'Other Staff' => [],
                 // Banned: no permissions
                 'Banned' => [],
             ];
