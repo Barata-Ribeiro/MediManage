@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\RoleRequest;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
@@ -45,5 +46,13 @@ class RoleController extends Controller
         return Inertia::render('admin/roles/Edit', [
             'role' => $role
         ]);
+    }
+
+    public function update(RoleRequest $request, Role $role)
+    {
+        $data = $request->validated();
+        $role->update($data);
+
+        return to_route('admin.roles.index')->with('success', 'Role updated successfully.');
     }
 }
