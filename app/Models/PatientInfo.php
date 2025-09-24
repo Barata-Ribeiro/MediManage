@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Database\Factories\PatientInfoFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -43,6 +45,7 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, \App\Models\Prescription> $prescriptions
  * @property-read int|null $prescriptions_count
  * @property-read \App\Models\User|null $user
+ * @method static \Database\Factories\PatientInfoFactory factory($count = null, $state = [])
  * @method static Builder<static>|PatientInfo newModelQuery()
  * @method static Builder<static>|PatientInfo newQuery()
  * @method static Builder<static>|PatientInfo query()
@@ -73,6 +76,12 @@ use Illuminate\Support\Carbon;
  */
 class PatientInfo extends Model
 {
+
+    /**
+     * @use HasFactory<PatientInfoFactory>
+     */
+    use HasFactory;
+
     protected $table = 'patient_info';
 
     protected $fillable = [
