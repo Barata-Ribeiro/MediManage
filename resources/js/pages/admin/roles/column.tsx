@@ -41,6 +41,10 @@ export const columns: ColumnDef<Role>[] = [
         id: 'actions',
         cell: ({ row }) => {
             const role = row.original;
+            const disabled = role.name === 'Super Admin';
+
+            const editLink = disabled ? '' : roles.edit(role.id);
+            const disabledStyle = disabled ? 'opacity-50 pointer-events-none' : '';
 
             return (
                 <DropdownMenu>
@@ -56,12 +60,12 @@ export const columns: ColumnDef<Role>[] = [
                             Copy role Name
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                            <Link href={roles.edit(role.id)} prefetch>
+                        <DropdownMenuItem className={disabledStyle} asChild>
+                            <Link href={editLink} prefetch>
                                 Edit
                             </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                        <DropdownMenuItem className={disabledStyle}>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );
