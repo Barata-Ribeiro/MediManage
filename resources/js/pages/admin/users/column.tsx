@@ -8,8 +8,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Role } from '@/types/admin/roles';
+import users from '@/routes/admin/users';
 import { User } from '@/types/admin/users';
+import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { MoreHorizontal } from 'lucide-react';
@@ -34,8 +35,8 @@ export const columns: ColumnDef<User>[] = [
         accessorKey: 'roles',
         header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
         cell: ({ row }) => {
-            const roles = (row.original.roles as Role[]) ?? [];
-            return roles.map((role: Role) => role.name).join(', ');
+            const roles = row.original.roles;
+            return roles?.map((role) => role.name).join(', ');
         },
         enableSorting: true,
     },
@@ -73,7 +74,9 @@ export const columns: ColumnDef<User>[] = [
                             Copy email
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>View</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href={users.show(user.id)}>View</Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem>Edit</DropdownMenuItem>
                         <DropdownMenuItem>Delete</DropdownMenuItem>
                     </DropdownMenuContent>

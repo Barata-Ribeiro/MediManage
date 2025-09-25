@@ -5,14 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserAccountRequest;
 use App\Models\User;
+use Auth;
 use DB;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Log;
 
 class UserManagementController extends Controller
 {
     public function index(Request $request)
     {
+        Log::info('User Management: Viewed user list', ['action_user_id' => Auth::id()]);
+
         $perPage = (int)$request->input('per_page', 10);
         $search = $request->search;
         $sortBy = $request->input('sort_by', 'id');
@@ -52,7 +56,8 @@ class UserManagementController extends Controller
 
     public function show(User $user)
     {
-        $user->load('roles', 'permissions');
+        Log::info('User Management: Viewed user details', ['action_user_id' => Auth::id(), 'viewed_user_id' => $user->id]);
+        $user->load('roles.permissions');
         return Inertia::render('admin/users/Show', [
             'user' => $user
         ]);
@@ -60,7 +65,8 @@ class UserManagementController extends Controller
 
     public function edit(User $user)
     {
-        $user->load('roles', 'permissions');
+        Log::info('User Management: Viewed user edit form', ['action_user_id' => Auth::id(), 'edited_user_id' => $user->id]);
+        $user->load('roles');
         return Inertia::render('admin/users/Edit', [
             'user' => $user
         ]);
@@ -76,6 +82,8 @@ class UserManagementController extends Controller
         } else {
             $user->syncRoles([]);
         }
+
+        Log::info('User Management: Updated user', ['action_user_id' => Auth::id(), 'updated_user_id' => $user->id]);
 
         return to_route('admin.users.edit', $user)->with('success', 'User updated successfully.');
     }
