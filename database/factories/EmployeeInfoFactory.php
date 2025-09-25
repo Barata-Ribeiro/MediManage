@@ -60,11 +60,11 @@ class EmployeeInfoFactory extends Factory
 
         return $this->state(fn(array $attributes) => [
             'position' => $mappedPosition,
-            'registration_number' => $mappedPosition === 'Doctor' ? fake()->bothify('??########') : '',
-            'registration_origin' => $mappedPosition === 'Doctor' ? fake()->company() : '',
-            'specialization' => $mappedPosition === 'Doctor' ? fake()->randomElement(['General Practitioner', 'Surgeon', 'Pediatrician', 'Cardiologist', 'Dermatologist', 'Pneumologist']) : '',
-            'license_number' => $mappedPosition === 'Doctor' ? fake()->bothify('??########') : '',
-            'license_expiry_date' => $mappedPosition === 'Doctor' ? fake()->dateTimeBetween('+1 years', '+10 years')->format('Y-m-d') : '',
+            'registration_number' => $mappedPosition === 'Doctor' ? fake()->bothify('??########') : null,
+            'registration_origin' => $mappedPosition === 'Doctor' ? fake()->company() : null,
+            'specialization' => $mappedPosition === 'Doctor' ? fake()->randomElement(['General Practitioner', 'Surgeon', 'Pediatrician', 'Cardiologist', 'Dermatologist', 'Pneumologist']) : null,
+            'license_number' => $mappedPosition === 'Doctor' ? fake()->bothify('LIC-########') : null,
+            'license_expiry_date' => $mappedPosition === 'Doctor' ? fake()->dateTimeBetween('+1 years', '+10 years')->format('Y-m-d') : null,
         ]);
     }
 }

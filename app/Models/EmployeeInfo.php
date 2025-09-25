@@ -21,11 +21,11 @@ use Illuminate\Support\Carbon;
  * @property string $date_of_birth
  * @property string $phone_number
  * @property string $address
- * @property string $registration_number
- * @property string $registration_origin
- * @property string $specialization
- * @property string $license_number
- * @property string $license_expiry_date
+ * @property string|null $registration_number
+ * @property string|null $registration_origin
+ * @property string|null $specialization
+ * @property string|null $license_number
+ * @property string|null $license_expiry_date
  * @property string $position
  * @property int $is_active
  * @property string $hire_date

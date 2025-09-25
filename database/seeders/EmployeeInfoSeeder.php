@@ -16,9 +16,12 @@ class EmployeeInfoSeeder extends Seeder
         $users = User::role(['Doctor', 'Attendant', 'Manager', 'Other Staff'])->get();
 
         foreach ($users as $user) {
-            EmployeeInfo::factory()->forRole($user->getRoleNames()->first())->create([
-                'user_id' => $user->id,
-            ]);
+            $employee = EmployeeInfo::factory()
+                ->forRole($user->getRoleNames()->first())
+                ->create(['user_id' => $user->id]);
+
+            $user->employee_info_id = $employee->id;
+            $user->save();
         }
     }
 }

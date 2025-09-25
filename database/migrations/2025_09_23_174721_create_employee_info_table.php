@@ -22,11 +22,11 @@ return new class extends Migration {
             $table->string('address');
 
             // Medical Professional Details
-            $table->string('registration_number');
-            $table->string('registration_origin');
-            $table->string('specialization');
-            $table->string('license_number');
-            $table->date('license_expiry_date');
+            $table->string('registration_number')->nullable();
+            $table->string('registration_origin')->nullable();
+            $table->string('specialization')->nullable();
+            $table->string('license_number')->nullable();
+            $table->date('license_expiry_date')->nullable();
 
             // Other Staff Details
             $table->string('position');
