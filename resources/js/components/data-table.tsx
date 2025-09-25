@@ -1,10 +1,11 @@
 import { DataTablePagination } from '@/components/data-table-pagination';
 import { DataTableViewOptions } from '@/components/data-table-view-options';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { buildParams } from '@/lib/utils';
 import { PaginationMeta } from '@/types';
-import { router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import {
     ColumnDef,
     flexRender,
@@ -13,6 +14,7 @@ import {
     useReactTable,
     VisibilityState,
 } from '@tanstack/react-table';
+import { TrashIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 interface DataTableProps<TData, TValue> {
@@ -72,7 +74,7 @@ export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly
 
         window.clearTimeout(searchDebounce.current);
         searchDebounce.current = window.setTimeout(() => {
-            router.get(pagination.path, buildParams({ search: search || undefined, page: 1 }), {
+            router.get(pagination.path, buildParams({ search: search ?? undefined }), {
                 preserveState: true,
                 replace: true,
             });
@@ -95,15 +97,23 @@ export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly
     });
 
     return (
-        <div className="mx-auto w-full flex-col space-y-4 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full flex-col space-y-4">
             <div className="flex items-center py-4">
-                <Input
-                    type="search"
-                    placeholder="Search..."
-                    value={search}
-                    onChange={(event) => setSearch(event.target.value)}
-                    className="max-w-sm"
-                />
+                <div className="inline-flex w-full flex-1 items-center gap-x-2">
+                    <Input
+                        type="search"
+                        placeholder="Search..."
+                        value={search}
+                        onChange={(event) => setSearch(event.target.value)}
+                        className="max-w-sm"
+                    />
+                    <Button variant="outline" size="icon" aria-label="Clear Filters" title="Clear Filters" asChild>
+                        <Link href={pagination.path} prefetch>
+                            <TrashIcon aria-hidden size={16} />
+                        </Link>
+                    </Button>
+                </div>
+
                 <DataTableViewOptions table={table} />
             </div>
 

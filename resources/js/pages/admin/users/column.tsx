@@ -1,10 +1,19 @@
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
+import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Role } from '@/types/admin/roles';
 import { User } from '@/types/admin/users';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
+import { MoreHorizontal } from 'lucide-react';
 
-// TODO: Add actions column with view, edit and delete buttons
 export const columns: ColumnDef<User>[] = [
     {
         accessorKey: 'id',
@@ -22,7 +31,7 @@ export const columns: ColumnDef<User>[] = [
         enableSorting: true,
     },
     {
-        accessorKey: 'role',
+        accessorKey: 'roles',
         header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
         cell: ({ row }) => {
             const roles = (row.original.roles as Role[]) ?? [];
@@ -41,5 +50,35 @@ export const columns: ColumnDef<User>[] = [
         header: ({ column }) => <DataTableColumnHeader column={column} title="Updated At" />,
         cell: ({ row }) => format(row.original.updated_at, 'PPpp'),
         enableSorting: true,
+    },
+    {
+        id: 'actions',
+        cell: ({ row }) => {
+            const user = row.original;
+
+            return (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(String(user.name))}>
+                            Copy username
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(String(user.email))}>
+                            Copy email
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>View</DropdownMenuItem>
+                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            );
+        },
     },
 ];
