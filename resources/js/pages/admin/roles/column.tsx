@@ -27,6 +27,11 @@ export const columns: ColumnDef<Role>[] = [
         enableSorting: true,
     },
     {
+        accessorKey: 'users_count',
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Users" />,
+        enableSorting: true,
+    },
+    {
         accessorKey: 'guard_name',
         header: ({ column }) => <DataTableColumnHeader column={column} title="Guard Name" />,
         enableSorting: true,
@@ -35,6 +40,12 @@ export const columns: ColumnDef<Role>[] = [
         accessorKey: 'created_at',
         header: ({ column }) => <DataTableColumnHeader column={column} title="Created At" />,
         cell: ({ row }) => format(row.original.created_at, 'PPpp'),
+        enableSorting: true,
+    },
+    {
+        accessorKey: 'updated_at',
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Updated At" />,
+        cell: ({ row }) => format(row.original.updated_at, 'PPpp'),
         enableSorting: true,
     },
     {

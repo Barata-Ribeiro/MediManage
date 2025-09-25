@@ -18,12 +18,12 @@ class RoleController extends Controller
         $sortBy = $request->input('sort_by', 'id');
         $sortDir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
 
-        $allowedSorts = ['id', 'name', 'guard_name', 'created_at'];
+        $allowedSorts = ['id', 'name', 'guard_name', 'created_at', 'updated_at', 'users_count'];
         if (!in_array($sortBy, $allowedSorts)) {
             $sortBy = 'id';
         }
 
-        $query = Role::query();
+        $query = Role::withCount('users as users_count');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
