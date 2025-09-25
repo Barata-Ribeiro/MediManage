@@ -5,16 +5,16 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserAccountRequest;
 use App\Models\User;
+use DB;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class UserManagementController extends Controller
 {
-    //
     public function index(Request $request)
     {
         $perPage = (int)$request->input('per_page', 10);
-        $search = $request->input('search');
+        $search = $request->search;
         $sortBy = $request->input('sort_by', 'id');
         $sortDir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
 
@@ -23,32 +23,27 @@ class UserManagementController extends Controller
             $sortBy = 'id';
         }
 
-        $query = User::with('roles');
+        $query = User::with('roles')->select('users.*');
+
+        $query->when($request->filled('search'), fn($qr) => $qr->whereLike('users.name', "%$search%")
+            ->orWhereLike('users.email', "%$search%")
+            ->orWhereHas('roles', fn($q) => $q->whereLike('roles.name', "%$search%")));
 
         if ($sortBy === 'roles') {
-            $query = $query
-                ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-                ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
-                ->select('users.*')
-                ->groupBy('users.id')
-                ->orderBy('roles.name', $sortDir);
+            $rolesSub = DB::table('model_has_roles')
+                ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
+                ->select('model_has_roles.model_id', DB::raw("GROUP_CONCAT(roles.name ORDER BY roles.name SEPARATOR ', ') as roles_names"))
+                ->where('model_has_roles.model_type', User::class)
+                ->groupBy('model_has_roles.model_id');
+
+            $query->leftJoinSub($rolesSub, 'r', fn($join) => $join->on('users.id', '=', 'r.model_id'));
+
+            $query->orderBy(DB::raw('COALESCE(r.roles_names, "")'), $sortDir);
         } else {
-            $query = $query->orderBy($sortBy, $sortDir);
+            $query->orderBy("users.$sortBy", $sortDir);
         }
 
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('users.name', 'LIKE', "%{$search}%")
-                    ->orWhere('users.email', 'LIKE', "%{$search}%")
-                    ->orWhereHas('roles', function ($roleQuery) use ($search) {
-                        $roleQuery->where('roles.name', 'LIKE', "%{$search}%");
-                    });
-            });
-        }
-
-        $users = $query->orderBy($sortBy, $sortDir)
-            ->paginate($perPage)
-            ->withQueryString();
+        $users = $query->paginate($perPage)->withQueryString();
 
         return Inertia::render('admin/users/Index', [
             'users' => $users

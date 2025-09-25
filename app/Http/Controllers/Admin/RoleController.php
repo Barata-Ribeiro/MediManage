@@ -14,7 +14,7 @@ class RoleController extends Controller
     public function index(Request $request)
     {
         $perPage = (int)$request->input('per_page', 10);
-        $search = $request->input('search');
+        $search = $request->search;
         $sortBy = $request->input('sort_by', 'id');
         $sortDir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
 
@@ -23,16 +23,10 @@ class RoleController extends Controller
             $sortBy = 'id';
         }
 
-        $query = Role::withCount('users as users_count');
-
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'LIKE', "%{$search}%")
-                    ->orWhere('guard_name', 'LIKE', "%{$search}%");
-            });
-        }
-
-        $roles = $query->orderBy($sortBy, $sortDir)
+        $roles = Role::withCount('users as users_count')
+            ->when($request->filled('search'), fn($query) => $query->whereLike('name', "%{$search}%")
+                ->orWhereLike('guard_name', "%{$search}%"))
+            ->orderBy($sortBy, $sortDir)
             ->paginate($perPage)
             ->withQueryString();
 
