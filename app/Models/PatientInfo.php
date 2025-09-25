@@ -16,6 +16,7 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property int|null $user_id
+ * @property int|null $medical_record_id
  * @property string $first_name
  * @property string $last_name
  * @property string $gender
@@ -36,7 +37,6 @@ use Illuminate\Support\Carbon;
  * @property string|null $family_medical_history
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property int|null $medical_record_id
  * @property-read Collection<int, \App\Models\Appointment> $appointments
  * @property-read int|null $appointments_count
  * @property-read Collection<int, \App\Models\MedicalRecordEntries> $medicalRecordEntries

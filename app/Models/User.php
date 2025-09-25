@@ -25,16 +25,16 @@ use Spatie\Permission\Traits\HasRoles;
  * @property int $id
  * @property string $name
  * @property string $email
+ * @property string|null $avatar
+ * @property string|null $bio
  * @property Carbon|null $email_verified_at
  * @property string $password
- * @property string|null $remember_token
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
  * @property string|null $two_factor_secret
  * @property string|null $two_factor_recovery_codes
  * @property string|null $two_factor_confirmed_at
- * @property string|null $avatar
- * @property string|null $bio
+ * @property string|null $remember_token
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property int|null $patient_info_id
  * @property int|null $employee_info_id
  * @property-read Collection<int, Audit> $audits
