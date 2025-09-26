@@ -48,7 +48,13 @@ export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly
     useEffect(() => {
         if (!pagination.path) return;
 
+        const params = new URLSearchParams(window.location.search);
+        const currentSortBy = params.get('sort_by');
+        const currentSortDir = params.get('sort_dir');
+
         if (!sorting || sorting.length === 0) {
+            if (!currentSortBy && !currentSortDir) return;
+
             router.get(pagination.path, buildParams({ sort_by: undefined, sort_dir: undefined }), {
                 preserveState: true,
                 replace: true,
@@ -60,17 +66,24 @@ export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly
         const sortBy = String(sort.id);
         const sortDir = sort.desc ? 'desc' : 'asc';
 
+        if (currentSortBy === sortBy && currentSortDir === sortDir) return;
+
         if (sortBy) {
             router.get(pagination.path, buildParams({ sort_by: sortBy, sort_dir: sortDir }), {
                 preserveState: true,
                 replace: true,
             });
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [sorting]);
+    }, [sorting, pagination.path]);
 
     useEffect(() => {
         if (!pagination.path) return;
+
+        window.clearTimeout(searchDebounce.current);
+        const params = new URLSearchParams(window.location.search);
+        const currentSearch = params.get('search') ?? '';
+
+        if (currentSearch === (search ?? '')) return;
 
         window.clearTimeout(searchDebounce.current);
         searchDebounce.current = window.setTimeout(() => {

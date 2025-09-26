@@ -4,15 +4,21 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\RoleRequest;
+use Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Log;
 use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
-    //
+    /**
+     * Display a listing of the resource.
+     */
     public function index(Request $request)
     {
+        Log::info('Role Management: Viewed role list', ['action_user_id' => Auth::id()]);
+
         $perPage = (int)$request->input('per_page', 10);
         $search = $request->search;
         $sortBy = $request->input('sort_by', 'id');
@@ -24,8 +30,8 @@ class RoleController extends Controller
         }
 
         $roles = Role::withCount('users as users_count')
-            ->when($request->filled('search'), fn($query) => $query->whereLike('name', "%{$search}%")
-                ->orWhereLike('guard_name', "%{$search}%"))
+            ->when($request->filled('search'), fn($query) => $query->whereLike('name', "%$search%")
+                ->orWhereLike('guard_name', "%$search%"))
             ->orderBy($sortBy, $sortDir)
             ->paginate($perPage)
             ->withQueryString();
@@ -35,17 +41,27 @@ class RoleController extends Controller
         ]);
     }
 
+    /**
+     * Show the form for editing the specified resource.
+     */
     public function edit(Role $role)
     {
+        Log::info('Role Management: Viewed role edit form', ['action_user_id' => Auth::id(), 'edited_role_id' => $role->id]);
         return Inertia::render('admin/roles/Edit', [
             'role' => $role
         ]);
     }
 
+    /**
+     * Update the specified resource in storage.
+     * @todo Implement permission syncing
+     */
     public function update(RoleRequest $request, Role $role)
     {
         $data = $request->validated();
         $role->update($data);
+
+        Log::info('Role Management: Updated role', ['action_user_id' => Auth::id(), 'updated_role_id' => $role->id]);
 
         return to_route('admin.roles.index')->with('success', 'Role updated successfully.');
     }
