@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import backgroundImage from '../../../public/images/not-found.jpg';
 
-export default function ErrorPage({ status }: { status: number }) {
+export default function ErrorPage({ status }: Readonly<{ status: number }>) {
     const title = {
         503: 'Service Unavailable',
         500: 'Server Error',

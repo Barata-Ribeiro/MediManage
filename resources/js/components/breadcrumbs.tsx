@@ -12,9 +12,9 @@ import { Fragment } from 'react';
 
 export function Breadcrumbs({
     breadcrumbs,
-}: {
+}: Readonly<{
     breadcrumbs: BreadcrumbItemType[];
-}) {
+}>) {
     return (
         <>
             {breadcrumbs.length > 0 && (
@@ -26,14 +26,10 @@ export function Breadcrumbs({
                                 <Fragment key={index}>
                                     <BreadcrumbItem>
                                         {isLast ? (
-                                            <BreadcrumbPage>
-                                                {item.title}
-                                            </BreadcrumbPage>
+                                            <BreadcrumbPage>{item.title}</BreadcrumbPage>
                                         ) : (
                                             <BreadcrumbLink asChild>
-                                                <Link href={item.href}>
-                                                    {item.title}
-                                                </Link>
+                                                <Link href={item.href}>{item.title}</Link>
                                             </BreadcrumbLink>
                                         )}
                                     </BreadcrumbItem>

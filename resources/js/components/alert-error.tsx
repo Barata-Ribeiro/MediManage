@@ -4,10 +4,10 @@ import { AlertCircleIcon } from 'lucide-react';
 export default function AlertError({
     errors,
     title,
-}: {
+}: Readonly<{
     errors: string[];
     title?: string;
-}) {
+}>) {
     return (
         <Alert variant="destructive">
             <AlertCircleIcon />
