@@ -1,4 +1,5 @@
 import UserManagementController from '@/actions/App/Http/Controllers/Admin/UserManagementController';
+import DeleteUser from '@/components/admin/delete-user';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -117,7 +118,13 @@ export default function Show({ user }: Readonly<{ user: User }>) {
                             </Link>
                         </Button>
 
-                        <Button>Send message</Button>
+                        <Button asChild>
+                            <Link href={UserManagementController.edit(user.id).url} prefetch>
+                                Edit
+                            </Link>
+                        </Button>
+
+                        <DeleteUser user={user} />
                     </CardFooter>
                 </Card>
 

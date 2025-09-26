@@ -15,5 +15,6 @@ Route::middleware(['auth', 'role:Super Admin'])->prefix('admin')->group(function
         Route::get('/{user}', [UserManagementController::class, 'show'])->name('admin.users.show');
         Route::get('/{user}/edit', [UserManagementController::class, 'edit'])->name('admin.users.edit');
         Route::patch('/{user}', [UserManagementController::class, 'update'])->name('admin.users.update');
+        Route::delete('/{user}', [UserManagementController::class, 'destroy'])->name('admin.users.destroy');
     });
 });

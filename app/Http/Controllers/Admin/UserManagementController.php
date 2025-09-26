@@ -13,6 +13,9 @@ use Log;
 
 class UserManagementController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index(Request $request)
     {
         Log::info('User Management: Viewed user list', ['action_user_id' => Auth::id()]);
@@ -54,6 +57,9 @@ class UserManagementController extends Controller
         ]);
     }
 
+    /**
+     * Display the specified resource.
+     */
     public function show(User $user)
     {
         Log::info('User Management: Viewed user details', ['action_user_id' => Auth::id(), 'viewed_user_id' => $user->id]);
@@ -63,6 +69,9 @@ class UserManagementController extends Controller
         ]);
     }
 
+    /**
+     * Show the form for editing the specified resource.
+     */
     public function edit(User $user)
     {
         Log::info('User Management: Viewed user edit form', ['action_user_id' => Auth::id(), 'edited_user_id' => $user->id]);
@@ -72,6 +81,9 @@ class UserManagementController extends Controller
         ]);
     }
 
+    /**
+     * Update the specified resource in storage.
+     */
     public function update(UserAccountRequest $request, User $user)
     {
         $data = $request->validated();
@@ -86,5 +98,23 @@ class UserManagementController extends Controller
         Log::info('User Management: Updated user', ['action_user_id' => Auth::id(), 'updated_user_id' => $user->id]);
 
         return to_route('admin.users.edit', $user)->with('success', 'User updated successfully.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Request $request, User $user)
+    {
+        $request->validate([
+            'password' => ['required', 'current_password'],
+        ]);
+
+        if (Auth::id() === $user->id) {
+            return to_route('admin.users.index')->with('error', 'You cannot delete your own account.');
+        }
+
+        $user->delete();
+        Log::info('User Management: Deleted user', ['action_user_id' => Auth::id(), 'deleted_user_id' => $user->id]);
+        return to_route('admin.users.index')->with('success', 'User deleted successfully.');
     }
 }

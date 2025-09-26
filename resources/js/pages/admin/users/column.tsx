@@ -78,7 +78,6 @@ export const columns: ColumnDef<User>[] = [
                             <Link href={users.show(user.id)}>View</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );
