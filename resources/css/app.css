@@ -172,3 +172,7 @@
         @apply bg-background text-foreground;
     }
 }
+
+@utility container {
+    @apply mx-auto px-4 sm:px-2 lg:px-8;
+}
