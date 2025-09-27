@@ -23,7 +23,10 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->index(['patient_info_id', 'employee_info_id']);
-            $table->fullText('prescription_details');
+
+            if (DB::getDriverName() === 'mysql' || DB::getDriverName() === 'pgsql') {
+                $table->fullText('prescription_details');
+            }
         });
     }
 

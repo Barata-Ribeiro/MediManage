@@ -19,7 +19,9 @@ return new class extends Migration {
 
             $table->timestamps();
 
-            $table->fullText('medical_notes');
+            if (DB::getDriverName() === 'mysql' || DB::getDriverName() === 'pgsql') {
+                $table->fullText('medical_notes');
+            }
         });
     }
 
