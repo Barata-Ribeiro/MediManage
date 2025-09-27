@@ -5,10 +5,11 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import medicalRecords from '@/routes/medicalRecords';
 import prescriptions from '@/routes/prescriptions';
 import { type NavItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { PillIcon } from 'lucide-react';
+import { ClipboardListIcon, PillIcon } from 'lucide-react';
 
 export function NavDoctor() {
     const { props, url } = usePage<SharedData>();
@@ -24,6 +25,7 @@ export function NavDoctor() {
             href: prescriptions.index(auth.user.employee_info_id),
             icon: PillIcon,
         },
+        { title: 'Medical Records', href: medicalRecords.index(), icon: ClipboardListIcon },
     ];
 
     return (
