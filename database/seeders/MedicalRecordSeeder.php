@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\MedicalRecord;
+use App\Models\PatientInfo;
 use Illuminate\Database\Seeder;
 
 class MedicalRecordSeeder extends Seeder
@@ -12,6 +13,6 @@ class MedicalRecordSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        PatientInfo::all()->each(fn($patient) => MedicalRecord::factory()->count(1)->create(['patient_info_id' => $patient->id]));
     }
 }

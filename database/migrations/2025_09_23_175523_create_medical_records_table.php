@@ -18,6 +18,8 @@ return new class extends Migration {
             $table->text('medical_notes')->nullable();
 
             $table->timestamps();
+
+            $table->fullText('medical_notes');
         });
     }
 
