@@ -2,8 +2,13 @@
 
 namespace App\Models;
 
+use Database\Factories\PrescriptionFactory;
+use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -12,25 +17,31 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $prescription_details
  * @property string $date_issued
  * @property string|null $date_expires
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property-read \App\Models\EmployeeInfo $employeeInfo
  * @property-read \App\Models\PatientInfo $patientInfo
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prescription newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prescription newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prescription query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prescription whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prescription whereDateExpires($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prescription whereDateIssued($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prescription whereEmployeeInfoId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prescription whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prescription wherePatientInfoId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prescription wherePrescriptionDetails($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Prescription whereUpdatedAt($value)
- * @mixin \Eloquent
+ * @method static \Database\Factories\PrescriptionFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Prescription newModelQuery()
+ * @method static Builder<static>|Prescription newQuery()
+ * @method static Builder<static>|Prescription query()
+ * @method static Builder<static>|Prescription whereCreatedAt($value)
+ * @method static Builder<static>|Prescription whereDateExpires($value)
+ * @method static Builder<static>|Prescription whereDateIssued($value)
+ * @method static Builder<static>|Prescription whereEmployeeInfoId($value)
+ * @method static Builder<static>|Prescription whereId($value)
+ * @method static Builder<static>|Prescription wherePatientInfoId($value)
+ * @method static Builder<static>|Prescription wherePrescriptionDetails($value)
+ * @method static Builder<static>|Prescription whereUpdatedAt($value)
+ * @mixin Eloquent
  */
 class Prescription extends Model
 {
+    /**
+     * @use HasFactory<PrescriptionFactory>
+     */
+    use HasFactory;
+
     protected $table = 'prescriptions';
 
     protected $fillable = [

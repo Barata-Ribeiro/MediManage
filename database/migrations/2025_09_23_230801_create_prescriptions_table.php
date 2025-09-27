@@ -14,13 +14,16 @@ return new class extends Migration {
             $table->id();
 
             $table->foreignId('patient_info_id')->constrained('patient_info')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId('employee_info_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('employee_info_id')->constrained('employee_info')->cascadeOnUpdate()->cascadeOnDelete();
 
             $table->text('prescription_details');
             $table->date('date_issued');
             $table->date('date_expires')->nullable();
 
             $table->timestamps();
+
+            $table->index(['patient_info_id', 'employee_info_id']);
+            $table->fullText('prescription_details');
         });
     }
 
