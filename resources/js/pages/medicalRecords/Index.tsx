@@ -1,4 +1,4 @@
-import medicalRecordController from '@/actions/App/Http/Controllers/MedicalRecordController';
+import medicalRecordController from '@/actions/App/Http/Controllers/Medical/MedicalRecordController';
 import { DataTable } from '@/components/data-table';
 import Heading from '@/components/heading';
 import Layout from '@/layouts/app-layout';

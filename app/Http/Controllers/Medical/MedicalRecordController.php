@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Medical;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Medical\MedicalRecordRequest;
 use App\Models\MedicalRecord;
 use Auth;
 use Illuminate\Http\Request;
@@ -42,5 +44,24 @@ class MedicalRecordController extends Controller
             ->withQueryString();
 
         return Inertia::render('medicalRecords/Index', ['medicalRecords' => $medicalRecords]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(MedicalRecordRequest $request)
+    {
+        Log::info('Medical Records: Created new medical record', ['action_user_id' => Auth::id(), 'patient_info_id' => $request->patient_info_id]);
+        MedicalRecord::create($request->validated());
+        return redirect()->route('medicalRecords.index')->with('success', 'Medical record created successfully.');
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        Log::info('Medical Records: Viewed create medical record form', ['action_user_id' => Auth::id()]);
+        return Inertia::render('medicalRecords/Create');
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\MedicalRecordController;
+
+use App\Http\Controllers\Medical\MedicalRecordController;
 
 Route::middleware(['auth'])->prefix('medical-records')->group(function () {
     Route::get('/', [MedicalRecordController::class, 'index'])->name('medicalRecords.index')->middleware('permission:index.medical_record');

@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\Prescription\DoctorPrescriptionController;
+
+use App\Http\Controllers\Medical\Prescription\DoctorPrescriptionController;
 
 Route::middleware(['auth'])->prefix('prescriptions')->group(function () {
     Route::middleware(['role:Doctor'])->prefix('/{doctor}/doctor')->group(function () {

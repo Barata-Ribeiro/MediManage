@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Prescription;
+namespace App\Http\Controllers\Medical\Prescription;
 
 use App\Http\Controllers\Controller;
 use App\Models\EmployeeInfo;

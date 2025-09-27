@@ -9,7 +9,7 @@ import medicalRecords from '@/routes/medicalRecords';
 import prescriptions from '@/routes/prescriptions';
 import { type NavItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { ClipboardListIcon, PillIcon } from 'lucide-react';
+import { ClipboardListIcon, ClipboardPlusIcon, PillIcon } from 'lucide-react';
 
 export function NavDoctor() {
     const { props, url } = usePage<SharedData>();
@@ -26,6 +26,7 @@ export function NavDoctor() {
             icon: PillIcon,
         },
         { title: 'Medical Records', href: medicalRecords.index(), icon: ClipboardListIcon },
+        { title: 'Initiate Record', href: medicalRecords.create(), icon: ClipboardPlusIcon },
     ];
 
     return (
