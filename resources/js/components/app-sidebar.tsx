@@ -1,7 +1,8 @@
-import { NavAdmin } from '@/components/nav-admin';
-import { NavFooter } from '@/components/nav-footer';
-import { NavMain } from '@/components/nav-main';
-import { NavUser } from '@/components/nav-user';
+import { NavAdmin } from '@/components/navigation/nav-admin';
+import { NavDoctor } from '@/components/navigation/nav-doctor';
+import { NavFooter } from '@/components/navigation/nav-footer';
+import { NavMain } from '@/components/navigation/nav-main';
+import { NavUser } from '@/components/navigation/nav-user';
 import {
     Sidebar,
     SidebarContent,
@@ -12,11 +13,9 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import roles from '@/routes/admin/roles';
-import users from '@/routes/admin/users';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BriefcaseBusinessIcon, FolderIcon, LayoutGrid, NotebookIcon, UsersIcon } from 'lucide-react';
+import { BriefcaseBusinessIcon, FolderIcon, LayoutGrid } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -24,19 +23,6 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
-    },
-];
-
-const adminNavItems: NavItem[] = [
-    {
-        title: 'Roles',
-        href: roles.index(),
-        icon: NotebookIcon,
-    },
-    {
-        title: 'Users',
-        href: users.index(),
-        icon: UsersIcon,
     },
 ];
 
@@ -70,7 +56,8 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <NavMain items={mainNavItems} />
-                <NavAdmin items={adminNavItems} />
+                <NavDoctor />
+                <NavAdmin />
             </SidebarContent>
 
             <SidebarFooter>

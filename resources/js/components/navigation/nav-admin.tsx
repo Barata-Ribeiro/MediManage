@@ -5,16 +5,32 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import roles from '@/routes/admin/roles';
+import users from '@/routes/admin/users';
 import { type NavItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
+import { NotebookIcon, UsersIcon } from 'lucide-react';
 
-export function NavAdmin({ items = [] }: Readonly<{ items: NavItem[] }>) {
+export function NavAdmin() {
     const { props, url } = usePage<SharedData>();
 
     const auth = props.auth;
 
     const isSuperAdmin = auth.roles.includes('Super Admin');
     if (!isSuperAdmin) return null;
+
+    const items: NavItem[] = [
+        {
+            title: 'Roles',
+            href: roles.index(),
+            icon: NotebookIcon,
+        },
+        {
+            title: 'Users',
+            href: users.index(),
+            icon: UsersIcon,
+        },
+    ];
 
     return (
         <SidebarGroup className="px-2 py-0">
