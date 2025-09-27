@@ -1,5 +1,5 @@
 import { PaginationMeta } from '@/types';
-import { PatientInfo } from '@/types/application/patient';
+import { PatientInfo, TablePatientInfo } from '@/types/application/patient';
 
 export interface Prescription {
     id: number;
@@ -13,4 +13,8 @@ export interface Prescription {
     patient_info: PatientInfo;
 }
 
-export type PaginationPrescriptions = PaginationMeta<Prescription[]>;
+export type TablePrescription = Omit<Prescription, 'prescription_details'> & {
+    patient_info: TablePatientInfo;
+};
+
+export type PaginationPrescriptions = PaginationMeta<TablePrescription[]>;
