@@ -91,8 +91,6 @@ class UserManagementController extends Controller
 
         if (isset($data['roles'])) {
             $user->syncRoles($data['roles']);
-        } else {
-            $user->syncRoles([]);
         }
 
         Log::info('User Management: Updated user', ['action_user_id' => Auth::id(), 'updated_user_id' => $user->id]);

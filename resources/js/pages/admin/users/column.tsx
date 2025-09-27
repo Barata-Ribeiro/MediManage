@@ -1,4 +1,5 @@
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
+import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -24,11 +25,21 @@ export const columns: ColumnDef<User>[] = [
     {
         accessorKey: 'name',
         header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+        cell: ({ row }) => <TextLink href={users.show(row.original.id)}>{row.original.name}</TextLink>,
         enableSorting: true,
     },
     {
         accessorKey: 'email',
         header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
+        cell: ({ row }) => (
+            <a
+                className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
+                href={`mailto:${row.original.email}`}
+                aria-label={`Send email to ${row.original.email}`}
+            >
+                {row.original.email}
+            </a>
+        ),
         enableSorting: true,
     },
     {

@@ -30,7 +30,7 @@ export default function Show({ user }: Readonly<{ user: User }>) {
         <Layout breadcrumbs={breadcrumbs}>
             <Head title={`User — ${user?.name ?? 'Show'}`} />
 
-            <div className="container space-y-6 px-4 py-4 sm:px-0 sm:py-6">
+            <div className="container space-y-6 py-4 sm:py-6">
                 <Card aria-labelledby="profile-title" className="mx-auto w-full max-w-3xl">
                     <CardHeader className="border-b pb-4">
                         <div className="flex flex-wrap items-center justify-between gap-4">

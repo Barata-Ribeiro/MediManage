@@ -34,6 +34,16 @@ class UserSeeder extends Seeder
             User::factory()->count(1)->create()->each(function ($user) {
                 $user->assignRole('Manager');
             });
+
+            // Specific user for login and testing
+            User::firstOrCreate(
+                ['email' => "dr.housemd@ppth.com"],
+                [
+                    'name' => "dr.housemd",
+                    'email' => "dr.housemd@ppth.com",
+                    'password' => config('app.admin_password'),
+                ]
+            )->assignRole('Doctor');
         } catch (Exception $e) {
             Log::error('Error seeding users!', ['error' => $e->getMessage()]);
         }
