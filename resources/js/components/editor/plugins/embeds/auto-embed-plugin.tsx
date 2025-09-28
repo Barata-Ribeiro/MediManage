@@ -164,6 +164,7 @@ export function AutoEmbedDialog({
                 />
                 <DialogFooter>
                     <Button
+                        type="button"
                         disabled={!embedResult}
                         onClick={onClick}
                         data-test-id={`${embedConfig.type}-embed-modal-submit-btn`}

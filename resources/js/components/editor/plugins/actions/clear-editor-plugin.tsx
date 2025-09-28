@@ -22,8 +22,8 @@ export function ClearEditorActionPlugin() {
             <Tooltip disableHoverableContent>
                 <TooltipTrigger asChild>
                     <DialogTrigger asChild>
-                        <Button size={'sm'} variant={'ghost'} className="p-2">
-                            <Trash2Icon className="h-4 w-4" />
+                        <Button type="button" size="sm" variant="ghost" className="p-2">
+                            <Trash2Icon className="size-4" />
                         </Button>
                     </DialogTrigger>
                 </TooltipTrigger>
@@ -37,11 +37,14 @@ export function ClearEditorActionPlugin() {
                 </DialogHeader>
                 <DialogFooter>
                     <DialogClose asChild>
-                        <Button variant="outline">Cancel</Button>
+                        <Button type="button" variant="outline">
+                            Cancel
+                        </Button>
                     </DialogClose>
 
                     <DialogClose asChild>
                         <Button
+                            type="button"
                             variant="destructive"
                             onClick={() => {
                                 editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);

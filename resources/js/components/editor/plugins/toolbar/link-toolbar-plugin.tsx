@@ -64,8 +64,8 @@ export function LinkToolbarPlugin({
     }, [activeEditor, isLink, setIsLinkEditMode]);
 
     return (
-        <Toggle variant={'outline'} size="sm" className="!h-8 !w-8" aria-label="Toggle link" onClick={insertLink}>
-            <LinkIcon className="h-4 w-4" />
+        <Toggle variant={'outline'} size="sm" className="!size-8" aria-label="Toggle link" onClick={insertLink}>
+            <LinkIcon className="size-4" />
         </Toggle>
     );
 }

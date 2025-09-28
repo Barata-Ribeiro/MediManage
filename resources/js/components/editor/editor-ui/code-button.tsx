@@ -47,6 +47,7 @@ export function CopyButton({ editor, getCodeDOMNode }: Readonly<Props>) {
 
     return (
         <button
+            type="button"
             className="flex shrink-0 cursor-pointer items-center rounded border border-transparent bg-none p-1 text-foreground/50 uppercase"
             onClick={handleClick}
             aria-label="copy"

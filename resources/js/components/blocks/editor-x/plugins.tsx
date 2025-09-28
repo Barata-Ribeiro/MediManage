@@ -4,12 +4,8 @@ import { CharacterLimitPlugin } from '@/components/editor/plugins/actions/charac
 import { ClearEditorActionPlugin } from '@/components/editor/plugins/actions/clear-editor-plugin';
 import { CounterCharacterPlugin } from '@/components/editor/plugins/actions/counter-character-plugin';
 import { EditModeTogglePlugin } from '@/components/editor/plugins/actions/edit-mode-toggle-plugin';
-import { ImportExportPlugin } from '@/components/editor/plugins/actions/import-export-plugin';
-import { MarkdownTogglePlugin } from '@/components/editor/plugins/actions/markdown-toggle-plugin';
 import { MaxLengthPlugin } from '@/components/editor/plugins/actions/max-length-plugin';
-import { ShareContentPlugin } from '@/components/editor/plugins/actions/share-content-plugin';
 import { SpeechToTextPlugin } from '@/components/editor/plugins/actions/speech-to-text-plugin';
-import { TreeViewPlugin } from '@/components/editor/plugins/actions/tree-view-plugin';
 import { AutoLinkPlugin } from '@/components/editor/plugins/auto-link-plugin';
 import { AutocompletePlugin } from '@/components/editor/plugins/autocomplete-plugin';
 import { CodeActionMenuPlugin } from '@/components/editor/plugins/code-action-menu-plugin';
@@ -101,9 +97,9 @@ import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
 import { useState } from 'react';
 
 const placeholder = 'Press / for commands...';
-const maxLength = 500;
+const MAX_LENGTH = 10000;
 
-export function Plugins({}) {
+export function Plugins() {
     const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
     const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
 
@@ -167,13 +163,11 @@ export function Plugins({}) {
                 <AutoFocusPlugin />
                 <RichTextPlugin
                     contentEditable={
-                        <div className="">
-                            <div className="" ref={onRef}>
-                                <ContentEditable
-                                    placeholder={placeholder}
-                                    className="ContentEditable__root relative block h-[calc(100vh-570px)] min-h-72 min-h-full overflow-auto px-8 py-4 focus:outline-none"
-                                />
-                            </div>
+                        <div ref={onRef}>
+                            <ContentEditable
+                                placeholder={placeholder}
+                                className="ContentEditable__root relative block h-[calc(100vh-570px)] min-h-72 overflow-auto px-8 py-4 focus:outline-none"
+                            />
                         </div>
                     }
                     ErrorBoundary={LexicalErrorBoundary}
@@ -267,37 +261,35 @@ export function Plugins({}) {
             <ActionsPlugin>
                 <div className="clear-both flex items-center justify-between gap-2 overflow-auto border-t p-1">
                     <div className="flex flex-1 justify-start">
-                        <MaxLengthPlugin maxLength={maxLength} />
-                        <CharacterLimitPlugin maxLength={maxLength} charset="UTF-16" />
+                        <MaxLengthPlugin maxLength={MAX_LENGTH} />
+                        <CharacterLimitPlugin maxLength={MAX_LENGTH} charset="UTF-16" />
                     </div>
                     <div>
                         <CounterCharacterPlugin charset="UTF-16" />
                     </div>
                     <div className="flex flex-1 justify-end">
                         <SpeechToTextPlugin />
-                        <ShareContentPlugin />
-                        <ImportExportPlugin />
-                        <MarkdownTogglePlugin
-                            shouldPreserveNewLinesInMarkdown={true}
-                            transformers={[
-                                TABLE,
-                                HR,
-                                IMAGE,
-                                EMOJI,
-                                TWEET,
-                                CHECK_LIST,
-                                ...ELEMENT_TRANSFORMERS,
-                                ...MULTILINE_ELEMENT_TRANSFORMERS,
-                                ...TEXT_FORMAT_TRANSFORMERS,
-                                ...TEXT_MATCH_TRANSFORMERS,
-                            ]}
-                        />
+                        {/*<ShareContentPlugin />*/}
+                        {/*<ImportExportPlugin />*/}
+                        {/*<MarkdownTogglePlugin*/}
+                        {/*    shouldPreserveNewLinesInMarkdown={true}*/}
+                        {/*    transformers={[*/}
+                        {/*        TABLE,*/}
+                        {/*        HR,*/}
+                        {/*        IMAGE,*/}
+                        {/*        EMOJI,*/}
+                        {/*        TWEET,*/}
+                        {/*        CHECK_LIST,*/}
+                        {/*        ...ELEMENT_TRANSFORMERS,*/}
+                        {/*        ...MULTILINE_ELEMENT_TRANSFORMERS,*/}
+                        {/*        ...TEXT_FORMAT_TRANSFORMERS,*/}
+                        {/*        ...TEXT_MATCH_TRANSFORMERS,*/}
+                        {/*    ]}*/}
+                        {/*/>*/}
                         <EditModeTogglePlugin />
-                        <>
-                            <ClearEditorActionPlugin />
-                            <ClearEditorPlugin />
-                        </>
-                        <TreeViewPlugin />
+                        <ClearEditorActionPlugin />
+                        <ClearEditorPlugin />
+                        {/*<TreeViewPlugin />*/}
                     </div>
                 </div>
             </ActionsPlugin>

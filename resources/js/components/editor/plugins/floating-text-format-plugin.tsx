@@ -197,7 +197,7 @@ function FloatingTextFormat({
                             }}
                             size="sm"
                         >
-                            <BoldIcon className="h-4 w-4" />
+                            <BoldIcon className="size-4" />
                         </ToggleGroupItem>
                         <ToggleGroupItem
                             value="italic"
@@ -207,7 +207,7 @@ function FloatingTextFormat({
                             }}
                             size="sm"
                         >
-                            <ItalicIcon className="h-4 w-4" />
+                            <ItalicIcon className="size-4" />
                         </ToggleGroupItem>
                         <ToggleGroupItem
                             value="underline"
@@ -217,7 +217,7 @@ function FloatingTextFormat({
                             }}
                             size="sm"
                         >
-                            <UnderlineIcon className="h-4 w-4" />
+                            <UnderlineIcon className="size-4" />
                         </ToggleGroupItem>
                         <ToggleGroupItem
                             value="strikethrough"
@@ -227,7 +227,7 @@ function FloatingTextFormat({
                             }}
                             size="sm"
                         >
-                            <StrikethroughIcon className="h-4 w-4" />
+                            <StrikethroughIcon className="size-4" />
                         </ToggleGroupItem>
                         <Separator orientation="vertical" />
                         <ToggleGroupItem
@@ -238,10 +238,10 @@ function FloatingTextFormat({
                             }}
                             size="sm"
                         >
-                            <CodeIcon className="h-4 w-4" />
+                            <CodeIcon className="size-4" />
                         </ToggleGroupItem>
                         <ToggleGroupItem value="link" aria-label="Toggle link" onClick={insertLink} size="sm">
-                            <LinkIcon className="h-4 w-4" />
+                            <LinkIcon className="size-4" />
                         </ToggleGroupItem>
                         <Separator orientation="vertical" />
                     </ToggleGroup>
@@ -257,7 +257,7 @@ function FloatingTextFormat({
                             }}
                             size="sm"
                         >
-                            <SubscriptIcon className="h-4 w-4" />
+                            <SubscriptIcon className="size-4" />
                         </ToggleGroupItem>
                         <ToggleGroupItem
                             value="superscript"
@@ -267,7 +267,7 @@ function FloatingTextFormat({
                             }}
                             size="sm"
                         >
-                            <SuperscriptIcon className="h-4 w-4" />
+                            <SuperscriptIcon className="size-4" />
                         </ToggleGroupItem>
                     </ToggleGroup>
                 </>

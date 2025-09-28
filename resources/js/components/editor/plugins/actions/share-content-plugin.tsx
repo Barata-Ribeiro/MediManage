@@ -34,7 +34,8 @@ export function ShareContentPlugin() {
         <Tooltip>
             <TooltipTrigger asChild>
                 <Button
-                    variant={'ghost'}
+                    type="button"
+                    variant="ghost"
                     onClick={() =>
                         shareDoc(
                             serializedDocumentFromEditorState(editor.getEditorState(), {
@@ -47,7 +48,7 @@ export function ShareContentPlugin() {
                     }
                     title="Share"
                     aria-label="Share Playground link to current editor state"
-                    size={'sm'}
+                    size="sm"
                     className="p-2"
                 >
                     <SendIcon className="size-4" />

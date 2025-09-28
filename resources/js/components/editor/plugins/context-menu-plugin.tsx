@@ -1,12 +1,10 @@
-import { $isLinkNode, TOGGLE_LINK_COMMAND }                           from '@lexical/link';
-import {
-    useLexicalComposerContext
-}                                                                     from '@lexical/react/LexicalComposerContext';
+import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {
     NodeContextMenuOption,
     NodeContextMenuPlugin,
-    NodeContextMenuSeparator
-}                                                                     from '@lexical/react/LexicalNodeContextMenuPlugin';
+    NodeContextMenuSeparator,
+} from '@lexical/react/LexicalNodeContextMenuPlugin';
 import {
     $getSelection,
     $isDecoratorNode,
@@ -15,11 +13,11 @@ import {
     COPY_COMMAND,
     CUT_COMMAND,
     type LexicalNode,
-    PASTE_COMMAND
-}                                                                     from 'lexical';
+    PASTE_COMMAND,
+} from 'lexical';
 import { Clipboard, ClipboardType, Copy, Link2Off, Scissors, Trash2 } from 'lucide-react';
-import type { JSX }                                                   from 'react';
-import { useMemo }                                                    from 'react';
+import type { JSX } from 'react';
+import { useMemo } from 'react';
 
 export function ContextMenuPlugin(): JSX.Element {
     const [editor] = useLexicalComposerContext();
@@ -32,7 +30,7 @@ export function ContextMenuPlugin(): JSX.Element {
                 },
                 $showOn: (node: LexicalNode) => $isLinkNode(node.getParent()),
                 disabled: false,
-                icon: <Link2Off className="h-4 w-4" />,
+                icon: <Link2Off className="size-4" />,
             }),
             new NodeContextMenuSeparator({
                 $showOn: (node: LexicalNode) => $isLinkNode(node.getParent()),
@@ -42,14 +40,14 @@ export function ContextMenuPlugin(): JSX.Element {
                     editor.dispatchCommand(CUT_COMMAND, null);
                 },
                 disabled: false,
-                icon: <Scissors className="h-4 w-4" />,
+                icon: <Scissors className="size-4" />,
             }),
             new NodeContextMenuOption(`Copy`, {
                 $onSelect: () => {
                     editor.dispatchCommand(COPY_COMMAND, null);
                 },
                 disabled: false,
-                icon: <Copy className="h-4 w-4" />,
+                icon: <Copy className="size-4" />,
             }),
             new NodeContextMenuOption(`Paste`, {
                 $onSelect: () => {
@@ -81,7 +79,7 @@ export function ContextMenuPlugin(): JSX.Element {
                     });
                 },
                 disabled: false,
-                icon: <Clipboard className="h-4 w-4" />,
+                icon: <Clipboard className="size-4" />,
             }),
             new NodeContextMenuOption(`Paste as Plain Text`, {
                 $onSelect: () => {
@@ -107,7 +105,7 @@ export function ContextMenuPlugin(): JSX.Element {
                     });
                 },
                 disabled: false,
-                icon: <ClipboardType className="h-4 w-4" />,
+                icon: <ClipboardType className="size-4" />,
             }),
             new NodeContextMenuSeparator(),
             new NodeContextMenuOption(`Delete Node`, {
@@ -128,7 +126,7 @@ export function ContextMenuPlugin(): JSX.Element {
                     }
                 },
                 disabled: false,
-                icon: <Trash2 className="h-4 w-4" />,
+                icon: <Trash2 className="size-4" />,
             }),
         ];
     }, [editor]);

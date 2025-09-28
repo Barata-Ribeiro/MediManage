@@ -69,13 +69,14 @@ export function ClearFormattingToolbarPlugin() {
 
     return (
         <Button
-            className="!h-8 !w-8"
+            type="button"
+            className="!size-8"
             aria-label="Clear formatting"
-            variant={'outline'}
-            size={'icon'}
+            variant="outline"
+            size="icon"
             onClick={clearFormatting}
         >
-            <EraserIcon className="h-4 w-4" />
+            <EraserIcon className="size-4" />
         </Button>
     );
 }

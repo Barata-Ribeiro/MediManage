@@ -69,7 +69,9 @@ export function InsertLayoutDialog({
                     ))}
                 </SelectContent>
             </Select>
-            <Button onClick={onClick}>Insert</Button>
+            <Button type="button" onClick={onClick}>
+                Insert
+            </Button>
         </>
     );
 }

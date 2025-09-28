@@ -44,7 +44,7 @@ export function FontFormatToolbarPlugin({
                 activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, format as TextFormatType);
             }}
         >
-            <Icon className="h-4 w-4" />
+            <Icon className="size-4" />
         </Toggle>
     );
 }

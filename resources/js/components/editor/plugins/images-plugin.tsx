@@ -71,7 +71,7 @@ export function InsertImageUriDialogBody({ onClick }: Readonly<{ onClick: (paylo
             </div>
             <DialogFooter>
                 <Button
-                    type="submit"
+                    type="button"
                     disabled={isDisabled}
                     onClick={() => onClick({ altText, src })}
                     data-test-id="image-modal-confirm-btn"
@@ -127,7 +127,7 @@ export function InsertImageUploadedDialogBody({
                 />
             </div>
             <Button
-                type="submit"
+                type="button"
                 disabled={isDisabled}
                 onClick={() => onClick({ altText, src })}
                 data-test-id="image-modal-file-upload-btn"

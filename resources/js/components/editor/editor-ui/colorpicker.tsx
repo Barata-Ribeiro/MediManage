@@ -16,7 +16,7 @@ export default function ColorPicker({ disabled = false, color, onChange, icon, .
     return (
         <Popover modal={true}>
             <PopoverTrigger asChild disabled={disabled}>
-                <Button size={'icon'} className="!h-8 !w-8" variant={'outline'} {...rest}>
+                <Button type="button" size={'icon'} className="!size-8" variant={'outline'} {...rest}>
                     <span className="size-4 rounded-full">{icon}</span>
                     {/* <ChevronDownIcon className='size-4'/> */}
                 </Button>

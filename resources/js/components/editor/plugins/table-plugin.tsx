@@ -134,7 +134,7 @@ export function InsertTableDialog({
                 </div>
             </div>
             <DialogFooter data-test-id="table-model-confirm-insert">
-                <Button disabled={isDisabled} onClick={onClick}>
+                <Button type="button" disabled={isDisabled} onClick={onClick}>
                     Confirm
                 </Button>
             </DialogFooter>

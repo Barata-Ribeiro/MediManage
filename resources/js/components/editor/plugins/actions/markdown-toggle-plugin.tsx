@@ -45,11 +45,12 @@ export function MarkdownTogglePlugin({
 
     return (
         <Button
-            variant={'ghost'}
+            type="button"
+            variant="ghost"
             onClick={handleMarkdownToggle}
             title="Convert From Markdown"
             aria-label="Convert from markdown"
-            size={'sm'}
+            size="sm"
             className="p-2"
         >
             <FileTextIcon className="size-4" />
