@@ -14,8 +14,9 @@ import { $createTextNode, $getSelection, $isRangeSelection, TextNode } from 'lex
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
+import emojiList from '../utils/emoji-list';
 
 class EmojiOption extends MenuOption {
     title: string;
@@ -52,11 +53,8 @@ const MAX_EMOJI_SUGGESTION_COUNT = 10;
 export function EmojiPickerPlugin() {
     const [editor] = useLexicalComposerContext();
     const [queryString, setQueryString] = useState<string | null>(null);
-    const [emojis, setEmojis] = useState<Array<Emoji>>([]);
-    const [isOpen, setIsOpen] = useState(false);
-    useEffect(() => {
-        import('../utils/emoji-list').then((file) => setEmojis(file.default));
-    }, []);
+    const [emojis] = useState<Array<Emoji>>(emojiList);
+    const [, setIsOpen] = useState(false);
 
     const emojiOptions = useMemo(
         () =>
