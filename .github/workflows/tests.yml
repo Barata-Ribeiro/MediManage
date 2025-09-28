@@ -37,7 +37,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install Node Dependencies
-        run: pnpm ci
+        run: pnpm install
 
       - name: Install Dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
