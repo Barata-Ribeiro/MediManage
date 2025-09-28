@@ -34,13 +34,11 @@ export function NavDoctor() {
             <SidebarGroupLabel>Doctor</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item) => {
+                    const isActive = url.endsWith(typeof item.href === 'string' ? item.href : item.href.url);
+
                     return (
                         <SidebarMenuItem key={item.title}>
-                            <SidebarMenuButton
-                                asChild
-                                isActive={url.startsWith(typeof item.href === 'string' ? item.href : item.href.url)}
-                                tooltip={{ children: item.title }}
-                            >
+                            <SidebarMenuButton asChild isActive={isActive} tooltip={{ children: item.title }}>
                                 <Link href={item.href} prefetch>
                                     {item.icon && <item.icon />}
                                     <span>{item.title}</span>
