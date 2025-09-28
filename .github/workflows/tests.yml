@@ -25,20 +25,25 @@ jobs:
           tools: composer:v2
           coverage: xdebug
 
-      - name: Setup Node
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
 
       - name: Install Node Dependencies
-        run: npm ci
+        run: pnpm ci
 
       - name: Install Dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Build Assets
-        run: npm run build
+        run: pnpm run build
 
       - name: Copy Environment File
         run: cp .env.example .env
