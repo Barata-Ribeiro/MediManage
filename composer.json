@@ -11,6 +11,8 @@
     "require": {
         "php": "^8.2",
         "ext-curl": "*",
+        "ext-dom": "*",
+        "ext-libxml": "*",
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/fortify": "^1.30",
         "laravel/framework": "^12.0",
