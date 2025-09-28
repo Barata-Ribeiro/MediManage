@@ -10,18 +10,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
+
 /**
  * @property int $id
  * @property int $patient_info_id
  * @property int $employee_info_id
- * @property string $prescription_details
+ * @property string $prescription_details_html
+ * @property string|null $prescription_details_json
  * @property string $date_issued
  * @property string|null $date_expires
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read \App\Models\EmployeeInfo $employeeInfo
- * @property-read \App\Models\PatientInfo $patientInfo
- * @method static \Database\Factories\PrescriptionFactory factory($count = null, $state = [])
+ * @property-read EmployeeInfo $employeeInfo
+ * @property-read PatientInfo $patientInfo
+ * @method static PrescriptionFactory factory($count = null, $state = [])
  * @method static Builder<static>|Prescription newModelQuery()
  * @method static Builder<static>|Prescription newQuery()
  * @method static Builder<static>|Prescription query()
@@ -31,7 +33,8 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|Prescription whereEmployeeInfoId($value)
  * @method static Builder<static>|Prescription whereId($value)
  * @method static Builder<static>|Prescription wherePatientInfoId($value)
- * @method static Builder<static>|Prescription wherePrescriptionDetails($value)
+ * @method static Builder<static>|Prescription wherePrescriptionDetailsHtml($value)
+ * @method static Builder<static>|Prescription wherePrescriptionDetailsJson($value)
  * @method static Builder<static>|Prescription whereUpdatedAt($value)
  * @mixin Eloquent
  */
@@ -47,7 +50,8 @@ class Prescription extends Model
     protected $fillable = [
         'patient_info_id',
         'employee_info_id',
-        'prescription_details',
+        'prescription_details_html',
+        'prescription_details_json',
         'date_issued',
         'date_expires',
     ];

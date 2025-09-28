@@ -21,7 +21,7 @@ class PrescriptionFactory extends Factory
         $dateExpires = $this->faker->dateTimeBetween($dateIssued, '+6 months');
 
         return [
-            'prescription_details' => $this->faker->paragraphs(2, true),
+            'prescription_details_html' => $this->faker->paragraphs(2, true),
             'date_issued' => $dateIssued->format('Y-m-d'),
             'date_expires' => $dateExpires->format('Y-m-d'),
         ];

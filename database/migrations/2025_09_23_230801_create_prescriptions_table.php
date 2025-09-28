@@ -16,7 +16,9 @@ return new class extends Migration {
             $table->foreignId('patient_info_id')->constrained('patient_info')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('employee_info_id')->constrained('employee_info')->cascadeOnUpdate()->cascadeOnDelete();
 
-            $table->text('prescription_details');
+            $table->text('prescription_details_html');
+            $table->text('prescription_details_json')->nullable();
+
             $table->date('date_issued');
             $table->date('date_expires')->nullable();
 
@@ -25,7 +27,7 @@ return new class extends Migration {
             $table->index(['patient_info_id', 'employee_info_id']);
 
             if (DB::getDriverName() === 'mysql' || DB::getDriverName() === 'pgsql') {
-                $table->fullText('prescription_details');
+                $table->fullText('prescription_details_html');
             }
         });
     }

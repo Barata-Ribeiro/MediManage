@@ -15,12 +15,13 @@ return new class extends Migration {
 
             $table->foreignId('patient_info_id')->constrained('patient_info')->cascadeOnUpdate()->cascadeOnDelete();
 
-            $table->text('medical_notes')->nullable();
+            $table->text('medical_notes_html');
+            $table->text('medical_notes_json')->nullable();
 
             $table->timestamps();
 
             if (DB::getDriverName() === 'mysql' || DB::getDriverName() === 'pgsql') {
-                $table->fullText('medical_notes');
+                $table->fullText('medical_notes_html');
             }
         });
     }
