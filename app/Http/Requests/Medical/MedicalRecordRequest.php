@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Medical;
 
+use App\Rules\IsValidHtml;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -17,7 +18,8 @@ class MedicalRecordRequest extends FormRequest
     {
         return [
             'patient_info_id' => ['required', 'exists:patient_info,id'],
-            'medical_notes' => ['required', 'string', 'min:10'],
+            'medical_notes_html' => ['required', 'string', new isValidHtml()],
+            'medical_notes_json' => ['nullable', 'string', 'json'],
         ];
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Medical;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Medical\MedicalRecordRequest;
 use App\Models\MedicalRecord;
+use App\Models\MedicalRecordEntries;
 use Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -51,9 +52,10 @@ class MedicalRecordController extends Controller
      */
     public function store(MedicalRecordRequest $request)
     {
-        Log::info('Medical Records: Created new medical record', ['action_user_id' => Auth::id(), 'patient_info_id' => $request->patient_info_id]);
-        MedicalRecord::create($request->validated());
-        return redirect()->route('medicalRecords.index')->with('success', 'Medical record created successfully.');
+//        Log::info('Medical Records: Created new medical record', ['action_user_id' => Auth::id(), 'patient_info_id' => $request->patient_info_id]);
+//        MedicalRecord::create($request->validated());
+//        return redirect()->route('medicalRecords.index')->with('success', 'Medical record created successfully.');
+        dd($request->all());
     }
 
     /**
@@ -63,5 +65,16 @@ class MedicalRecordController extends Controller
     {
         Log::info('Medical Records: Viewed create medical record form', ['action_user_id' => Auth::id()]);
         return Inertia::render('medicalRecords/Create');
+    }
+
+    public function show(MedicalRecord $medicalRecord)
+    {
+        Log::info('Medical Records: Viewed medical record', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id]);
+
+        $medicalRecord->load('patientInfo');
+        $entries = MedicalRecordEntries::where('medical_record_id', $medicalRecord->id)
+            ->orderBy('created_at', 'desc')->get();
+
+        return Inertia::render('medicalRecords/Show', ['medicalRecord' => $medicalRecord, 'entries' => $entries]);
     }
 }
