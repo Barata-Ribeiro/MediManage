@@ -24,7 +24,7 @@ export default function Create() {
             <div className="px-4 py-6">
                 <Heading title="New Medical Record" description="Write a new medical record for a patient." />
 
-                <section className="container py-4 sm:py-6">
+                <section className="rounded-md bg-card p-4 shadow sm:p-6">
                     <NewMedicalRecordForm />
                 </section>
             </div>
