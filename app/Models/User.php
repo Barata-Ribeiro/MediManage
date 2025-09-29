@@ -39,15 +39,15 @@ use Spatie\Permission\Traits\HasRoles;
  * @property int|null $employee_info_id
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read \App\Models\EmployeeInfo|null $employeeInfo
+ * @property-read EmployeeInfo|null $employeeInfo
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read \App\Models\PatientInfo|null $patientInfo
+ * @property-read PatientInfo|null $patientInfo
  * @property-read Collection<int, Permission> $permissions
  * @property-read int|null $permissions_count
  * @property-read Collection<int, Role> $roles
  * @property-read int|null $roles_count
- * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
+ * @method static UserFactory factory($count = null, $state = [])
  * @method static Builder<static>|User newModelQuery()
  * @method static Builder<static>|User newQuery()
  * @method static Builder<static>|User permission($permissions, $without = false)
@@ -108,12 +108,12 @@ class User extends Authenticatable implements Auditable
 
     public function patientInfo(): HasOne
     {
-        return $this->hasOne(PatientInfo::class);
+        return $this->hasOne(PatientInfo::class, 'user_id');
     }
 
     public function employeeInfo(): HasOne
     {
-        return $this->hasOne(EmployeeInfo::class);
+        return $this->hasOne(EmployeeInfo::class, 'user_id');
     }
 
     /**

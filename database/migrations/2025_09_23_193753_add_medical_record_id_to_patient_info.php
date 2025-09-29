@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::table('patient_info', function (Blueprint $table) {
             $table->foreignId('medical_record_id')->after('user_id')
-                ->nullable()->constrained('medical_records')->cascadeOnUpdate()->nullOnDelete();
+                ->unique()->nullable()->constrained('medical_records')->cascadeOnUpdate()->nullOnDelete();
         });
     }
 

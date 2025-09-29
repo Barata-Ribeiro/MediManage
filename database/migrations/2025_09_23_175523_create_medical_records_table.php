@@ -13,7 +13,8 @@ return new class extends Migration {
         Schema::create('medical_records', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('patient_info_id')->constrained('patient_info')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('patient_info_id')->unique()->constrained('patient_info')->cascadeOnUpdate()
+                ->cascadeOnDelete();
 
             $table->text('medical_notes_html');
             $table->text('medical_notes_json')->nullable();

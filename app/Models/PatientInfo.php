@@ -113,7 +113,7 @@ class PatientInfo extends Model
 
     public function medicalRecords(): HasOne
     {
-        return $this->hasOne(MedicalRecord::class);
+        return $this->hasOne(MedicalRecord::class, 'patient_info_id');
     }
 
     public function medicalRecordEntries(): HasMany
