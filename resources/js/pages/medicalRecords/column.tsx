@@ -8,7 +8,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import medicalRecords from '@/routes/medicalRecords';
 import { TableMedicalRecord } from '@/types/application/medicalRecord';
+import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { MoreHorizontal } from 'lucide-react';
@@ -66,8 +68,17 @@ export const column: ColumnDef<TableMedicalRecord>[] = [
                             Copy Full Name
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>View</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href={medicalRecords.show(row.original.id)} prefetch>
+                                Show
+                            </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <a href={medicalRecords.generatePdf(row.original.id).url} target="_blank" rel="external">
+                                Get PDF
+                            </a>
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );

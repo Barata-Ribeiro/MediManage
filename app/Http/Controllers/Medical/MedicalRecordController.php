@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Medical\MedicalRecordRequest;
 use App\Models\MedicalRecord;
 use App\Models\MedicalRecordEntries;
+use App\Models\PatientInfo;
 use Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
@@ -37,7 +39,7 @@ class MedicalRecordController extends Controller
             $query->leftJoin('patient_info', 'patient_info.id', '=', 'medical_records.patient_info_id');
         }
 
-        $query->when($request->filled('search'), fn($qr) => $qr->whereFullText('medical_notes', "%$search%")
+        $query->when($request->filled('search'), fn($qr) => $qr->whereFullText('medical_notes_html', "%$search%")
             ->orWhereHas('patientInfo', fn($q) => $q->whereLike('first_name', "%$search%")->orWhereLike('last_name', "%$search%")));
 
         $medicalRecords = $query->orderBy($sortBy, $sortDir)
@@ -52,10 +54,9 @@ class MedicalRecordController extends Controller
      */
     public function store(MedicalRecordRequest $request)
     {
-//        Log::info('Medical Records: Created new medical record', ['action_user_id' => Auth::id(), 'patient_info_id' => $request->patient_info_id]);
-//        MedicalRecord::create($request->validated());
-//        return redirect()->route('medicalRecords.index')->with('success', 'Medical record created successfully.');
-        dd($request->all());
+        Log::info('Medical Records: Created new medical record', ['action_user_id' => Auth::id(), 'patient_info_id' => $request->patient_info_id]);
+        MedicalRecord::create($request->validated());
+        return to_route('medicalRecords.index')->with('success', 'Medical record created successfully.');
     }
 
     /**
@@ -67,14 +68,58 @@ class MedicalRecordController extends Controller
         return Inertia::render('medicalRecords/Create');
     }
 
+    /**
+     * Display the specified resource.
+     */
     public function show(MedicalRecord $medicalRecord)
     {
         Log::info('Medical Records: Viewed medical record', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id]);
 
-        $medicalRecord->load('patientInfo');
-        $entries = MedicalRecordEntries::where('medical_record_id', $medicalRecord->id)
+        $medicalRecord->select(['id', 'patient_info_id', 'medical_notes_html', 'created_at', 'updated_at'])
+            ->with(['patientInfo' => fn($q) => $q->select('id', 'first_name', 'last_name')]);
+
+        $entries = MedicalRecordEntries::whereMedicalRecordId($medicalRecord->id)
             ->orderBy('created_at', 'desc')->get();
 
         return Inertia::render('medicalRecords/Show', ['medicalRecord' => $medicalRecord, 'entries' => $entries]);
+    }
+
+    /**
+     * Generate PDF of the specified resource.
+     */
+    public function generateMedicalRecordPdf(MedicalRecord $medicalRecord)
+    {
+        $data = MedicalRecord::with('patientInfo')
+            ->find($medicalRecord->id, ['id', 'patient_info_id', 'medical_notes_html', 'created_at', 'updated_at']);
+
+        $entries = MedicalRecordEntries::where('medical_record_id', $medicalRecord->id)
+            ->orderBy('created_at', 'desc')->get();
+
+        $pdf = PDF::loadView('pdfs.medical-record', ['medicalRecord' => $data, 'entries' => $entries]);
+        $pdf->setOptions([
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+        ])->setPaper('a4', 'portrait');
+
+        $filename = 'medical_record_' . ($data->id ?? $medicalRecord->id);
+        return $pdf->stream($filename . '.pdf');
+    }
+
+    /**
+     * Simple search for patients (for FETCH/AXIOS requests).
+     */
+    public function patientSimpleSearch(Request $request)
+    {
+        $search = $request->q;
+
+        $patients = PatientInfo::select(['id', 'first_name', 'last_name'])
+            ->where('medical_record_id', null)
+            ->when($request->filled('q'), fn($q) => $q->whereLike('first_name', "%$search%")
+                ->orWhereLike('last_name', "%$search%"))
+            ->orderBy('first_name', 'asc')
+            ->paginate(10)
+            ->withQueryString();
+
+        return response()->json($patients);
     }
 }
