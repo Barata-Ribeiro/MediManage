@@ -73,7 +73,11 @@ export const column: ColumnDef<TableMedicalRecord>[] = [
                                 Show
                             </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href={medicalRecords.edit(row.original.id)} prefetch>
+                                Edit
+                            </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                             <a href={medicalRecords.generatePdf(row.original.id).url} target="_blank" rel="external">
                                 Get PDF

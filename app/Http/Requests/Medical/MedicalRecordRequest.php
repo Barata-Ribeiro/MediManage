@@ -17,7 +17,7 @@ class MedicalRecordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'patient_info_id' => ['required', 'exists:patient_info,id', 'unique:medical_records,patient_info_id'],
+            'patient_info_id' => ['sometimes', 'required', 'exists:patient_info,id', 'unique:medical_records,patient_info_id'],
             'medical_notes_html' => ['required', 'string', new isValidHtml()],
             'medical_notes_json' => ['nullable', 'string', 'json'],
         ];
