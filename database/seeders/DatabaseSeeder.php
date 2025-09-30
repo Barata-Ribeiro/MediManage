@@ -21,7 +21,9 @@ class DatabaseSeeder extends Seeder
                 PatientInfoSeeder::class,
                 EmployeeInfoSeeder::class,
                 PrescriptionSeeder::class,
-                MedicalRecordSeeder::class
+                MedicalRecordSeeder::class,
+                CategorySeeder::class,
+                ArticleSeeder::class,
             ]);
         }
     }
