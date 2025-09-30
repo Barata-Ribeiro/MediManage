@@ -11,28 +11,39 @@ import {
     NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { cn } from '@/lib/utils';
 import { dashboard, home, login, register } from '@/routes';
 import type { SharedData } from '@/types';
 import { Article } from '@/types/application/article';
 import { Link, usePage } from '@inertiajs/react';
 import { Menu, NewspaperIcon } from 'lucide-react';
+import { Fragment } from 'react/jsx-runtime';
 
 interface NavIndexProps {
-    articles: Pick<Article, 'id' | 'title' | 'slug' | 'created_at'>[];
+    articles?: Pick<Article, 'id' | 'title' | 'slug' | 'created_at'>[];
 }
 
 export default function NavIndex({ articles }: Readonly<NavIndexProps>) {
+    const isMobile = useIsMobile();
     const { auth } = usePage<SharedData>().props;
 
+    const currentPath = window.location.pathname;
+    const isIndex = currentPath === '/';
+    const headerStyles = cn(
+        'fixed inset-x-0 top-0 z-50 py-6 dark:border-b dark:bg-white/10 dark:shadow dark:backdrop-blur-sm',
+        !isIndex && cn('border-b bg-white/20 shadow backdrop-blur-sm'),
+    );
+
     return (
-        <div className="border-b border-sidebar-border/80 py-4">
+        <header className={headerStyles}>
             <div className="container flex items-center justify-between">
                 <Link href={home()} className="w-max">
                     <AppLogo />
                 </Link>
 
                 {/*Mobile Menu*/}
-                <div className="md:hidden">
+                {isMobile && (
                     <Sheet>
                         <SheetTrigger asChild>
                             <Button variant="ghost" size="icon" className="mr-2 cursor-pointer">
@@ -51,31 +62,33 @@ export default function NavIndex({ articles }: Readonly<NavIndexProps>) {
                                     <Link href={home()} className="text-md font-semibold">
                                         Home
                                     </Link>
-                                    <AccordionItem value="articles" className="border-b-0">
-                                        <AccordionTrigger className="text-md py-0 font-semibold hover:no-underline">
-                                            Articles
-                                        </AccordionTrigger>
-                                        <AccordionContent className="mt-2">
-                                            {articles.map((article) => (
-                                                <Link
-                                                    key={article.id}
-                                                    href="#" // TODO: Add article link
-                                                    className="flex min-w-80 flex-row gap-4 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none hover:bg-muted hover:text-accent-foreground"
-                                                >
-                                                    <div className="text-foreground">
-                                                        <NewspaperIcon aria-hidden size={16} />
-                                                    </div>
+                                    {articles && (
+                                        <AccordionItem value="articles" className="border-b-0">
+                                            <AccordionTrigger className="text-md py-0 font-semibold hover:no-underline">
+                                                Articles
+                                            </AccordionTrigger>
+                                            <AccordionContent className="mt-2">
+                                                {articles.map((article) => (
+                                                    <Link
+                                                        key={article.id}
+                                                        href="#" // TODO: Add article link
+                                                        className="flex min-w-80 flex-row gap-4 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none hover:bg-muted hover:text-accent-foreground"
+                                                    >
+                                                        <div className="text-foreground">
+                                                            <NewspaperIcon aria-hidden size={16} />
+                                                        </div>
 
-                                                    <div>
-                                                        <div className="text-sm font-semibold">{article.title}</div>
-                                                        <p className="text-sm leading-snug text-muted-foreground">
-                                                            Published on {article.created_at}
-                                                        </p>
-                                                    </div>
-                                                </Link>
-                                            ))}
-                                        </AccordionContent>
-                                    </AccordionItem>
+                                                        <div>
+                                                            <div className="text-sm font-semibold">{article.title}</div>
+                                                            <p className="text-sm leading-snug text-muted-foreground">
+                                                                Published on {article.created_at}
+                                                            </p>
+                                                        </div>
+                                                    </Link>
+                                                ))}
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                    )}
                                 </Accordion>
                                 <div className="flex flex-col gap-3">
                                     {auth.user ? (
@@ -96,54 +109,62 @@ export default function NavIndex({ articles }: Readonly<NavIndexProps>) {
                             </div>
                         </SheetContent>
                     </Sheet>
-                </div>
+                )}
 
-                <NavigationMenu className="hidden md:block">
-                    <NavigationMenuList>
-                        <NavigationMenuItem>
-                            <NavigationMenuLink asChild>
-                                <Link href={home()}>Home</Link>
-                            </NavigationMenuLink>
-                        </NavigationMenuItem>
+                {!isMobile && (
+                    <Fragment>
+                        <NavigationMenu>
+                            <NavigationMenuList>
+                                <NavigationMenuItem>
+                                    <NavigationMenuLink asChild>
+                                        <Link href={home()}>Home</Link>
+                                    </NavigationMenuLink>
+                                </NavigationMenuItem>
 
-                        <NavigationMenuItem>
-                            <NavigationMenuTrigger>Articles</NavigationMenuTrigger>
-                            <NavigationMenuContent>
-                                <ul className="grid w-[300px] gap-4">
-                                    {articles.map((article) => (
-                                        <li key={article.id}>
-                                            <NavigationMenuLink asChild>
-                                                <Link href="#">
-                                                    {/*// TODO: Add article link*/}
-                                                    <div className="font-medium">{article.title}</div>
-                                                    <div className="text-muted-foreground">{article.created_at}</div>
-                                                </Link>
-                                            </NavigationMenuLink>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </NavigationMenuContent>
-                        </NavigationMenuItem>
-                    </NavigationMenuList>
-                </NavigationMenu>
+                                {articles && (
+                                    <NavigationMenuItem>
+                                        <NavigationMenuTrigger>Articles</NavigationMenuTrigger>
+                                        <NavigationMenuContent>
+                                            <ul className="grid w-[300px] gap-4">
+                                                {articles.map((article) => (
+                                                    <li key={article.id}>
+                                                        <NavigationMenuLink asChild>
+                                                            <Link href="#">
+                                                                {/*// TODO: Add article link*/}
+                                                                <div className="font-medium">{article.title}</div>
+                                                                <div className="text-muted-foreground">
+                                                                    {article.created_at}
+                                                                </div>
+                                                            </Link>
+                                                        </NavigationMenuLink>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </NavigationMenuContent>
+                                    </NavigationMenuItem>
+                                )}
+                            </NavigationMenuList>
+                        </NavigationMenu>
 
-                <div className="hidden items-center gap-x-4 md:flex">
-                    {auth.user ? (
-                        <Button variant="outline" asChild>
-                            <Link href={dashboard()}>Dashboard</Link>
-                        </Button>
-                    ) : (
-                        <div className="inline-flex items-center gap-x-4">
-                            <Button variant="outline" asChild>
-                                <Link href={login()}>Log in</Link>
-                            </Button>
-                            <Button asChild>
-                                <Link href={register()}>Register</Link>
-                            </Button>
+                        <div className="hidden items-center gap-x-4 md:flex">
+                            {auth.user ? (
+                                <Button variant="outline" asChild>
+                                    <Link href={dashboard()}>Dashboard</Link>
+                                </Button>
+                            ) : (
+                                <div className="inline-flex items-center gap-x-4">
+                                    <Button variant="outline" asChild>
+                                        <Link href={login()}>Log in</Link>
+                                    </Button>
+                                    <Button asChild>
+                                        <Link href={register()}>Register</Link>
+                                    </Button>
+                                </div>
+                            )}
                         </div>
-                    )}
-                </div>
+                    </Fragment>
+                )}
             </div>
-        </div>
+        </header>
     );
 }
