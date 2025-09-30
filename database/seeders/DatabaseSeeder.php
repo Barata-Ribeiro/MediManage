@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
                 MedicalRecordSeeder::class,
                 CategorySeeder::class,
                 ArticleSeeder::class,
+                NoticeSeeder::class
             ]);
         }
     }
