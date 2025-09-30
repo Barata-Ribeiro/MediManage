@@ -29,7 +29,10 @@ return new class extends Migration {
 
             $table->index(['user_id', 'is_published']);
             $table->index(['title', 'slug']);
-            $table->fullText(['title', 'subtitle', 'excerpt', 'content_html']);
+
+            if (DB::getDriverName() === 'mysql' || DB::getDriverName() === 'pgsql') {
+                $table->fullText(['title', 'subtitle', 'excerpt', 'content_html']);
+            }
         });
     }
 
