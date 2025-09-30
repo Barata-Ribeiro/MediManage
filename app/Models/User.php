@@ -38,9 +38,13 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon|null $updated_at
  * @property int|null $patient_info_id
  * @property int|null $employee_info_id
+ * @property-read Collection<int, Article> $articles
+ * @property-read int|null $articles_count
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
  * @property-read EmployeeInfo|null $employeeInfo
+ * @property-read Collection<int, Notice> $notices
+ * @property-read int|null $notices_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read PatientInfo|null $patientInfo
