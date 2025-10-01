@@ -2,9 +2,10 @@ import PatternSVG from '@/components/public/pattern-svg';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useInitials } from '@/hooks/use-initials';
-import AppPublicLayout from '@/layouts/app/app-public-layout';
+import Layout from '@/layouts/app/app-public-layout';
+import { article as articleRoute, register } from '@/routes';
 import { Article } from '@/types/application/article';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { MoveRightIcon } from 'lucide-react';
 
@@ -24,7 +25,7 @@ export default function Welcome({ latestArticles }: Readonly<WelcomeProps>) {
     };
 
     return (
-        <AppPublicLayout>
+        <Layout>
             <Head title="Welcome to MediManage">
                 <meta name="description" content="MediManage - Your Health, Our Priority" />
             </Head>
@@ -57,8 +58,12 @@ export default function Welcome({ latestArticles }: Readonly<WelcomeProps>) {
                                     here.
                                 </p>
                                 <div className="mt-10 flex items-center gap-x-6">
-                                    {/*TODO: Link to register page*/}
-                                    <Button>Register</Button>
+                                    <Button asChild>
+                                        <Link href={register()} prefetch>
+                                            Register
+                                        </Link>
+                                    </Button>
+
                                     {/*TODO: Link to about us page*/}
                                     <Button variant="ghost">
                                         About Us <MoveRightIcon aria-hidden size={16} />
@@ -145,7 +150,7 @@ export default function Welcome({ latestArticles }: Readonly<WelcomeProps>) {
 
                                 <div className="flex flex-wrap items-center gap-y-1 overflow-hidden text-sm/6 text-gray-300">
                                     <time dateTime={article.created_at} className="mr-8">
-                                        {format(article.created_at, 'MMM dd, yyyy')}
+                                        {format(article.created_at, 'PPP')}
                                     </time>
                                     <div className="-ml-4 flex items-center gap-x-4">
                                         <svg viewBox="0 0 2 2" className="-ml-0.5 size-0.5 flex-none fill-white/50">
@@ -163,17 +168,16 @@ export default function Welcome({ latestArticles }: Readonly<WelcomeProps>) {
                                     </div>
                                 </div>
                                 <h3 className="mt-3 text-lg/6 font-semibold text-white">
-                                    {/*TODO: Link to article detail page*/}
-                                    <a>
+                                    <Link href={articleRoute(article.slug)} prefetch>
                                         <span className="absolute inset-0" />
                                         {article.title}
-                                    </a>
+                                    </Link>
                                 </h3>
                             </article>
                         ))}
                     </div>
                 </div>
             </section>
-        </AppPublicLayout>
+        </Layout>
     );
 }

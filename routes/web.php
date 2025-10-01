@@ -6,6 +6,10 @@ use Inertia\Inertia;
 
 Route::group(['middleware' => 'guest'], function () {
     Route::get('/', [PublicController::class, 'home'])->name('home');
+    Route::prefix('articles')->group(function () {
+        Route::get('/', [PublicController::class, 'articles'])->name('articles');
+        Route::get('/{article:slug}', [PublicController::class, 'article'])->name('article');
+    });
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

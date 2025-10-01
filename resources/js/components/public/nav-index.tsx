@@ -1,5 +1,6 @@
 import AppLogo from '@/components/app-logo';
 import AppLogoIcon from '@/components/app-logo-icon';
+import TextLink from '@/components/text-link';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,10 +14,11 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
-import { dashboard, home, login, register } from '@/routes';
+import { article as articleRoute, articles as articlesRoute, dashboard, home, login, register } from '@/routes';
 import type { Auth } from '@/types';
 import { Article } from '@/types/application/article';
 import { Link } from '@inertiajs/react';
+import { format } from 'date-fns';
 import { Menu, NewspaperIcon } from 'lucide-react';
 import { Fragment } from 'react/jsx-runtime';
 
@@ -71,8 +73,9 @@ export default function NavIndex({ articles, auth }: Readonly<NavIndexProps>) {
                                                 {articles.map((article) => (
                                                     <Link
                                                         key={article.id}
-                                                        href="#" // TODO: Add article link
+                                                        href={articleRoute(article.slug)}
                                                         className="flex min-w-80 flex-row gap-4 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none hover:bg-muted hover:text-accent-foreground"
+                                                        prefetch="hover"
                                                     >
                                                         <div className="text-foreground">
                                                             <NewspaperIcon aria-hidden size={16} />
@@ -81,11 +84,15 @@ export default function NavIndex({ articles, auth }: Readonly<NavIndexProps>) {
                                                         <div>
                                                             <div className="text-sm font-semibold">{article.title}</div>
                                                             <p className="text-sm leading-snug text-muted-foreground">
-                                                                Published on {article.created_at}
+                                                                Published on {format(article.created_at, 'PPP')}
                                                             </p>
                                                         </div>
                                                     </Link>
                                                 ))}
+
+                                                <div className="mt-2 border-t pt-2 text-center">
+                                                    <TextLink href={articlesRoute()}>Browse all articles</TextLink>
+                                                </div>
                                             </AccordionContent>
                                         </AccordionItem>
                                     )}
@@ -129,17 +136,23 @@ export default function NavIndex({ articles, auth }: Readonly<NavIndexProps>) {
                                                 {articles.map((article) => (
                                                     <li key={article.id}>
                                                         <NavigationMenuLink asChild>
-                                                            <Link href="#">
-                                                                {/*// TODO: Add article link*/}
+                                                            <Link href={articleRoute(article.slug)} prefetch="hover">
                                                                 <div className="font-medium">{article.title}</div>
-                                                                <div className="text-muted-foreground">
-                                                                    {article.created_at}
-                                                                </div>
+                                                                <time
+                                                                    dateTime={article.created_at}
+                                                                    className="text-muted-foreground"
+                                                                >
+                                                                    Published on {format(article.created_at, 'PPP')}
+                                                                </time>
                                                             </Link>
                                                         </NavigationMenuLink>
                                                     </li>
                                                 ))}
                                             </ul>
+
+                                            <div className="-mx-2 mt-2 border-t p-4 text-center">
+                                                <TextLink href={articlesRoute()}>Browse all articles</TextLink>
+                                            </div>
                                         </NavigationMenuContent>
                                     </NavigationMenuItem>
                                 )}
