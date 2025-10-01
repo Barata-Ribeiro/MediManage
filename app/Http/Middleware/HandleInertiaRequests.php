@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Article;
 use App\Models\Notice;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
@@ -56,6 +57,7 @@ class HandleInertiaRequests extends Middleware
                 'warning' => fn() => $request->session()->get('warning'),
             ],
             'notices' => fn() => Notice::whereIsActive(true)->get(),
+            'latestArticles' => fn() => Article::whereIsPublished(true)->latest()->take(3)->get(['id', 'title', 'slug', 'created_at'])
         ];
     }
 }

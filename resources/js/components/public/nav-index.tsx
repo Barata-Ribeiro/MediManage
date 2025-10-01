@@ -14,21 +14,21 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { dashboard, home, login, register } from '@/routes';
-import type { SharedData } from '@/types';
+import type { Auth } from '@/types';
 import { Article } from '@/types/application/article';
-import { Link, usePage } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { Menu, NewspaperIcon } from 'lucide-react';
 import { Fragment } from 'react/jsx-runtime';
 
 interface NavIndexProps {
+    auth: Auth;
     articles?: Pick<Article, 'id' | 'title' | 'slug' | 'created_at'>[];
 }
 
-export default function NavIndex({ articles }: Readonly<NavIndexProps>) {
+export default function NavIndex({ articles, auth }: Readonly<NavIndexProps>) {
     const isMobile = useIsMobile();
-    const { auth } = usePage<SharedData>().props;
 
-    const currentPath = window.location.pathname;
+    const currentPath = globalThis.location.pathname;
     const isIndex = currentPath === '/';
     const headerStyles = cn(
         'fixed inset-x-0 top-0 z-50 py-6 dark:border-b dark:bg-white/10 dark:shadow dark:backdrop-blur-sm',
