@@ -12,6 +12,7 @@ export interface Article {
     title: string;
     subTitle: string;
     slug: string;
+    excerpt: string;
     content_html: string;
     content_json?: string;
     thumbnail: string;

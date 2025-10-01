@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
 use Inertia\Inertia;
 
 class PublicController extends Controller
@@ -11,6 +12,13 @@ class PublicController extends Controller
      */
     public function home()
     {
-        return Inertia::render('welcome');
+        $latestArticles = Article::whereIsPublished(true)
+            ->with(['user' => fn($query) => $query->select('id', 'name', 'avatar')])
+            ->latest()->take(3)
+            ->get(['id', 'user_id', 'title', 'slug', 'thumbnail', 'created_at']);
+
+        return Inertia::render('welcome', [
+            'latestArticles' => $latestArticles,
+        ]);
     }
 }
