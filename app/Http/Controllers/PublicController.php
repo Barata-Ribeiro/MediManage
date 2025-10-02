@@ -30,11 +30,26 @@ class PublicController extends Controller
     public function articles(Request $request)
     {
         $category = $request->query('category');
+        $search = $request->query('search');
+        $start_date = $request->query('start_date_creation');
+        $end_date = $request->query('end_date_creation');
 
         $articles = Article::whereIsPublished(true)
             ->with(['user' => fn($query) => $query->select('id', 'name', 'avatar')])
             ->with(['categories' => fn($query) => $query->select('id', 'name')])
-            ->when($request->filled('category'), fn($query) => $query->whereHas('categories', fn($q) => $q->where('name', $category)))
+            ->when($request->filled('category'), function ($query) use ($category) {
+                $names = array_filter(array_map('trim', explode(',', $category)));
+                foreach ($names as $name) {
+                    $query->whereHas('categories', function ($q) use ($name) {
+                        $q->where('name', $name);
+                    });
+                }
+                return $query;
+            })
+            ->when($request->filled('search'), fn($query) => $query->whereFullText(['title', 'subtitle', 'excerpt', 'content_html'], "%$search%")
+                ->orWhereHas('user', fn($q) => $q->whereLike('name', "%$search%")))
+            ->when($request->filled('start_date_creation'), fn($query) => $query->whereDate('created_at', '>=', $start_date))
+            ->when($request->filled('end_date_creation'), fn($query) => $query->whereDate('created_at', '<=', $end_date))
             ->latest()
             ->paginate(10, ['id', 'user_id', 'title', 'slug', 'excerpt', 'thumbnail', 'created_at'])
             ->withQueryString();

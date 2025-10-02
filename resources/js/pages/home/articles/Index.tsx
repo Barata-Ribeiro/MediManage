@@ -1,4 +1,5 @@
 import AppPagination from '@/components/app-pagination';
+import ArticleFilterForm from '@/components/forms/home/article-filter-form';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import Layout from '@/layouts/app/app-public-layout';
@@ -25,8 +26,7 @@ export default function Index({ articles: paginatedArticles, categories }: Reado
             <div className="isolate container pt-32 lg:pt-36">
                 <Heading title="All Articles" description="Browse all articles." />
 
-                {/*TODO: Add Categories filter*/}
-                {/*TODO: Add Search box*/}
+                <ArticleFilterForm />
 
                 <ul className="my-8 grid grid-cols-1 gap-6 border-t pt-8 sm:grid-cols-2 lg:grid-cols-3">
                     {articles.map((article) => {
