@@ -28,6 +28,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read Collection<int, Category> $categories
  * @property-read int|null $categories_count
+ * @property-read int $reading_time
  * @property-read User $user
  * @method static ArticleFactory factory($count = null, $state = [])
  * @method static Builder<static>|Article newModelQuery()
