@@ -10,7 +10,7 @@ export interface Article {
     id: number;
     user_id: number;
     title: string;
-    subTitle: string;
+    subtitle: string;
     slug: string;
     excerpt: string;
     content_html: string;
@@ -21,4 +21,5 @@ export interface Article {
     updated_at: string;
     user?: Partial<User>;
     categories?: Category[];
+    reading_time: number;
 }
