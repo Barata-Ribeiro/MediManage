@@ -69,6 +69,28 @@ class Article extends Model
         'is_published',
     ];
 
+    protected $appends = ['reading_time'];
+
+    /**
+     * Estimate reading time in minutes (integer).
+     *
+     * @return int
+     */
+    public function getReadingTimeAttribute(): int
+    {
+        $html = $this->content_html;
+        $text = trim(strip_tags(html_entity_decode($html)));
+
+        if ($text === '') {
+            return 1;
+        }
+
+        $wpm = 200; // Average reading speed in words per minute
+        $wordCount = str_word_count($text);
+
+        return (int)max(1, ceil($wordCount / $wpm));
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

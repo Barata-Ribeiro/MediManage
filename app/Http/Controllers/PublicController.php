@@ -72,8 +72,8 @@ class PublicController extends Controller
         }
 
         $article
-            ->with('user')
-            ->with(['categories' => fn($query) => $query->select('id', 'name')]);
+            ->load('user')
+            ->load(['categories' => fn($query) => $query->select('id', 'name')]);
 
         return Inertia::render('home/articles/Show', [
             'article' => $article,
