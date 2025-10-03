@@ -16,6 +16,10 @@ class DoctorPrescriptionController extends Controller
      */
     public function index(EmployeeInfo $doctor, Request $request)
     {
+        if (Auth::user()->id !== $doctor->user_id) {
+            return to_route('prescriptions.index', Auth::user()->employeeInfo->id);
+        }
+
         Log::info('Doctor Prescription: Viewed issued prescriptions', ['action_user_id' => Auth::id()]);
 
         $perPage = (int)$request->input('per_page', 10);
