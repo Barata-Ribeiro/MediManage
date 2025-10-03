@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\General;
 
 use App\Http\Controllers\Controller;
+use App\Services\DashboardAdminService;
 use App\Services\DashboardDoctorDoctorService;
 use Auth;
 use Inertia\Inertia;
@@ -10,10 +11,12 @@ use Inertia\Inertia;
 class DashboardController extends Controller
 {
     private DashboardDoctorDoctorService $dashboardDoctorService;
+    private DashboardAdminService $dashboardAdminService;
 
-    public function __construct(DashboardDoctorDoctorService $dashboardDoctorService)
+    public function __construct(DashboardDoctorDoctorService $dashboardDoctorService, DashboardAdminService $dashboardAdminService)
     {
         $this->dashboardDoctorService = $dashboardDoctorService;
+        $this->dashboardAdminService = $dashboardAdminService;
     }
 
     /**
@@ -27,6 +30,7 @@ class DashboardController extends Controller
         switch ($userRole) {
             case 'Super Admin':
             case 'Admin':
+                $data = $this->dashboardAdminService->getAdminDashboardData();
                 return Inertia::render('dashboard/admin-dashboard', $data);
             case 'Doctor':
                 $data = $this->dashboardDoctorService->getDoctorDashboardData();

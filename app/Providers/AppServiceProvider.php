@@ -19,6 +19,11 @@ class AppServiceProvider extends ServiceProvider
             DashboardDoctorServiceInterface::class,
             DashboardDoctorDoctorService::class
         );
+
+		$this->app->bind(
+			\App\Interfaces\DashboardAdminServiceInterface::class,
+			\App\Services\DashboardAdminService::class
+		);
     }
 
     /**
