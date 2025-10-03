@@ -56,3 +56,8 @@ export interface PaginationMeta<T> {
     to: number;
     total: number;
 }
+
+export interface ChartItem {
+    labels: string[];
+    data: number[];
+}
