@@ -68,21 +68,19 @@ export default function AdminStatsCards({ users, usersByRole }: Readonly<AdminSt
     ];
 
     return (
-        <div className="flex w-full justify-center p-4">
-            <div className="grid w-full max-w-6xl gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {cards.map(({ title, icon, value, change }) => (
-                    <Card key={title}>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-semibold">{title}</CardTitle>
-                            {icon}
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold">{value ?? ''}</div>
-                            <p className="text-xs text-muted-foreground">{formatChange(change)}</p>
-                        </CardContent>
-                    </Card>
-                ))}
-            </div>
+        <div className="grid w-full gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {cards.map(({ title, icon, value, change }) => (
+                <Card className="w-full" key={title}>
+                    <CardHeader className="flex flex-row items-center justify-between gap-y-0 pb-2">
+                        <CardTitle className="text-sm font-semibold">{title}</CardTitle>
+                        {icon}
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{value ?? ''}</div>
+                        <p className="text-xs text-muted-foreground">{formatChange(change)}</p>
+                    </CardContent>
+                </Card>
+            ))}
         </div>
     );
 }
