@@ -61,3 +61,8 @@ export interface ChartItem {
     labels: string[];
     data: number[];
 }
+
+export interface ComparisonItem {
+    total: number;
+    percentageChange: number;
+}
