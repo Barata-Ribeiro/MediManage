@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Interfaces\DashboardDoctorServiceInterface;
+use App\Services\DashboardDoctorDoctorService;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -12,7 +14,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+
+        $this->app->bind(
+            DashboardDoctorServiceInterface::class,
+            DashboardDoctorDoctorService::class
+        );
     }
 
     /**
