@@ -1,4 +1,4 @@
-import PublicController from '@/actions/App/Http/Controllers/PublicController';
+import PublicController from '@/actions/App/Http/Controllers/General/PublicController';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
