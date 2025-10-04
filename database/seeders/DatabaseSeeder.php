@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
                 EmployeeInfoSeeder::class,
                 PrescriptionSeeder::class,
                 MedicalRecordSeeder::class,
+                AppointmentSeeder::class,
                 CategorySeeder::class,
                 ArticleSeeder::class,
                 NoticeSeeder::class

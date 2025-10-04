@@ -18,7 +18,7 @@ class PrescriptionSeeder extends Seeder
     {
         try {
             $drHouse = User::where('email', 'dr.housemd@ppth.com')->with('employeeInfo')->first();
-            $patients = PatientInfo::all();
+            $patients = PatientInfo::inRandomOrder()->limit(20)->get();
 
             Log::info('Seeding prescriptions for Dr. House and patients.', ['doctor_id' => $drHouse->id, 'patient_count' => $patients->count()]);
             Log::info('Doctor Info', ['employee_info_id' => $drHouse->employeeInfo->id]);
@@ -29,7 +29,6 @@ class PrescriptionSeeder extends Seeder
                     'patient_info_id' => $patient->id,
                 ]);
             });
-
         } catch (Exception $e) {
             Log::error('Error seeding prescriptions!', ['error' => $e]);
         }
