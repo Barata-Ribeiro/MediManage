@@ -2,8 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\AppointmentFactory;
+use Eloquent;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
+
 
 /**
  * @property int $id
@@ -12,35 +18,37 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $appointment_date
  * @property string $status
  * @property string|null $reason_for_visit
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\EmployeeInfo $employeeInfo
- * @property-read \App\Models\PatientInfo $patientInfo
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Appointment newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Appointment newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Appointment query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Appointment whereAppointmentDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Appointment whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Appointment whereEmployeeInfoId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Appointment whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Appointment wherePatientInfoId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Appointment whereReasonForVisit($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Appointment whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Appointment whereUpdatedAt($value)
- * @mixin \Eloquent
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read EmployeeInfo $employeeInfo
+ * @property-read PatientInfo $patientInfo
+ * @method static AppointmentFactory factory($count = null, $state = [])
+ * @method static Builder<static>|Appointment newModelQuery()
+ * @method static Builder<static>|Appointment newQuery()
+ * @method static Builder<static>|Appointment query()
+ * @method static Builder<static>|Appointment whereAppointmentDate($value)
+ * @method static Builder<static>|Appointment whereCreatedAt($value)
+ * @method static Builder<static>|Appointment whereEmployeeInfoId($value)
+ * @method static Builder<static>|Appointment whereId($value)
+ * @method static Builder<static>|Appointment wherePatientInfoId($value)
+ * @method static Builder<static>|Appointment whereReasonForVisit($value)
+ * @method static Builder<static>|Appointment whereStatus($value)
+ * @method static Builder<static>|Appointment whereUpdatedAt($value)
+ * @mixin Eloquent
  */
 class Appointment extends Model
 {
+    /** @use HasFactory<AppointmentFactory> */
+    use HasFactory;
+
     protected $table = 'appointments';
 
     protected $fillable = [
         'patient_info_id',
         'employee_info_id',
         'appointment_date',
-        'appointment_time',
-        'reason_for_visit',
         'status',
-        'notes',
+        'reason_for_visit',
     ];
 
     public function patientInfo(): BelongsTo
