@@ -1,7 +1,5 @@
-export function invariant(cond?: boolean, message?: string, ...args: string[]): asserts cond {
-    if (cond) {
-        return;
-    }
+export function invariant(cond?: boolean, message?: string): asserts cond {
+    if (cond) return;
 
     throw new Error(
         'Internal Lexical error: invariant() is meant to be replaced at compile ' +

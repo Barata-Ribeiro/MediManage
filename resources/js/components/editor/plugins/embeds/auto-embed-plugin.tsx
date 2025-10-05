@@ -106,10 +106,10 @@ export const TwitterEmbedConfig: CustomEmbedConfig = {
 export const EmbedConfigs = [TwitterEmbedConfig, YoutubeEmbedConfig];
 
 const debounce = (callback: (text: string) => void, delay: number) => {
-    let timeoutId: number;
+    let timeoutId: NodeJS.Timeout;
     return (text: string) => {
-        window.clearTimeout(timeoutId);
-        timeoutId = window.setTimeout(() => {
+        globalThis.clearTimeout(timeoutId);
+        timeoutId = globalThis.setTimeout(() => {
             callback(text);
         }, delay);
     };
@@ -204,10 +204,7 @@ export function AutoEmbedPlugin(): JSX.Element {
                 embedConfigs={EmbedConfigs}
                 onOpenEmbedModalForConfig={openEmbedModal}
                 getMenuOptions={getMenuOptions}
-                menuRenderFn={(
-                    anchorElementRef,
-                    { selectedIndex, options, selectOptionAndCleanUp, setHighlightedIndex },
-                ) => {
+                menuRenderFn={(anchorElementRef, { options, selectOptionAndCleanUp }) => {
                     return anchorElementRef.current ? (
                         <Popover open={true}>
                             <PopoverPortal container={anchorElementRef.current}>
@@ -217,7 +214,7 @@ export function AutoEmbedPlugin(): JSX.Element {
                                         <Command>
                                             <CommandList>
                                                 <CommandGroup>
-                                                    {options.map((option, i: number) => (
+                                                    {options.map((option) => (
                                                         <CommandItem
                                                             key={option.key}
                                                             value={option.title}

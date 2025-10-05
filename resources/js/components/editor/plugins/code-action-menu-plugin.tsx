@@ -3,7 +3,7 @@ import { CopyButton } from '@/components/editor/editor-ui/code-button';
 import { $isCodeNode, CodeNode, getLanguageFriendlyName, normalizeCodeLang } from '@lexical/code';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $getNearestNodeFromDOMNode, isHTMLElement } from 'lexical';
-import { JSX, useEffect, useRef, useState } from 'react';
+import { type JSX, type ReactPortal, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 const CODE_PADDING = 8;
@@ -115,7 +115,8 @@ function CodeActionMenuContainer({
         );
     }, [editor]);
 
-    const normalizedLang = normalizeCodeLang(lang);
+    normalizeCodeLang(lang);
+
     const codeFriendlyName = getLanguageFriendlyName(lang);
 
     return (
@@ -150,10 +151,8 @@ export function CodeActionMenuPlugin({
     anchorElem = document.body,
 }: {
     anchorElem: HTMLElement | null;
-}): React.ReactPortal | null {
-    if (!anchorElem) {
-        return null;
-    }
+}): ReactPortal | null {
+    if (!anchorElem) return null;
 
     return createPortal(<CodeActionMenuContainer anchorElem={anchorElem} />, anchorElem);
 }

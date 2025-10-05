@@ -30,7 +30,7 @@ import { Check, Pencil, Trash, X } from 'lucide-react';
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { Dispatch, JSX, useCallback, useEffect, useRef, useState } from 'react';
+import { Dispatch, JSX, KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 function FloatingLinkEditor({
@@ -72,7 +72,7 @@ function FloatingLinkEditor({
             }
         }
         const editorElem = editorRef.current;
-        const nativeSelection = window.getSelection();
+        const nativeSelection = globalThis.getSelection();
         const activeElement = document.activeElement;
 
         if (editorElem === null) {
@@ -171,9 +171,9 @@ function FloatingLinkEditor({
             inputRef.current.focus();
             setIsLink(true);
         }
-    }, [isLinkEditMode, isLink]);
+    }, [isLinkEditMode, isLink]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const monitorInputInteraction = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const monitorInputInteraction = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
             event.preventDefault();
             handleLinkSubmission();
@@ -208,66 +208,67 @@ function FloatingLinkEditor({
     };
     return (
         <div ref={editorRef} className="absolute top-0 left-0 w-full max-w-sm rounded-md opacity-0 shadow-md">
-            {!isLink ? null : isLinkEditMode ? (
-                <div className="flex items-center space-x-2 rounded-md border p-1 pl-2">
-                    <Input
-                        ref={inputRef}
-                        value={editedLinkUrl}
-                        onChange={(event) => setEditedLinkUrl(event.target.value)}
-                        onKeyDown={monitorInputInteraction}
-                        className="flex-grow"
-                    />
-                    <Button
-                        type="button"
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => {
-                            setIsLinkEditMode(false);
-                            setIsLink(false);
-                        }}
-                        className="shrink-0"
-                    >
-                        <X className="size-4" />
-                    </Button>
-                    <Button type="button" size="icon" onClick={handleLinkSubmission} className="shrink-0">
-                        <Check className="size-4" />
-                    </Button>
-                </div>
-            ) : (
-                <div className="flex items-center justify-between rounded-md border p-1 pl-2">
-                    <a
-                        href={sanitizeUrl(linkUrl)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="overflow-hidden text-sm text-ellipsis whitespace-nowrap"
-                    >
-                        {linkUrl}
-                    </a>
-                    <div className="flex">
+            {isLink &&
+                (isLinkEditMode ? (
+                    <div className="flex items-center space-x-2 rounded-md border p-1 pl-2">
+                        <Input
+                            ref={inputRef}
+                            value={editedLinkUrl}
+                            onChange={(event) => setEditedLinkUrl(event.target.value)}
+                            onKeyDown={monitorInputInteraction}
+                            className="flex-grow"
+                        />
                         <Button
                             type="button"
                             size="icon"
                             variant="ghost"
                             onClick={() => {
-                                setEditedLinkUrl(linkUrl);
-                                setIsLinkEditMode(true);
+                                setIsLinkEditMode(false);
+                                setIsLink(false);
                             }}
+                            className="shrink-0"
                         >
-                            <Pencil className="size-4" />
+                            <X className="size-4" />
                         </Button>
-                        <Button
-                            type="button"
-                            size="icon"
-                            variant="destructive"
-                            onClick={() => {
-                                editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
-                            }}
-                        >
-                            <Trash className="size-4" />
+                        <Button type="button" size="icon" onClick={handleLinkSubmission} className="shrink-0">
+                            <Check className="size-4" />
                         </Button>
                     </div>
-                </div>
-            )}
+                ) : (
+                    <div className="flex items-center justify-between rounded-md border p-1 pl-2">
+                        <a
+                            href={sanitizeUrl(linkUrl)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="overflow-hidden text-sm text-ellipsis whitespace-nowrap"
+                        >
+                            {linkUrl}
+                        </a>
+                        <div className="flex">
+                            <Button
+                                type="button"
+                                size="icon"
+                                variant="ghost"
+                                onClick={() => {
+                                    setEditedLinkUrl(linkUrl);
+                                    setIsLinkEditMode(true);
+                                }}
+                            >
+                                <Pencil className="size-4" />
+                            </Button>
+                            <Button
+                                type="button"
+                                size="icon"
+                                variant="destructive"
+                                onClick={() => {
+                                    editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+                                }}
+                            >
+                                <Trash className="size-4" />
+                            </Button>
+                        </div>
+                    </div>
+                ))}
         </div>
     );
 }
@@ -305,11 +306,8 @@ function useFloatingLinkEditorToolbar(
                             (autoLinkNode && (!autoLinkNode.is(focusAutoLinkNode) || autoLinkNode.getIsUnlinked()))
                         );
                     });
-                if (!badNode) {
-                    setIsLink(true);
-                } else {
-                    setIsLink(false);
-                }
+
+                setIsLink(!badNode);
             } else if ($isNodeSelection(selection)) {
                 const nodes = selection.getNodes();
                 if (nodes.length === 0) {

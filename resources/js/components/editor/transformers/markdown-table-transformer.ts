@@ -61,7 +61,9 @@ export const TABLE: ElementTransformer = {
             for (const cell of row.getChildren()) {
                 // It's TableCellNode so it's just to make flow happy
                 if ($isTableCellNode(cell)) {
-                    rowOutput.push($convertToMarkdownString(OTHER_MARKDOWN_TRANSFORMERS, cell).replace(/\n/g, '\\n'));
+                    rowOutput.push(
+                        $convertToMarkdownString(OTHER_MARKDOWN_TRANSFORMERS, cell).replaceAll(/\n/g, String.raw`\n`),
+                    );
                     if (cell.__headerState === TableCellHeaderStates.ROW) {
                         isHeaderRow = true;
                     }
@@ -70,7 +72,7 @@ export const TABLE: ElementTransformer = {
 
             output.push(`| ${rowOutput.join(' | ')} |`);
             if (isHeaderRow) {
-                output.push(`| ${rowOutput.map((_) => '---').join(' | ')} |`);
+                output.push(`| ${rowOutput.map(() => '---').join(' | ')} |`);
             }
         }
 
@@ -86,18 +88,16 @@ export const TABLE: ElementTransformer = {
             }
 
             const rows = table.getChildren();
-            const lastRow = rows[rows.length - 1];
-            if (!lastRow || !$isTableRowNode(lastRow)) {
-                return;
-            }
+            const lastRow = rows.at(-1);
+
+            if (!lastRow || !$isTableRowNode(lastRow)) return;
 
             // Add header state to row cells
-            lastRow.getChildren().forEach((cell) => {
-                if (!$isTableCellNode(cell)) {
-                    return;
-                }
+            for (const cell of lastRow.getChildren()) {
+                if (!$isTableCellNode(cell)) continue;
+
                 cell.setHeaderStyles(TableCellHeaderStates.ROW, TableCellHeaderStates.ROW);
-            });
+            }
 
             // Remove line
             parentNode.remove();
@@ -172,14 +172,14 @@ function getTableColumnsSize(table: TableNode) {
 }
 
 const $createTableCell = (textContent: string): TableCellNode => {
-    textContent = textContent.replace(/\\n/g, '\n');
+    textContent = textContent.replaceAll(/\\n/g, '\n');
     const cell = $createTableCellNode(TableCellHeaderStates.NO_STATUS);
     $convertFromMarkdownString(textContent, OTHER_MARKDOWN_TRANSFORMERS, cell);
     return cell;
 };
 
 const mapToTableCells = (textContent: string): Array<TableCellNode> | null => {
-    const match = RegExp(TABLE_ROW_REG_EXP).exec(textContent);
+    const match = new RegExp(TABLE_ROW_REG_EXP).exec(textContent);
     if (!match?.[1]) return null;
     return match[1].split('|').map((text) => $createTableCell(text));
 };

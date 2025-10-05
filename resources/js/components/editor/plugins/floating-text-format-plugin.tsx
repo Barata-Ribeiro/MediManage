@@ -58,13 +58,10 @@ function FloatingTextFormat({
     const popupCharStylesEditorRef = useRef<HTMLDivElement | null>(null);
 
     const insertLink = useCallback(() => {
-        if (!isLink) {
-            setIsLinkEditMode(true);
-            editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://');
-        } else {
-            setIsLinkEditMode(false);
-            editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
-        }
+        const payload = isLink ? null : 'https://';
+
+        setIsLinkEditMode(!isLink);
+        editor.dispatchCommand(TOGGLE_LINK_COMMAND, payload);
     }, [editor, isLink, setIsLinkEditMode]);
 
     function mouseMoveListener(e: MouseEvent) {
@@ -82,6 +79,8 @@ function FloatingTextFormat({
         }
     }
     function mouseUpListener(e: MouseEvent) {
+        e.stopImmediatePropagation();
+
         if (popupCharStylesEditorRef?.current) {
             if (popupCharStylesEditorRef.current.style.pointerEvents !== 'auto') {
                 popupCharStylesEditorRef.current.style.pointerEvents = 'auto';
@@ -105,7 +104,7 @@ function FloatingTextFormat({
         const selection = $getSelection();
 
         const popupCharStylesEditorElem = popupCharStylesEditorRef.current;
-        const nativeSelection = window.getSelection();
+        const nativeSelection = globalThis.getSelection();
 
         if (popupCharStylesEditorElem === null) {
             return;
@@ -116,8 +115,7 @@ function FloatingTextFormat({
             selection !== null &&
             nativeSelection !== null &&
             !nativeSelection.isCollapsed &&
-            rootElement !== null &&
-            rootElement.contains(nativeSelection.anchorNode)
+            rootElement?.contains(nativeSelection.anchorNode)
         ) {
             const rangeRect = getDOMRangeRect(nativeSelection, rootElement);
 
@@ -298,14 +296,12 @@ function useFloatingTextFormatToolbar(
                 return;
             }
             const selection = $getSelection();
-            const nativeSelection = window.getSelection();
+            const nativeSelection = globalThis.getSelection();
             const rootElement = editor.getRootElement();
 
             if (
                 nativeSelection !== null &&
-                (!$isRangeSelection(selection) ||
-                    rootElement === null ||
-                    !rootElement.contains(nativeSelection.anchorNode))
+                (!$isRangeSelection(selection) || !rootElement?.contains(nativeSelection.anchorNode))
             ) {
                 setIsText(false);
                 return;
@@ -328,11 +324,7 @@ function useFloatingTextFormatToolbar(
 
             // Update links
             const parent = node.getParent();
-            if ($isLinkNode(parent) || $isLinkNode(node)) {
-                setIsLink(true);
-            } else {
-                setIsLink(false);
-            }
+            setIsLink($isLinkNode(parent) || $isLinkNode(node));
 
             if (!$isCodeHighlightNode(selection.anchor.getNode()) && selection.getTextContent() !== '') {
                 setIsText($isTextNode(node) || $isParagraphNode(node));
@@ -340,7 +332,7 @@ function useFloatingTextFormatToolbar(
                 setIsText(false);
             }
 
-            const rawTextContent = selection.getTextContent().replace(/\n/g, '');
+            const rawTextContent = selection.getTextContent().replaceAll(/\n/g, '');
             if (!selection.isCollapsed() && rawTextContent === '') {
                 setIsText(false);
                 return;
