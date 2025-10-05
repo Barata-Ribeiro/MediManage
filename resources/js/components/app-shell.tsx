@@ -4,6 +4,7 @@ import { SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
 import { type ReactNode, useEffect } from 'react';
 import { toast } from 'sonner';
+import GlobalThemeSwitcher from './global-theme-switcher';
 
 interface AppShellProps {
     children: ReactNode;
@@ -29,6 +30,7 @@ export function AppShell({ children, variant = 'header' }: Readonly<AppShellProp
     return (
         <SidebarProvider defaultOpen={isOpen}>
             {children}
+            <GlobalThemeSwitcher />
             <Toaster />
         </SidebarProvider>
     );
