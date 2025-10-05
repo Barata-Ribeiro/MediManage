@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Interfaces\DashboardAdminServiceInterface;
 use App\Models\User;
+use Asika\Agent\Agent;
 use Carbon\Carbon;
+use DB;
 use Spatie\Permission\Models\Role;
 
 class DashboardAdminService implements DashboardAdminServiceInterface
@@ -19,6 +21,7 @@ class DashboardAdminService implements DashboardAdminServiceInterface
         $totalUsers = $this->getTotalUsersWithPastMonthComparison($usersByRole);
         $totalUsersByRole = $this->getTotalUsersByRoleWithPastMonthComparison($usersByRole);
         $newUsersPerMonth = $this->getNewUsersPerMonth();
+        $allUserAgents = $this->getAllUserAgents();
 
         return [
             'data' => [
@@ -26,6 +29,7 @@ class DashboardAdminService implements DashboardAdminServiceInterface
                 'totalUsers' => $totalUsers,
                 'totalUsersByRole' => $totalUsersByRole,
                 'newUsersPerMonth' => $newUsersPerMonth,
+                'allUserAgents' => $allUserAgents,
             ],
         ];
     }
@@ -132,6 +136,45 @@ class DashboardAdminService implements DashboardAdminServiceInterface
         return [
             'labels' => collect($labels)->map(fn($l) => mb_substr($l, 0, 3))->all(),
             'data' => $data,
+        ];
+    }
+
+    /**
+     * Get all user agents from sessions, grouped by user_agent with counts.
+     *
+     * @return array
+     */
+    private function getAllUserAgents(): array
+    {
+        $userAgents = DB::table('sessions')
+            ->selectRaw('user_agent, COUNT(*) as total')
+            ->whereNotNull('user_agent')
+            ->groupBy('user_agent')
+            ->orderBy('total', 'desc')
+            ->get()
+            ->pluck('total', 'user_agent');
+
+        $agentsCounts = [];
+
+        foreach ($userAgents as $ua => $count) {
+            $agent = new Agent();
+            $agent->setUserAgent($ua);
+
+            $browser = $agent->browser() ?: 'Unknown Browser';
+            $version = $agent->version($browser) ?: '';
+            $os = $agent->platform() ?: 'Unknown OS';
+
+            $major = $version ? explode('.', $version)[0] : '';
+            $key = trim($browser . ($major ? " {$major}" : '') . " / {$os}");
+
+            $agentCounts[$key] = ($agentCounts[$key] ?? 0) + $count;
+        }
+
+        arsort($agentCounts);
+
+        return [
+            'labels' => array_keys($agentCounts),
+            'data' => array_values($agentCounts),
         ];
     }
 }
