@@ -89,7 +89,6 @@ export default function Profile({
                                         className="mt-1 block w-full"
                                         defaultValue={auth.user.avatar}
                                         name="avatar"
-                                        required
                                         placeholder="e.g. https://example.com/avatar.jpg"
                                     />
 
@@ -104,9 +103,22 @@ export default function Profile({
                                         className="mt-1 block w-full"
                                         defaultValue={auth.user.bio}
                                         name="bio"
-                                        required
-                                        placeholder="Short biography about yourself"
+                                        placeholder="Write a short biography about yourself..."
+                                        maxLength={500}
+                                        onInput={(e) => {
+                                            const ta = e.currentTarget as HTMLTextAreaElement;
+                                            const counter = ta.parentElement?.querySelector(
+                                                '[data-char-counter]',
+                                            ) as HTMLElement | null;
+                                            if (counter) counter.textContent = `${ta.value.length}/500`;
+                                        }}
                                     />
+
+                                    <div className="flex justify-end text-sm text-muted-foreground">
+                                        <span data-char-counter>
+                                            {(auth.user.bio && auth.user.bio.length) ?? 0}/500
+                                        </span>
+                                    </div>
 
                                     <InputError className="mt-2" message={errors.bio} />
                                 </div>
