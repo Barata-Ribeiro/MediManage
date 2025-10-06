@@ -1,5 +1,6 @@
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
 import TextLink from '@/components/text-link';
+import DropdownMenuCopyButton from '@/components/ui-helpers/dropdown-menu-copy-button';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -71,18 +72,18 @@ export const columns: ColumnDef<User>[] = [
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Button variant="ghost" className="size-8 p-0">
                             <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
+                            <MoreHorizontal className="size-4" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(String(user.name))}>
-                            Copy username
+                        <DropdownMenuItem asChild>
+                            <DropdownMenuCopyButton content={user.name}>Copy Username</DropdownMenuCopyButton>
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(String(user.email))}>
-                            Copy email
+                        <DropdownMenuItem asChild>
+                            <DropdownMenuCopyButton content={user.email}>Copy Email</DropdownMenuCopyButton>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>

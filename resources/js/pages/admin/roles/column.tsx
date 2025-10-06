@@ -1,4 +1,5 @@
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
+import DropdownMenuCopyButton from '@/components/ui-helpers/dropdown-menu-copy-button';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -67,8 +68,8 @@ export const columns: ColumnDef<Role>[] = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(String(role.name))}>
-                            Copy role Name
+                        <DropdownMenuItem asChild>
+                            <DropdownMenuCopyButton content={role.name}>Copy Role</DropdownMenuCopyButton>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem className={disabledStyle} asChild>
