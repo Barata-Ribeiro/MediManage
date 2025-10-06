@@ -5,11 +5,14 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import permissions from '@/routes/admin/permissions';
 import roles from '@/routes/admin/roles';
 import users from '@/routes/admin/users';
+import articles from '@/routes/articles';
+import categories from '@/routes/categories';
 import { type NavItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { NotebookIcon, UsersIcon } from 'lucide-react';
+import { ChartBarStackedIcon, NewspaperIcon, NotebookIcon, ShieldUserIcon, UsersIcon } from 'lucide-react';
 
 export function NavAdmin() {
     const { props, url } = usePage<SharedData>();
@@ -26,9 +29,24 @@ export function NavAdmin() {
             icon: NotebookIcon,
         },
         {
+            title: 'Permissions',
+            href: permissions.index(),
+            icon: ShieldUserIcon,
+        },
+        {
             title: 'Users',
             href: users.index(),
             icon: UsersIcon,
+        },
+        {
+            title: 'Articles',
+            href: articles.index(),
+            icon: NewspaperIcon,
+        },
+        {
+            title: 'Categories',
+            href: categories.index(),
+            icon: ChartBarStackedIcon,
         },
     ];
 
