@@ -77,6 +77,16 @@ class UserSeeder extends Seeder
                 ]
             )->assignRole('Doctor');
 
+            // Banned user for testing
+            User::firstOrCreate(
+                ['email' => "banned_user@example.com"],
+                [
+                    'name' => "banned_user",
+                    'email' => "banned_user@example.com",
+                    'password' => config('app.admin_password'),
+                ]
+            )->assignRole('Banned');
+
             Log::info('Seeded users with roles.');
         } catch (Exception $e) {
             Log::error('Error seeding users!', ['error' => $e->getMessage()]);

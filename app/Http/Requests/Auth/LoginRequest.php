@@ -44,6 +44,18 @@ class LoginRequest extends FormRequest
         /** @var User|null $user */
         $user = Auth::getProvider()->retrieveByCredentials($this->only('email', 'password'));
 
+        if ($user && (
+            (method_exists($user, 'hasRole') && $user->hasRole('Banned')) ||
+            (isset($user->role) && $user->role === 'Banned') ||
+            (isset($user->roles) && (is_array($user->roles) ? in_array('Banned', $user->roles) : stripos((string)$user->roles, 'Banned') !== false))
+        )) {
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => 'Your account has been banned. Please contact support for more information.',
+            ]);
+        }
+
         if (! $user || ! Auth::getProvider()->validateCredentials($user, $this->only('password'))) {
             RateLimiter::hit($this->throttleKey());
 
