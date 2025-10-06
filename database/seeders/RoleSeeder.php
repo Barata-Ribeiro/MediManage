@@ -18,22 +18,46 @@ class RoleSeeder extends Seeder
         try {
             $allPermissions = Permission::pluck('name')->toArray();
 
-            // Build role -> permissions mapping programmatically to avoid listing every permission manually.
-            $actions = ['index', 'show', 'create', 'edit', 'destroy'];
-
             $modulesForRoles = [
                 'Super Admin' => ['all' => true],
-                // Manager should be able to manage most resources
-                'Manager' => ['user', 'role', 'permission', 'patient_info', 'employee_info', 'appointment', 'prescription', 'medical_record', 'medical_record_entries'],
-                // Doctor primarily works with patients, records and prescriptions
-                'Doctor' => ['patient_info', 'appointment', 'prescription', 'medical_record', 'medical_record_entries'],
-                // Attendant handles appointments and basic patient records
-                'Attendant' => ['patient_info', 'appointment', 'prescription'],
-                // Patient can view/list their own info, appointments and prescriptions/records
-                'Patient' => ['patient_info', 'appointment', 'prescription', 'medical_record'],
-                // Other Staff have no special permissions by default
+                'Manager' => [
+                    'user' => ['index', 'show', 'create', 'edit'],
+                    'role' => ['index', 'show'],
+                    'permission' => ['index', 'show'],
+                    'patient_info' => ['index', 'show', 'edit', 'destroy'],
+                    'employee_info' => ['index', 'show', 'create', 'edit', 'destroy'],
+                    'appointment' => ['index', 'show', 'create', 'edit', 'destroy'],
+                    'prescription' => ['index', 'show', 'destroy'],
+                    'medical_record' => ['index', 'show', 'destroy'],
+                    'medical_record_entries' => ['index', 'show', 'destroy'],
+                    'article' => ['index', 'show', 'create', 'edit', 'destroy'],
+                    'category' => ['index', 'show', 'create', 'edit', 'destroy'],
+                ],
+                'Doctor' => [
+                    'patient_info' => ['index', 'show', 'edit'],
+                    'employee_info' => ['index', 'show'],
+                    'appointment' => ['index', 'show'],
+                    'prescription' => ['index', 'show', 'create', 'edit'],
+                    'medical_record' => ['index', 'show', 'create', 'edit'],
+                    'medical_record_entries' => ['index', 'show', 'create', 'edit'],
+                    'article' => ['index', 'show', 'create', 'edit'],
+                    'category' => ['index', 'show', 'create'],
+                ],
+                'Attendant' => [
+                    'patient_info' => ['index', 'show', 'create', 'edit'],
+                    'employee_info' => ['index', 'show'],
+                    'appointment' => ['index', 'show', 'create', 'edit', 'destroy'],
+                    'prescription' => ['index', 'show'],
+                ],
+                'Patient' => [
+                    'patient_info' => ['show'],
+                    'employee_info' => ['index', 'show'],
+                    'appointment' => ['index', 'show', 'create', 'edit', 'destroy'],
+                    'prescription' => ['index', 'show'],
+                    'medical_record' => ['show'],
+                    'medical_record_entries' => ['index', 'show'],
+                ],
                 'Other Staff' => [],
-                // Banned: no permissions
                 'Banned' => [],
             ];
 
@@ -44,21 +68,26 @@ class RoleSeeder extends Seeder
                     continue;
                 }
 
-                $perms = [];
-                foreach ($mods as $mod) {
-                    foreach ($actions as $act) {
-                        $perms[] = $act . '.' . $mod;
+                $rolePermissions = [];
+                foreach ($mods as $module => $actions) {
+                    foreach ($actions as $action) {
+                        $permissionName = $action . '.' . $module;
+                        if (in_array($permissionName, $allPermissions)) {
+                            $rolePermissions[] = $permissionName;
+                        } else {
+                            Log::warning("Permission '{$permissionName}' does not exist and cannot be assigned to role '{$roleName}'.");
+                        }
                     }
                 }
 
-                $perms = array_values(array_intersect($perms, $allPermissions));
+                $rolePermissions = array_values(array_intersect($rolePermissions, $allPermissions));
 
-                $roles[$roleName] = $perms;
+                $roles[$roleName] = $rolePermissions;
             }
 
             foreach ($roles as $roleName => $permissions) {
                 $role = Role::firstOrCreate(['name' => $roleName]);
-                if (isset($permissions['all']) && $permissions['all']) {
+                if (is_array($permissions) && isset($permissions['all']) && $permissions['all']) {
                     $role->syncPermissions($allPermissions);
                 } else {
                     $role->syncPermissions($permissions);
