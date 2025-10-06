@@ -1,20 +1,5 @@
 import { PaginationMeta } from '@/types';
-
-export interface Permission {
-    id: number;
-    title: string;
-    name: string;
-    guard_name?: string;
-    [key: string]: unknown;
-}
-
-export interface Role {
-    id: number;
-    name: string;
-    guard_name?: string;
-    permissions?: Permission[];
-    [key: string]: unknown;
-}
+import { Role } from '@/types/admin/roles';
 
 export interface User {
     id: number;
