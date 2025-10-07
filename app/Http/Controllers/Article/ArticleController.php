@@ -84,4 +84,13 @@ class ArticleController extends Controller
 
         return Inertia::render('manage/articles/MyIndex', ['articles' => $articles]);
     }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        Log::info('Articles: Viewed create article page', ['action_user_id' => Auth::id()]);
+        return Inertia::render('manage/articles/Create');
+    }
 }
