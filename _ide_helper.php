@@ -22961,6 +22961,516 @@ namespace Illuminate\Support\Facades {
             }
     }
 
+namespace Asika\Agent\Facades {
+    /**
+     */
+    class Agent extends \Detection\MobileDetect {
+        /**
+         * @static
+         */
+        public static function getExtendedRules()
+        {
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->getExtendedRules();
+        }
+
+        /**
+         * @return \Jaybizzle\CrawlerDetect\CrawlerDetect
+         * @static
+         */
+        public static function getCrawlerDetect()
+        {
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->getCrawlerDetect();
+        }
+
+        /**
+         * @static
+         */
+        public static function getBrowsers()
+        {
+            return \Asika\Agent\Agent::getBrowsers();
+        }
+
+        /**
+         * @static
+         */
+        public static function getOperatingSystems()
+        {
+            return \Asika\Agent\Agent::getOperatingSystems();
+        }
+
+        /**
+         * @static
+         */
+        public static function getPlatforms()
+        {
+            return \Asika\Agent\Agent::getPlatforms();
+        }
+
+        /**
+         * @static
+         */
+        public static function getDesktopDevices()
+        {
+            return \Asika\Agent\Agent::getDesktopDevices();
+        }
+
+        /**
+         * @static
+         */
+        public static function getProperties()
+        {
+            return \Asika\Agent\Agent::getProperties();
+        }
+
+        /**
+         * Get accept languages.
+         *
+         * @param string|null $acceptLanguage
+         * @return array
+         * @static
+         */
+        public static function languages($acceptLanguage = null)
+        {
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->languages($acceptLanguage);
+        }
+
+        /**
+         * @static
+         */
+        public static function match($regex, $userAgent = null)
+        {
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->match($regex, $userAgent);
+        }
+
+        /**
+         * Get the browser name.
+         *
+         * @param string|null $userAgent
+         * @return string|bool
+         * @static
+         */
+        public static function browser($userAgent = null)
+        {
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->browser($userAgent);
+        }
+
+        /**
+         * Get the platform name.
+         *
+         * @param string|null $userAgent
+         * @return string|bool
+         * @static
+         */
+        public static function platform($userAgent = null)
+        {
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->platform($userAgent);
+        }
+
+        /**
+         * Get the device name.
+         *
+         * @param string|null $userAgent
+         * @return string|bool
+         * @static
+         */
+        public static function device($userAgent = null)
+        {
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->device($userAgent);
+        }
+
+        /**
+         * Check if the device is a desktop computer.
+         *
+         * @param string|null $userAgent deprecated
+         * @param array|null $httpHeaders deprecated
+         * @return bool
+         * @throws MobileDetectException
+         * @static
+         */
+        public static function isDesktop($userAgent = null, $httpHeaders = null)
+        {
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->isDesktop($userAgent, $httpHeaders);
+        }
+
+        /**
+         * @static
+         */
+        public static function isMobile($userAgent = null, $httpHeaders = null)
+        {
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->isMobile($userAgent, $httpHeaders);
+        }
+
+        /**
+         * @static
+         */
+        public static function isTablet($userAgent = null, $httpHeaders = null)
+        {
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->isTablet($userAgent, $httpHeaders);
+        }
+
+        /**
+         * Check if the device is a mobile phone.
+         *
+         * @param string|null $userAgent deprecated
+         * @param array|null $httpHeaders deprecated
+         * @return bool
+         * @throws MobileDetectException
+         * @static
+         */
+        public static function isPhone($userAgent = null, $httpHeaders = null)
+        {
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->isPhone($userAgent, $httpHeaders);
+        }
+
+        /**
+         * Get the robot name.
+         *
+         * @param string|null $userAgent
+         * @return string|bool
+         * @static
+         */
+        public static function robot($userAgent = null)
+        {
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->robot($userAgent);
+        }
+
+        /**
+         * Check if device is a robot.
+         *
+         * @param string|null $userAgent
+         * @return bool
+         * @static
+         */
+        public static function isRobot($userAgent = null)
+        {
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->isRobot($userAgent);
+        }
+
+        /**
+         * Get the device type
+         *
+         * @param string|null $userAgent
+         * @param array|null $httpHeaders
+         * @return string
+         * @throws MobileDetectException
+         * @static
+         */
+        public static function deviceType($userAgent = null, $httpHeaders = null)
+        {
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->deviceType($userAgent, $httpHeaders);
+        }
+
+        /**
+         * @static
+         */
+        public static function version($propertyName, $type = 'text')
+        {
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->version($propertyName, $type);
+        }
+
+        /**
+         * @static
+         */
+        public static function getHttpHeader($header)
+        {
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->getHttpHeader($header);
+        }
+
+        /**
+         * Get the current script version.
+         * 
+         * Used in demo.php file.
+         *
+         * @return string The version number in semantic version format.
+         * @static
+         */
+        public static function getVersion()
+        {
+            //Method inherited from \Detection\MobileDetect 
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->getVersion();
+        }
+
+        /**
+         * On startup Mobile Detect library will auto-initiate from the existing
+         * HTTP headers extracted from $_SERVER.
+         *
+         * @return void
+         * @static
+         */
+        public static function autoInitKnownHttpHeaders()
+        {
+            //Method inherited from \Detection\MobileDetect 
+            /** @var \Asika\Agent\Agent $instance */
+            $instance->autoInitKnownHttpHeaders();
+        }
+
+        /**
+         * Set the HTTP Headers. Must be PHP-flavored. This method will reset existing headers.
+         *
+         * @param array $httpHeaders The headers to set. If null, then using PHP's _SERVER to extract
+         *                           the headers. The default null is left for backwards compatibility.
+         * @static
+         */
+        public static function setHttpHeaders($httpHeaders = [])
+        {
+            //Method inherited from \Detection\MobileDetect 
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->setHttpHeaders($httpHeaders);
+        }
+
+        /**
+         * Retrieves the HTTP headers.
+         *
+         * @return array
+         * @static
+         */
+        public static function getHttpHeaders()
+        {
+            //Method inherited from \Detection\MobileDetect 
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->getHttpHeaders();
+        }
+
+        /**
+         * @static
+         */
+        public static function hasHttpHeaders()
+        {
+            //Method inherited from \Detection\MobileDetect 
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->hasHttpHeaders();
+        }
+
+        /**
+         * @static
+         */
+        public static function getMobileHeaders()
+        {
+            //Method inherited from \Detection\MobileDetect 
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->getMobileHeaders();
+        }
+
+        /**
+         * Get all possible HTTP headers that
+         * can contain the User-Agent string.
+         *
+         * @return array List of HTTP headers.
+         * @static
+         */
+        public static function getUaHttpHeaders()
+        {
+            //Method inherited from \Detection\MobileDetect 
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->getUaHttpHeaders();
+        }
+
+        /**
+         * Retrieves the HTTP CloudFront headers
+         * that trigger a mobile detection.
+         *
+         * @return array
+         * @static
+         */
+        public static function getCloudFrontHttpHeaders()
+        {
+            //Method inherited from \Detection\MobileDetect 
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->getCloudFrontHttpHeaders();
+        }
+
+        /**
+         * Set the User-Agent to be used.
+         *
+         * @param string $userAgent The User-Agent string.
+         * @return string
+         * @static
+         */
+        public static function setUserAgent($userAgent)
+        {
+            //Method inherited from \Detection\MobileDetect 
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->setUserAgent($userAgent);
+        }
+
+        /**
+         * Retrieve the User-Agent.
+         *
+         * @return string|null The user agent if it's set.
+         * @static
+         */
+        public static function getUserAgent()
+        {
+            //Method inherited from \Detection\MobileDetect 
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->getUserAgent();
+        }
+
+        /**
+         * @static
+         */
+        public static function hasUserAgent()
+        {
+            //Method inherited from \Detection\MobileDetect 
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->hasUserAgent();
+        }
+
+        /**
+         * @static
+         */
+        public static function isUserAgentEmpty()
+        {
+            //Method inherited from \Detection\MobileDetect 
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->isUserAgentEmpty();
+        }
+
+        /**
+         * @static
+         */
+        public static function getMatchingRegex()
+        {
+            //Method inherited from \Detection\MobileDetect 
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->getMatchingRegex();
+        }
+
+        /**
+         * @static
+         */
+        public static function getMatchesArray()
+        {
+            //Method inherited from \Detection\MobileDetect 
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->getMatchesArray();
+        }
+
+        /**
+         * Retrieve the list of known phone devices.
+         *
+         * @return array List of phone devices.
+         * @static
+         */
+        public static function getPhoneDevices()
+        {
+            //Method inherited from \Detection\MobileDetect 
+            return \Asika\Agent\Agent::getPhoneDevices();
+        }
+
+        /**
+         * Retrieve the list of known tablet devices.
+         *
+         * @return array List of tablet devices.
+         * @static
+         */
+        public static function getTabletDevices()
+        {
+            //Method inherited from \Detection\MobileDetect 
+            return \Asika\Agent\Agent::getTabletDevices();
+        }
+
+        /**
+         * Method gets the mobile detection rules.
+         * 
+         * This method is used for the magic methods $detect->is*().
+         * Retrieve the current set of rules.
+         *
+         * @return array
+         * @static
+         */
+        public static function getRules()
+        {
+            //Method inherited from \Detection\MobileDetect 
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->getRules();
+        }
+
+        /**
+         * Check the HTTP headers for signs of mobile.
+         * 
+         * This is the fastest mobile check possible; it's used
+         * inside isMobile() method.
+         *
+         * @return bool
+         * @static
+         */
+        public static function checkHttpHeadersForMobile()
+        {
+            //Method inherited from \Detection\MobileDetect 
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->checkHttpHeadersForMobile();
+        }
+
+        /**
+         * Checks if a rule (e.g. isIphone, isIOS, etc.) matches its regex against the User-Agent.
+         *
+         * @param string $ruleName
+         * @return bool
+         * @throws MobileDetectException
+         * @static
+         */
+        public static function is($ruleName)
+        {
+            //Method inherited from \Detection\MobileDetect 
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->is($ruleName);
+        }
+
+        /**
+         * Prepare the version number.
+         *
+         * @todo Remove the error suppression from str_replace() call.
+         * @param string $ver The string version, like "2.6.21.2152";
+         * @return float
+         * @static
+         */
+        public static function prepareVersionNo($ver)
+        {
+            //Method inherited from \Detection\MobileDetect 
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->prepareVersionNo($ver);
+        }
+
+        /**
+         * @static
+         */
+        public static function getCache()
+        {
+            //Method inherited from \Detection\MobileDetect 
+            /** @var \Asika\Agent\Agent $instance */
+            return $instance->getCache();
+        }
+
+        /**
+         * @static
+         */
+        public static function flattenHeaders($httpHeaders)
+        {
+            //Method inherited from \Detection\MobileDetect 
+            return \Asika\Agent\Agent::flattenHeaders($httpHeaders);
+        }
+
+            }
+    }
+
 namespace Barryvdh\DomPDF\Facade {
     /**
      * @method static BasePDF setBaseHost(string $baseHost)
@@ -28365,6 +28875,7 @@ namespace  {
     class Validator extends \Illuminate\Support\Facades\Validator {}
     class View extends \Illuminate\Support\Facades\View {}
     class Vite extends \Illuminate\Support\Facades\Vite {}
+    class Agent extends \Asika\Agent\Facades\Agent {}
     class PDF extends \Barryvdh\DomPDF\Facade\Pdf {}
     class Pdf extends \Barryvdh\DomPDF\Facade\Pdf {}
 }
