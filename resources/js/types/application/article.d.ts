@@ -1,3 +1,4 @@
+import { PaginationMeta } from '@/types';
 import { User } from '@/types/admin/users';
 
 export interface Category {
@@ -23,3 +24,10 @@ export interface Article {
     categories?: Category[];
     reading_time: number;
 }
+
+export type TableArticle = Pick<
+    Article,
+    'id' | 'user_id' | 'title' | 'slug' | 'is_published' | 'created_at' | 'updated_at' | 'user'
+>;
+
+export type PaginationArticle = PaginationMeta<TableArticle[]>;
