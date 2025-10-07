@@ -27,27 +27,17 @@ export default function EditMedicalRecordForm({ id, html, json }: Readonly<EditM
             options={{
                 preserveScroll: true,
             }}
-            className="space-y-6"
+            className="space-y-6 inert:pointer-events-none inert:opacity-50"
+            transform={(data) => ({
+                ...data,
+                medical_notes_json: JSON.stringify(editorState),
+                medical_notes_html: lexicalToHtml(editorState),
+            })}
+            disableWhileProcessing
         >
-            {({ processing, errors }) => (
+            {({ errors }) => (
                 <>
                     <div className="grid gap-2">
-                        <input
-                            type="hidden"
-                            name="medical_notes_html"
-                            defaultValue={lexicalToHtml(editorState)}
-                            required
-                            readOnly
-                        />
-
-                        <input
-                            type="hidden"
-                            name="medical_notes_json"
-                            defaultValue={JSON.stringify(editorState)}
-                            required
-                            readOnly
-                        />
-
                         <Editor
                             editorSerializedState={editorState}
                             onSerializedChange={(value) => setEditorState(value)}
@@ -56,9 +46,7 @@ export default function EditMedicalRecordForm({ id, html, json }: Readonly<EditM
                         <InputError message={errors.medical_notes_html || errors.medical_notes_json} className="mt-2" />
                     </div>
 
-                    <Button type="submit" disabled={processing}>
-                        Update
-                    </Button>
+                    <Button type="submit">Update</Button>
                 </>
             )}
         </Form>

@@ -41,7 +41,7 @@ export default function NewMedicalRecordForm() {
     const [loading, setLoading] = useState(false);
     const [selectedPatientId, setSelectedPatientId] = useState<number | null>(null);
 
-    const debounceRef = useRef<number | undefined>(undefined);
+    const debounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
     const loadPatients = useCallback(async (q: string) => {
         try {
@@ -69,17 +69,17 @@ export default function NewMedicalRecordForm() {
 
     // debounce query changes
     useEffect(() => {
-        if (debounceRef.current) window.clearTimeout(debounceRef.current);
+        if (debounceRef.current) globalThis.clearTimeout(debounceRef.current);
 
         if (!query) {
-            debounceRef.current = window.setTimeout(() => void loadPatients(''), 150);
+            debounceRef.current = globalThis.setTimeout(() => void loadPatients(''), 150);
             return;
         }
 
-        debounceRef.current = window.setTimeout(() => void loadPatients(query), 300);
+        debounceRef.current = globalThis.setTimeout(() => void loadPatients(query), 300);
 
         return () => {
-            if (debounceRef.current) window.clearTimeout(debounceRef.current);
+            if (debounceRef.current) globalThis.clearTimeout(debounceRef.current);
         };
     }, [query, loadPatients]);
 
@@ -89,19 +89,18 @@ export default function NewMedicalRecordForm() {
             options={{
                 preserveScroll: true,
             }}
-            className="space-y-6"
+            className="space-y-6 inert:pointer-events-none inert:opacity-50"
+            transform={(data) => ({
+                ...data,
+                patient_info_id: selectedPatientId,
+                medical_notes_json: JSON.stringify(editorState),
+                medical_notes_html: lexicalToHtml(editorState),
+            })}
+            disableWhileProcessing
         >
-            {({ processing, errors }) => (
+            {({ errors }) => (
                 <>
                     <div className="grid gap-2">
-                        <input
-                            type="hidden"
-                            name="patient_info_id"
-                            defaultValue={selectedPatientId ?? ''}
-                            required
-                            readOnly
-                        />
-
                         <Label htmlFor="patient_info_id">Patient</Label>
                         <Popover open={open} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
@@ -159,33 +158,15 @@ export default function NewMedicalRecordForm() {
                     </div>
 
                     <div className="grid gap-2">
-                        <input
-                            type="hidden"
-                            name="medical_notes_html"
-                            defaultValue={lexicalToHtml(editorState)}
-                            required
-                            readOnly
-                        />
-
-                        <input
-                            type="hidden"
-                            name="medical_notes_json"
-                            defaultValue={JSON.stringify(editorState)}
-                            required
-                            readOnly
-                        />
-
                         <Editor
                             editorSerializedState={editorState}
                             onSerializedChange={(value) => setEditorState(value)}
                         />
 
-                        <InputError message={errors.medical_notes_html || errors.medical_notes_json} className="mt-2" />
+                        <InputError message={errors.medical_notes_html ?? errors.medical_notes_json} className="mt-2" />
                     </div>
 
-                    <Button type="submit" disabled={processing}>
-                        Create
-                    </Button>
+                    <Button type="submit">Create</Button>
                 </>
             )}
         </Form>
