@@ -18,7 +18,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { MoreHorizontal } from 'lucide-react';
 
-export const column: ColumnDef<TableArticle>[] = [
+export const myColumn: ColumnDef<TableArticle>[] = [
     {
         accessorKey: 'id',
         header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
@@ -41,13 +41,6 @@ export const column: ColumnDef<TableArticle>[] = [
         enableHiding: false,
     },
     {
-        id: 'user.name',
-        accessorKey: 'user.name',
-        header: ({ column }) => <DataTableColumnHeader column={column} title="Author" />,
-        enableSorting: true,
-        enableHiding: false,
-    },
-    {
         accessorKey: 'is_published',
         header: ({ column }) => <DataTableColumnHeader column={column} title="Published" />,
         cell: ({ row }) => (row.original.is_published ? 'Yes' : 'No'),
@@ -65,7 +58,6 @@ export const column: ColumnDef<TableArticle>[] = [
         cell: ({ row }) => format(row.original.updated_at, 'PPpp'),
         enableSorting: true,
     },
-
     {
         id: 'actions',
         cell: ({ row }) => {
@@ -74,9 +66,9 @@ export const column: ColumnDef<TableArticle>[] = [
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="size-8 p-0">
+                        <Button variant="ghost" className="h-8 w-8 p-0">
                             <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="size-4" />
+                            <MoreHorizontal className="h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
