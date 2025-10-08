@@ -1,4 +1,5 @@
 import AppointmentsGenderOverviewChart from '@/components/charts/appointments-gender-overview-chart';
+import AppointmentsStatusOverviewChart from '@/components/charts/appointments-status-overview-chart';
 import NewPatientsByMonthChart from '@/components/charts/new-patients-by-month-chart';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
@@ -33,8 +34,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function DoctorDashboard({ data }: Readonly<DoctorDashboardProps>) {
-    console.log(data);
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Doctor Dashboard" />
@@ -43,10 +42,10 @@ export default function DoctorDashboard({ data }: Readonly<DoctorDashboardProps>
                     <NewPatientsByMonthChart chartData={data.newPatientsByMonth} />
 
                     <AppointmentsGenderOverviewChart chartData={data.appointmentsGenderOverview} />
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
+
+                    <AppointmentsStatusOverviewChart chartData={data.appointmentsStatusOverview} />
                 </div>
+                {/* TODO: Add more components to the dashboard */}
                 <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
                     <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
                 </div>
