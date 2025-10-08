@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Article;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Article\ArticleRequest;
 use App\Models\Article;
+use App\Models\Category;
 use Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
+use Str;
 
 class ArticleController extends Controller
 {
@@ -86,11 +89,35 @@ class ArticleController extends Controller
     }
 
     /**
+     * Store a newly created resource in storage.
+     */
+    public function store(ArticleRequest $request)
+    {
+        $data = $request->validated();
+        $data['user_id'] = Auth::id();
+        $data['slug'] = Str::slug($data['title'], '-');
+
+        $article = Article::create($data);
+        if ($request->has('categories')) {
+            $categoryNames = $data['categories'];
+            $categoryIds = collect($categoryNames)
+                ->map(fn($name) => Category::firstOrCreate(['name' => $name])->id)
+                ->all();
+            $article->categories()->sync($categoryIds);
+        }
+
+        Log::info('Articles: Created new article', ['action_user_id' => Auth::id(), 'article_id' => $article->id]);
+
+        return to_route('articles.my')->with('success', 'Article created successfully.');
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
         Log::info('Articles: Viewed create article page', ['action_user_id' => Auth::id()]);
-        return Inertia::render('manage/articles/Create');
+        $categories = Category::select(['name'])->orderBy('name')->get();
+        return Inertia::render('manage/articles/Create', ['categories' => $categories]);
     }
 }
