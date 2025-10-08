@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->string('title');
             $table->string('subtitle');
             $table->string('slug')->unique();
-            $table->string('excerpt');
+            $table->string('excerpt', 500);
 
             $table->text('content_html');
             $table->text('content_json')->nullable();
