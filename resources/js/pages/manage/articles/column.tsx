@@ -27,16 +27,19 @@ export const column: ColumnDef<TableArticle>[] = [
     {
         accessorKey: 'title',
         header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
-        cell: ({ row }) => (
-            <TextLink
-                href={article(row.original.slug)}
-                target="_blank"
-                rel="external"
-                aria-label={`View article: ${row.original.title}`}
-            >
-                {row.original.title}
-            </TextLink>
-        ),
+        cell: ({ row }) =>
+            row.original.is_published ? (
+                <TextLink
+                    href={article(row.original.slug)}
+                    target="_blank"
+                    rel="external"
+                    aria-label={`View article: ${row.original.title}`}
+                >
+                    {row.original.title}
+                </TextLink>
+            ) : (
+                row.original.title
+            ),
         enableSorting: true,
         enableHiding: false,
     },
@@ -85,18 +88,20 @@ export const column: ColumnDef<TableArticle>[] = [
                             <DropdownMenuCopyButton content={title}>Copy Title</DropdownMenuCopyButton>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                            <Link
-                                className="w-full"
-                                href={article(row.original.slug)}
-                                target="_blank"
-                                rel="external"
-                                aria-label={`View article: ${row.original.title}`}
-                                as="button"
-                            >
-                                View
-                            </Link>
-                        </DropdownMenuItem>
+                        {row.original.is_published && (
+                            <DropdownMenuItem asChild>
+                                <Link
+                                    className="w-full"
+                                    href={article(row.original.slug)}
+                                    target="_blank"
+                                    rel="external"
+                                    aria-label={`View article: ${row.original.title}`}
+                                    as="button"
+                                >
+                                    View
+                                </Link>
+                            </DropdownMenuItem>
+                        )}
                         <DropdownMenuItem asChild>
                             <Link
                                 className="w-full"
