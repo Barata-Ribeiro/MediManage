@@ -53,7 +53,6 @@ export const column: ColumnDef<TableMedicalRecord>[] = [
         id: 'actions',
         cell: ({ row }) => {
             const patient = row.original.patient_info;
-            const name = `${patient.first_name} ${patient.last_name}`;
 
             return (
                 <DropdownMenu>
@@ -66,7 +65,7 @@ export const column: ColumnDef<TableMedicalRecord>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem asChild>
-                            <DropdownMenuCopyButton content={name}>Copy Full Name</DropdownMenuCopyButton>
+                            <DropdownMenuCopyButton content={patient.full_name}>Copy Full Name</DropdownMenuCopyButton>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>

@@ -9,7 +9,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import prescriptions from '@/routes/prescriptions';
 import { TablePrescription } from '@/types/application/prescription';
+import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { MoreHorizontal } from 'lucide-react';
@@ -57,7 +59,6 @@ export const column: ColumnDef<TablePrescription>[] = [
         id: 'actions',
         cell: ({ row }) => {
             const patient = row.original.patient_info;
-            const name = `${patient.first_name} ${patient.last_name}`;
 
             return (
                 <DropdownMenu>
@@ -70,10 +71,22 @@ export const column: ColumnDef<TablePrescription>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem asChild>
-                            <DropdownMenuCopyButton content={name}>Copy Full Name</DropdownMenuCopyButton>
+                            <DropdownMenuCopyButton content={patient.full_name}>Copy Full Name</DropdownMenuCopyButton>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>View</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link
+                                className="w-full"
+                                href={prescriptions.show({
+                                    doctor: row.original.employee_info_id,
+                                    patientInfo: patient.id,
+                                    prescription: row.original.id,
+                                })}
+                                as="button"
+                            >
+                                Show
+                            </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem>Edit</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
