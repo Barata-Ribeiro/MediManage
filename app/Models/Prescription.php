@@ -9,9 +9,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
+use InvalidArgumentException;
 use Log;
-use RuntimeException;
 use Throwable;
+use UnexpectedValueException;
 
 
 /**
@@ -26,9 +27,9 @@ use Throwable;
  * @property string|null $date_expires
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read \App\Models\EmployeeInfo $employeeInfo
- * @property-read \App\Models\PatientInfo $patientInfo
- * @method static \Database\Factories\PrescriptionFactory factory($count = null, $state = [])
+ * @property-read EmployeeInfo $employeeInfo
+ * @property-read PatientInfo $patientInfo
+ * @method static PrescriptionFactory factory($count = null, $state = [])
  * @method static Builder<static>|Prescription newModelQuery()
  * @method static Builder<static>|Prescription newQuery()
  * @method static Builder<static>|Prescription query()
@@ -65,30 +66,19 @@ class Prescription extends Model
         'date_expires',
     ];
 
-    protected static function boot()
+
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function boot(): void
     {
         parent::boot();
 
         static::creating(function ($prescription) {
             if (empty($prescription->validation_code)) {
-                try {
-                    $maxAttempts = 5;
-                    $attempt = 0;
-
-                    do {
-                        $code = strtoupper(bin2hex(random_bytes(8))); // 16 chars
-                        $attempt++;
-                    } while (Prescription::where('validation_code', $code)->exists() && $attempt < $maxAttempts);
-
-                    if ($attempt === $maxAttempts && Prescription::where('validation_code', $code)->exists()) {
-                        throw new RuntimeException('Could not generate unique validation_code.');
-                    }
-
-                    $prescription->validation_code = $code;
-                } catch (Throwable $e) {
-                    Log::error('There was an error generating validation code.', ['error' => $e->getMessage()]);
-                    $prescription->validation_code = strtoupper(substr(md5(uniqid('', true)), 0, 16));
-                }
+                self::attemptToGenerateValidationCode($prescription);
             }
 
             $prescription->is_valid = self::computeValidity($prescription->date_expires);
@@ -96,7 +86,7 @@ class Prescription extends Model
 
         static::updating(function ($prescription) {
             if ($prescription->isDirty('validation_code')) {
-                throw new RuntimeException('The validation_code field is immutable and cannot be changed.');
+                throw new InvalidArgumentException('The validation_code field is immutable and cannot be changed.');
             }
 
             if ($prescription->isDirty('date_expires')) {
@@ -106,9 +96,43 @@ class Prescription extends Model
     }
 
     /**
-     * Compute is_valid (1 = valid, 0 = expired) from date_expires.
+     * Attempt to generate a unique validation code.
+     * If unable to do so after several attempts, fall back to a less robust method.
+     *
+     * @param $prescription
+     * @return void
      */
-    private static function computeValidity($dateExpires): int
+    private static function attemptToGenerateValidationCode($prescription): void
+    {
+        try {
+            $maxAttempts = 5;
+            $attempt = 0;
+
+            do {
+                $code = strtoupper(bin2hex(random_bytes(8))); // 16 chars
+                $attempt++;
+            } while (Prescription::where('validation_code', $code)->exists() && $attempt < $maxAttempts);
+
+            if ($attempt === $maxAttempts && Prescription::where('validation_code', $code)->exists()) {
+                throw new UnexpectedValueException('Unable to generate a unique validation code after multiple attempts.');
+            }
+
+            $prescription->validation_code = $code;
+        } catch (Throwable $e) {
+            Log::error('There was an error generating validation code.', ['error' => $e->getMessage()]);
+            $prescription->validation_code = strtoupper(substr(md5(uniqid('', true)), 0, 16));
+        }
+    }
+
+    /**
+     * Compute is_valid (1 = valid, 0 = expired) from date_expires.
+     * If date_expires is empty, the prescription is considered valid.
+     * If date_expires is invalid, the prescription is considered expired.
+     *
+     * @param string|null $dateExpires
+     * @return int
+     */
+    private static function computeValidity(?string $dateExpires): int
     {
         if (empty($dateExpires)) {
             return 1;
