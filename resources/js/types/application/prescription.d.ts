@@ -10,10 +10,11 @@ export interface Prescription {
     employee_info_id: number;
     prescription_details_html?: string;
     prescription_details_json?: string;
-    date_issued: string;
-    date_expires: string;
-    created_at: string;
-    updated_at: string;
+    date_issued: Date;
+    date_expires: Date;
+    created_at: Date;
+    updated_at: Date;
+
     patient_info: Partial<PatientInfo>;
     employee_info: Partial<EmployeeInfo>;
 }
