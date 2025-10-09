@@ -5,6 +5,7 @@ namespace App\Http\Controllers\General;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\Category;
+use App\Models\Prescription;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -79,5 +80,30 @@ class PublicController extends Controller
         return Inertia::render('home/articles/Show', [
             'article' => $article,
         ]);
+    }
+
+    /**
+     * Display the prescription validation page with a form to enter the validation code.
+     */
+    public function prescription()
+    {
+        return Inertia::render('home/prescription/Index');
+    }
+
+    /**
+     * Display if the prescription is valid or not based on the validation code.
+     */
+    public function prescriptionValidation(Prescription $prescription)
+    {
+        $prescription = Prescription::select(['id', 'validation_code', 'is_valid', 'patient_info_id',
+            'employee_info_id', 'date_issued', 'date_expires'])
+            ->find($prescription->id);
+
+        $prescription->load([
+            'employeeInfo:id,first_name,last_name,gender,date_of_birth,license_number,license_expiry_date,specialization,phone_number',
+            'patientInfo:id,first_name,last_name,gender,date_of_birth'
+        ])->getAppends();
+
+        return Inertia::render('home/prescription/Show', ['prescription' => $prescription]);
     }
 }

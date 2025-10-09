@@ -11,6 +11,11 @@ Route::prefix('articles')->group(function () {
     Route::get('/{article:slug}', [PublicController::class, 'article'])->name('article');
 });
 
+Route::prefix('prescription')->group(function () {
+    Route::get('/', [PublicController::class, 'prescription'])->name('public.prescription');
+    Route::get('/{prescription:validation_code}', [PublicController::class, 'prescriptionValidation'])->name('public.prescription.validation');
+});
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 });
