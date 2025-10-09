@@ -32,14 +32,16 @@ use Illuminate\Support\Carbon;
  * @property string|null $termination_date
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Collection<int, \App\Models\Appointment> $appointments
+ * @property-read Collection<int, Appointment> $appointments
  * @property-read int|null $appointments_count
- * @property-read Collection<int, \App\Models\MedicalRecordEntries> $medicalRecordEntries
+ * @property-read int|null $age
+ * @property-read string $full_name
+ * @property-read Collection<int, MedicalRecordEntries> $medicalRecordEntries
  * @property-read int|null $medical_record_entries_count
- * @property-read Collection<int, \App\Models\Prescription> $prescriptions
+ * @property-read Collection<int, Prescription> $prescriptions
  * @property-read int|null $prescriptions_count
- * @property-read \App\Models\User $user
- * @method static \Database\Factories\EmployeeInfoFactory factory($count = null, $state = [])
+ * @property-read User $user
+ * @method static EmployeeInfoFactory factory($count = null, $state = [])
  * @method static Builder<static>|EmployeeInfo newModelQuery()
  * @method static Builder<static>|EmployeeInfo newQuery()
  * @method static Builder<static>|EmployeeInfo query()
@@ -91,6 +93,40 @@ class EmployeeInfo extends Model
         'hire_date',
         'termination_date',
     ];
+
+    /**
+     * Appended accessors to include in the model's array and JSON forms.
+     *
+     * @var string[]
+     */
+    protected $appends = [
+        'full_name',
+        'age'
+    ];
+
+    /**
+     * Get the patient's full name.
+     *
+     * @return string
+     */
+    public function getFullNameAttribute(): string
+    {
+        return "$this->first_name $this->last_name";
+    }
+
+    /**
+     * Calculate age from date_of_birth on the fly.
+     *
+     * @return int|null
+     */
+    public function getAgeAttribute(): ?int
+    {
+        if (!$this->date_of_birth) {
+            return null;
+        }
+
+        return Carbon::parse($this->date_of_birth)->age;
+    }
 
     public function user(): BelongsTo
     {
