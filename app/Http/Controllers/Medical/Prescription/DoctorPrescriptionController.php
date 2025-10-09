@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Medical\Prescription;
 
 use App\Http\Controllers\Controller;
 use App\Models\EmployeeInfo;
+use App\Models\PatientInfo;
+use App\Models\Prescription;
 use Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -35,6 +37,7 @@ class DoctorPrescriptionController extends Controller
         $query = $doctor->prescriptions()
             ->select([
                 'prescriptions.id',
+                'prescriptions.employee_info_id',
                 'prescriptions.patient_info_id',
                 'prescriptions.date_issued',
                 'prescriptions.date_expires',
@@ -54,5 +57,24 @@ class DoctorPrescriptionController extends Controller
             ->withQueryString();
 
         return Inertia::render('doctor/prescriptions/Index', ['prescriptions' => $prescriptions]);
+    }
+
+    public function show(EmployeeInfo $doctor, PatientInfo $patientInfo, Prescription $prescription)
+    {
+        $doctor_id = Auth::user()->employeeInfo->id;
+
+        if (($doctor->id !== $doctor_id) || ($prescription->employee_info_id !== $doctor->id || $prescription->patient_info_id !== $patientInfo->id)) {
+            return to_route('prescriptions.index', $doctor_id);
+        }
+
+        Log::info('Doctor Prescription: Viewed prescription details', ['action_user_id' => Auth::id(), 'prescription_id' => $prescription->id]);
+
+        $prescription->load([
+            'employeeInfo:id,first_name,last_name,gender,date_of_birth,license_number,license_expiry_date,specialization,phone_number',
+            'patientInfo:id,first_name,last_name,gender,date_of_birth,phone_number'])
+            ->makeHidden(['employee_info_id', 'patient_info_id'])
+            ->getAppends();
+
+        return Inertia::render('doctor/prescriptions/Show', ['prescription' => $prescription]);
     }
 }
