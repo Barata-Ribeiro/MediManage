@@ -15,6 +15,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { article as articleRoute, articles as articlesRoute, dashboard, home, login, register } from '@/routes';
+import { prescription } from '@/routes/public';
 import type { Auth } from '@/types';
 import { Article } from '@/types/application/article';
 import { Link } from '@inertiajs/react';
@@ -60,13 +61,13 @@ export default function NavIndex({ articles, auth }: Readonly<NavIndexProps>) {
                             </SheetHeader>
 
                             <div className="flex flex-col gap-6 p-4">
-                                <Accordion type="single" collapsible className="border-b-0">
+                                <Accordion type="single" collapsible className="grid gap-4 border-b-0">
                                     <Link href={home()} className="text-md font-semibold">
                                         Home
                                     </Link>
                                     {articles && (
                                         <AccordionItem value="articles" className="border-b-0">
-                                            <AccordionTrigger className="text-md py-0 font-semibold hover:no-underline">
+                                            <AccordionTrigger className="text-md cursor-pointer py-0 font-semibold hover:no-underline">
                                                 Articles
                                             </AccordionTrigger>
                                             <AccordionContent className="mt-2">
@@ -74,7 +75,7 @@ export default function NavIndex({ articles, auth }: Readonly<NavIndexProps>) {
                                                     <Link
                                                         key={article.id}
                                                         href={articleRoute(article.slug)}
-                                                        className="flex min-w-80 flex-row gap-4 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none hover:bg-muted hover:text-accent-foreground"
+                                                        className="flex flex-row gap-4 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none hover:bg-muted hover:text-accent-foreground"
                                                         prefetch="hover"
                                                     >
                                                         <div className="text-foreground">
@@ -96,6 +97,9 @@ export default function NavIndex({ articles, auth }: Readonly<NavIndexProps>) {
                                             </AccordionContent>
                                         </AccordionItem>
                                     )}
+                                    <Link href={prescription()} className="text-md font-semibold">
+                                        Validate Prescription
+                                    </Link>
                                 </Accordion>
                                 <div className="flex flex-col gap-3">
                                     {auth.user ? (
@@ -130,7 +134,9 @@ export default function NavIndex({ articles, auth }: Readonly<NavIndexProps>) {
 
                                 {articles && (
                                     <NavigationMenuItem>
-                                        <NavigationMenuTrigger>Articles</NavigationMenuTrigger>
+                                        <NavigationMenuTrigger className="cursor-pointer">
+                                            Articles
+                                        </NavigationMenuTrigger>
                                         <NavigationMenuContent>
                                             <ul className="grid w-[300px] gap-4">
                                                 {articles.map((article) => (
@@ -156,6 +162,12 @@ export default function NavIndex({ articles, auth }: Readonly<NavIndexProps>) {
                                         </NavigationMenuContent>
                                     </NavigationMenuItem>
                                 )}
+
+                                <NavigationMenuItem>
+                                    <NavigationMenuLink asChild>
+                                        <Link href={prescription()}>Validate Prescription</Link>
+                                    </NavigationMenuLink>
+                                </NavigationMenuItem>
                             </NavigationMenuList>
                         </NavigationMenu>
 
