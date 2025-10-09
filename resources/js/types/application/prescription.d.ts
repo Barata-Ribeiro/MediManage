@@ -4,6 +4,8 @@ import { EmployeeInfo } from './employee';
 
 export interface Prescription {
     id: number;
+    validation_code: string;
+    is_valid: boolean;
     patient_info_id: number;
     employee_info_id: number;
     prescription_details_html?: string;

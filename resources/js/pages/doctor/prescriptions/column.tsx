@@ -1,5 +1,6 @@
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
 import DropdownMenuCopyButton from '@/components/ui-helpers/dropdown-menu-copy-button';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -14,7 +15,7 @@ import { TablePrescription } from '@/types/application/prescription';
 import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
-import { MoreHorizontal } from 'lucide-react';
+import { BadgeCheckIcon, CircleAlertIcon, MoreHorizontal } from 'lucide-react';
 
 export const column: ColumnDef<TablePrescription>[] = [
     {
@@ -47,6 +48,27 @@ export const column: ColumnDef<TablePrescription>[] = [
         header: ({ column }) => <DataTableColumnHeader column={column} title="Expires At" />,
         cell: ({ row }) => format(row.original.date_expires, 'PPpp'),
         enableSorting: true,
+    },
+    {
+        accessorKey: 'is_valid',
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Is Valid" />,
+        cell: ({ row }) => {
+            const isValid = row.original.is_valid;
+
+            return isValid ? (
+                <Badge variant="secondary">
+                    <BadgeCheckIcon aria-hiden />
+                    Valid
+                </Badge>
+            ) : (
+                <Badge variant="destructive">
+                    <CircleAlertIcon aria-hidden />
+                    Expired
+                </Badge>
+            );
+        },
+        enableSorting: true,
+        enableHiding: false,
     },
     {
         accessorKey: 'updated_at',

@@ -29,7 +29,7 @@ class DoctorPrescriptionController extends Controller
         $sortBy = $request->input('sort_by', 'id');
         $sortDir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
 
-        $allowedSorts = ['id', 'patient_info.first_name', 'patient_info.last_name', 'date_issued', 'date_expires', 'updated_at'];
+        $allowedSorts = ['id', 'patient_info.first_name', 'patient_info.last_name', 'date_issued', 'date_expires', 'is_valid', 'updated_at'];
         if (!in_array($sortBy, $allowedSorts)) {
             $sortBy = 'id';
         }
@@ -37,6 +37,8 @@ class DoctorPrescriptionController extends Controller
         $query = $doctor->prescriptions()
             ->select([
                 'prescriptions.id',
+                'prescriptions.validation_code',
+                'prescriptions.is_valid',
                 'prescriptions.employee_info_id',
                 'prescriptions.patient_info_id',
                 'prescriptions.date_issued',
@@ -71,7 +73,8 @@ class DoctorPrescriptionController extends Controller
 
         $prescription->load([
             'employeeInfo:id,first_name,last_name,gender,date_of_birth,license_number,license_expiry_date,specialization,phone_number',
-            'patientInfo:id,first_name,last_name,gender,date_of_birth,phone_number'])
+            'patientInfo:id,first_name,last_name,gender,date_of_birth,phone_number'
+        ])
             ->makeHidden(['employee_info_id', 'patient_info_id'])
             ->getAppends();
 

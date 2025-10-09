@@ -32,6 +32,8 @@ class PrescriptionController extends Controller
         $query = $user->patientInfo->prescriptions()
             ->select([
                 'prescriptions.id',
+                'prescriptions.validation_code',
+                'prescriptions.is_valid',
                 'prescriptions.employee_info_id',
                 'prescriptions.date_issued',
                 'prescriptions.date_expires',
