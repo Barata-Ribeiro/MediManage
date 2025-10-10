@@ -1,7 +1,9 @@
+import PublicController from '@/actions/App/Http/Controllers/General/PublicController';
 import AppPagination from '@/components/app-pagination';
 import ArticleFilterForm from '@/components/forms/home/article-filter-form';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
+import { Marquee, MarqueeContent, MarqueeFade, MarqueeItem } from '@/components/ui/shadcn-io/marquee';
 import Layout from '@/layouts/app/app-public-layout';
 import { article as articleRoute } from '@/routes';
 import { PaginationMeta } from '@/types';
@@ -28,7 +30,34 @@ export default function Index({ articles: paginatedArticles, categories }: Reado
 
                 <ArticleFilterForm />
 
-                <ul className="my-8 grid grid-cols-1 gap-6 border-t pt-8 sm:grid-cols-2 lg:grid-cols-3">
+                <Marquee className="mt-8">
+                    <MarqueeFade side="left" />
+                    <MarqueeFade side="right" />
+                    <MarqueeContent>
+                        {categories.map((category) => {
+                            const key = `category-${category.id}`;
+                            const articlesCount = category.articles_count;
+                            const articleRoute = PublicController.articles({
+                                mergeQuery: { category: category.name },
+                            });
+
+                            return (
+                                <MarqueeItem key={key}>
+                                    <Badge variant="secondary" asChild>
+                                        <Link
+                                            href={articleRoute}
+                                            className="inline-flex items-center gap-x-1 capitalize"
+                                        >
+                                            {category.name} <span>({articlesCount})</span>
+                                        </Link>
+                                    </Badge>
+                                </MarqueeItem>
+                            );
+                        })}
+                    </MarqueeContent>
+                </Marquee>
+
+                <ul className="mt-4 mb-8 grid grid-cols-1 gap-6 border-t pt-8 sm:grid-cols-2 lg:grid-cols-3">
                     {articles.map((article) => {
                         const key = `article-${article.id}`;
                         const thumbnail = article.thumbnail;

@@ -16,6 +16,8 @@ export default function ArticleFilterForm() {
     const [startingValue, onChangeStarting] = useState<Date | undefined>(undefined);
     const [endValue, onChangeEnd] = useState<Date | undefined>(undefined);
 
+    // TODO: Adjust form submission to work with Inertia correctly and update URL parameters accordingly
+
     const currentQuery = new URLSearchParams(globalThis.location.search);
     const searchQuery = currentQuery.get('search') ?? '';
     const startingDateQuery = currentQuery.get('start_date_creation') ?? '';
@@ -45,7 +47,6 @@ export default function ArticleFilterForm() {
         >
             {({ errors }) => (
                 <>
-                    {/*TODO: Add category filter*/}
                     <div className="grid gap-2">
                         <Label htmlFor="search">Search Articles</Label>
                         <Input
