@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "52c1d3528e6d81e1aca3fd1249c0d915",
+    "content-hash": "2b3361300375f5b712e7d094524d73c7",
     "packages": [
         {
             "name": "asika/agent",
@@ -1589,16 +1589,16 @@
         },
         {
             "name": "laravel/fortify",
-            "version": "v1.31.0",
+            "version": "v1.31.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/fortify.git",
-                "reference": "67116b14bd6b480d027f8b8075c2cd75363904e8"
+                "reference": "e39a49592e1440508337a765cdc913ff5bcba66f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/fortify/zipball/67116b14bd6b480d027f8b8075c2cd75363904e8",
-                "reference": "67116b14bd6b480d027f8b8075c2cd75363904e8",
+                "url": "https://api.github.com/repos/laravel/fortify/zipball/e39a49592e1440508337a765cdc913ff5bcba66f",
+                "reference": "e39a49592e1440508337a765cdc913ff5bcba66f",
                 "shasum": ""
             },
             "require": {
@@ -1650,20 +1650,20 @@
                 "issues": "https://github.com/laravel/fortify/issues",
                 "source": "https://github.com/laravel/fortify"
             },
-            "time": "2025-09-30T10:06:29+00:00"
+            "time": "2025-10-03T09:10:57+00:00"
         },
         {
             "name": "laravel/framework",
-            "version": "v12.32.5",
+            "version": "v12.33.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "77b2740391cd2a825ba59d6fada45e9b8b9bcc5a"
+                "reference": "124efc5f09d4668a4dc13f94a1018c524a58bcb1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/77b2740391cd2a825ba59d6fada45e9b8b9bcc5a",
-                "reference": "77b2740391cd2a825ba59d6fada45e9b8b9bcc5a",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/124efc5f09d4668a4dc13f94a1018c524a58bcb1",
+                "reference": "124efc5f09d4668a4dc13f94a1018c524a58bcb1",
                 "shasum": ""
             },
             "require": {
@@ -1869,7 +1869,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-09-30T17:39:22+00:00"
+            "time": "2025-10-07T14:30:39+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -7053,6 +7053,80 @@
             "time": "2024-12-21T16:25:41+00:00"
         },
         {
+            "name": "tuncaybahadir/quar",
+            "version": "1.5.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tuncaybahadir/quar.git",
+                "reference": "52833024788dbfa868d55bcf43627f9be6dfd32c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tuncaybahadir/quar/zipball/52833024788dbfa868d55bcf43627f9be6dfd32c",
+                "reference": "52833024788dbfa868d55bcf43627f9be6dfd32c",
+                "shasum": ""
+            },
+            "require": {
+                "bacon/bacon-qr-code": "^3.0",
+                "ext-gd": "*",
+                "php": ">=8.3"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.24",
+                "roave/security-advisories": "dev-latest"
+            },
+            "suggest": {
+                "ext-imagick": "Allows the generation of PNG QrCodes.",
+                "illuminate/support": "Allows for use within Laravel."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Quar": "tbQuar\\Facades\\Quar"
+                    },
+                    "providers": [
+                        "tbQuar\\QuarServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "tbQuar\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tuncay Bahadır",
+                    "email": "tuncaybahadir@protonmail.com"
+                }
+            ],
+            "description": "A simple QR Code generation tool for your projects with Laravel 10, 11, 12 versions, php 8.3 and 8.4",
+            "homepage": "https://github.com/tuncaybahadir/quar",
+            "keywords": [
+                "generator",
+                "laravel",
+                "laravel 10",
+                "laravel 11",
+                "laravel 12",
+                "php",
+                "php 8.3",
+                "php 8.4",
+                "qr",
+                "qrcode",
+                "quar"
+            ],
+            "support": {
+                "issues": "https://github.com/tuncaybahadir/quar/issues",
+                "source": "https://github.com/tuncaybahadir/quar/tree/1.5.4"
+            },
+            "time": "2025-07-24T19:08:42+00:00"
+        },
+        {
             "name": "vlucas/phpdotenv",
             "version": "v5.6.2",
             "source": {
@@ -10826,7 +10900,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.2",
+        "php": "^8.4",
         "ext-curl": "*",
         "ext-dom": "*",
         "ext-libxml": "*"

@@ -9,7 +9,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "ext-curl": "*",
         "ext-dom": "*",
         "ext-libxml": "*",
@@ -21,7 +21,8 @@
         "laravel/tinker": "^2.10.1",
         "laravel/wayfinder": "^0.1.9",
         "owen-it/laravel-auditing": "^14.0",
-        "spatie/laravel-permission": "^6.21"
+        "spatie/laravel-permission": "^6.21",
+        "tuncaybahadir/quar": "^1.5"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.6",
