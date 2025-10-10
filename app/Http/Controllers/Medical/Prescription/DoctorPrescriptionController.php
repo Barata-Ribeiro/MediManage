@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Medical\Prescription;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Medical\PrescriptionRequest;
 use App\Models\EmployeeInfo;
 use App\Models\PatientInfo;
 use App\Models\Prescription;
@@ -63,6 +64,9 @@ class DoctorPrescriptionController extends Controller
         return Inertia::render('doctor/prescriptions/Index', ['prescriptions' => $prescriptions]);
     }
 
+    /**
+     * Display the specified resource.
+     */
     public function show(EmployeeInfo $doctor, PatientInfo $patientInfo, Prescription $prescription)
     {
         $doctor_id = Auth::user()->employeeInfo->id;
@@ -81,5 +85,43 @@ class DoctorPrescriptionController extends Controller
             ->getAppends();
 
         return Inertia::render('doctor/prescriptions/Show', ['prescription' => $prescription]);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(EmployeeInfo $doctor, PatientInfo $patientInfo, Prescription $prescription)
+    {
+        $doctor_id = Auth::user()->employeeInfo->id;
+
+        if (($doctor->id !== $doctor_id) || ($prescription->employee_info_id !== $doctor->id || $prescription->patient_info_id !== $patientInfo->id)) {
+            return to_route('prescriptions.index', $doctor_id);
+        }
+
+        Log::info('Doctor Prescription: Viewed prescription edit form', ['action_user_id' => Auth::id(), 'prescription_id' => $prescription->id]);
+
+        $prescription->load(['employeeInfo:id,first_name,last_name', 'patientInfo:id,first_name,last_name,gender,date_of_birth'])
+            ->makeHidden(['qr_code'])
+            ->getAppends();
+
+        return Inertia::render('doctor/prescriptions/Edit', ['prescription' => $prescription]);
+    }
+
+    public function update(EmployeeInfo $doctor, PatientInfo $patientInfo, Prescription $prescription, PrescriptionRequest $request)
+    {
+        $doctor_id = Auth::user()->employeeInfo->id;
+
+        if (($doctor->id !== $doctor_id) || ($prescription->employee_info_id !== $doctor->id || $prescription->patient_info_id !== $patientInfo->id)) {
+            return to_route('prescriptions.index', $doctor_id);
+        }
+
+        $validated = $request->validated();
+        Log::debug('Doctor Prescription: Update prescription request data', ['action_user_id' => Auth::id(), 'prescription_id' => $prescription->id, 'data' => $validated]);
+
+        $prescription->update($validated);
+
+        Log::info('Doctor Prescription: Updated prescription', ['action_user_id' => Auth::id(), 'prescription_id' => $prescription->id]);
+
+        return to_route('prescriptions.show', [$doctor->id, $patientInfo->id, $prescription->id])->with('success', 'Prescription updated successfully.');
     }
 }
