@@ -56,12 +56,12 @@ export const column: ColumnDef<TablePrescription>[] = [
             const isValid = row.original.is_valid;
 
             return isValid ? (
-                <Badge variant="secondary">
-                    <BadgeCheckIcon aria-hiden />
+                <Badge className="select-none" variant="secondary">
+                    <BadgeCheckIcon aria-hidden />
                     Valid
                 </Badge>
             ) : (
-                <Badge variant="destructive">
+                <Badge className="select-none" variant="destructive">
                     <CircleAlertIcon aria-hidden />
                     Expired
                 </Badge>
