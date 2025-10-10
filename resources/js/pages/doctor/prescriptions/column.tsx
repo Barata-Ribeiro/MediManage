@@ -109,7 +109,19 @@ export const column: ColumnDef<TablePrescription>[] = [
                                 Show
                             </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link
+                                className="w-full"
+                                href={prescriptions.edit({
+                                    doctor: row.original.employee_info_id,
+                                    patientInfo: patient.id,
+                                    prescription: row.original.id,
+                                })}
+                                as="button"
+                            >
+                                Edit
+                            </Link>
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );

@@ -1,11 +1,12 @@
 import Heading from '@/components/heading';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import Layout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import prescriptions from '@/routes/prescriptions';
 import type { BreadcrumbItem, SharedData } from '@/types';
 import { Prescription } from '@/types/application/prescription';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { format } from 'date-fns';
 
 interface ShowProps {
@@ -17,7 +18,8 @@ export default function Show({ prescription }: Readonly<ShowProps>) {
     if (!auth?.user?.employee_info_id) return dashboard();
 
     const patient = prescription.patient_info;
-    const patientFullName = `${patient.first_name} ${patient.last_name}`;
+    const dateIssued = String(prescription.date_issued).replace(/-/, '/');
+    const dateExpires = String(prescription.date_expires).replace(/-/, '/');
 
     const qrCodeSrc = `data:image/png;base64,${prescription.qr_code}`;
 
@@ -36,15 +38,41 @@ export default function Show({ prescription }: Readonly<ShowProps>) {
         },
     ];
 
+    const editLink = prescriptions.edit({
+        doctor: auth.user.employee_info_id,
+        patientInfo: patient.id!,
+        prescription: prescription.id,
+    });
+
+    const editLabel = `Edit Prescription for ${prescription.patient_info.full_name}`;
+    const pdfLabel = `Generate PDF for Prescription of ${prescription.patient_info.full_name}`;
+
     return (
         <Layout breadcrumbs={breadcrumbs}>
-            <Head title={`Prescription for ${patientFullName}`} />
+            <Head title={`Prescription for ${prescription.patient_info.full_name}`} />
 
             <div className="px-4 py-6">
-                <Heading
-                    title="Prescription Details"
-                    description={`Details of the prescription issued to ${patientFullName}.`}
-                />
+                <div className="border-b sm:flex sm:items-center sm:justify-between">
+                    <Heading
+                        title="Prescription Details"
+                        description={`Details of the prescription issued to ${prescription.patient_info.full_name}.`}
+                    />
+
+                    <div className="mt-3 inline-flex gap-x-2 pb-5 sm:mt-0 sm:ml-4 sm:pb-0">
+                        <Button type="button" asChild>
+                            <Link href={editLink} aria-label={editLabel} title={editLabel}>
+                                Edit
+                            </Link>
+                        </Button>
+
+                        {/*TODO: Implement PDF generation*/}
+                        <Button type="button" variant="secondary" asChild>
+                            <Link href="#" aria-label={pdfLabel} title={pdfLabel} target="_blank" rel="external">
+                                Generate PDF
+                            </Link>
+                        </Button>
+                    </div>
+                </div>
 
                 <section
                     aria-label="Prescription Details"
@@ -52,7 +80,7 @@ export default function Show({ prescription }: Readonly<ShowProps>) {
                 >
                     <header>
                         <h3 className="scroll-m-20 text-center text-4xl font-bold tracking-tight text-balance">
-                            {patientFullName}
+                            {prescription.patient_info.full_name}
                         </h3>
                         <div className="my-2 flex h-5 justify-center space-x-2 text-center text-sm font-semibold text-muted-foreground">
                             <span>{patient.gender}</span>
@@ -63,11 +91,11 @@ export default function Show({ prescription }: Readonly<ShowProps>) {
                         <div className="flex items-center justify-between gap-2">
                             <time className="text-sm">
                                 <span className="block text-left font-semibold">Issued on:</span>{' '}
-                                {format(prescription.date_issued, 'PPP')}
+                                {format(dateIssued, 'PPP')}
                             </time>
                             <time className="text-sm">
                                 <span className="block text-right font-semibold">Expires on:</span>{' '}
-                                {format(prescription.date_expires, 'PPP')}
+                                {format(dateExpires, 'PPP')}
                             </time>
                         </div>
                     </header>
