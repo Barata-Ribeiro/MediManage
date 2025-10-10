@@ -41,12 +41,7 @@ class PublicController extends Controller
             ->with(['categories' => fn($query) => $query->select('id', 'name')])
             ->when($request->filled('category'), function ($query) use ($category) {
                 $names = array_filter(array_map('trim', explode(',', $category)));
-                foreach ($names as $name) {
-                    $query->whereHas('categories', function ($q) use ($name) {
-                        $q->where('name', $name);
-                    });
-                }
-                return $query;
+                return $query->whereHas('categories', fn($q) => $q->whereIn('name', $names));
             })
             ->when($request->filled('search'), fn($query) => $query->whereFullText(['title', 'subtitle', 'excerpt', 'content_html'], "%$search%")
                 ->orWhereHas('user', fn($q) => $q->whereLike('name', "%$search%")))
@@ -56,7 +51,7 @@ class PublicController extends Controller
             ->paginate(10, ['id', 'user_id', 'title', 'slug', 'excerpt', 'thumbnail', 'created_at'])
             ->withQueryString();
 
-        $categories = Category::withCount('articles')->get();
+        $categories = Category::withCount(['articles as articles_count' => fn($query) => $query->whereIsPublished(true)])->get();
 
         return Inertia::render('home/articles/Index', [
             'articles' => $articles,
