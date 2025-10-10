@@ -18,7 +18,7 @@ export default function Edit({ medicalRecord }: Readonly<{ medicalRecord: Medica
         },
     ];
 
-    const patientFullName = `${medicalRecord.patient_info.first_name} ${medicalRecord.patient_info.last_name}`;
+    const patientFullName = medicalRecord.patient_info.full_name;
 
     return (
         <Layout breadcrumbs={breadcrumbs}>
