@@ -58,6 +58,8 @@ class DoctorPrescriptionController extends Controller
             ->paginate($perPage)
             ->withQueryString();
 
+        $prescriptions->getCollection()->transform(fn($p) => $p->makeHidden('qr_code'));
+
         return Inertia::render('doctor/prescriptions/Index', ['prescriptions' => $prescriptions]);
     }
 

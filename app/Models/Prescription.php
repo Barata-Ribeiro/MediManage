@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use InvalidArgumentException;
 use Log;
+use tbQuar\Facades\Quar;
 use Throwable;
 use UnexpectedValueException;
 
@@ -28,6 +29,7 @@ use UnexpectedValueException;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read EmployeeInfo $employeeInfo
+ * @property-read string $qr_code
  * @property-read PatientInfo $patientInfo
  * @method static PrescriptionFactory factory($count = null, $state = [])
  * @method static Builder<static>|Prescription newModelQuery()
@@ -66,6 +68,14 @@ class Prescription extends Model
         'date_expires',
     ];
 
+    /**
+     * Appended accessors to include in the model's array and JSON forms.
+     *
+     * @var string[]
+     */
+    protected $appends = [
+        'qr_code'
+    ];
 
     /**
      * The "booted" method of the model.
@@ -145,6 +155,25 @@ class Prescription extends Model
             Log::warning('Invalid date_expires when computing validity', ['date_expires' => $dateExpires, 'error' => $e->getMessage()]);
             return 0;
         }
+    }
+
+    /**
+     * Generate a base64-encoded QR code for the prescription validation URL.
+     *
+     * @return string
+     */
+    public function getQrCodeAttribute(): string
+    {
+        $url = route('public.prescription.validation', ['prescription' => $this->validation_code]);
+
+        $qr = Quar::format('png')
+            ->size(180)
+            ->margin(1)
+            ->eye('rounded')
+            ->gradient(18, 79, 201, 39, 43, 51, 'VERTICAL')
+            ->generate($url);
+
+        return base64_encode($qr);
     }
 
     public function patientInfo(): BelongsTo
