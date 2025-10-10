@@ -16,10 +16,10 @@ export default function Show({ prescription }: Readonly<ShowProps>) {
     const { auth } = usePage<SharedData>().props;
     if (!auth?.user?.employee_info_id) return dashboard();
 
-    console.log(prescription);
-
     const patient = prescription.patient_info;
     const patientFullName = `${patient.first_name} ${patient.last_name}`;
+
+    const qrCodeSrc = `data:image/png;base64,${prescription.qr_code}`;
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -48,17 +48,17 @@ export default function Show({ prescription }: Readonly<ShowProps>) {
 
                 <section
                     aria-label="Prescription Details"
-                    className="mx-auto mt-6 grid max-w-7xl gap-6 rounded-lg border border-t-8 border-border border-t-primary bg-input p-4 dark:bg-muted"
+                    className="mx-auto mt-6 flex aspect-[9/16] max-w-7xl flex-col gap-6 rounded-lg border border-t-8 border-border border-t-primary bg-input p-4 dark:bg-muted"
                 >
                     <header>
                         <h3 className="scroll-m-20 text-center text-4xl font-bold tracking-tight text-balance">
                             {patientFullName}
                         </h3>
-                        <p className="my-2 flex h-5 justify-center space-x-2 text-center text-sm font-semibold text-muted-foreground">
+                        <div className="my-2 flex h-5 justify-center space-x-2 text-center text-sm font-semibold text-muted-foreground">
                             <span>{patient.gender}</span>
                             <Separator orientation="vertical" />
                             <span>{patient.age} years old</span>
-                        </p>
+                        </div>
 
                         <div className="flex items-center justify-between gap-2">
                             <time className="text-sm">
@@ -87,12 +87,31 @@ export default function Show({ prescription }: Readonly<ShowProps>) {
                         />
                     </article>
 
-                    <footer className="flex flex-col items-end gap-1">
-                        <p className="text-sm">
-                            <span className="block text-right font-semibold">Prescribed by:</span>{' '}
-                            {prescription.employee_info.full_name}
-                        </p>
-                        <p className="text-sm">{prescription.employee_info.specialization}</p>
+                    <footer className="mt-auto flex items-end justify-between">
+                        <figure className="grid gap-2">
+                            <img
+                                src={qrCodeSrc}
+                                alt="Prescription QR Code"
+                                className="rounded-lg border-8 border-primary"
+                            />
+                            <figcaption className="text-center text-sm font-semibold text-primary">
+                                #{prescription.validation_code}
+                            </figcaption>
+                        </figure>
+
+                        <div className="flex flex-col items-end gap-1">
+                            <p className="text-sm">
+                                <span className="block text-right font-semibold">Prescribed by:</span>{' '}
+                                <span className="block">
+                                    {prescription.employee_info.full_name}, {prescription.employee_info.specialization}
+                                </span>
+                            </p>
+
+                            <p className="text-sm">
+                                <span className="block text-right font-semibold">License:</span>{' '}
+                                {prescription.employee_info.license_number}
+                            </p>
+                        </div>
                     </footer>
                 </section>
             </div>

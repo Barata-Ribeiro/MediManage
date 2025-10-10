@@ -17,6 +17,7 @@ export interface Prescription {
 
     patient_info: Partial<PatientInfo>;
     employee_info: Partial<EmployeeInfo>;
+    qr_code: string; // Base64 encoded string
 }
 
 export type TablePrescription = Omit<Prescription, 'prescription_details_html' | 'prescription_details_json'> & {
