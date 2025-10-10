@@ -12,8 +12,9 @@ interface ShowProps {
 }
 
 export default function Show({ prescription }: Readonly<ShowProps>) {
-    const dateIssued = new Date(prescription.date_issued ?? '').toLocaleDateString();
-    const dateExpires = new Date(prescription.date_expires ?? '').toLocaleDateString();
+    const dateIssued = String(prescription.date_issued).replaceAll('-', '/');
+    const dateExpires = String(prescription.date_expires).replaceAll('-', '/');
+    const dateOfBirth = String(prescription.patient_info?.date_of_birth).replaceAll('-', '/');
 
     const isValid = prescription.is_valid;
     const validLabel = isValid ? 'Valid' : 'Expired';
@@ -84,7 +85,10 @@ export default function Show({ prescription }: Readonly<ShowProps>) {
                                         <strong>Name:</strong> {prescription.patient_info?.full_name}
                                     </p>
                                     <p>
-                                        <strong>Age:</strong> {prescription.patient_info?.age}
+                                        <strong>DOB:</strong> {format(dateOfBirth, 'PPP')}
+                                    </p>
+                                    <p>
+                                        <strong>Age:</strong> {prescription.patient_info?.age} years old
                                     </p>
                                     <p>
                                         <strong>Gender:</strong> {prescription.patient_info?.gender}

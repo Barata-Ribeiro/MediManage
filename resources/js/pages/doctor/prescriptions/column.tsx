@@ -40,13 +40,19 @@ export const column: ColumnDef<TablePrescription>[] = [
     {
         accessorKey: 'date_issued',
         header: ({ column }) => <DataTableColumnHeader column={column} title="Issued At" />,
-        cell: ({ row }) => format(row.original.date_issued, 'PPpp'),
+        cell: ({ row }) => {
+            const dateIssued = String(row.original.date_issued).replaceAll('-', '/');
+            return format(dateIssued, 'PPP');
+        },
         enableSorting: true,
     },
     {
         accessorKey: 'date_expires',
         header: ({ column }) => <DataTableColumnHeader column={column} title="Expires At" />,
-        cell: ({ row }) => format(row.original.date_expires, 'PPpp'),
+        cell: ({ row }) => {
+            const dateExpires = String(row.original.date_expires).replaceAll('-', '/');
+            return format(dateExpires, 'PPP');
+        },
         enableSorting: true,
     },
     {
