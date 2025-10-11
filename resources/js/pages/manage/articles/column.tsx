@@ -88,7 +88,7 @@ export const column: ColumnDef<TableArticle>[] = [
                             <DropdownMenuCopyButton content={title}>Copy Title</DropdownMenuCopyButton>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        {row.original.is_published && (
+                        {row.original.is_published ? (
                             <DropdownMenuItem asChild>
                                 <Link
                                     className="w-full"
@@ -101,7 +101,7 @@ export const column: ColumnDef<TableArticle>[] = [
                                     View
                                 </Link>
                             </DropdownMenuItem>
-                        )}
+                        ) : null}
                         <DropdownMenuItem asChild>
                             <Link
                                 className="w-full"
