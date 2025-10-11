@@ -71,7 +71,7 @@ class RoleSeeder extends Seeder
                 $rolePermissions = [];
                 foreach ($mods as $module => $actions) {
                     foreach ($actions as $action) {
-                        $permissionName = $action . '.' . $module;
+                        $permissionName = $module . '.' . $action;
                         if (in_array($permissionName, $allPermissions)) {
                             $rolePermissions[] = $permissionName;
                         } else {

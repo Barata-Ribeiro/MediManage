@@ -49,7 +49,7 @@ class PermissionSeeder extends Seeder
                     }
 
                     $permissions[] = [
-                        'name' => $ac['name'] . '.' . $mod['name'],
+                        'name' => $mod['name'] . '.' . $ac['name'],
                         'label' => $label,
                     ];
                 }
