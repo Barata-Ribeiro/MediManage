@@ -9,6 +9,7 @@ Route::middleware(['auth', 'role:Super Admin'])->prefix('admin')->group(function
         Route::get('/', [RoleController::class, 'index'])->name('admin.roles.index');
         Route::get('/{role}/edit', [RoleController::class, 'edit'])->name('admin.roles.edit');
         Route::patch('/{role}', [RoleController::class, 'update'])->name('admin.roles.update');
+        Route::patch('/{role}/toggle/{permission}', [RoleController::class, 'togglePermission'])->name('admin.roles.togglePermission');
     });
 
     Route::prefix('permissions')->group(function () {
