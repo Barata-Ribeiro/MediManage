@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Medical\Prescription;
 
 use App\Http\Controllers\Controller;
+use App\Models\Prescription;
 use Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Inertia\Inertia;
 use Log;
+use Str;
 
 class PrescriptionController extends Controller
 {
@@ -53,5 +57,48 @@ class PrescriptionController extends Controller
             ->withQueryString();
 
         return Inertia::render('patient/prescriptions/Index', ['prescriptions' => $prescriptions]);
+    }
+
+    /**
+     * Generate a PDF for the specified prescription.
+     */
+    public function generatePdf(Prescription $prescription)
+    {
+        $requestingUser = Auth::user();
+
+        if ($requestingUser->hasRole('Patient')) {
+            if ($prescription->patient_info_id !== $requestingUser->patientInfo->id) {
+                Log::warning('Patient Prescription: Unauthorized PDF generation attempt', ['action_user_id' => $requestingUser->id, 'prescription_id' => $prescription->id]);
+                abort(403, 'You do not have permission to generate this prescription PDF.');
+            }
+
+            return $this->generatePrescriptionPdf($prescription);
+        }
+
+        return $this->generatePrescriptionPdf($prescription);
+    }
+
+    /**
+     * Generate and stream the prescription PDF.
+     *
+     * @param Prescription $prescription
+     * @return Response
+     */
+    private function generatePrescriptionPdf(Prescription $prescription)
+    {
+        $data = [
+            'prescription' => $prescription,
+            'patient' => $prescription->patientInfo->getAppends(),
+            'doctor' => $prescription->employeeInfo->getAppends(),
+        ];
+
+        $pdf = PDF::loadView('pdfs.prescription', $data);
+        $pdf->setOptions([
+            'defaultFont' => 'sans-serif',
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+        ])->setPaper('a4', 'portrait');
+        $fileName = 'prescription_' . Str::slug($prescription->patientInfo->full_name) . '.pdf';
+        return $pdf->stream($fileName . '.pdf');
     }
 }
