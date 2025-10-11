@@ -8,6 +8,7 @@ use Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
@@ -44,17 +45,22 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Role $role)
+    public function edit(Role $role, Request $request)
     {
         Log::info('Role Management: Viewed role edit form', ['action_user_id' => Auth::id(), 'edited_role_id' => $role->id]);
+
+        $allPermissions = Permission::select(['id', 'name'])
+            ->when($request->filled('search'), fn($query) => $query->whereLike('name', "%$request->search%"))
+            ->orderBy('name', 'ASC')->paginate(10);
+
         return Inertia::render('admin/roles/Edit', [
-            'role' => $role
+            'role' => $role->load('permissions:name'),
+            'allPermissions' => $allPermissions,
         ]);
     }
 
     /**
      * Update the specified resource in storage.
-     * @todo Implement permission syncing
      */
     public function update(RoleRequest $request, Role $role)
     {
@@ -64,5 +70,28 @@ class RoleController extends Controller
         Log::info('Role Management: Updated role', ['action_user_id' => Auth::id(), 'updated_role_id' => $role->id]);
 
         return to_route('admin.roles.index')->with('success', 'Role updated successfully.');
+    }
+
+    /**
+     * Toggle permission for the specified role.
+     */
+    public function togglePermission(Role $role, Permission $permission)
+    {
+        $action = $role->permissions->contains($permission)
+            ? 'block'
+            : 'grant';
+
+        $actionWord = $action === 'grant' ? 'granted' : 'revoked';
+
+        $role->{$action === 'grant' ? 'givePermissionTo' : 'revokePermissionTo'}($permission);
+
+        Log::info("Role Management: $actionWord permission", [
+            'action_user_id' => Auth::id(),
+            'role_id' => $role->id,
+            'permission_id' => $permission->id,
+            'action' => $action,
+        ]);
+
+        return to_route('admin.roles.edit', $role)->with('success', "Permission $actionWord to role $role->name successfully.");
     }
 }
