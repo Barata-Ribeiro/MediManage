@@ -43,6 +43,7 @@ export default function Show({ prescription }: Readonly<ShowProps>) {
         patientInfo: patient.id!,
         prescription: prescription.id,
     });
+    const pdfLink = prescriptions.generatePdf(prescription.id).url;
 
     const editLabel = `Edit Prescription for ${prescription.patient_info.full_name}`;
     const pdfLabel = `Generate PDF for Prescription of ${prescription.patient_info.full_name}`;
@@ -65,11 +66,10 @@ export default function Show({ prescription }: Readonly<ShowProps>) {
                             </Link>
                         </Button>
 
-                        {/*TODO: Implement PDF generation*/}
                         <Button type="button" variant="secondary" asChild>
-                            <Link href="#" aria-label={pdfLabel} title={pdfLabel} target="_blank" rel="external">
+                            <a href={pdfLink} aria-label={pdfLabel} title={pdfLabel} target="_blank" rel="external">
                                 Generate PDF
-                            </Link>
+                            </a>
                         </Button>
                     </div>
                 </div>
