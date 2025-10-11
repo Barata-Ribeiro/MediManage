@@ -89,6 +89,60 @@ class ArticleController extends Controller
     }
 
     /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Article $article)
+    {
+        $requestingUser = Auth::user();
+
+        if ($article->user_id !== $requestingUser->id && !$requestingUser->hasRole('Super Admin|Manager')) {
+            abort(403, 'You do not have permission to edit this article.');
+        }
+
+        Log::info("Articles: Viewed edit page for article ID {$article->id}", ['action_user_id' => $requestingUser->id]);
+
+        $categories = Category::select(['name'])->orderBy('name')->get();
+        $article->load('categories:id,name');
+
+        return Inertia::render('manage/articles/Edit', [
+            'article' => $article,
+            'categories' => $categories,
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(ArticleRequest $request, Article $article)
+    {
+        $requestingUser = Auth::user();
+
+        if ($article->user_id !== $requestingUser->id && !$requestingUser->hasRole('Super Admin|Manager')) {
+            abort(403, 'You do not have permission to update this article.');
+        }
+
+        $data = $request->validated();
+        if (isset($data['title']) && $data['title'] !== $article->title) {
+            $data['slug'] = Str::slug($data['title'], '-');
+        }
+
+        $article->update($data);
+        if ($request->has('categories')) {
+            $categoryNames = $data['categories'];
+            $categoryIds = collect($categoryNames)
+                ->map(fn($name) => Category::firstOrCreate(['name' => $name])->id)
+                ->all();
+            $article->categories()->sync($categoryIds);
+        } else {
+            $article->categories()->detach();
+        }
+
+        Log::info("Articles: Updated article ID {$article->id}", ['action_user_id' => $requestingUser->id]);
+
+        return to_route($article->user_id === $requestingUser->id ? 'articles.my' : 'articles.index')->with('success', 'Article updated successfully.');
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(ArticleRequest $request)
