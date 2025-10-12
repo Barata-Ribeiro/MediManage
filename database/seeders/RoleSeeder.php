@@ -39,8 +39,8 @@ class RoleSeeder extends Seeder
                     'appointment' => ['index', 'show'],
                     'prescription' => ['index', 'show', 'create', 'edit'],
                     'medical_record' => ['index', 'show', 'create', 'edit'],
-                    'medical_record_entries' => ['index', 'show', 'create', 'edit'],
-                    'article' => ['index', 'show', 'create', 'edit'],
+                    'medical_record_entries' => ['index', 'show', 'create', 'edit', 'destroy'],
+                    'article' => ['index', 'show', 'create', 'edit', 'destroy'],
                     'category' => ['index', 'show', 'create'],
                 ],
                 'Attendant' => [
