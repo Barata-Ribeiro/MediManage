@@ -12,11 +12,20 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { article } from '@/routes';
+import { destroy } from '@/routes/articles';
 import { TableArticle } from '@/types/application/article';
 import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { MoreHorizontal } from 'lucide-react';
+import type { MouseEvent } from 'react';
+
+function handleDelete(e: MouseEvent<HTMLDivElement>, original: TableArticle) {
+    e.preventDefault();
+    if (confirm(`Are you sure you want to delete the article: "${original.title}"? This action cannot be undone.`)) {
+        destroy(original.slug);
+    }
+}
 
 export const column: ColumnDef<TableArticle>[] = [
     {
@@ -90,16 +99,15 @@ export const column: ColumnDef<TableArticle>[] = [
                         <DropdownMenuSeparator />
                         {row.original.is_published ? (
                             <DropdownMenuItem asChild>
-                                <Link
+                                <a
                                     className="w-full"
-                                    href={article(row.original.slug)}
+                                    href={article(row.original.slug).url}
                                     target="_blank"
                                     rel="external"
                                     aria-label={`View article: ${row.original.title}`}
-                                    as="button"
                                 >
                                     View
-                                </Link>
+                                </a>
                             </DropdownMenuItem>
                         ) : null}
                         <DropdownMenuItem asChild>
@@ -111,6 +119,9 @@ export const column: ColumnDef<TableArticle>[] = [
                             >
                                 Edit
                             </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem variant="destructive" onClick={(e) => handleDelete(e, row.original)}>
+                            Delete
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

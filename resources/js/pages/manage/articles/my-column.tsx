@@ -12,11 +12,20 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { article } from '@/routes';
+import { destroy } from '@/routes/articles';
 import { TableArticle } from '@/types/application/article';
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { MoreHorizontal } from 'lucide-react';
+import type { MouseEvent } from 'react';
+
+function handleDelete(e: MouseEvent<HTMLDivElement>, original: TableArticle) {
+    e.preventDefault();
+    if (confirm(`Are you sure you want to delete the article: "${original.title}"? This action cannot be undone.`)) {
+        return router.delete(destroy(original.slug));
+    }
+}
 
 export const myColumn: ColumnDef<TableArticle>[] = [
     {
@@ -105,6 +114,9 @@ export const myColumn: ColumnDef<TableArticle>[] = [
                             >
                                 Edit
                             </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem variant="destructive" onClick={(e) => handleDelete(e, row.original)}>
+                            Delete
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
