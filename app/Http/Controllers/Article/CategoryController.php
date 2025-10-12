@@ -56,4 +56,23 @@ class CategoryController extends Controller
         Log::info('Categories: Viewed create category page', ['action_user_id' => Auth::id()]);
         return Inertia::render('manage/categories/Create');
     }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Category $category)
+    {
+        Log::info('Categories: Viewed edit category page', ['action_user_id' => Auth::id(), 'category_id' => $category->id]);
+        return Inertia::render('manage/categories/Edit', ['category' => $category]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(CategoryRequest $request, Category $category)
+    {
+        $category->update($request->validated());
+        Log::info('Categories: Updated category', ['action_user_id' => Auth::id(), 'category_id' => $category->id]);
+        return to_route('categories.index')->with('success', 'Category updated successfully.');
+    }
 }
