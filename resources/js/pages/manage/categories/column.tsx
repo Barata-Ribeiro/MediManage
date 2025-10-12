@@ -9,7 +9,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import categories from '@/routes/categories';
 import { Category } from '@/types/application/article';
+import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { MoreHorizontal } from 'lucide-react';
@@ -59,7 +61,11 @@ export const column: ColumnDef<Category>[] = [
                         <DropdownMenuCopyButton content={row.original.name}>Copy Name</DropdownMenuCopyButton>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <Link href={categories.edit(row.original.id)} className="w-full" as="button">
+                            Edit
+                        </Link>
+                    </DropdownMenuItem>
                     <DropdownMenuItem>Delete</DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
