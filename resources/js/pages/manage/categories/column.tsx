@@ -9,12 +9,20 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import categories from '@/routes/categories';
+import categories, { destroy } from '@/routes/categories';
 import { Category } from '@/types/application/article';
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { MoreHorizontal } from 'lucide-react';
+import type { MouseEvent } from 'react';
+
+function handleDelete(e: MouseEvent<HTMLDivElement>, original: Category) {
+    e.preventDefault();
+    if (confirm(`Are you sure you want to delete the category: "${original.name}"? This action cannot be undone.`)) {
+        return router.delete(destroy(original.id));
+    }
+}
 
 export const column: ColumnDef<Category>[] = [
     {
@@ -66,7 +74,9 @@ export const column: ColumnDef<Category>[] = [
                             Edit
                         </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>Delete</DropdownMenuItem>
+                    <DropdownMenuItem variant="destructive" onClick={(e) => handleDelete(e, row.original)}>
+                        Delete
+                    </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
         ),
