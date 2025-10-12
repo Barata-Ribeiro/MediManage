@@ -7,6 +7,7 @@ import { column } from '@/pages/manage/articles/column';
 import type { BreadcrumbItem } from '@/types';
 import { PaginationArticle } from '@/types/application/article';
 import { Head, Link } from '@inertiajs/react';
+import { NotebookPenIcon } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -24,8 +25,10 @@ export default function Index({ articles }: Readonly<{ articles: PaginationArtic
                 <div className="flex items-center justify-between">
                     <Heading title="Articles" description="List of all articles" />
 
-                    <Button>
-                        <Link href={articleController.create().url}>Create Article</Link>
+                    <Button variant="secondary" asChild>
+                        <Link href={articleController.create()} prefetch>
+                            <NotebookPenIcon aria-hidden /> New Article
+                        </Link>
                     </Button>
                 </div>
 
