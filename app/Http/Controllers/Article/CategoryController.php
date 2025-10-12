@@ -75,4 +75,14 @@ class CategoryController extends Controller
         Log::info('Categories: Updated category', ['action_user_id' => Auth::id(), 'category_id' => $category->id]);
         return to_route('categories.index')->with('success', 'Category updated successfully.');
     }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Category $category)
+    {
+        $category->delete();
+        Log::info('Categories: Deleted category', ['action_user_id' => Auth::id(), 'category_id' => $category->id]);
+        return to_route('categories.index')->with('success', 'Category deleted successfully.');
+    }
 }
