@@ -34,3 +34,5 @@ export type TableArticle = Pick<
 >;
 
 export type PaginationArticle = PaginationMeta<TableArticle[]>;
+
+export type PaginationCategory = PaginationMeta<Category[]>;
