@@ -174,4 +174,23 @@ class ArticleController extends Controller
         $categories = Category::select(['name'])->orderBy('name')->get();
         return Inertia::render('manage/articles/Create', ['categories' => $categories]);
     }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Article $article)
+    {
+        $requestingUser = Auth::user();
+
+        if ($article->user_id !== $requestingUser->id && !$requestingUser->hasRole('Super Admin|Manager')) {
+            abort(403, 'You do not have permission to delete this article.');
+        }
+
+        $articleId = $article->id;
+        $article->delete();
+
+        Log::info("Articles: Deleted article ID {$articleId}", ['action_user_id' => $requestingUser->id]);
+
+        return to_route($article->user_id === $requestingUser->id ? 'articles.my' : 'articles.index')->with('success', 'Article deleted successfully.');
+    }
 }
