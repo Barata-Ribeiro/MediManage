@@ -14,7 +14,7 @@ import {
 import { article } from '@/routes';
 import { destroy } from '@/routes/articles';
 import { TableArticle } from '@/types/application/article';
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { MoreHorizontal } from 'lucide-react';
@@ -23,7 +23,7 @@ import type { MouseEvent } from 'react';
 function handleDelete(e: MouseEvent<HTMLDivElement>, original: TableArticle) {
     e.preventDefault();
     if (confirm(`Are you sure you want to delete the article: "${original.title}"? This action cannot be undone.`)) {
-        destroy(original.slug);
+        return router.delete(destroy(original.slug));
     }
 }
 
