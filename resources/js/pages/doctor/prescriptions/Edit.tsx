@@ -1,3 +1,4 @@
+import AppPageAlert from '@/components/app-page-alert';
 import EditPatientPrescriptionForm from '@/components/forms/prescriptions/edit-patient-prescription-form';
 import Heading from '@/components/heading';
 import { Separator } from '@/components/ui/separator';
@@ -77,16 +78,12 @@ export default function Edit({ prescription }: Readonly<EditProps>) {
                         </div>
                     </header>
 
-                    <div
-                        role="alert"
-                        className="mb-4 rounded border-l-4 border-yellow-400 bg-yellow-50 p-3 text-sm text-yellow-800"
-                    >
-                        <strong className="block font-semibold">Sensitive Information</strong>
-                        <span>
-                            Prescriptions are incredibly sensitive documents. Handle with care - verify everything
-                            before editing or sharing any details.
-                        </span>
-                    </div>
+                    <AppPageAlert
+                        title="Sensitive Information"
+                        message="Prescriptions are incredibly sensitive documents. Handle with care - verify everything
+                            before editing or sharing any details."
+                        variant="warning"
+                    />
 
                     <EditPatientPrescriptionForm data={prescription} />
                 </section>

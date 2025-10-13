@@ -1,4 +1,5 @@
 import medicalRecordController from '@/actions/App/Http/Controllers/Medical/MedicalRecordController';
+import AppPageAlert from '@/components/app-page-alert';
 import EditMedicalRecordForm from '@/components/forms/medicalRecords/edit-medical-record-form';
 import Heading from '@/components/heading';
 import Layout from '@/layouts/app-layout';
@@ -28,16 +29,12 @@ export default function Edit({ medicalRecord }: Readonly<{ medicalRecord: Medica
                 <Heading title="Edit Medical Record" description={`Medical Record of ${patientFullName}`} />
 
                 <section className="rounded-md bg-card p-4 shadow sm:p-6">
-                    <div
-                        role="alert"
-                        className="mb-4 rounded border-l-4 border-yellow-400 bg-yellow-50 p-3 text-sm text-yellow-800"
-                    >
-                        <strong className="block font-semibold">Sensitive Information</strong>
-                        <span>
-                            Medical records contain confidential patient information. Handle with care — verify
-                            permissions before viewing, editing, or sharing.
-                        </span>
-                    </div>
+                    <AppPageAlert
+                        title="Sensitive Information"
+                        message="Medical records contain confidential patient information. Handle with care — verify
+                            permissions before viewing, editing, or sharing."
+                        variant="warning"
+                    />
 
                     <EditMedicalRecordForm
                         id={medicalRecord.id}
