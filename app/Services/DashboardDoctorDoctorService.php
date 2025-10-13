@@ -8,8 +8,11 @@ use App\Models\EmployeeInfo;
 use App\Models\PatientInfo;
 use Auth;
 use Carbon\Carbon;
+use Illuminate\Pagination\AbstractPaginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use LaravelIdea\Helper\App\Models\_IH_Appointment_C;
 
 class DashboardDoctorDoctorService implements DashboardDoctorServiceInterface
 {
@@ -24,35 +27,21 @@ class DashboardDoctorDoctorService implements DashboardDoctorServiceInterface
         $startOfWorkDay = Carbon::now()->setTime(8, 0);
         $endOfWorkDay = Carbon::now()->setTime(17, 0);
 
-        // Get overall day appointments grouped by hour
-        $overallDayAppointmentsData = [];
-        $overallDayAppointmentsLabels = [];
-        $overallDayAppointments = $this->getOverallDayAppointments($doctorInfo, $startOfWorkDay, $endOfWorkDay);
-        foreach (range(8, 16) as $hour) {
-            $hourLabel = sprintf('%02d:00', $hour);
-            $overallDayAppointmentsLabels[] = $hourLabel;
-            $overallDayAppointmentsData[] = $overallDayAppointments->get($hourLabel, 0);
-        }
-
         $appointmentsGenderOverview = $this->getAppointmentsGenderOverview($doctorInfo);
         $upcomingToday = $this->getTodayUpcomingAppointments($doctorInfo, $startOfWorkDay, $endOfWorkDay);
         $statusOverview = $this->getAppointmentsStatusOverview($doctorInfo);
-        $weeklyTrend = $this->getWeeklyAppointmentsTrend($doctorInfo, 6);
+        $weeklyTrend = $this->getWeeklyAppointmentsTrend($doctorInfo);
         $distinctPatients30Days = $this->getDistinctPatientsLast30Days($doctorInfo);
         $newPatientsThisMonth = $this->getNewPatientsThisMonth();
         $newPatientsByMonth = $this->getNewPatientsByMonth();
 
         return [
             'data' => [
-                'overallDayAppointments' => [
-                    'labels' => $overallDayAppointmentsLabels,
-                    'data' => $overallDayAppointmentsData,
-                ],
                 'appointmentsGenderOverview' => [
                     'labels' => $appointmentsGenderOverview->keys()->all(),
                     'data' => $appointmentsGenderOverview->values()->all(),
                 ],
-                'upcomingToday' => $upcomingToday, // array of upcoming appointments with time, patient name, status
+                'upcomingToday' => $upcomingToday,
                 'appointmentsStatusOverview' => [
                     'labels' => $statusOverview->keys()->all(),
                     'data' => $statusOverview->values()->all(),
@@ -66,33 +55,6 @@ class DashboardDoctorDoctorService implements DashboardDoctorServiceInterface
                 'newPatientsByMonth' => $newPatientsByMonth,
             ]
         ];
-    }
-
-    /**
-     * Get overall day appointments grouped by hour.
-     *
-     * @param EmployeeInfo|null $doctorInfo
-     * @param Carbon $startOfWorkDay
-     * @param Carbon $endOfWorkDay
-     * @return Collection
-     */
-    private function getOverallDayAppointments(?EmployeeInfo $doctorInfo, Carbon $startOfWorkDay, Carbon $endOfWorkDay): Collection
-    {
-        if (!$doctorInfo) {
-            return collect();
-        }
-
-        return Appointment::selectRaw("DATE_FORMAT(appointment_date, '%H:00') as hour, COUNT(*) as total")
-            ->where('employee_info_id', $doctorInfo->id)
-            ->whereBetween('appointment_date', [$startOfWorkDay, $endOfWorkDay])
-            ->groupBy('hour')
-            ->orderBy('hour')
-            ->get()
-            ->pluck('total', 'hour')
-            ->union(collect(array_fill_keys(collect(range(8, 16))
-                ->map(fn($h) => sprintf('%02d:00', $h))
-                ->toArray(), 0)))
-            ->sortKeys();
     }
 
     /**
@@ -122,14 +84,14 @@ class DashboardDoctorDoctorService implements DashboardDoctorServiceInterface
     }
 
     /**
-     * Today's upcoming appointments (during work hours) with patient name and status.
+     * Today's upcoming appointments for the doctor within working hours (8 AM - 5 PM).
      *
      * @param EmployeeInfo|null $doctorInfo
      * @param Carbon $startOfWorkDay
      * @param Carbon $endOfWorkDay
-     * @return array
+     * @return array|LengthAwarePaginator|_IH_Appointment_C|AbstractPaginator
      */
-    private function getTodayUpcomingAppointments(?EmployeeInfo $doctorInfo, Carbon $startOfWorkDay, Carbon $endOfWorkDay): array
+    private function getTodayUpcomingAppointments(?EmployeeInfo $doctorInfo, Carbon $startOfWorkDay, Carbon $endOfWorkDay): array|LengthAwarePaginator|_IH_Appointment_C|AbstractPaginator
     {
         if (!$doctorInfo) {
             return [];
@@ -140,17 +102,14 @@ class DashboardDoctorDoctorService implements DashboardDoctorServiceInterface
             ->whereDate('appointment_date', Carbon::today())
             ->whereBetween('appointment_date', [$startOfWorkDay, $endOfWorkDay])
             ->orderBy('appointment_date')
-            ->get()
-            ->map(function (Appointment $a) {
-                $time = Carbon::parse($a->appointment_date)->format('H:i');
-                $patientName = $a->patientInfo ? trim($a->patientInfo->first_name . ' ' . $a->patientInfo->last_name) : null;
-                return [
-                    'time' => $time,
-                    'patient' => $patientName,
-                    'status' => $a->status,
-                ];
-            })
-            ->toArray();
+            ->paginate(10)
+            ->through(fn($a) => [
+                'id' => $a->id,
+                'time' => Carbon::parse($a->appointment_date)->format('H:i'),
+                'doctor' => $a->employeeInfo->getFullNameAttribute(),
+                'patient' => $a->patientInfo->getFullNameAttribute(),
+                'status' => $a->status,
+            ]);
     }
 
     /**
@@ -183,10 +142,9 @@ class DashboardDoctorDoctorService implements DashboardDoctorServiceInterface
      * 6-week appointments trend (configurable number of weeks).
      *
      * @param EmployeeInfo|null $doctorInfo
-     * @param int $weeks
      * @return Collection
      */
-    private function getWeeklyAppointmentsTrend(?EmployeeInfo $doctorInfo, int $weeks = 6): Collection
+    private function getWeeklyAppointmentsTrend(?EmployeeInfo $doctorInfo): Collection
     {
         if (!$doctorInfo) {
             return collect();
@@ -195,7 +153,7 @@ class DashboardDoctorDoctorService implements DashboardDoctorServiceInterface
         $labels = [];
         $data = [];
 
-        for ($i = $weeks - 1; $i >= 0; $i--) {
+        for ($i = 6 - 1; $i >= 0; $i--) {
             $start = Carbon::now()->subWeeks($i)->startOfWeek();
             $end = (clone $start)->endOfWeek();
             $label = $start->format('Y-m-d'); // week start label
@@ -245,7 +203,7 @@ class DashboardDoctorDoctorService implements DashboardDoctorServiceInterface
      */
     private function getNewPatientsByMonth(): array
     {
-        $startMonthDate = Carbon::now()->subMonth(11)->startOfMonth();
+        $startMonthDate = Carbon::now()->subMonths(11)->startOfMonth();
         $endMonthDate = Carbon::now()->endOfMonth();
 
         $labels = [];
