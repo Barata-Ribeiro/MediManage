@@ -1,4 +1,5 @@
 import { NavAdmin } from '@/components/navigation/nav-admin';
+import NavAttendant from '@/components/navigation/nav-attendant';
 import { NavDoctor } from '@/components/navigation/nav-doctor';
 import { NavFooter } from '@/components/navigation/nav-footer';
 import { NavMain } from '@/components/navigation/nav-main';
@@ -56,6 +57,7 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <NavMain items={mainNavItems} />
+                <NavAttendant />
                 <NavDoctor />
                 <NavAdmin />
             </SidebarContent>
