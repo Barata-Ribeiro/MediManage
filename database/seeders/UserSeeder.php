@@ -67,15 +67,49 @@ class UserSeeder extends Seeder
                 $user->saveQuietly();
             });
 
-            // Specific user for login and testing
+            // Specific patient for login and testing
+            User::firstOrCreate(
+                ['email' => "tribbiani@estelleagency.com"],
+                [
+                    'name' => "joeytribbiani",
+                    'email' => "tribbiani@estelleagency.com",
+                    'password' => config('app.admin_password'),
+                    'avatar' => 'https://static.wikia.nocookie.net/friends/images/4/43/10joey.png/revision/latest/scale-to-width-down/1000?cb=20241104084824',
+                ]
+            )->assignRole('Patient');
+
+            // Specific doctor for login and testing
             User::firstOrCreate(
                 ['email' => "dr.housemd@ppth.com"],
                 [
                     'name' => "dr.housemd",
                     'email' => "dr.housemd@ppth.com",
                     'password' => config('app.admin_password'),
+                    'avatar' => 'https://garrisonmarketinggroup.com/wp-content/uploads/2022/05/0003_article-dr-house-netflix.jpg'
                 ]
             )->assignRole('Doctor');
+
+            // Specific attendant user for testing
+            User::firstOrCreate(
+                ['email' => "pam.beesly@dunder-mifflin.com"],
+                [
+                    'name' => "pam.beesly",
+                    'email' => "pam.beesly@dunder-mifflin.com",
+                    'password' => config('app.admin_password'),
+                    'avatar' => 'https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/09/the-office-jenna-fischer-2.jpg'
+                ]
+            )->assignRole('Attendant');
+
+            // Specific manager user for testing
+            User::firstOrCreate(
+                ['email' => "tone@dimeofamily.com"],
+                [
+                    'name' => "tony-soprano",
+                    'email' => "tone@dimeofamily.com",
+                    'password' => config('app.admin_password'),
+                    'avatar' => 'https://static.wikia.nocookie.net/sopranos/images/8/8c/Tony_Soprano_Season_1.png'
+                ]
+            )->assignRole('Manager');
 
             // Banned user for testing
             User::firstOrCreate(
