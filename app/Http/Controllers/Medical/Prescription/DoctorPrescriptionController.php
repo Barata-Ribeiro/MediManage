@@ -8,6 +8,7 @@ use App\Models\EmployeeInfo;
 use App\Models\PatientInfo;
 use App\Models\Prescription;
 use Auth;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
@@ -109,19 +110,24 @@ class DoctorPrescriptionController extends Controller
 
     public function update(EmployeeInfo $doctor, PatientInfo $patientInfo, Prescription $prescription, PrescriptionRequest $request)
     {
-        $doctor_id = Auth::user()->employeeInfo->id;
+        try {
+            $doctor_id = Auth::user()->employeeInfo->id;
 
-        if (($doctor->id !== $doctor_id) || ($prescription->employee_info_id !== $doctor->id || $prescription->patient_info_id !== $patientInfo->id)) {
-            return to_route('prescriptions.index', $doctor_id);
+            if (($doctor->id !== $doctor_id) || ($prescription->employee_info_id !== $doctor->id || $prescription->patient_info_id !== $patientInfo->id)) {
+                return to_route('prescriptions.index', $doctor_id);
+            }
+
+            $validated = $request->validated();
+            Log::debug('Doctor Prescription: Update prescription request data', ['action_user_id' => Auth::id(), 'prescription_id' => $prescription->id, 'data' => $validated]);
+
+            $prescription->update($validated);
+
+            Log::info('Doctor Prescription: Updated prescription', ['action_user_id' => Auth::id(), 'prescription_id' => $prescription->id]);
+
+            return to_route('prescriptions.show', [$doctor->id, $patientInfo->id, $prescription->id])->with('success', 'Prescription updated successfully.');
+        } catch (Exception $e) {
+            Log::error('Doctor Prescription: Failed to update prescription', ['action_user_id' => Auth::id(), 'prescription_id' => $prescription->id, 'error' => $e->getMessage()]);
+            return back()->withInput()->with('error', 'Failed to update prescription. Please try again.');
         }
-
-        $validated = $request->validated();
-        Log::debug('Doctor Prescription: Update prescription request data', ['action_user_id' => Auth::id(), 'prescription_id' => $prescription->id, 'data' => $validated]);
-
-        $prescription->update($validated);
-
-        Log::info('Doctor Prescription: Updated prescription', ['action_user_id' => Auth::id(), 'prescription_id' => $prescription->id]);
-
-        return to_route('prescriptions.show', [$doctor->id, $patientInfo->id, $prescription->id])->with('success', 'Prescription updated successfully.');
     }
 }

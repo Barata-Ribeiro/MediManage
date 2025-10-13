@@ -146,15 +146,13 @@ class DashboardAdminService implements DashboardAdminServiceInterface
      */
     private function getAllUserAgents(): array
     {
-        $userAgents = DB::table('sessions')
+        $userAgents = DB::table(config('session.table'))
             ->selectRaw('user_agent, COUNT(*) as total')
             ->whereNotNull('user_agent')
             ->groupBy('user_agent')
             ->orderBy('total', 'desc')
             ->get()
             ->pluck('total', 'user_agent');
-
-        $agentsCounts = [];
 
         foreach ($userAgents as $ua => $count) {
             $agent = new Agent();

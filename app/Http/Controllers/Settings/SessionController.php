@@ -7,7 +7,9 @@ use Asika\Agent\Agent;
 use Auth;
 use Carbon\Carbon;
 use DB;
+use Exception;
 use Inertia\Inertia;
+use Log;
 
 class SessionController extends Controller
 {
@@ -16,9 +18,11 @@ class SessionController extends Controller
      */
     public function index()
     {
-        $rawSessions = DB::table('sessions')
+        $rawSessions = DB::table(config('session.table'))
+            ->distinct()
             ->select('id', 'user_id', 'ip_address', 'user_agent', 'last_activity')
             ->where('user_id', Auth::id())
+            ->whereNotNull('user_id')
             ->orderBy('last_activity', 'desc')
             ->get();
 
@@ -59,11 +63,16 @@ class SessionController extends Controller
      */
     public function destroy(string $session_id)
     {
-        DB::table('sessions')
-            ->where('id', $session_id)
-            ->where('user_id', Auth::id())
-            ->delete();
+        try {
+            DB::table('sessions')
+                ->where('id', $session_id)
+                ->where('user_id', Auth::id())
+                ->delete();
 
-        return to_route('sessions.index')->with('success', 'Session terminated successfully.');
+            return to_route('sessions.index')->with('success', 'Session terminated successfully.');
+        } catch (Exception $e) {
+            Log::error('Failed to terminate session.', ['action_user_id' => Auth::id(), 'session_id' => $session_id, 'error' => $e->getMessage()]);
+            return to_route('sessions.index')->with('error', 'Failed to terminate session.');
+        }
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\RoleRequest;
 use Auth;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
@@ -64,12 +65,22 @@ class RoleController extends Controller
      */
     public function update(RoleRequest $request, Role $role)
     {
-        $data = $request->validated();
-        $role->update($data);
+        try {
+            $data = $request->validated();
+            $role->update($data);
 
-        Log::info('Role Management: Updated role', ['action_user_id' => Auth::id(), 'updated_role_id' => $role->id]);
+            Log::info('Role Management: Updated role', ['action_user_id' => Auth::id(), 'updated_role_id' => $role->id]);
 
-        return to_route('admin.roles.index')->with('success', 'Role updated successfully.');
+            return to_route('admin.roles.index')->with('success', 'Role updated successfully.');
+        } catch (Exception $e) {
+            Log::error('Role Management: Failed to update role', [
+                'action_user_id' => Auth::id(),
+                'role_id' => $role->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->withInput()->with('error', 'Failed to update role. Please try again.');
+        }
     }
 
     /**
@@ -77,21 +88,32 @@ class RoleController extends Controller
      */
     public function togglePermission(Role $role, Permission $permission)
     {
-        $action = $role->permissions->contains($permission)
-            ? 'block'
-            : 'grant';
+        try {
+            $action = $role->permissions->contains($permission)
+                ? 'block'
+                : 'grant';
 
-        $actionWord = $action === 'grant' ? 'granted' : 'revoked';
+            $actionWord = $action === 'grant' ? 'granted' : 'revoked';
 
-        $role->{$action === 'grant' ? 'givePermissionTo' : 'revokePermissionTo'}($permission);
+            $role->{$action === 'grant' ? 'givePermissionTo' : 'revokePermissionTo'}($permission);
 
-        Log::info("Role Management: $actionWord permission", [
-            'action_user_id' => Auth::id(),
-            'role_id' => $role->id,
-            'permission_id' => $permission->id,
-            'action' => $action,
-        ]);
+            Log::info("Role Management: $actionWord permission", [
+                'action_user_id' => Auth::id(),
+                'role_id' => $role->id,
+                'permission_id' => $permission->id,
+                'action' => $action,
+            ]);
 
-        return to_route('admin.roles.edit', $role)->with('success', "Permission $actionWord to role $role->name successfully.");
+            return to_route('admin.roles.edit', $role)->with('success', "Permission $actionWord to role $role->name successfully.");
+        } catch (Exception $e) {
+            Log::error('Role Management: Failed to toggle permission', [
+                'action_user_id' => Auth::id(),
+                'role_id' => $role->id,
+                'permission_id' => $permission->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->withInput()->with('error', 'Failed to update permission. Please try again.');
+        }
     }
 }

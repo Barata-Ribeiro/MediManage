@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Article\CategoryRequest;
 use App\Models\Category;
 use Auth;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
@@ -43,9 +44,14 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request)
     {
-        $category = Category::create($request->validated());
-        Log::info('Categories: Created new category', ['action_user_id' => Auth::id(), 'category_id' => $category->id]);
-        return to_route('categories.index')->with('success', 'Category created successfully.');
+        try {
+            $category = Category::create($request->validated());
+            Log::info('Categories: Created new category', ['action_user_id' => Auth::id(), 'category_id' => $category->id]);
+            return to_route('categories.index')->with('success', 'Category created successfully.');
+        } catch (Exception $e) {
+            Log::error('Categories: Failed to create category', ['action_user_id' => Auth::id(), 'error' => $e->getMessage()]);
+            return back()->withInput()->with('error', 'Failed to create category. Please try again.');
+        }
     }
 
     /**
@@ -71,9 +77,14 @@ class CategoryController extends Controller
      */
     public function update(CategoryRequest $request, Category $category)
     {
-        $category->update($request->validated());
-        Log::info('Categories: Updated category', ['action_user_id' => Auth::id(), 'category_id' => $category->id]);
-        return to_route('categories.index')->with('success', 'Category updated successfully.');
+        try {
+            $category->update($request->validated());
+            Log::info('Categories: Updated category', ['action_user_id' => Auth::id(), 'category_id' => $category->id]);
+            return to_route('categories.index')->with('success', 'Category updated successfully.');
+        } catch (Exception $e) {
+            Log::error('Categories: Failed to update category', ['action_user_id' => Auth::id(), 'category_id' => $category->id, 'error' => $e->getMessage()]);
+            return back()->withInput()->with('error', 'Failed to update category. Please try again.');
+        }
     }
 
     /**
@@ -81,8 +92,13 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        $category->delete();
-        Log::info('Categories: Deleted category', ['action_user_id' => Auth::id(), 'category_id' => $category->id]);
-        return to_route('categories.index')->with('success', 'Category deleted successfully.');
+        try {
+            $category->delete();
+            Log::info('Categories: Deleted category', ['action_user_id' => Auth::id(), 'category_id' => $category->id]);
+            return to_route('categories.index')->with('success', 'Category deleted successfully.');
+        } catch (Exception $e) {
+            Log::error('Categories: Failed to delete category', ['action_user_id' => Auth::id(), 'category_id' => $category->id, 'error' => $e->getMessage()]);
+            return back()->with('error', 'Failed to delete category. Please try again.');
+        }
     }
 }

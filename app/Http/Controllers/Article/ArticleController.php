@@ -7,6 +7,7 @@ use App\Http\Requests\Article\ArticleRequest;
 use App\Models\Article;
 use App\Models\Category;
 use Auth;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
@@ -115,31 +116,41 @@ class ArticleController extends Controller
      */
     public function update(ArticleRequest $request, Article $article)
     {
-        $requestingUser = Auth::user();
+        try {
+            $requestingUser = Auth::user();
 
-        if ($article->user_id !== $requestingUser->id && !$requestingUser->hasRole('Super Admin|Manager')) {
-            abort(403, 'You do not have permission to update this article.');
+            if ($article->user_id !== $requestingUser->id && !$requestingUser->hasRole('Super Admin|Manager')) {
+                abort(403, 'You do not have permission to update this article.');
+            }
+
+            $data = $request->validated();
+            if (isset($data['title']) && $data['title'] !== $article->title) {
+                $data['slug'] = Str::slug($data['title'], '-');
+            }
+
+            $article->update($data);
+            if ($request->has('categories')) {
+                $categoryNames = $data['categories'];
+                $categoryIds = collect($categoryNames)
+                    ->map(fn($name) => Category::firstOrCreate(['name' => $name])->id)
+                    ->all();
+                $article->categories()->sync($categoryIds);
+            } else {
+                $article->categories()->detach();
+            }
+
+            Log::info("Articles: Updated article ID {$article->id}", ['action_user_id' => $requestingUser->id]);
+
+            return to_route($article->user_id === $requestingUser->id ? 'articles.my' : 'articles.index')->with('success', 'Article updated successfully.');
+        } catch (Exception $e) {
+            Log::error('Articles: Failed to update article', [
+                'action_user_id' => Auth::id(),
+                'article_id' => $article->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->withInput()->with('error', 'Failed to update article. Please try again.');
         }
-
-        $data = $request->validated();
-        if (isset($data['title']) && $data['title'] !== $article->title) {
-            $data['slug'] = Str::slug($data['title'], '-');
-        }
-
-        $article->update($data);
-        if ($request->has('categories')) {
-            $categoryNames = $data['categories'];
-            $categoryIds = collect($categoryNames)
-                ->map(fn($name) => Category::firstOrCreate(['name' => $name])->id)
-                ->all();
-            $article->categories()->sync($categoryIds);
-        } else {
-            $article->categories()->detach();
-        }
-
-        Log::info("Articles: Updated article ID {$article->id}", ['action_user_id' => $requestingUser->id]);
-
-        return to_route($article->user_id === $requestingUser->id ? 'articles.my' : 'articles.index')->with('success', 'Article updated successfully.');
     }
 
     /**
@@ -147,22 +158,31 @@ class ArticleController extends Controller
      */
     public function store(ArticleRequest $request)
     {
-        $data = $request->validated();
-        $data['user_id'] = Auth::id();
-        $data['slug'] = Str::slug($data['title'], '-');
+        try {
+            $data = $request->validated();
+            $data['user_id'] = Auth::id();
+            $data['slug'] = Str::slug($data['title'], '-');
 
-        $article = Article::create($data);
-        if ($request->has('categories')) {
-            $categoryNames = $data['categories'];
-            $categoryIds = collect($categoryNames)
-                ->map(fn($name) => Category::firstOrCreate(['name' => $name])->id)
-                ->all();
-            $article->categories()->sync($categoryIds);
+            $article = Article::create($data);
+            if ($request->has('categories')) {
+                $categoryNames = $data['categories'];
+                $categoryIds = collect($categoryNames)
+                    ->map(fn($name) => Category::firstOrCreate(['name' => $name])->id)
+                    ->all();
+                $article->categories()->sync($categoryIds);
+            }
+
+            Log::info('Articles: Created new article', ['action_user_id' => Auth::id(), 'article_id' => $article->id]);
+
+            return to_route('articles.my')->with('success', 'Article created successfully.');
+        } catch (Exception $e) {
+            Log::error('Articles: Failed to create article', [
+                'action_user_id' => Auth::id(),
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->withInput()->with('error', 'Failed to create article. Please try again.');
         }
-
-        Log::info('Articles: Created new article', ['action_user_id' => Auth::id(), 'article_id' => $article->id]);
-
-        return to_route('articles.my')->with('success', 'Article created successfully.');
     }
 
     /**
@@ -180,17 +200,27 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        $requestingUser = Auth::user();
+        try {
+            $requestingUser = Auth::user();
 
-        if ($article->user_id !== $requestingUser->id && !$requestingUser->hasRole('Super Admin|Manager')) {
-            abort(403, 'You do not have permission to delete this article.');
+            if ($article->user_id !== $requestingUser->id && !$requestingUser->hasRole('Super Admin|Manager')) {
+                abort(403, 'You do not have permission to delete this article.');
+            }
+
+            $articleId = $article->id;
+            $article->delete();
+
+            Log::info("Articles: Deleted article ID {$articleId}", ['action_user_id' => $requestingUser->id]);
+
+            return to_route($article->user_id === $requestingUser->id ? 'articles.my' : 'articles.index')->with('success', 'Article deleted successfully.');
+        } catch (Exception $e) {
+            Log::error('Articles: Failed to delete article', [
+                'action_user_id' => Auth::id(),
+                'article_id' => $article->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->with('error', 'Failed to delete article. Please try again.');
         }
-
-        $articleId = $article->id;
-        $article->delete();
-
-        Log::info("Articles: Deleted article ID {$articleId}", ['action_user_id' => $requestingUser->id]);
-
-        return to_route($article->user_id === $requestingUser->id ? 'articles.my' : 'articles.index')->with('success', 'Article deleted successfully.');
     }
 }

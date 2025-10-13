@@ -9,6 +9,7 @@ use App\Models\MedicalRecordEntries;
 use App\Models\PatientInfo;
 use Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
@@ -54,9 +55,14 @@ class MedicalRecordController extends Controller
      */
     public function store(MedicalRecordRequest $request)
     {
-        Log::info('Medical Records: Created new medical record', ['action_user_id' => Auth::id(), 'patient_info_id' => $request->patient_info_id]);
-        MedicalRecord::create($request->validated());
-        return to_route('medicalRecords.index')->with('success', 'Medical record created successfully.');
+        try {
+            Log::info('Medical Records: Created new medical record', ['action_user_id' => Auth::id(), 'patient_info_id' => $request->patient_info_id]);
+            MedicalRecord::create($request->validated());
+            return to_route('medicalRecords.index')->with('success', 'Medical record created successfully.');
+        } catch (Exception $e) {
+            Log::error('Medical Records: Failed to create medical record', ['action_user_id' => Auth::id(), 'error' => $e->getMessage()]);
+            return back()->withInput()->withErrors('Failed to create medical record. Please try again.');
+        }
     }
 
     /**
@@ -89,20 +95,26 @@ class MedicalRecordController extends Controller
      */
     public function generateMedicalRecordPdf(MedicalRecord $medicalRecord)
     {
-        $data = MedicalRecord::with('patientInfo')
-            ->find($medicalRecord->id, ['id', 'patient_info_id', 'medical_notes_html', 'created_at', 'updated_at']);
+        try {
 
-        $entries = MedicalRecordEntries::where('medical_record_id', $medicalRecord->id)
-            ->orderBy('created_at', 'desc')->get();
+            $data = MedicalRecord::with('patientInfo')
+                ->find($medicalRecord->id, ['id', 'patient_info_id', 'medical_notes_html', 'created_at', 'updated_at']);
 
-        $pdf = PDF::loadView('pdfs.medical-record', ['medicalRecord' => $data, 'entries' => $entries]);
-        $pdf->setOptions([
-            'isHtml5ParserEnabled' => true,
-            'isRemoteEnabled' => true,
-        ])->setPaper('a4', 'portrait');
+            $entries = MedicalRecordEntries::where('medical_record_id', $medicalRecord->id)
+                ->orderBy('created_at', 'desc')->get();
 
-        $filename = 'medical_record_' . ($data->id ?? $medicalRecord->id);
-        return $pdf->stream($filename . '.pdf');
+            $pdf = PDF::loadView('pdfs.medical-record', ['medicalRecord' => $data, 'entries' => $entries]);
+            $pdf->setOptions([
+                'isHtml5ParserEnabled' => true,
+                'isRemoteEnabled' => true,
+            ])->setPaper('a4', 'portrait');
+
+            $filename = 'medical_record_' . ($data->id ?? $medicalRecord->id);
+            return $pdf->stream($filename . '.pdf');
+        } catch (Exception $e) {
+            Log::error('Medical Records: Failed to generate medical record PDF', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id, 'error' => $e->getMessage()]);
+            return to_route('medicalRecords.index')->with('error', 'Failed to generate PDF. Please try again.');
+        }
     }
 
     /**
@@ -140,8 +152,13 @@ class MedicalRecordController extends Controller
      */
     public function update(MedicalRecordRequest $request, MedicalRecord $medicalRecord)
     {
-        Log::info('Medical Records: Updated medical record', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id]);
-        $medicalRecord->update($request->validated());
-        return to_route('medicalRecords.show', ['medicalRecord' => $medicalRecord])->with('success', 'Medical record updated successfully.');
+        try {
+            Log::info('Medical Records: Updated medical record', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id]);
+            $medicalRecord->update($request->validated());
+            return to_route('medicalRecords.show', ['medicalRecord' => $medicalRecord])->with('success', 'Medical record updated successfully.');
+        } catch (Exception $e) {
+            Log::error('Medical Records: Failed to update medical record', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id, 'error' => $e->getMessage()]);
+            return back()->withInput()->with('error', 'Failed to update medical record. Please try again.');
+        }
     }
 }

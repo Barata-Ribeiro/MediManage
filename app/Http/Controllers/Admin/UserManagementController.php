@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\UserAccountRequest;
 use App\Models\User;
 use Auth;
 use DB;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
@@ -86,16 +87,26 @@ class UserManagementController extends Controller
      */
     public function update(UserAccountRequest $request, User $user)
     {
-        $data = $request->validated();
-        $user->update($data);
+        try {
+            $data = $request->validated();
+            $user->update($data);
 
-        if (isset($data['roles'])) {
-            $user->syncRoles($data['roles']);
+            if (isset($data['roles'])) {
+                $user->syncRoles($data['roles']);
+            }
+
+            Log::info('User Management: Updated user', ['action_user_id' => Auth::id(), 'updated_user_id' => $user->id]);
+
+            return to_route('admin.users.edit', $user)->with('success', 'User updated successfully.');
+        } catch (Exception $e) {
+            Log::error('User Management: Failed to update user', [
+                'action_user_id' => Auth::id(),
+                'user_id' => $user->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->with('error', 'Failed to update user. Please try again.');
         }
-
-        Log::info('User Management: Updated user', ['action_user_id' => Auth::id(), 'updated_user_id' => $user->id]);
-
-        return to_route('admin.users.edit', $user)->with('success', 'User updated successfully.');
     }
 
     /**
@@ -103,16 +114,26 @@ class UserManagementController extends Controller
      */
     public function destroy(Request $request, User $user)
     {
-        $request->validate([
-            'password' => ['required', 'current_password'],
-        ]);
+        try {
+            $request->validate([
+                'password' => ['required', 'current_password'],
+            ]);
 
-        if (Auth::id() === $user->id) {
-            return to_route('admin.users.index')->with('error', 'You cannot delete your own account.');
+            if (Auth::id() === $user->id) {
+                return to_route('admin.users.index')->with('error', 'You cannot delete your own account.');
+            }
+
+            $user->delete();
+            Log::info('User Management: Deleted user', ['action_user_id' => Auth::id(), 'deleted_user_id' => $user->id]);
+            return to_route('admin.users.index')->with('success', 'User deleted successfully.');
+        } catch (Exception $e) {
+            Log::error('User Management: Failed to delete user', [
+                'action_user_id' => Auth::id(),
+                'user_id' => $user->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->with('error', 'Failed to delete user. Please try again.');
         }
-
-        $user->delete();
-        Log::info('User Management: Deleted user', ['action_user_id' => Auth::id(), 'deleted_user_id' => $user->id]);
-        return to_route('admin.users.index')->with('success', 'User deleted successfully.');
     }
 }
