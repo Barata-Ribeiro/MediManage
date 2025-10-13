@@ -1,26 +1,20 @@
 import AppointmentsGenderOverviewChart from '@/components/charts/appointments-gender-overview-chart';
 import AppointmentsStatusOverviewChart from '@/components/charts/appointments-status-overview-chart';
 import NewPatientsByMonthChart from '@/components/charts/new-patients-by-month-chart';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
+import DoctorUpcomingApptTable from '@/pages/dashboard/tables/doctor-upcoming-appt-table';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem, ChartItem } from '@/types';
+import { PaginatedUpcomingAppointments } from '@/types/application/appointment';
 import { Head } from '@inertiajs/react';
-
-interface UpcomingAppointment {
-    time: string;
-    patient: string | null;
-    status: string;
-}
 
 interface DoctorDashboardProps {
     data: {
-        overallDayAppointments: ChartItem;
         appointmentsGenderOverview: ChartItem;
         appointmentsStatusOverview: ChartItem;
         weeklyAppointmentsTrend: ChartItem;
         newPatientsByMonth: ChartItem;
-        upcomingToday: UpcomingAppointment[];
+        upcomingToday: PaginatedUpcomingAppointments;
         distinctPatientsLast30Days: number;
         newPatientsThisMonth: number;
     };
@@ -45,9 +39,8 @@ export default function DoctorDashboard({ data }: Readonly<DoctorDashboardProps>
 
                     <AppointmentsStatusOverviewChart chartData={data.appointmentsStatusOverview} />
                 </div>
-                {/* TODO: Add more components to the dashboard */}
-                <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                    <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+                <div className="flex-1">
+                    <DoctorUpcomingApptTable pagination={data.upcomingToday} />
                 </div>
             </div>
         </AppLayout>
