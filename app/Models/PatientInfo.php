@@ -41,13 +41,13 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $appointments_count
  * @property-read int|null $age
  * @property-read string $full_name
+ * @property-read MedicalRecord|null $medicalRecord
  * @property-read Collection<int, MedicalRecordEntries> $medicalRecordEntries
  * @property-read int|null $medical_record_entries_count
- * @property-read MedicalRecord|null $medicalRecords
  * @property-read Collection<int, Prescription> $prescriptions
  * @property-read int|null $prescriptions_count
  * @property-read User|null $user
- * @method static PatientInfoFactory factory($count = null, $state = [])
+ * @method static \Database\Factories\PatientInfoFactory factory($count = null, $state = [])
  * @method static Builder<static>|PatientInfo newModelQuery()
  * @method static Builder<static>|PatientInfo newQuery()
  * @method static Builder<static>|PatientInfo query()
@@ -147,7 +147,7 @@ class PatientInfo extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function medicalRecords(): HasOne
+    public function medicalRecord(): HasOne
     {
         return $this->hasOne(MedicalRecord::class, 'patient_info_id');
     }

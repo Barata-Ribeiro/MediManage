@@ -1,11 +1,13 @@
 import { PaginationMeta, ScrollMeta } from '@/types';
 import { User } from '@/types/admin/users';
+import { MedicalRecord } from './medicalRecord';
 
 export interface PatientInfo {
     id: number;
     user_id?: number;
     user?: User;
     medical_record_id: number;
+    medical_record?: MedicalRecord;
     first_name: string;
     last_name: string;
     full_name?: string;

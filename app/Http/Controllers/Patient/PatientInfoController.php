@@ -33,8 +33,7 @@ class PatientInfoController extends Controller
             $patient = PatientInfo::create($data);
             Log::info("Patient Info: Attendant created patient info", ['action_user_id' => Auth::id(), 'patient_info_id' => $patient->id]);
 
-            // TODO: Change route to patient listing or patient detail page
-            return to_route('dashboard')->with('success', 'Patient information created successfully.');
+            return to_route('patient_info.show', ['patientInfo' => $patient])->with('success', 'Patient information created successfully.');
         } catch (Exception $e) {
             Log::error('Patient Info: Failed to create patient info', [
                 'action_user_id' => Auth::id(),
@@ -69,5 +68,15 @@ class PatientInfoController extends Controller
         Log::info("Patient Info: Searched for patients", ['action_user_id' => Auth::id(), 'search_term' => $request->input('search')]);
 
         return Inertia::render('patient/Find', ['patients' => Inertia::scroll(fn() => $patients)]);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(PatientInfo $patientInfo)
+    {
+        $patientInfo->load(['user:id,name,email,avatar,bio,created_at,updated_at,patient_info_id', 'medicalRecord'])->getAppends();
+        Log::info("Patient Info: Viewed patient info", ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id]);
+        return Inertia::render('patient/Show', ['patient' => $patientInfo]);
     }
 }
