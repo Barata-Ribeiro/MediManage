@@ -1,6 +1,10 @@
+import { PaginationMeta, ScrollMeta } from '@/types';
+import { User } from '@/types/admin/users';
+
 export interface PatientInfo {
     id: number;
     user_id?: number;
+    user?: User;
     medical_record_id: number;
     first_name: string;
     last_name: string;
@@ -31,3 +35,6 @@ export interface PatientInfo {
 }
 
 export type TablePatientInfo = Pick<PatientInfo, 'id' | 'first_name' | 'last_name'>;
+
+export type PaginatedPatientInfo = PaginationMeta<PatientInfo>;
+export type ScrollablePatientInfo = ScrollMeta<PatientInfo>;

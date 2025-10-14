@@ -57,6 +57,16 @@ export interface PaginationMeta<T> {
     total: number;
 }
 
+export interface ScrollMeta<T> {
+    data: T[];
+    path: string;
+    per_page: number;
+    next_cursor?: string;
+    next_page_url?: string;
+    prev_cursor?: string;
+    prev_page_url?: string;
+}
+
 export interface ChartItem {
     labels: string[];
     data: number[];
