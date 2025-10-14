@@ -20,15 +20,20 @@ class PatientInfoSeeder extends Seeder
             $users = User::role('Patient')->inRandomOrder()->get();
 
             PatientInfo::factory()->count(80)->create()->each(function ($info) use ($users) {
-                $user = $users->random();
+                if ($users->isNotEmpty()) {
+                    $user = $users->shift();
 
-                $info->update(['user_id' => $user->id]);
-                $user->update(['patient_info_id' => $info->id]);
+                    $info->update(['user_id' => $user->id]);
+                    $user->update(['patient_info_id' => $info->id]);
 
-                $start = $user->created_at ?? now();
+                    $start = $user->created_at ?? now();
+                } else {
+                    $start = now();
+                }
+
                 $end = now();
                 $createdAt = Carbon::createFromTimestamp(rand($start->timestamp, $end->timestamp));
-
+            
                 $updatedAt = (clone $createdAt)->addDays(rand(0, 30));
                 if ($updatedAt->greaterThan($end)) {
                     $updatedAt = $end;
