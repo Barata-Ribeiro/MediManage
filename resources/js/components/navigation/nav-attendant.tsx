@@ -5,10 +5,10 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { createPartial } from '@/routes/patient_info';
+import { createPartial, search } from '@/routes/patient_info';
 import { type NavItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { UserPlusIcon } from 'lucide-react';
+import { UserPlusIcon, UserSearchIcon } from 'lucide-react';
 
 export default function NavAttendant() {
     const { props, url } = usePage<SharedData>();
@@ -22,6 +22,11 @@ export default function NavAttendant() {
             title: 'New Patient',
             href: createPartial().url,
             icon: UserPlusIcon,
+        },
+        {
+            title: 'Find Patient',
+            href: search().url,
+            icon: UserSearchIcon,
         },
     ];
 
