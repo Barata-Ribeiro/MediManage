@@ -7,6 +7,7 @@ use App\Http\Requests\Patient\PatientRequest;
 use App\Models\PatientInfo;
 use Auth;
 use Exception;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
 
@@ -42,5 +43,31 @@ class PatientInfoController extends Controller
 
             return back()->withInput()->with('error', 'Failed to create patient information. Please try again.');
         }
+    }
+
+    /**
+     * Search for patients based on query parameters.
+     */
+    public function search(Request $request)
+    {
+        $query = PatientInfo::select(['id', 'user_id', 'first_name', 'last_name', 'date_of_birth', 'phone_number']);
+
+        if ($request->filled('search')) {
+            $searchTerm = $request->input('search');
+
+            $query->where(fn($q) => $q->whereLike('first_name', "%$searchTerm%")
+                ->orWhereLike('last_name', "%$searchTerm%")
+                ->orWhereLike('date_of_birth', "%$searchTerm%")
+                ->orWhereLike('phone_number', "%$searchTerm%"))
+                ->orWhereHas('user', fn($q) => $q->whereLike('name', "%$searchTerm%")
+                    ->orWhereLike('email', "%$searchTerm%"));
+        } else {
+            $query->where('id', 0);
+        }
+
+        $patients = $query->with('user:id,name,email,avatar')->cursorPaginate(10)->withQueryString();
+        Log::info("Patient Info: Searched for patients", ['action_user_id' => Auth::id(), 'search_term' => $request->input('search')]);
+
+        return Inertia::render('patient/Find', ['patients' => Inertia::scroll(fn() => $patients)]);
     }
 }
