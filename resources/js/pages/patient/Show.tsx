@@ -1,5 +1,6 @@
 import NoAccount from '@/components/helpers/no-account';
 import NoMedicalRecord from '@/components/helpers/no-medical-record';
+import PatientAccountInfoItem from '@/components/helpers/patient-account-info-item';
 import PatientMedicalRecordInfoItem from '@/components/helpers/patient-medical-record-info-item';
 import PatientPersonalInfoItem from '@/components/helpers/patient-personal-info-item';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -66,13 +67,14 @@ export default function Show({ patient: data }: Readonly<{ patient: PatientInfo 
                         </TabsContent>
 
                         <TabsContent value="account">
-                            {/* TODO: Add account info here */}
-                            {!hasAccount && (
+                            {!hasAccount ? (
                                 <Item variant="outline">
                                     <ItemContent>
                                         <NoAccount />
                                     </ItemContent>
                                 </Item>
+                            ) : (
+                                <PatientAccountInfoItem account={user} />
                             )}
                         </TabsContent>
 
