@@ -1,7 +1,11 @@
+import { User } from '@/types/admin/users';
+
 export interface EmployeeInfo {
     id: number;
     user_id?: number;
+    user?: User;
     medical_record_id: number;
+    medical_record?: MedicalRecord;
     first_name: string;
     last_name: string;
     full_name?: string;
@@ -21,6 +25,7 @@ export interface EmployeeInfo {
     is_active: boolean;
     hire_date: Date;
     termination_date?: Date;
+
     created_at: Date;
     updated_at: Date;
 }
