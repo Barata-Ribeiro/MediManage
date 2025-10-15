@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Patient;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Patient\PatientRequest;
 use App\Models\PatientInfo;
+use App\Models\User;
 use Auth;
 use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
+use Str;
 
 class PatientInfoController extends Controller
 {
@@ -78,5 +80,56 @@ class PatientInfoController extends Controller
         $patientInfo->load(['user:id,name,email,avatar,bio,created_at,updated_at,patient_info_id', 'medicalRecord'])->getAppends();
         Log::info("Patient Info: Viewed patient info", ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id]);
         return Inertia::render('patient/Show', ['patient' => $patientInfo]);
+    }
+
+    /**
+     * Show the form for creating a new account for the patient.
+     */
+    public function newAccount(PatientInfo $patientInfo)
+    {
+        if ($patientInfo->user_id) {
+            return to_route('patient_info.show', ['patientInfo' => $patientInfo])->with('error', 'This patient already has an associated user account.');
+        }
+
+        Log::info("Patient Info: Viewed new account form for patient", ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id]);
+        return Inertia::render('patient/NewAccount', ['patient' => $patientInfo]);
+    }
+
+    public function storeNewAccount(Request $request, PatientInfo $patientInfo)
+    {
+        if ($patientInfo->user_id) {
+            return to_route('patient_info.show', ['patientInfo' => $patientInfo])->with('error', 'This patient already has an associated user account.');
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255|unique:users,name',
+            'email' => 'required|string|email|max:255|unique:users,email',
+        ]);
+
+        $genPassword = Str::random(12);
+
+        $request->merge(['password' => $genPassword]);
+
+        try {
+            $user = User::create($request->only('name', 'email', 'password'))->assignRole('patient');
+
+            $patientInfo->user()->associate($user);
+            $patientInfo->save();
+
+            Log::info("Patient Info: Created new account for patient", ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id, 'user_id' => $user->id]);
+
+            // TODO: Send email to patient with account details
+            // Mail::to($user->email)->send(new NewAccountMail($user, $genPassword));
+
+            return to_route('patient_info.show', ['patientInfo' => $patientInfo])->with('success', 'User account created successfully.');
+        } catch (Exception $e) {
+            Log::error('Patient Info: Failed to create user account for patient', [
+                'action_user_id' => Auth::id(),
+                'patient_info_id' => $patientInfo->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->withInput()->with('error', 'Failed to create user account. Please try again.');
+        }
     }
 }

@@ -12,4 +12,9 @@ Route::middleware(['auth', 'verified'])->prefix('patients')->group(function () {
 
     Route::get('/{patientInfo}', [PatientInfoController::class, 'show'])->name('patient_info.show')
         ->middleware('permission:patient_info.show');
+
+    Route::get('{patientInfo}/new-account', [PatientInfoController::class, 'newAccount'])->name('patient_info.newAccount')
+        ->middleware('permission:patient_info.create');
+    Route::post('{patientInfo}/new-account', [PatientInfoController::class, 'storeNewAccount'])->name('patient_info.storeNewAccount')
+        ->middleware('permission:patient_info.create');
 });
