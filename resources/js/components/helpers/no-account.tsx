@@ -1,9 +1,14 @@
 import { Button } from '@/components/ui/button';
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
+import patient_info from '@/routes/patient_info';
 import { Link } from '@inertiajs/react';
 import { UserRoundXIcon } from 'lucide-react';
 
-export default function NoAccount() {
+interface NoAccountProps {
+    id?: number;
+}
+
+export default function NoAccount({ id }: Readonly<NoAccountProps>) {
     return (
         <Empty>
             <EmptyHeader>
@@ -13,14 +18,15 @@ export default function NoAccount() {
                 <EmptyTitle>No Account</EmptyTitle>
                 <EmptyDescription>No account found. An association is required to proceed.</EmptyDescription>
             </EmptyHeader>
-            <EmptyContent>
-                <Button asChild>
-                    {/* TODO: Add functionality to associate account */}
-                    <Link href="#" as="button" prefetch="click">
-                        Associate Account
-                    </Link>
-                </Button>
-            </EmptyContent>
+            {id && (
+                <EmptyContent>
+                    <Button asChild>
+                        <Link href={patient_info.newAccount(id)} as="button" prefetch="click">
+                            New Account
+                        </Link>
+                    </Button>
+                </EmptyContent>
+            )}
         </Empty>
     );
 }

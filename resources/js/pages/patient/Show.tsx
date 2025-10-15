@@ -70,7 +70,7 @@ export default function Show({ patient: data }: Readonly<{ patient: PatientInfo 
                             {!hasAccount ? (
                                 <Item variant="outline">
                                     <ItemContent>
-                                        <NoAccount />
+                                        <NoAccount id={rest.id} />
                                     </ItemContent>
                                 </Item>
                             ) : (
