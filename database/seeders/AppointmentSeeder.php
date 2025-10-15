@@ -7,6 +7,7 @@ use App\Models\EmployeeInfo;
 use App\Models\PatientInfo;
 use Exception;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 use Log;
 
 class AppointmentSeeder extends Seeder
@@ -24,7 +25,6 @@ class AppointmentSeeder extends Seeder
                 'patients_count' => $patients->count(),
                 'doctors_count' => $doctors->count(),
             ]);
-
             $patients->each(function ($patient) use ($doctors) {
                 $doctor = $doctors->random();
 
@@ -32,7 +32,7 @@ class AppointmentSeeder extends Seeder
                     'patient_info_id' => $patient->id,
                     'employee_info_id' => $doctor->id,
                 ])->each(function ($appointment) {
-                    $currentDate = $appointment->appointment_date;
+                    $currentDate = Carbon::parse($appointment->appointment_date);
                     $currentStatus = $appointment->status;
                     $isScheduled = $currentStatus === 'scheduled';
 
