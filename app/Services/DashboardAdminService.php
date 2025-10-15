@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\Interfaces\DashboardAdminServiceInterface;
+use App\Models\EmployeeInfo;
 use App\Models\User;
 use Asika\Agent\Agent;
+use Auth;
 use Carbon\Carbon;
 use DB;
 use Spatie\Permission\Models\Role;
@@ -17,6 +19,7 @@ class DashboardAdminService implements DashboardAdminServiceInterface
     public function getAdminDashboardData(): array
     {
 
+        $adminInfo = EmployeeInfo::with('user')->where('user_id', Auth::id())->first();
         $usersByRole = $this->getUsersByRole();
         $totalUsers = $this->getTotalUsersWithPastMonthComparison($usersByRole);
         $totalUsersByRole = $this->getTotalUsersByRoleWithPastMonthComparison($usersByRole);
@@ -25,6 +28,7 @@ class DashboardAdminService implements DashboardAdminServiceInterface
 
         return [
             'data' => [
+                'adminInfo' => $adminInfo,
                 'usersByRole' => $usersByRole,
                 'totalUsers' => $totalUsers,
                 'totalUsersByRole' => $totalUsersByRole,
