@@ -139,6 +139,8 @@ return [
     'admin_email' => env('APP_ADMIN_EMAIL', 'admin@example.com'),
     'admin_name' => env('APP_ADMIN_NAME', 'Administrator'),
     'admin_password' => env('APP_ADMIN_PASSWORD', '123456A#'),
+    'admin_first_name' => env('APP_ADMIN_FIRST_NAME', 'Admin'),
+    'admin_last_name' => env('APP_ADMIN_LAST_NAME', 'User'),
 
     /*|--------------------------------------------------------------------------
     | Autoloaded Service Providers
