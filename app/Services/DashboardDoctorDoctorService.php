@@ -22,7 +22,7 @@ class DashboardDoctorDoctorService implements DashboardDoctorServiceInterface
      */
     public function getDoctorDashboardData(): array
     {
-        $doctorInfo = Auth::user()->employeeInfo;
+        $doctorInfo = EmployeeInfo::with('user')->where('user_id', Auth::id())->first();
 
         $startOfWorkDay = Carbon::now()->setTime(8, 0);
         $endOfWorkDay = Carbon::now()->setTime(17, 0);
@@ -37,6 +37,7 @@ class DashboardDoctorDoctorService implements DashboardDoctorServiceInterface
 
         return [
             'data' => [
+                'doctorInfo' => $doctorInfo,
                 'appointmentsGenderOverview' => [
                     'labels' => $appointmentsGenderOverview->keys()->all(),
                     'data' => $appointmentsGenderOverview->values()->all(),
