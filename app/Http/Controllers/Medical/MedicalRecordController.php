@@ -81,13 +81,12 @@ class MedicalRecordController extends Controller
     {
         Log::info('Medical Records: Viewed medical record', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id]);
 
-        $medicalRecord->select(['id', 'patient_info_id', 'medical_notes_html', 'created_at', 'updated_at'])
-            ->with(['patientInfo' => fn($q) => $q->select(['id', 'first_name', 'last_name'])]);
+        $medicalRecord->load(['patientInfo' => fn($q) => $q->select(['id', 'first_name', 'last_name', 'date_of_birth', 'gender'])]);
 
         $entries = MedicalRecordEntries::whereMedicalRecordId($medicalRecord->id)
             ->orderBy('created_at', 'desc')->get();
 
-        return Inertia::render('medicalRecords/Show', ['medicalRecord' => $medicalRecord, 'entries' => $entries]);
+        return Inertia::render('medicalRecords/Show', ['medicalRecord' => $medicalRecord, 'entries' => Inertia::defer(fn() => $entries)]);
     }
 
     /**
