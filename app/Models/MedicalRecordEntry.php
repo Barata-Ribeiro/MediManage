@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
+use Database\Factories\MedicalRecordEntryFactory;
 
 
 /**
@@ -24,24 +26,28 @@ use Illuminate\Support\Carbon;
  * @property-read Appointment $appointment
  * @property-read EmployeeInfo $employeeInfo
  * @property-read MedicalRecord $medicalRecord
- * @method static Builder<static>|MedicalRecordEntries newModelQuery()
- * @method static Builder<static>|MedicalRecordEntries newQuery()
- * @method static Builder<static>|MedicalRecordEntries query()
- * @method static Builder<static>|MedicalRecordEntries whereAppointmentId($value)
- * @method static Builder<static>|MedicalRecordEntries whereContentHtml($value)
- * @method static Builder<static>|MedicalRecordEntries whereContentJson($value)
- * @method static Builder<static>|MedicalRecordEntries whereCreatedAt($value)
- * @method static Builder<static>|MedicalRecordEntries whereEmployeeInfoId($value)
- * @method static Builder<static>|MedicalRecordEntries whereEntryType($value)
- * @method static Builder<static>|MedicalRecordEntries whereId($value)
- * @method static Builder<static>|MedicalRecordEntries whereIsVisibleToPatient($value)
- * @method static Builder<static>|MedicalRecordEntries whereMedicalRecordId($value)
- * @method static Builder<static>|MedicalRecordEntries whereTitle($value)
- * @method static Builder<static>|MedicalRecordEntries whereUpdatedAt($value)
+ * @method static Builder<static>|MedicalRecordEntry newModelQuery()
+ * @method static Builder<static>|MedicalRecordEntry newQuery()
+ * @method static Builder<static>|MedicalRecordEntry query()
+ * @method static Builder<static>|MedicalRecordEntry whereAppointmentId($value)
+ * @method static Builder<static>|MedicalRecordEntry whereContentHtml($value)
+ * @method static Builder<static>|MedicalRecordEntry whereContentJson($value)
+ * @method static Builder<static>|MedicalRecordEntry whereCreatedAt($value)
+ * @method static Builder<static>|MedicalRecordEntry whereEmployeeInfoId($value)
+ * @method static Builder<static>|MedicalRecordEntry whereEntryType($value)
+ * @method static Builder<static>|MedicalRecordEntry whereId($value)
+ * @method static Builder<static>|MedicalRecordEntry whereIsVisibleToPatient($value)
+ * @method static Builder<static>|MedicalRecordEntry whereMedicalRecordId($value)
+ * @method static Builder<static>|MedicalRecordEntry whereTitle($value)
+ * @method static Builder<static>|MedicalRecordEntry whereUpdatedAt($value)
  * @mixin Eloquent
  */
-class MedicalRecordEntries extends Model
+class MedicalRecordEntry extends Model
 {
+
+    /** @use HasFactory <MedicalRecordEntryFactory> */
+    use HasFactory;
+
     protected $table = 'medical_record_entries';
 
     protected $fillable = [

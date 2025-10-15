@@ -20,7 +20,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $medical_notes_json
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Collection<int, MedicalRecordEntries> $medicalRecordEntries
+ * @property-read Collection<int, MedicalRecordEntry> $medicalRecordEntries
  * @property-read int|null $medical_record_entries_count
  * @property-read PatientInfo $patientInfo
  * @method static MedicalRecordFactory factory($count = null, $state = [])
@@ -57,6 +57,6 @@ class MedicalRecord extends Model
 
     public function medicalRecordEntries(): HasMany
     {
-        return $this->hasMany(MedicalRecordEntries::class);
+        return $this->hasMany(MedicalRecordEntry::class);
     }
 }

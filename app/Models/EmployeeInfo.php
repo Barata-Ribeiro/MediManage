@@ -36,7 +36,7 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $appointments_count
  * @property-read int|null $age
  * @property-read string $full_name
- * @property-read Collection<int, MedicalRecordEntries> $medicalRecordEntries
+ * @property-read Collection<int, MedicalRecordEntry> $medicalRecordEntries
  * @property-read int|null $medical_record_entries_count
  * @property-read Collection<int, Prescription> $prescriptions
  * @property-read int|null $prescriptions_count
@@ -140,7 +140,7 @@ class EmployeeInfo extends Model
 
     public function medicalRecordEntries(): HasMany
     {
-        return $this->hasMany(MedicalRecordEntries::class);
+        return $this->hasMany(MedicalRecordEntry::class);
     }
 
     public function prescriptions(): HasMany

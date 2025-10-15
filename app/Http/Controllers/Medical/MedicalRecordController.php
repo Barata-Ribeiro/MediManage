@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Medical;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Medical\MedicalRecordRequest;
 use App\Models\MedicalRecord;
-use App\Models\MedicalRecordEntries;
+use App\Models\MedicalRecordEntry;
 use App\Models\PatientInfo;
 use Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -83,7 +83,7 @@ class MedicalRecordController extends Controller
 
         $medicalRecord->load(['patientInfo' => fn($q) => $q->select(['id', 'first_name', 'last_name', 'date_of_birth', 'gender'])]);
 
-        $entries = MedicalRecordEntries::whereMedicalRecordId($medicalRecord->id)
+        $entries = MedicalRecordEntry::whereMedicalRecordId($medicalRecord->id)
             ->orderBy('created_at', 'desc')->get();
 
         return Inertia::render('medicalRecords/Show', ['medicalRecord' => $medicalRecord, 'entries' => Inertia::defer(fn() => $entries)]);
@@ -99,7 +99,7 @@ class MedicalRecordController extends Controller
             $data = MedicalRecord::with('patientInfo')
                 ->find($medicalRecord->id, ['id', 'patient_info_id', 'medical_notes_html', 'created_at', 'updated_at']);
 
-            $entries = MedicalRecordEntries::where('medical_record_id', $medicalRecord->id)
+            $entries = MedicalRecordEntry::where('medical_record_id', $medicalRecord->id)
                 ->orderBy('created_at', 'desc')->get();
 
             $pdf = PDF::loadView('pdfs.medical-record', ['medicalRecord' => $data, 'entries' => $entries]);
