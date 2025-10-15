@@ -5,7 +5,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 12.32.5.
+ * Generated for Laravel 12.33.0.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -1618,15 +1618,11 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
-         * Finds an entry of the container by its identifier and returns it.
+         * {@inheritdoc}
          *
          * @template TClass of object
          * @param string|class-string<TClass> $id
          * @return ($id is class-string<TClass> ? TClass : mixed)
-         * @param string $id Identifier of the entry to look for.
-         * @throws NotFoundExceptionInterface  No entry was found for **this** identifier.
-         * @throws ContainerExceptionInterface Error while retrieving the entry.
-         * @return mixed Entry.
          * @static
          */
         public static function get($id)
@@ -23842,6 +23838,375 @@ namespace Barryvdh\DomPDF\Facade {
             }
     }
 
+namespace tbQuar\Facades {
+    /**
+     */
+    class Quar {
+        /**
+         * Generates the QrCode.
+         *
+         * @param string $text
+         * @param string|null $filename
+         * @return true|\Illuminate\Support\HtmlString|string
+         * @static
+         */
+        public static function generate($text, $filename = null)
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->generate($text, $filename);
+        }
+
+        /**
+         * Merges an image over the QrCode.
+         *
+         * @param string $filepath
+         * @param float $percentage
+         * @param bool $absolute
+         * @return \tbQuar\Generate
+         * @static
+         */
+        public static function merge($filepath, $percentage = 0.2, $absolute = false)
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->merge($filepath, $percentage, $absolute);
+        }
+
+        /**
+         * Merges an image string with the center of the QrCode.
+         *
+         * @param string $content
+         * @param float $percentage
+         * @return \tbQuar\Generate
+         * @static
+         */
+        public static function mergeString($content, $percentage = 0.2)
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->mergeString($content, $percentage);
+        }
+
+        /**
+         * Sets the size of the QrCode.
+         *
+         * @param int $pixels
+         * @return \tbQuar\Generate
+         * @static
+         */
+        public static function size($pixels)
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->size($pixels);
+        }
+
+        /**
+         * Sets the format of the QrCode.
+         *
+         * @param string $format
+         * @return \tbQuar\Generate
+         * @static
+         */
+        public static function format($format)
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->format($format);
+        }
+
+        /**
+         * Sets the foreground color of the QrCode.
+         *
+         * @param int|string $redOrHex
+         * @param int|null $green
+         * @param int|null $blue
+         * @param \tbQuar\?int $alpha
+         * @return \tbQuar\Generate
+         * @static
+         */
+        public static function color($redOrHex, $green = null, $blue = null, $alpha = null)
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->color($redOrHex, $green, $blue, $alpha);
+        }
+
+        /**
+         * Sets the background color of the QrCode.
+         *
+         * @param int|string $redOrHex
+         * @param int|null $green
+         * @param int|null $blue
+         * @param \tbQuar\?int $alpha
+         * @return \tbQuar\Generate
+         * @static
+         */
+        public static function backgroundColor($redOrHex, $green = null, $blue = null, $alpha = null)
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->backgroundColor($redOrHex, $green, $blue, $alpha);
+        }
+
+        /**
+         * Sets the eye color for the provided eye index.
+         *
+         * @param int $eyeNumber
+         * @param int $innerRed
+         * @param int $innerGreen
+         * @param int $innerBlue
+         * @param int $outterRed
+         * @param int $outterGreen
+         * @param int $outterBlue
+         * @return \tbQuar\Generate
+         * @static
+         */
+        public static function eyeColor($eyeNumber, $innerRed, $innerGreen, $innerBlue, $outterRed = 0, $outterGreen = 0, $outterBlue = 0)
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->eyeColor($eyeNumber, $innerRed, $innerGreen, $innerBlue, $outterRed, $outterGreen, $outterBlue);
+        }
+
+        /**
+         * Sets the eye color for the provided eye index by providing hex codes.
+         *
+         * @param int $eyeNumber
+         * @param string $innerHex
+         * @param string $outterHex
+         * @return \tbQuar\Generate
+         * @static
+         */
+        public static function eyeColorFromHex($eyeNumber, $outterHex = '#000000', $innerHex = '#000000')
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->eyeColorFromHex($eyeNumber, $outterHex, $innerHex);
+        }
+
+        /**
+         * @param int $startRed
+         * @param int $startGreen
+         * @param int $startBlue
+         * @param int $endRed
+         * @param int $endGreen
+         * @param int $endBlue
+         * @param string $type
+         * @return \tbQuar\Generate
+         * @static
+         */
+        public static function gradient($startRed, $startGreen, $startBlue, $endRed, $endGreen, $endBlue, $type)
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->gradient($startRed, $startGreen, $startBlue, $endRed, $endGreen, $endBlue, $type);
+        }
+
+        /**
+         * Sets the eye style.
+         *
+         * @param string $style
+         * @return \tbQuar\Generate
+         * @static
+         */
+        public static function eye($style)
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->eye($style);
+        }
+
+        /**
+         * Sets the style of the blocks for the QrCode.
+         *
+         * @param string $style
+         * @param float $size
+         * @return \tbQuar\Generate
+         * @static
+         */
+        public static function style($style, $size = 0.5)
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->style($style, $size);
+        }
+
+        /**
+         * Sets the encoding for the QrCode.
+         * 
+         * Possible values are
+         * ISO-8859-2, ISO-8859-3, ISO-8859-4, ISO-8859-5, ISO-8859-6,
+         * ISO-8859-7, ISO-8859-8, ISO-8859-9, ISO-8859-10, ISO-8859-11,
+         * ISO-8859-12, ISO-8859-13, ISO-8859-14, ISO-8859-15, ISO-8859-16,
+         * SHIFT-JIS, WINDOWS-1250, WINDOWS-1251, WINDOWS-1252, WINDOWS-1256,
+         * UTF-16BE, UTF-8, ASCII, GBK, EUC-KR.
+         *
+         * @param string $encoding
+         * @return \tbQuar\Generate
+         * @static
+         */
+        public static function encoding($encoding)
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->encoding($encoding);
+        }
+
+        /**
+         * Sets the error correction for the QrCode.
+         * 
+         * L: 7% loss.
+         * M: 15% loss.
+         * Q: 25% loss.
+         * H: 30% loss.
+         *
+         * @param string $errorCorrection
+         * @return \tbQuar\Generate
+         * @static
+         */
+        public static function errorCorrection($errorCorrection)
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->errorCorrection($errorCorrection);
+        }
+
+        /**
+         * Sets the margin of the QrCode.
+         *
+         * @param int $margin
+         * @return \tbQuar\Generate
+         * @static
+         */
+        public static function margin($margin)
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->margin($margin);
+        }
+
+        /**
+         * Fetches the Writer.
+         *
+         * @param \BaconQrCode\Renderer\ImageRenderer $renderer
+         * @return \BaconQrCode\Writer
+         * @static
+         */
+        public static function getWriter($renderer)
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->getWriter($renderer);
+        }
+
+        /**
+         * Fetches the Image Renderer.
+         *
+         * @return \BaconQrCode\Renderer\ImageRenderer
+         * @static
+         */
+        public static function getRenderer()
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->getRenderer();
+        }
+
+        /**
+         * Returns the Renderer Style.
+         *
+         * @return \BaconQrCode\Renderer\RendererStyle\RendererStyle
+         * @static
+         */
+        public static function getRendererStyle()
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->getRendererStyle();
+        }
+
+        /**
+         * Fetches the formatter.
+         *
+         * @return \BaconQrCode\Renderer\Image\ImageBackEndInterface
+         * @static
+         */
+        public static function getFormatter()
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->getFormatter();
+        }
+
+        /**
+         * Fetches the module.
+         *
+         * @return \BaconQrCode\Renderer\Module\ModuleInterface
+         * @static
+         */
+        public static function getModule()
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->getModule();
+        }
+
+        /**
+         * Fetches the eye style.
+         *
+         * @return \BaconQrCode\Renderer\Eye\EyeInterface
+         * @static
+         */
+        public static function getEye()
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->getEye();
+        }
+
+        /**
+         * Fetches the color fill.
+         *
+         * @return \BaconQrCode\Renderer\RendererStyle\Fill
+         * @static
+         */
+        public static function getFill()
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->getFill();
+        }
+
+        /**
+         * Sets the compression quality
+         *
+         * @param int $quality
+         * @return \tbQuar\Generate
+         * @static
+         */
+        public static function setPngCompression($quality)
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->setPngCompression($quality);
+        }
+
+        /**
+         * Apply the callback if the given "value" is (or resolves to) truthy.
+         *
+         * @template TWhenParameter
+         * @template TWhenReturnType
+         * @param (\Closure($this): TWhenParameter)|TWhenParameter|null $value
+         * @param (callable($this, TWhenParameter): TWhenReturnType)|null $callback
+         * @param (callable($this, TWhenParameter): TWhenReturnType)|null $default
+         * @return $this|TWhenReturnType
+         * @static
+         */
+        public static function when($value = null, $callback = null, $default = null)
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->when($value, $callback, $default);
+        }
+
+        /**
+         * Apply the callback if the given "value" is (or resolves to) falsy.
+         *
+         * @template TUnlessParameter
+         * @template TUnlessReturnType
+         * @param (\Closure($this): TUnlessParameter)|TUnlessParameter|null $value
+         * @param (callable($this, TUnlessParameter): TUnlessReturnType)|null $callback
+         * @param (callable($this, TUnlessParameter): TUnlessReturnType)|null $default
+         * @return $this|TUnlessReturnType
+         * @static
+         */
+        public static function unless($value = null, $callback = null, $default = null)
+        {
+            /** @var \tbQuar\Generate $instance */
+            return $instance->unless($value, $callback, $default);
+        }
+
+            }
+    }
+
 namespace Illuminate\Http {
     /**
      */
@@ -28878,6 +29243,7 @@ namespace  {
     class Agent extends \Asika\Agent\Facades\Agent {}
     class PDF extends \Barryvdh\DomPDF\Facade\Pdf {}
     class Pdf extends \Barryvdh\DomPDF\Facade\Pdf {}
+    class Quar extends \tbQuar\Facades\Quar {}
 }
 
 
