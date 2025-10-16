@@ -2,12 +2,16 @@ import medicalRecordController from '@/actions/App/Http/Controllers/Medical/Medi
 import Heading from '@/components/heading';
 import HeadingSmall from '@/components/heading-small';
 import { Button } from '@/components/ui/button';
-import { Item, ItemActions, ItemContent } from '@/components/ui/item';
+import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '@/components/ui/item';
+import { Separator } from '@/components/ui/separator';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalTrigger } from '@/components/ui/shadcn-io/animated-modal';
 import Layout from '@/layouts/app-layout';
 import patient_info from '@/routes/patient_info';
 import type { BreadcrumbItem } from '@/types';
 import { MedicalRecord, MedicalRecordEntry } from '@/types/application/medicalRecord';
 import { Deferred, Head, Link } from '@inertiajs/react';
+import { format } from 'date-fns';
+import { ExternalLinkIcon } from 'lucide-react';
 
 interface ShowProps {
     medicalRecord: MedicalRecord;
@@ -86,10 +90,46 @@ export default function Show({ medicalRecord, entries }: Readonly<ShowProps>) {
                     />
                 </article>
 
-                {/* TODO: Implement entries properly */}
-                <Deferred data="entries" fallback={<div>Loading...</div>}>
-                    <pre>{JSON.stringify({ entries }, null, 2)}</pre>
-                </Deferred>
+                <section className="my-4 grid gap-4">
+                    <HeadingSmall title="Entries" description="These are the entries for this medical record." />
+                    {/* TODO: Add infinite scroll / pagination */}
+                    {/* TODO: Add custom table view with search, filter, sort, pagination, etc. */}
+                    <Deferred data="entries" fallback={<div>Loading...</div>}>
+                        {entries?.map((entry) => (
+                            <Modal key={entry.id}>
+                                <ModalTrigger className="group">
+                                    <Item variant="outline" className="group-hover:bg-card">
+                                        <ItemContent>
+                                            <ItemTitle>{entry.title}</ItemTitle>
+                                            <ItemDescription className="inline-flex h-4 items-center text-sm text-muted-foreground capitalize">
+                                                {entry.entry_type}
+                                                <Separator orientation="vertical" className="mx-2 h-4" />
+                                                {format(entry.created_at, 'PPP')}
+                                            </ItemDescription>
+                                        </ItemContent>
+                                        <ItemActions>
+                                            <ExternalLinkIcon aria-hidden size={16} />
+                                        </ItemActions>
+                                    </Item>
+                                </ModalTrigger>
+                                <ModalBody>
+                                    <ModalContent>
+                                        <div
+                                            dangerouslySetInnerHTML={{
+                                                __html: entry.content_html,
+                                            }}
+                                        />
+                                    </ModalContent>
+
+                                    <ModalFooter className="gap-4">
+                                        {/* TODO: Add go to edit entry page */}
+                                        <Button variant="secondary">Modify</Button>
+                                    </ModalFooter>
+                                </ModalBody>
+                            </Modal>
+                        ))}
+                    </Deferred>
+                </section>
             </div>
         </Layout>
     );
