@@ -112,7 +112,7 @@ export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly
     return (
         <div className="mx-auto w-full flex-col space-y-4">
             <div className="flex items-center py-4">
-                {pagination.data.length > 10 && (
+                {pagination.total > 10 && (
                     <div className="inline-flex w-full flex-1 items-center gap-x-2">
                         <Input
                             type="search"
@@ -171,7 +171,7 @@ export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly
                 </Table>
             </div>
 
-            {pagination.data.length > 10 && <DataTablePagination pagination={pagination} />}
+            {pagination.total > 10 && <DataTablePagination pagination={pagination} />}
         </div>
     );
 }
