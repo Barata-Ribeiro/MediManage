@@ -78,21 +78,29 @@ class MedicalRecordController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(MedicalRecord $medicalRecord)
+    public function show(MedicalRecord $medicalRecord, Request $request)
     {
         Log::info('Medical Records: Viewed medical record', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id]);
 
         $medicalRecord->load(['patientInfo' => fn($q) => $q->select(['id', 'first_name', 'last_name', 'date_of_birth', 'gender'])]);
+
+
+        // Dynamically get columns except 'content_json'
 
         $columns = Schema::getColumnListing((new MedicalRecordEntry)->getTable());
         $columns = array_values(array_filter($columns, fn($c) => $c !== 'content_json'));
 
         $entries = MedicalRecordEntry::select($columns)
             ->where('medical_record_id', $medicalRecord->id)
-            ->latest('created_at')
-            ->get();
+            ->when($request->filled('search'), fn($q) => $q->where(function ($q2) use ($request) {
+                $q2->whereFullText(['title', 'content_html'], $request->search)
+                    ->orWhereLike('entry_type', "%$request->search%");
+            }))
+            ->orderBy('created_at', 'desc')
+            ->cursorPaginate(10)
+            ->withQueryString();
 
-        return Inertia::render('medicalRecords/Show', ['medicalRecord' => $medicalRecord, 'entries' => Inertia::defer(fn() => $entries)]);
+        return Inertia::render('medicalRecords/Show', ['medicalRecord' => $medicalRecord, 'entries' => Inertia::scroll(fn() => $entries)]);
     }
 
     /**
