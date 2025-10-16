@@ -71,6 +71,7 @@
         "cmdk": "^1.1.1",
         "concurrently": "^9.2.1",
         "date-fns": "^4.1.0",
+        "framer-motion": "^12.23.24",
         "globals": "^16.4.0",
         "input-otp": "^1.4.2",
         "laravel-vite-plugin": "^2.0",
