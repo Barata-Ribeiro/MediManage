@@ -1,4 +1,4 @@
-import { PaginationMeta } from '@/types';
+import { PaginationMeta, ScrollMeta } from '@/types';
 import { PatientInfo, TablePatientInfo } from '@/types/application/patient';
 
 export enum MedicalRecordEntryType {
@@ -43,3 +43,4 @@ export type TableMedicalRecord = Omit<MedicalRecord, 'medical_notes'> & {
 };
 
 export type PaginationMedicalRecord = PaginationMeta<TableMedicalRecord[]>;
+export type ScrollableMedicalRecordEntry = ScrollMeta<MedicalRecordEntry>;
