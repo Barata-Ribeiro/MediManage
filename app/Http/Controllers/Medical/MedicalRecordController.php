@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
+use Illuminate\Support\Facades\Schema;
 
 class MedicalRecordController extends Controller
 {
@@ -83,8 +84,13 @@ class MedicalRecordController extends Controller
 
         $medicalRecord->load(['patientInfo' => fn($q) => $q->select(['id', 'first_name', 'last_name', 'date_of_birth', 'gender'])]);
 
-        $entries = MedicalRecordEntry::whereMedicalRecordId($medicalRecord->id)
-            ->orderBy('created_at', 'desc')->get();
+        $columns = Schema::getColumnListing((new MedicalRecordEntry)->getTable());
+        $columns = array_values(array_filter($columns, fn($c) => $c !== 'content_json'));
+
+        $entries = MedicalRecordEntry::select($columns)
+            ->where('medical_record_id', $medicalRecord->id)
+            ->latest('created_at')
+            ->get();
 
         return Inertia::render('medicalRecords/Show', ['medicalRecord' => $medicalRecord, 'entries' => Inertia::defer(fn() => $entries)]);
     }
