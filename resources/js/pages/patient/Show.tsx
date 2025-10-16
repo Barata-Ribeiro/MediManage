@@ -9,6 +9,8 @@ import { Item, ItemContent } from '@/components/ui/item';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useInitials } from '@/hooks/use-initials';
 import Layout from '@/layouts/app-layout';
+import patient_info from '@/routes/patient_info';
+import { BreadcrumbItem } from '@/types';
 import { PatientInfo } from '@/types/application/patient';
 import { Head } from '@inertiajs/react';
 import { format } from 'date-fns';
@@ -22,10 +24,15 @@ export default function Show({ patient: data }: Readonly<{ patient: PatientInfo 
     const hasMedicalRecord = !!medical_record;
     const dateOfBirth = String(rest?.date_of_birth).replaceAll('-', '/');
 
-    console.log(data);
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: 'Patient Details',
+            href: patient_info.show(data.id).url,
+        },
+    ];
 
     return (
-        <Layout>
+        <Layout breadcrumbs={breadcrumbs}>
             <Head title={rest.full_name} />
 
             <article className="container py-2">
@@ -67,26 +74,26 @@ export default function Show({ patient: data }: Readonly<{ patient: PatientInfo 
                         </TabsContent>
 
                         <TabsContent value="account">
-                            {!hasAccount ? (
+                            {hasAccount ? (
+                                <PatientAccountInfoItem account={user} />
+                            ) : (
                                 <Item variant="outline">
                                     <ItemContent>
                                         <NoAccount id={rest.id} />
                                     </ItemContent>
                                 </Item>
-                            ) : (
-                                <PatientAccountInfoItem account={user} />
                             )}
                         </TabsContent>
 
                         <TabsContent value="medicalRecord">
-                            {!hasMedicalRecord ? (
+                            {hasMedicalRecord ? (
+                                <PatientMedicalRecordInfoItem medicalRecord={medical_record} />
+                            ) : (
                                 <Item variant="outline">
                                     <ItemContent>
                                         <NoMedicalRecord />
                                     </ItemContent>
                                 </Item>
-                            ) : (
-                                <PatientMedicalRecordInfoItem medicalRecord={medical_record} />
                             )}
                         </TabsContent>
                     </Tabs>
