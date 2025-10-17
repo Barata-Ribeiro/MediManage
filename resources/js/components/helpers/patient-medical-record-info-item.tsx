@@ -1,6 +1,9 @@
 import HeadingSmall from '@/components/heading-small';
+import { Button } from '@/components/ui/button';
 import { Item, ItemContent, ItemHeader } from '@/components/ui/item';
+import medicalRecords from '@/routes/medicalRecords';
 import { MedicalRecord } from '@/types/application/medicalRecord';
+import { Link } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { CalendarPlus2Icon, CalendarSyncIcon } from 'lucide-react';
 
@@ -48,6 +51,12 @@ export default function PatientMedicalRecordInfoItem({ medicalRecord }: Readonly
                     className="mx-auto prose rounded-lg bg-card px-3 py-1.5 dark:prose-invert"
                     dangerouslySetInnerHTML={{ __html: medicalRecord.medical_notes_html! }}
                 />
+
+                <Button className="mx-auto mt-4 w-full max-w-sm" asChild>
+                    <Link href={medicalRecords.show(medicalRecord.id!)} prefetch>
+                        View Full Medical Record
+                    </Link>
+                </Button>
             </ItemContent>
         </Item>
     );
