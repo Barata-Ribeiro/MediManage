@@ -1,6 +1,7 @@
 import medicalRecordController from '@/actions/App/Http/Controllers/Medical/MedicalRecordController';
 import Heading from '@/components/heading';
 import HeadingSmall from '@/components/heading-small';
+import MedicalEntryModal from '@/components/helpers/medical-entry-modal';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Field, FieldLabel } from '@/components/ui/field';
@@ -164,11 +165,24 @@ export default function Show({ medicalRecord, entries }: Readonly<ShowProps>) {
 
                                 <TableBody id="table-body">
                                     {entries?.data.map((entry) => (
-                                        <TableRow key={entry.id} className="[&>*]:w-max">
+                                        <TableRow key={entry.id} className="[&>*]:not-last:w-max">
                                             <TableCell className="font-medium">{entry.id}</TableCell>
                                             <TableCell>{entry.title}</TableCell>
                                             <TableCell className="capitalize">{entry.entry_type}</TableCell>
-                                            <TableCell className="text-right">TODO</TableCell>
+                                            <TableCell className="inline-flex w-full justify-end gap-2">
+                                                <MedicalEntryModal
+                                                    id={entry.id}
+                                                    medical_record_id={entry.medical_record_id}
+                                                    employee_info_id={entry.employee_info_id}
+                                                    appointment_id={entry.appointment_id}
+                                                    title={entry.title}
+                                                    content_html={entry.content_html}
+                                                    entry_type={entry.entry_type}
+                                                    is_visible_to_patient={entry.is_visible_to_patient}
+                                                    created_at={entry.created_at}
+                                                    updated_at={entry.updated_at}
+                                                />
+                                            </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
