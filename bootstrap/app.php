@@ -36,14 +36,20 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->respond(function (Response $response, Throwable $exception, Request $request) {
-            if (!app()->environment(['local', 'testing']) && in_array($response->getStatusCode(), [500, 503, 404, 403])) {
+            Log::error('An exception occurred!', [
+                'message' => $exception->getMessage(),
+                'url' => $request->fullUrl(),
+                'action_user_id' => Auth::id(),
+            ]);
+
+            if (!app()->environment(['local', 'testing']) && in_array($response->getStatusCode(), [500, 503, 404])) {
                 return Inertia::render('ErrorPage', ['status' => $response->getStatusCode()])
                     ->toResponse($request)
                     ->setStatusCode($response->getStatusCode());
             } elseif ($response->getStatusCode() === 419) {
-                return back()->with([
-                    'message' => 'The page expired, please try again.',
-                ]);
+                return back()->with(['message' => 'The page expired, please try again.']);
+            } elseif ($response->getStatusCode() === 403) {
+                return to_route('dashboard')->with(['error' => 'You do not have permission to access that resource.']);
             }
 
             return $response;
