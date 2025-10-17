@@ -89,7 +89,9 @@ export const columns: ColumnDef<User>[] = [
                         <DropdownMenuItem asChild>
                             <Link href={users.show(user.id)}>View</Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href={users.edit(user.id)}>Edit</Link>
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );
