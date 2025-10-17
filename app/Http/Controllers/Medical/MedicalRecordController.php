@@ -114,7 +114,10 @@ class MedicalRecordController extends Controller
                 ->find($medicalRecord->id, ['id', 'patient_info_id', 'medical_notes_html', 'created_at', 'updated_at']);
 
             $entries = MedicalRecordEntry::where('medical_record_id', $medicalRecord->id)
-                ->orderBy('created_at', 'desc')->get();
+                ->select(['id', 'medical_record_id', 'entry_type', 'title', 'content_html', 'created_at', 'updated_at'])
+                ->latest('created_at')
+                ->limit(5)
+                ->get();
 
             $pdf = PDF::loadView('pdfs.medical-record', ['medicalRecord' => $data, 'entries' => $entries]);
             $pdf->setOptions([
