@@ -4,6 +4,7 @@ import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
+import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '@/components/ui/item';
 import { Label } from '@/components/ui/label';
@@ -14,7 +15,7 @@ import type { BreadcrumbItem } from '@/types';
 import { PaginationPermissions } from '@/types/admin/permissions';
 import { Role } from '@/types/admin/roles';
 import { Form, Head, Link } from '@inertiajs/react';
-import { SearchIcon } from 'lucide-react';
+import { EraserIcon, SearchIcon } from 'lucide-react';
 import { Fragment } from 'react';
 
 interface EditProps {
@@ -29,7 +30,7 @@ export default function Edit({ role, allPermissions }: Readonly<EditProps>) {
             href: RoleController.index().url,
         },
         {
-            title: 'Edit',
+            title: `Edit ${role.name}`,
             href: RoleController.edit(role.id).url,
         },
     ];
@@ -70,7 +71,14 @@ export default function Edit({ role, allPermissions }: Readonly<EditProps>) {
                                         <InputError message={errors.name} className="mt-2" />
                                     </div>
 
-                                    <Button>Save</Button>
+                                    <div className="inline-flex items-center gap-x-2">
+                                        <Button type="button" variant="ghost" asChild>
+                                            <Link href={RoleController.index()} prefetch>
+                                                Go back
+                                            </Link>
+                                        </Button>
+                                        <Button type="submit">Save</Button>
+                                    </div>
                                 </Fragment>
                             )}
                         </Form>
@@ -87,24 +95,31 @@ export default function Edit({ role, allPermissions }: Readonly<EditProps>) {
                 />
 
                 <Form
-                    method="GET"
+                    {...admin.roles.edit.form(role.id)}
                     options={{ preserveScroll: true }}
                     disableWhileProcessing
-                    action={admin.roles.edit(role.id)}
                     className="mb-4 inert:pointer-events-none inert:opacity-50 inert:grayscale-100"
                 >
-                    <Label htmlFor="search">Search Permissions</Label>
-                    <ButtonGroup className="w-full">
-                        <Input id="search" name="search" placeholder="e.g. create.user" autoComplete="off" />
-                        <Button
-                            type="submit"
-                            variant="outline"
-                            aria-label="Search permissions"
-                            title="Search permissions"
-                        >
-                            <SearchIcon aria-hidden />
-                        </Button>
-                    </ButtonGroup>
+                    <Field>
+                        <FieldLabel htmlFor="search">Search Permissions</FieldLabel>
+                        <ButtonGroup>
+                            <Input type="search" id="search" name="search" placeholder="e.g. create.user" />
+                            <Button
+                                type="button"
+                                variant="outline"
+                                aria-label="Reset results"
+                                title="Reset results"
+                                asChild
+                            >
+                                <Link href={admin.roles.edit(role.id)} prefetch as="button">
+                                    <EraserIcon aria-hidden />
+                                </Link>
+                            </Button>
+                            <Button type="submit" aria-label="Search" title="Search">
+                                <SearchIcon aria-hidden />
+                            </Button>
+                        </ButtonGroup>
+                    </Field>
                 </Form>
 
                 {allPermissions.data.map((permission) => {
