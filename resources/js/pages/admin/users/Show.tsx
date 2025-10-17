@@ -8,7 +8,8 @@ import { useInitials } from '@/hooks/use-initials';
 import Layout from '@/layouts/app-layout';
 import { cn } from '@/lib/utils';
 import type { BreadcrumbItem } from '@/types';
-import { Role, User } from '@/types/admin/users';
+import { Role } from '@/types/admin/roles';
+import { User } from '@/types/admin/users';
 import { Head, Link } from '@inertiajs/react';
 import { format } from 'date-fns';
 
@@ -21,7 +22,7 @@ export default function Show({ user }: Readonly<{ user: User }>) {
             href: UserManagementController.index().url,
         },
         {
-            title: 'Show',
+            title: `View '${user.name}'`,
             href: UserManagementController.show(user.id).url,
         },
     ];
@@ -114,7 +115,7 @@ export default function Show({ user }: Readonly<{ user: User }>) {
                     <CardFooter className="-mb-2 justify-end space-x-2 border-t pt-4">
                         <Button variant="outline" asChild>
                             <Link href={UserManagementController.index().url} prefetch>
-                                Back
+                                Go Back
                             </Link>
                         </Button>
 
