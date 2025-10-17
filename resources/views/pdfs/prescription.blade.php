@@ -223,11 +223,7 @@
 
         <footer class="footer">
             <figure class="footer__figure">
-                <img
-                    src={{ "data:image/png;base64," . $prescription->qr_code }}
-                    alt="Prescription QR Code"
-                    class="footer__qrcode"
-                />
+                <img src={{ "data:image/png;base64,$prescription->qr_code" }} alt="Prescription QR Code" class="footer__qrcode" />
                 <figcaption class="footer__caption">
                     #{{ $prescription->validation_code }}
                 </figcaption>
