@@ -37,6 +37,8 @@ export const ModalTrigger = ({ children, className }: { children: ReactNode; cla
             type="button"
             className={cn('relative cursor-pointer overflow-hidden', className)}
             onClick={() => setOpen(true)}
+            aria-label="Open Modal"
+            title="Open Modal"
         >
             {children}
         </button>
@@ -105,7 +107,7 @@ export const ModalBody = ({ children, className }: { children: ReactNode; classN
 };
 
 export const ModalContent = ({ children, className }: { children: ReactNode; className?: string }) => {
-    return <div className={cn('flex flex-1 flex-col p-8 md:p-10', className)}>{children}</div>;
+    return <div className={cn('flex flex-1 flex-col p-8 md:p-10 overflow-auto', className)}>{children}</div>;
 };
 
 export const ModalFooter = ({
@@ -147,7 +149,7 @@ const Overlay = ({ className }: { className?: string }) => {
 const CloseIcon = () => {
     const { setOpen } = useModal();
     return (
-        <button type="button" onClick={() => setOpen(false)} className="group absolute top-4 right-4">
+        <button type="button" onClick={() => setOpen(false)} className="group absolute top-4 right-4" aria-label="Close Modal" title="Close Modal">
             <XIcon
                 aria-hidden
                 size={16}
