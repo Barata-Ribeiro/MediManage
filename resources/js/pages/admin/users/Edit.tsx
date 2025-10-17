@@ -1,19 +1,19 @@
-import UserManagementController                from '@/actions/App/Http/Controllers/Admin/UserManagementController';
-import DeleteUser                              from '@/components/admin/delete-user';
-import Heading                                 from '@/components/heading';
-import InputError                              from '@/components/input-error';
+import UserManagementController from '@/actions/App/Http/Controllers/Admin/UserManagementController';
+import DeleteUser from '@/components/admin/delete-user';
+import Heading from '@/components/heading';
+import InputError from '@/components/input-error';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button }                              from '@/components/ui/button';
-import { Card, CardContent, CardHeader }       from '@/components/ui/card';
-import { Input }                               from '@/components/ui/input';
-import { Label }                               from '@/components/ui/label';
-import { Textarea }                            from '@/components/ui/textarea';
-import { useInitials }                         from '@/hooks/use-initials';
-import Layout                                  from '@/layouts/app-layout';
-import type { BreadcrumbItem }                 from '@/types';
-import { User }                                from '@/types/admin/users';
-import { Transition }                          from '@headlessui/react';
-import { Form, Head, Link }                    from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { useInitials } from '@/hooks/use-initials';
+import Layout from '@/layouts/app-layout';
+import type { BreadcrumbItem } from '@/types';
+import { User } from '@/types/admin/users';
+import { Transition } from '@headlessui/react';
+import { Form, Head, Link } from '@inertiajs/react';
 
 export default function Edit({ user }: Readonly<{ user: User }>) {
     const getInitials = useInitials();
@@ -24,12 +24,16 @@ export default function Edit({ user }: Readonly<{ user: User }>) {
             href: UserManagementController.index().url,
         },
         {
-            title: 'Edit',
+            title: `View '${user.name}'`,
+            href: UserManagementController.show(user.id).url,
+        },
+        {
+            title: `Edit '${user.name}'`,
             href: UserManagementController.edit(user.id).url,
         },
     ];
 
-    const label = `You are currently editing the user "${user.name}", please make sure the information is correct.`;
+    const label = `You are currently editing the user '${user.name}', please make sure the information is correct.`;
 
     return (
         <Layout breadcrumbs={breadcrumbs}>
@@ -125,7 +129,7 @@ export default function Edit({ user }: Readonly<{ user: User }>) {
                                     <div className="flex items-center gap-4">
                                         <div className="inline-flex items-center gap-x-2">
                                             <Button variant="ghost" asChild>
-                                                <Link href={UserManagementController.index().url} prefetch>
+                                                <Link href={UserManagementController.show(user.id)} prefetch>
                                                     Go back
                                                 </Link>
                                             </Button>
