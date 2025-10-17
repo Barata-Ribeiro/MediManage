@@ -44,13 +44,12 @@ export default function AppointmentsGenderOverviewChart({ chartData }: Readonly<
                         <ChartTooltip
                             content={<ChartTooltipContent nameKey="gender" className="bg-accent" hideLabel />}
                         />
-                        <Pie data={pieData} dataKey="value" label nameKey="gender">
+                        <Pie data={pieData} dataKey="value" nameKey="gender" label>
                             <LabelList
                                 dataKey="gender"
-                                className="fill-background font-semibold"
+                                className="fill-white font-semibold"
                                 stroke="none"
                                 fontSize={14}
-                                formatter={(value) => `${value}`}
                             />
                         </Pie>
                     </PieChart>

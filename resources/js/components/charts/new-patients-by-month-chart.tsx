@@ -16,14 +16,12 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function NewPatientsByMonthChart({ chartData }: Readonly<NewPatientsByMonthChartProps>) {
-    const points = useMemo(
-        () =>
-            chartData.labels.map((label, i) => ({
-                month: label,
-                value: chartData.data[i] ?? 0,
-            })),
-        [chartData],
-    );
+    const points = useMemo(() => {
+        return chartData.labels.map((label, i) => ({
+            month: label,
+            value: chartData.data[i] ?? 0,
+        }));
+    }, [chartData]);
 
     return (
         <Card>
@@ -34,7 +32,7 @@ export default function NewPatientsByMonthChart({ chartData }: Readonly<NewPatie
 
             <CardContent>
                 <ChartContainer config={chartConfig}>
-                    <AreaChart accessibilityLayer data={points} margin={{ left: -35, right: 12 }}>
+                    <AreaChart accessibilityLayer data={points} margin={{ left: -30, right: 12 }}>
                         <CartesianGrid vertical={false} />
                         <XAxis
                             dataKey="month"
