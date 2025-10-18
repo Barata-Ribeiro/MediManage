@@ -8,17 +8,17 @@ export function cn(...inputs: ClassValue[]) {
 export function buildParams(overrides: Record<string, string | number | boolean | undefined> = {}) {
     const params: Record<string, string | number | boolean | undefined> = {};
 
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.forEach((value, key) => {
+    const urlParams = new URLSearchParams(globalThis.window.location.search);
+    for (const [key, value] of urlParams.entries()) {
         params[key] = value;
-    });
+    }
 
-    Object.keys(overrides).forEach((k) => {
+    for (const k of Object.keys(overrides)) {
         const v = overrides[k];
 
         if (v === undefined || v === null || v === '') delete params[k];
         else params[k] = v;
-    });
+    }
 
     return params;
 }
