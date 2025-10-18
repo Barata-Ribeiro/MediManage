@@ -112,7 +112,7 @@ export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly
     return (
         <div className="mx-auto w-full flex-col space-y-4">
             <div className="flex items-center py-4">
-                {pagination.total > 10 && (
+                {(pagination.total > 10 || new URLSearchParams(globalThis.location.search).toString() !== '') && (
                     <div className="inline-flex w-full flex-1 items-center gap-x-2">
                         <Input
                             type="search"
