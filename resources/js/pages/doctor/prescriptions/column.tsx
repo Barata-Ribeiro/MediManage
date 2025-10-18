@@ -128,6 +128,11 @@ export const column: ColumnDef<TablePrescription>[] = [
                                 Edit
                             </Link>
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <a href={prescriptions.generatePdf(row.original.id).url} target="_blank" rel="external">
+                                Get PDF
+                            </a>
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );

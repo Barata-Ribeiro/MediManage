@@ -76,7 +76,7 @@ export default function Show({ prescription }: Readonly<ShowProps>) {
 
                 <section
                     aria-label="Prescription Details"
-                    className="mx-auto mt-6 flex aspect-[9/16] max-w-7xl flex-col gap-6 rounded-lg border border-t-8 border-border border-t-primary bg-input p-4 dark:bg-muted"
+                    className="mx-auto mt-6 flex max-w-7xl flex-col gap-6 rounded-lg border border-t-8 border-border border-t-primary bg-input p-4 dark:bg-muted"
                 >
                     <header>
                         <h3 className="scroll-m-20 text-center text-4xl font-bold tracking-tight text-balance">
