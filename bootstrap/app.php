@@ -48,8 +48,10 @@ return Application::configure(basePath: dirname(__DIR__))
                     ->setStatusCode($response->getStatusCode());
             } elseif ($response->getStatusCode() === 419) {
                 return back()->with(['message' => 'The page expired, please try again.']);
-            } elseif ($response->getStatusCode() === 403) {
-                return to_route('dashboard')->with(['error' => 'You do not have permission to access that resource.']);
+            } elseif (!app()->environment(['local', 'testing']) && $response->getStatusCode() === 403) {
+                return to_route('dashboard')->with(['error' => 'You do not have permission to access that resource.'])
+                    ->toResponse($request)
+                    ->setStatusCode($response->getStatusCode());
             }
 
             return $response;
