@@ -1,21 +1,22 @@
-import { Button } from '@/components/ui/button';
 import { calculateZoomLevel } from '@lexical/utils';
 import type { LexicalEditor } from 'lexical';
 import * as React from 'react';
 import { JSX, useRef } from 'react';
+
+import { Button } from '@/components/ui/button';
 
 function clamp(value: number, min: number, max: number) {
     return Math.min(Math.max(value, min), max);
 }
 
 const Direction = {
-    east: 1 << 0,
-    north: 1 << 3,
-    south: 1 << 1,
-    west: 1 << 2,
+    east: Math.trunc(1),
+    north: Math.trunc(8),
+    south: Math.trunc(2),
+    west: Math.trunc(4),
 };
 
-function ImageResizer({
+export function ImageResizer({
     onResizeStart,
     onResizeEnd,
     buttonRef,
@@ -64,9 +65,17 @@ function ImageResizer({
     });
     const editorRootElement = editor.getRootElement();
     // Find max width, accounting for editor padding.
-    const maxWidthContainer =
-        maxWidth || (editorRootElement !== null ? editorRootElement.getBoundingClientRect().width - 20 : 100);
-    const maxHeightContainer = editorRootElement !== null ? editorRootElement.getBoundingClientRect().height - 20 : 100;
+    let maxWidthContainer: number;
+
+    if (maxWidth != null) {
+        maxWidthContainer = maxWidth;
+    } else if (editorRootElement) {
+        maxWidthContainer = editorRootElement.getBoundingClientRect().width - 20;
+    } else {
+        maxWidthContainer = 100;
+    }
+
+    const maxHeightContainer = editorRootElement ? editorRootElement.getBoundingClientRect().height - 20 : 100;
 
     const minWidth = 100;
     const minHeight = 100;
@@ -78,7 +87,14 @@ function ImageResizer({
             (direction & Direction.north && direction & Direction.west) ||
             (direction & Direction.south && direction & Direction.east);
 
-        const cursorDir = ew ? 'ew' : ns ? 'ns' : nwse ? 'nwse' : 'nesw';
+        let cursorDir = 'nesw';
+        if (ew) {
+            cursorDir = 'ew';
+        } else if (ns) {
+            cursorDir = 'ns';
+        } else if (nwse) {
+            cursorDir = 'nwse';
+        }
 
         if (editorRootElement !== null) {
             editorRootElement.style.setProperty('cursor', `${cursorDir}-resize`, 'important');
@@ -270,5 +286,3 @@ function ImageResizer({
         </div>
     );
 }
-
-export default ImageResizer;

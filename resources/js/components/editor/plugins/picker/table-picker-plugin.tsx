@@ -1,7 +1,8 @@
-import { ComponentPickerOption } from '@/components/editor/plugins/picker/component-picker-option';
-import { InsertTableDialog } from '@/components/editor/plugins/table-plugin';
 import { INSERT_TABLE_COMMAND } from '@lexical/table';
 import { TableIcon } from 'lucide-react';
+
+import { ComponentPickerOption } from '@/components/editor/plugins/picker/component-picker-option';
+import { InsertTableDialog } from '@/components/editor/plugins/table-plugin';
 
 export function TablePickerPlugin() {
     return new ComponentPickerOption('Table', {
@@ -19,7 +20,8 @@ export function DynamicTablePickerPlugin({ queryString }: { queryString: string 
         return options;
     }
 
-    const tableMatch = RegExp(/^([1-9]\d?)(?:x([1-9]\d?)?)?$/).exec(queryString);
+    const tableRegex = /^([1-9]\d?)(?:x([1-9]\d?)?)?$/;
+    const tableMatch = tableRegex.exec(queryString);
 
     if (tableMatch !== null) {
         const rows = tableMatch[1];

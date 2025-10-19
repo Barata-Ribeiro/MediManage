@@ -1,5 +1,3 @@
-import { registerCodeHighlighting } from '@lexical/code';
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 /**
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
@@ -7,6 +5,8 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
  * LICENSE file in the root directory of this source tree.
  *
  */
+import { registerCodeHighlighting } from '@lexical/code';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { JSX, useEffect } from 'react';
 
 export function CodeHighlightPlugin(): JSX.Element | null {

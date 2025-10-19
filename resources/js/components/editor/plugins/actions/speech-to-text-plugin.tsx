@@ -1,7 +1,3 @@
-import { useReport } from '@/components/editor/editor-hooks/use-report';
-import { CAN_USE_DOM } from '@/components/editor/shared/can-use-dom';
-import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type { LexicalCommand, LexicalEditor, RangeSelection } from 'lexical';
 import {
@@ -14,6 +10,11 @@ import {
 } from 'lexical';
 import { MicIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+
+import { useReport } from '@/components/editor/editor-hooks/use-report';
+import { CAN_USE_DOM } from '@/components/editor/shared/can-use-dom';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 export const SPEECH_TO_TEXT_COMMAND: LexicalCommand<boolean> = createCommand('SPEECH_TO_TEXT_COMMAND');
 
@@ -30,7 +31,7 @@ const VOICE_COMMANDS: Readonly<Record<string, (arg0: { editor: LexicalEditor; se
 };
 
 export const SUPPORT_SPEECH_RECOGNITION: boolean =
-    CAN_USE_DOM && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+    CAN_USE_DOM && ('SpeechRecognition' in globalThis.window || 'webkitSpeechRecognition' in globalThis.window);
 
 function SpeechToTextPluginImpl() {
     const [editor] = useLexicalComposerContext();
@@ -38,7 +39,7 @@ function SpeechToTextPluginImpl() {
     const [isSpeechToText, setIsSpeechToText] = useState<boolean>(false);
     const SpeechRecognition =
         // @ts-expect-error missing type
-        CAN_USE_DOM && (window.SpeechRecognition || window.webkitSpeechRecognition);
+        CAN_USE_DOM && (globalThis.window.SpeechRecognition || globalThis.window.webkitSpeechRecognition);
     const recognition = useRef<typeof SpeechRecognition | null>(null);
     const report = useReport();
 
@@ -115,7 +116,7 @@ function SpeechToTextPluginImpl() {
                     title="Speech To Text"
                     aria-label={`${isSpeechToText ? 'Enable' : 'Disable'} speech to text`}
                     className="p-2"
-                    size="sm"
+                    size={'sm'}
                 >
                     <MicIcon className="size-4" />
                 </Button>

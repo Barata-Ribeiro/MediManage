@@ -1,5 +1,3 @@
-import { useToolbarContext } from '@/components/editor/context/toolbar-context';
-import { Button } from '@/components/ui/button';
 import { $isDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode';
 import { $isHeadingNode, $isQuoteNode } from '@lexical/rich-text';
 import { $isTableSelection } from '@lexical/table';
@@ -7,6 +5,9 @@ import { $getNearestBlockElementAncestorOrThrow } from '@lexical/utils';
 import { $createParagraphNode, $getSelection, $isRangeSelection, $isTextNode } from 'lexical';
 import { EraserIcon } from 'lucide-react';
 import { useCallback } from 'react';
+
+import { useToolbarContext } from '@/components/editor/context/toolbar-context';
+import { Button } from '@/components/ui/button';
 
 export function ClearFormattingToolbarPlugin() {
     const { activeEditor } = useToolbarContext();
@@ -24,7 +25,7 @@ export function ClearFormattingToolbarPlugin() {
                     return;
                 }
 
-                nodes.forEach((node, idx) => {
+                for (let [idx, node] of nodes.entries()) {
                     // We split the first and last node by the selection
                     // So that we don't format unselected text inside those nodes
                     if ($isTextNode(node)) {
@@ -52,17 +53,19 @@ export function ClearFormattingToolbarPlugin() {
                         if (textNode.__style !== '') {
                             textNode.setStyle('');
                         }
+
                         if (textNode.__format !== 0) {
                             textNode.setFormat(0);
                             $getNearestBlockElementAncestorOrThrow(textNode).setFormat('');
                         }
+
                         node = textNode;
                     } else if ($isHeadingNode(node) || $isQuoteNode(node)) {
                         node.replace($createParagraphNode(), true);
                     } else if ($isDecoratorBlockNode(node)) {
                         node.setFormat('');
                     }
-                });
+                }
             }
         });
     }, [activeEditor]);
@@ -72,11 +75,11 @@ export function ClearFormattingToolbarPlugin() {
             type="button"
             className="!size-8"
             aria-label="Clear formatting"
-            variant="outline"
-            size="icon"
+            variant={'outline'}
+            size={'icon'}
             onClick={clearFormatting}
         >
-            <EraserIcon className="size-4" />
+            <EraserIcon className="h-4 w-4" />
         </Button>
     );
 }

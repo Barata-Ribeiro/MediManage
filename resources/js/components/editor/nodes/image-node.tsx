@@ -1,3 +1,4 @@
+import ImageComponent from '@/components/editor/editor-ui/image-component';
 import type {
     DOMConversionMap,
     DOMConversionOutput,
@@ -8,13 +9,10 @@ import type {
     NodeKey,
     SerializedEditor,
     SerializedLexicalNode,
-    Spread
+    Spread,
 } from 'lexical';
 import { $applyNodeReplacement, createEditor, DecoratorNode } from 'lexical';
-import * as React from 'react';
 import { JSX, Suspense } from 'react';
-
-const ImageComponent = React.lazy(() => import('../editor-ui/image-component'));
 
 export interface ImagePayload {
     altText: string;
@@ -71,32 +69,6 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     // Captions cannot yet be used within editor cells
     __captionsEnabled: boolean;
 
-    constructor(
-        src: string,
-        altText: string,
-        maxWidth: number,
-        width?: 'inherit' | number,
-        height?: 'inherit' | number,
-        showCaption?: boolean,
-        caption?: LexicalEditor,
-        captionsEnabled?: boolean,
-        key?: NodeKey,
-    ) {
-        super(key);
-        this.__src = src;
-        this.__altText = altText;
-        this.__maxWidth = maxWidth;
-        this.__width = width || 'inherit';
-        this.__height = height || 'inherit';
-        this.__showCaption = showCaption || false;
-        this.__caption =
-            caption ||
-            createEditor({
-                nodes: [],
-            });
-        this.__captionsEnabled = captionsEnabled || captionsEnabled === undefined;
-    }
-
     static getType(): string {
         return 'image';
     }
@@ -133,6 +105,15 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
         return node;
     }
 
+    exportDOM(): DOMExportOutput {
+        const element = document.createElement('img');
+        element.setAttribute('src', this.__src);
+        element.setAttribute('alt', this.__altText);
+        element.setAttribute('width', this.__width.toString());
+        element.setAttribute('height', this.__height.toString());
+        return { element };
+    }
+
     static importDOM(): DOMConversionMap | null {
         return {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -143,13 +124,30 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
         };
     }
 
-    exportDOM(): DOMExportOutput {
-        const element = document.createElement('img');
-        element.setAttribute('src', this.__src);
-        element.setAttribute('alt', this.__altText);
-        element.setAttribute('width', this.__width.toString());
-        element.setAttribute('height', this.__height.toString());
-        return { element };
+    constructor(
+        src: string,
+        altText: string,
+        maxWidth: number,
+        width?: 'inherit' | number,
+        height?: 'inherit' | number,
+        showCaption?: boolean,
+        caption?: LexicalEditor,
+        captionsEnabled?: boolean,
+        key?: NodeKey,
+    ) {
+        super(key);
+        this.__src = src;
+        this.__altText = altText;
+        this.__maxWidth = maxWidth;
+        this.__width = width || 'inherit';
+        this.__height = height || 'inherit';
+        this.__showCaption = showCaption || false;
+        this.__caption =
+            caption ||
+            createEditor({
+                nodes: [],
+            });
+        this.__captionsEnabled = captionsEnabled || captionsEnabled === undefined;
     }
 
     exportJSON(): SerializedImageNode {

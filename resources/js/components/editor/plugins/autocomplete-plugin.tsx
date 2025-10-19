@@ -1,5 +1,4 @@
-import { $createAutocompleteNode, AutocompleteNode } from '@/components/editor/nodes/autocomplete-node';
-import { addSwipeRightListener } from '@/components/editor/utils/swipe'; /**
+/**
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
@@ -26,6 +25,9 @@ import {
 import type { JSX } from 'react';
 import { useCallback, useEffect } from 'react';
 
+import { $createAutocompleteNode, AutocompleteNode } from '@/components/editor/nodes/autocomplete-node';
+import { addSwipeRightListener } from '@/components/editor/utils/swipe';
+
 const HISTORY_MERGE = { tag: HISTORY_MERGE_TAG };
 
 declare global {
@@ -43,10 +45,9 @@ type SearchPromise = {
 
 export const uuid = Math.random()
     .toString(36)
-    .replace(/[^a-z]+/g, '')
+    .replaceAll(/[^a-z]+/g, '')
     .substring(0, 5);
 
-// TODO lookup should be custom
 function $search(selection: null | BaseSelection): [boolean, string] {
     if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
         return [false, ''];
@@ -57,6 +58,7 @@ function $search(selection: null | BaseSelection): [boolean, string] {
     if (!$isTextNode(node) || !node.isSimpleText() || !$isAtNodeEnd(anchor)) {
         return [false, ''];
     }
+
     const word = [];
     const text = node.getTextContent();
     let i = node.getTextContentSize();
@@ -70,7 +72,6 @@ function $search(selection: null | BaseSelection): [boolean, string] {
     return [true, word.toReversed().join('')];
 }
 
-// TODO query should be custom
 function useQuery(): (searchText: string) => SearchPromise {
     return useCallback((searchText: string) => {
         const server = new AutocompleteServer();
@@ -82,9 +83,9 @@ function useQuery(): (searchText: string) => SearchPromise {
 }
 
 function formatSuggestionText(suggestion: string): string {
-    const userAgentData = window.navigator.userAgentData;
+    const userAgentData = globalThis.window.navigator.userAgentData;
     const isMobile =
-        userAgentData !== undefined ? userAgentData.mobile : window.innerWidth <= 800 && window.innerHeight <= 600;
+        userAgentData === undefined ? window.innerWidth <= 800 && window.innerHeight <= 600 : userAgentData.mobile;
 
     return `${suggestion} ${isMobile ? '(SWIPE \u2B95)' : '(TAB)'}`;
 }
@@ -92,7 +93,6 @@ function formatSuggestionText(suggestion: string): string {
 export function AutocompletePlugin(): JSX.Element | null {
     const [editor] = useLexicalComposerContext();
     const query = useQuery();
-    // const {toolbarState} = useToolbarState();
 
     useEffect(() => {
         let autocompleteNodeKey: null | NodeKey = null;
@@ -101,7 +101,7 @@ export function AutocompletePlugin(): JSX.Element | null {
         let searchPromise: null | SearchPromise = null;
         let prevNodeFormat: number = 0;
         function $clearSuggestion() {
-            const autocompleteNode = autocompleteNodeKey !== null ? $getNodeByKey(autocompleteNodeKey) : null;
+            const autocompleteNode = autocompleteNodeKey == null ? null : $getNodeByKey(autocompleteNodeKey);
             if (autocompleteNode?.isAttached()) {
                 autocompleteNode.remove();
                 autocompleteNodeKey = null;
@@ -228,7 +228,7 @@ export function AutocompletePlugin(): JSX.Element | null {
             editor.registerUpdateListener(handleUpdate),
             editor.registerCommand(KEY_TAB_COMMAND, $handleKeypressCommand, COMMAND_PRIORITY_LOW),
             editor.registerCommand(KEY_ARROW_RIGHT_COMMAND, $handleKeypressCommand, COMMAND_PRIORITY_LOW),
-            ...(rootElem !== null ? [addSwipeRightListener(rootElem, handleSwipeRight)] : []),
+            ...(rootElem == null ? [] : [addSwipeRightListener(rootElem, handleSwipeRight)]),
             unmountSuggestion,
         );
     }, [editor, query]);
@@ -253,17 +253,19 @@ class AutocompleteServer {
         const promise: Promise<null | string> = new Promise((resolve, reject) => {
             setTimeout(() => {
                 if (isDismissed) {
-                    // TODO cache result
                     return reject('Dismissed');
                 }
                 const searchTextLength = searchText.length;
                 if (searchText === '' || searchTextLength < 4) {
                     return resolve(null);
                 }
-                const char0 = searchText.charCodeAt(0);
+                const char0 = searchText.codePointAt(0);
+                if (char0 === undefined) {
+                    return resolve(null);
+                }
                 const isCapitalized = char0 >= 65 && char0 <= 90;
                 const caseInsensitiveSearchText = isCapitalized
-                    ? String.fromCharCode(char0 + 32) + searchText.substring(1)
+                    ? String.fromCodePoint(char0 + 32) + searchText.substring(1)
                     : searchText;
                 const match = this.DATABASE.find(
                     (dictionaryWord) => dictionaryWord.startsWith(caseInsensitiveSearchText) ?? null,
@@ -271,9 +273,7 @@ class AutocompleteServer {
                 if (match === undefined) {
                     return resolve(null);
                 }
-                const matchCapitalized = isCapitalized
-                    ? String.fromCharCode(match.charCodeAt(0) - 32) + match.substring(1)
-                    : match;
+                const matchCapitalized = isCapitalized ? (match[0]?.toUpperCase() ?? '') + match.substring(1) : match;
                 const autocompleteChunk = matchCapitalized.substring(searchTextLength);
                 if (autocompleteChunk === '') {
                     return resolve(null);

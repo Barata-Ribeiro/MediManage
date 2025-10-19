@@ -1,6 +1,7 @@
-import { uuid as UUID }                                                                           from '@/components/editor/plugins/autocomplete-plugin';
 import type { DOMExportOutput, EditorConfig, LexicalEditor, NodeKey, SerializedTextNode, Spread } from 'lexical';
-import { TextNode }                                                                               from 'lexical';
+import { TextNode } from 'lexical';
+
+import { uuid as UUID } from '@/components/editor/plugins/autocomplete-plugin';
 
 export type SerializedAutocompleteNode = Spread<
     {
@@ -19,11 +20,6 @@ export class AutocompleteNode extends TextNode {
      * See https://github.com/facebook/lexical/blob/main/packages/lexical-playground/src/plugins/AutocompletePlugin/index.tsx
      */
     __uuid: string;
-
-    constructor(text: string, uuid: string, key?: NodeKey) {
-        super(text, key);
-        this.__uuid = uuid;
-    }
 
     static clone(node: AutocompleteNode): AutocompleteNode {
         return new AutocompleteNode(node.__text, node.__uuid, node.__key);
@@ -47,6 +43,11 @@ export class AutocompleteNode extends TextNode {
             ...super.exportJSON(),
             uuid: this.__uuid,
         };
+    }
+
+    constructor(text: string, uuid: string, key?: NodeKey) {
+        super(text, key);
+        this.__uuid = uuid;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

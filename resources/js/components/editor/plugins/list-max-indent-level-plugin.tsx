@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
 import { $getListDepth, $isListItemNode, $isListNode } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type { ElementNode, RangeSelection } from 'lexical';
@@ -7,13 +14,7 @@ import {
     $isRangeSelection,
     COMMAND_PRIORITY_CRITICAL,
     INDENT_CONTENT_COMMAND,
-} from 'lexical'; /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
+} from 'lexical';
 import { useEffect } from 'react';
 
 function getElementNodesInSelection(selection: RangeSelection): Set<ElementNode> {

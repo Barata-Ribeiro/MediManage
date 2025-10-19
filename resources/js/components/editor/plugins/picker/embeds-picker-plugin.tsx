@@ -1,6 +1,7 @@
+import { INSERT_EMBED_COMMAND } from '@lexical/react/LexicalAutoEmbedPlugin';
+
 import { CustomEmbedConfig, EmbedConfigs } from '@/components/editor/plugins/embeds/auto-embed-plugin';
 import { ComponentPickerOption } from '@/components/editor/plugins/picker/component-picker-option';
-import { INSERT_EMBED_COMMAND } from '@lexical/react/LexicalAutoEmbedPlugin';
 
 export function EmbedsPickerPlugin({ embed }: { embed: 'tweet' | 'youtube-video' }) {
     const embedConfig = EmbedConfigs.find((config) => config.type === embed) as CustomEmbedConfig;

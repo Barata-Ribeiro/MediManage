@@ -1,4 +1,3 @@
-import { $createTweetNode, TweetNode } from '@/components/editor/nodes/embeds/tweet-node';
 /**
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
@@ -10,6 +9,8 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { $insertNodeToNearestRoot } from '@lexical/utils';
 import { COMMAND_PRIORITY_EDITOR, createCommand, LexicalCommand } from 'lexical';
 import { JSX, useEffect } from 'react';
+
+import { $createTweetNode, TweetNode } from '@/components/editor/nodes/embeds/tweet-node';
 
 export const INSERT_TWEET_COMMAND: LexicalCommand<string> = createCommand('INSERT_TWEET_COMMAND');
 

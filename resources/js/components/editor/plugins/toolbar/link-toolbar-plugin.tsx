@@ -1,12 +1,13 @@
+import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
+import { $isRangeSelection, BaseSelection, COMMAND_PRIORITY_NORMAL, KEY_MODIFIER_COMMAND } from 'lexical';
+import { LinkIcon } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+
 import { useToolbarContext } from '@/components/editor/context/toolbar-context';
 import { useUpdateToolbarHandler } from '@/components/editor/editor-hooks/use-update-toolbar';
 import { getSelectedNode } from '@/components/editor/utils/get-selected-node';
 import { sanitizeUrl } from '@/components/editor/utils/url';
 import { Toggle } from '@/components/ui/toggle';
-import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
-import { $isRangeSelection, BaseSelection, COMMAND_PRIORITY_NORMAL, KEY_MODIFIER_COMMAND } from 'lexical';
-import { LinkIcon } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
 
 export function LinkToolbarPlugin({
     setIsLinkEditMode,
@@ -38,12 +39,12 @@ export function LinkToolbarPlugin({
                 if (code === 'KeyK' && (ctrlKey || metaKey)) {
                     event.preventDefault();
                     let url: string | null;
-                    if (!isLink) {
-                        setIsLinkEditMode(true);
-                        url = sanitizeUrl('https://');
-                    } else {
+                    if (isLink) {
                         setIsLinkEditMode(false);
                         url = null;
+                    } else {
+                        setIsLinkEditMode(true);
+                        url = sanitizeUrl('https://');
                     }
                     return activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, url);
                 }
@@ -54,17 +55,23 @@ export function LinkToolbarPlugin({
     }, [activeEditor, isLink, setIsLinkEditMode]);
 
     const insertLink = useCallback(() => {
-        if (!isLink) {
-            setIsLinkEditMode(true);
-            activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl('https://'));
-        } else {
+        if (isLink) {
             setIsLinkEditMode(false);
             activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+        } else {
+            setIsLinkEditMode(true);
+            activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl('https://'));
         }
     }, [activeEditor, isLink, setIsLinkEditMode]);
 
     return (
-        <Toggle variant={'outline'} size="sm" className="!size-8" aria-label="Toggle link" onClick={insertLink}>
+        <Toggle
+            variant="outline"
+            size="sm"
+            className="!size-8 cursor-pointer"
+            aria-label="Toggle link"
+            onClick={insertLink}
+        >
             <LinkIcon className="size-4" />
         </Toggle>
     );

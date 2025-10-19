@@ -1,10 +1,10 @@
-'use client';
-
-import { getSelectedNode } from '@/components/editor/utils/get-selected-node';
-import { setFloatingElemPositionForLinkEditor } from '@/components/editor/utils/set-floating-elem-position-for-link-editor';
-import { sanitizeUrl } from '@/components/editor/utils/url';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
 import { $createLinkNode, $isAutoLinkNode, $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $findMatchingParent, mergeRegister } from '@lexical/utils';
@@ -23,15 +23,14 @@ import {
     SELECTION_CHANGE_COMMAND,
 } from 'lexical';
 import { Check, Pencil, Trash, X } from 'lucide-react';
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-import { Dispatch, JSX, KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { Dispatch, JSX, useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+
+import { getSelectedNode } from '@/components/editor/utils/get-selected-node';
+import { setFloatingElemPositionForLinkEditor } from '@/components/editor/utils/set-floating-elem-position-for-link-editor';
+import { sanitizeUrl } from '@/components/editor/utils/url';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 function FloatingLinkEditor({
     editor,
@@ -72,7 +71,7 @@ function FloatingLinkEditor({
             }
         }
         const editorElem = editorRef.current;
-        const nativeSelection = globalThis.getSelection();
+        const nativeSelection = globalThis.window.getSelection();
         const activeElement = document.activeElement;
 
         if (editorElem === null) {
@@ -171,9 +170,9 @@ function FloatingLinkEditor({
             inputRef.current.focus();
             setIsLink(true);
         }
-    }, [isLinkEditMode, isLink]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [isLinkEditMode, isLink]);
 
-    const monitorInputInteraction = (event: KeyboardEvent<HTMLInputElement>) => {
+    const monitorInputInteraction = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
             event.preventDefault();
             handleLinkSubmission();
@@ -208,67 +207,66 @@ function FloatingLinkEditor({
     };
     return (
         <div ref={editorRef} className="absolute top-0 left-0 w-full max-w-sm rounded-md opacity-0 shadow-md">
-            {isLink &&
-                (isLinkEditMode ? (
-                    <div className="flex items-center space-x-2 rounded-md border p-1 pl-2">
-                        <Input
-                            ref={inputRef}
-                            value={editedLinkUrl}
-                            onChange={(event) => setEditedLinkUrl(event.target.value)}
-                            onKeyDown={monitorInputInteraction}
-                            className="flex-grow"
-                        />
+            {!isLink ? null : isLinkEditMode ? (
+                <div className="flex items-center space-x-2 rounded-md border p-1 pl-2">
+                    <Input
+                        ref={inputRef}
+                        value={editedLinkUrl}
+                        onChange={(event) => setEditedLinkUrl(event.target.value)}
+                        onKeyDown={monitorInputInteraction}
+                        className="flex-grow"
+                    />
+                    <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => {
+                            setIsLinkEditMode(false);
+                            setIsLink(false);
+                        }}
+                        className="shrink-0"
+                    >
+                        <X className="h-4 w-4" />
+                    </Button>
+                    <Button type="button" size="icon" onClick={handleLinkSubmission} className="shrink-0">
+                        <Check className="h-4 w-4" />
+                    </Button>
+                </div>
+            ) : (
+                <div className="flex items-center justify-between rounded-md border p-1 pl-2">
+                    <a
+                        href={sanitizeUrl(linkUrl)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="overflow-hidden text-sm text-ellipsis whitespace-nowrap"
+                    >
+                        {linkUrl}
+                    </a>
+                    <div className="flex">
                         <Button
                             type="button"
                             size="icon"
                             variant="ghost"
                             onClick={() => {
-                                setIsLinkEditMode(false);
-                                setIsLink(false);
+                                setEditedLinkUrl(linkUrl);
+                                setIsLinkEditMode(true);
                             }}
-                            className="shrink-0"
                         >
-                            <X className="size-4" />
+                            <Pencil className="h-4 w-4" />
                         </Button>
-                        <Button type="button" size="icon" onClick={handleLinkSubmission} className="shrink-0">
-                            <Check className="size-4" />
+                        <Button
+                            type="button"
+                            size="icon"
+                            variant="destructive"
+                            onClick={() => {
+                                editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+                            }}
+                        >
+                            <Trash className="h-4 w-4" />
                         </Button>
                     </div>
-                ) : (
-                    <div className="flex items-center justify-between rounded-md border p-1 pl-2">
-                        <a
-                            href={sanitizeUrl(linkUrl)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="overflow-hidden text-sm text-ellipsis whitespace-nowrap"
-                        >
-                            {linkUrl}
-                        </a>
-                        <div className="flex">
-                            <Button
-                                type="button"
-                                size="icon"
-                                variant="ghost"
-                                onClick={() => {
-                                    setEditedLinkUrl(linkUrl);
-                                    setIsLinkEditMode(true);
-                                }}
-                            >
-                                <Pencil className="size-4" />
-                            </Button>
-                            <Button
-                                type="button"
-                                size="icon"
-                                variant="destructive"
-                                onClick={() => {
-                                    editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
-                                }}
-                            >
-                                <Trash className="size-4" />
-                            </Button>
-                        </div>
-                    </div>
-                ))}
+                </div>
+            )}
         </div>
     );
 }
@@ -306,8 +304,11 @@ function useFloatingLinkEditorToolbar(
                             (autoLinkNode && (!autoLinkNode.is(focusAutoLinkNode) || autoLinkNode.getIsUnlinked()))
                         );
                     });
-
-                setIsLink(!badNode);
+                if (!badNode) {
+                    setIsLink(true);
+                } else {
+                    setIsLink(false);
+                }
             } else if ($isNodeSelection(selection)) {
                 const nodes = selection.getNodes();
                 if (nodes.length === 0) {

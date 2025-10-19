@@ -1,10 +1,11 @@
-import { useEditorModal } from '@/components/editor/editor-hooks/use-modal';
-import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { LexicalTypeaheadMenuPlugin, useBasicTypeaheadTriggerMatch } from '@lexical/react/LexicalTypeaheadMenuPlugin';
 import { TextNode } from 'lexical';
 import { JSX, useCallback, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
+
+import { useEditorModal } from '@/components/editor/editor-hooks/use-modal';
+import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
 
 import { ComponentPickerOption } from './picker/component-picker-option';
 
@@ -36,7 +37,7 @@ export function ComponentPickerMenuPlugin({
                 (option) => regex.test(option.title) || option.keywords.some((keyword) => regex.test(keyword)),
             ),
         ];
-    }, [editor, queryString, showModal]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [editor, queryString, showModal]);
 
     const onSelectOption = useCallback(
         (
@@ -51,13 +52,13 @@ export function ComponentPickerMenuPlugin({
                 closeMenu();
             });
         },
-        [editor], // eslint-disable-line react-hooks/exhaustive-deps
+        [editor],
     );
 
     return (
         <>
             {modal}
-            <LexicalTypeaheadMenuPlugin<ComponentPickerOption>
+            <LexicalTypeaheadMenuPlugin
                 onQueryChange={setQueryString}
                 onSelectOption={onSelectOption}
                 triggerFn={checkForTriggerMatch}
@@ -71,14 +72,14 @@ export function ComponentPickerMenuPlugin({
                                           if (e.key === 'ArrowUp') {
                                               e.preventDefault();
                                               setHighlightedIndex(
-                                                  selectedIndex !== null
-                                                      ? (selectedIndex - 1 + options.length) % options.length
-                                                      : options.length - 1,
+                                                  selectedIndex === null
+                                                      ? options.length - 1
+                                                      : (selectedIndex - 1 + options.length) % options.length,
                                               );
                                           } else if (e.key === 'ArrowDown') {
                                               e.preventDefault();
                                               setHighlightedIndex(
-                                                  selectedIndex !== null ? (selectedIndex + 1) % options.length : 0,
+                                                  selectedIndex === null ? 0 : (selectedIndex + 1) % options.length,
                                               );
                                           }
                                       }}

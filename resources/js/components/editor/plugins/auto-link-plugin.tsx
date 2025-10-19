@@ -1,6 +1,6 @@
 import {
-    AutoLinkPlugin as LexicalAutoLinkPlugin,
     createLinkMatcherWithRegExp,
+    AutoLinkPlugin as LexicalAutoLinkPlugin,
 } from '@lexical/react/LexicalAutoLinkPlugin';
 import { JSX } from 'react';
 

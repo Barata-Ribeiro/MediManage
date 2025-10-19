@@ -7,9 +7,9 @@ import type {
     LexicalNode,
     NodeKey,
     SerializedElementNode,
-    Spread
-}                                 from 'lexical';
-import { ElementNode }            from 'lexical';
+    Spread,
+} from 'lexical';
+import { ElementNode } from 'lexical';
 
 export type SerializedLayoutContainerNode = Spread<
     {
@@ -19,7 +19,7 @@ export type SerializedLayoutContainerNode = Spread<
 >;
 
 function $convertLayoutContainerElement(domNode: HTMLElement): DOMConversionOutput | null {
-    const styleAttributes = window.getComputedStyle(domNode);
+    const styleAttributes = globalThis.window.getComputedStyle(domNode);
     const templateColumns = styleAttributes.getPropertyValue('grid-template-columns');
     if (templateColumns) {
         const node = $createLayoutContainerNode(templateColumns);
@@ -44,24 +44,6 @@ export class LayoutContainerNode extends ElementNode {
         return new LayoutContainerNode(node.__templateColumns, node.__key);
     }
 
-    static importDOM(): DOMConversionMap | null {
-        return {
-            div: (domNode: HTMLElement) => {
-                if (!domNode.hasAttribute('data-lexical-layout-container')) {
-                    return null;
-                }
-                return {
-                    conversion: $convertLayoutContainerElement,
-                    priority: 2,
-                };
-            },
-        };
-    }
-
-    static importJSON(json: SerializedLayoutContainerNode): LayoutContainerNode {
-        return $createLayoutContainerNode(json.templateColumns);
-    }
-
     createDOM(config: EditorConfig): HTMLElement {
         const dom = document.createElement('div');
         dom.style.gridTemplateColumns = this.__templateColumns;
@@ -74,7 +56,7 @@ export class LayoutContainerNode extends ElementNode {
     exportDOM(): DOMExportOutput {
         const element = document.createElement('div');
         element.style.gridTemplateColumns = this.__templateColumns;
-        element.setAttribute('data-lexical-layout-container', 'true');
+        element.dataset.lexicalLayoutContainer = 'true';
         return { element };
     }
 
@@ -83,6 +65,24 @@ export class LayoutContainerNode extends ElementNode {
             dom.style.gridTemplateColumns = this.__templateColumns;
         }
         return false;
+    }
+
+    static importDOM(): DOMConversionMap | null {
+        return {
+            div: (domNode: HTMLElement) => {
+                if (!domNode.dataset.lexicalLayoutContainer) {
+                    return null;
+                }
+                return {
+                    conversion: $convertLayoutContainerElement,
+                    priority: 2,
+                };
+            },
+        };
+    }
+
+    static importJSON(json: SerializedLayoutContainerNode): LayoutContainerNode {
+        return $createLayoutContainerNode(json.templateColumns);
     }
 
     isShadowRoot(): boolean {

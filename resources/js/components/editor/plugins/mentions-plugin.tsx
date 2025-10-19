@@ -1,5 +1,3 @@
-import { $createMentionNode } from '@/components/editor/nodes/mention-node';
-import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {
     LexicalTypeaheadMenuPlugin,
@@ -11,6 +9,9 @@ import { TextNode } from 'lexical';
 import { CircleUserRoundIcon } from 'lucide-react';
 import { JSX, useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
+
+import { $createMentionNode } from '@/components/editor/nodes/mention-node';
+import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
 
 const PUNCTUATION = '\\.,\\+\\*\\?\\$\\@\\|#{}\\(\\)\\^\\-\\[\\]\\\\/!%\'"~=<>_:;';
 const NAME = '\\b[A-Z][^\\s' + PUNCTUATION + ']';
@@ -504,6 +505,7 @@ function checkForAtSignMentions(text: string, minMatchLength: number): MenuTextM
     let match = AtSignMentionsRegex.exec(text);
 
     match ??= AtSignMentionsRegexAliasRegex.exec(text);
+
     if (match !== null) {
         // The strategy ignores leading whitespace but we need to know it's
         // length to add it to the leadOffset
@@ -582,7 +584,7 @@ export function MentionsPlugin(): JSX.Element | null {
     );
 
     return (
-        <LexicalTypeaheadMenuPlugin<MentionTypeaheadOption>
+        <LexicalTypeaheadMenuPlugin
             onQueryChange={setQueryString}
             onSelectOption={onSelectOption}
             triggerFn={checkForMentionMatch}

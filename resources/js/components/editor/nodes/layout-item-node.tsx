@@ -1,6 +1,6 @@
-import { addClassNamesToElement }                                                  from '@lexical/utils';
+import { addClassNamesToElement } from '@lexical/utils';
 import type { DOMConversionMap, EditorConfig, LexicalNode, SerializedElementNode } from 'lexical';
-import { ElementNode }                                                             from 'lexical';
+import { ElementNode } from 'lexical';
 
 export type SerializedLayoutItemNode = SerializedElementNode;
 
@@ -13,14 +13,6 @@ export class LayoutItemNode extends ElementNode {
         return new LayoutItemNode(node.__key);
     }
 
-    static importDOM(): DOMConversionMap | null {
-        return {};
-    }
-
-    static importJSON(): LayoutItemNode {
-        return $createLayoutItemNode();
-    }
-
     createDOM(config: EditorConfig): HTMLElement {
         const dom = document.createElement('div');
         if (typeof config.theme.layoutItem === 'string') {
@@ -31,6 +23,14 @@ export class LayoutItemNode extends ElementNode {
 
     updateDOM(): boolean {
         return false;
+    }
+
+    static importDOM(): DOMConversionMap | null {
+        return {};
+    }
+
+    static importJSON(): LayoutItemNode {
+        return $createLayoutItemNode();
     }
 
     isShadowRoot(): boolean {

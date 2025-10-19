@@ -1,6 +1,3 @@
-import { docFromHash, docToHash } from '@/components/editor/utils/doc-serialization';
-import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import {
     editorStateFromSerializedDocument,
     SerializedDocument,
@@ -12,17 +9,23 @@ import { SendIcon } from 'lucide-react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
+import { docFromHash, docToHash } from '@/components/editor/utils/doc-serialization';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+
+async function shareDoc(doc: SerializedDocument): Promise<void> {
+    const url = new URL(globalThis.window.location.toString());
+    url.hash = await docToHash(doc);
+    const newUrl = url.toString();
+    globalThis.window.history.replaceState({}, '', newUrl);
+    await globalThis.window.navigator.clipboard.writeText(newUrl);
+}
+
 export function ShareContentPlugin() {
     const [editor] = useLexicalComposerContext();
-    async function shareDoc(doc: SerializedDocument): Promise<void> {
-        const url = new URL(window.location.toString());
-        url.hash = await docToHash(doc);
-        const newUrl = url.toString();
-        window.history.replaceState({}, '', newUrl);
-        await window.navigator.clipboard.writeText(newUrl);
-    }
+
     useEffect(() => {
-        docFromHash(window.location.hash).then((doc) => {
+        docFromHash(globalThis.window.location.hash).then((doc) => {
             if (doc && doc.source === 'editor') {
                 editor.setEditorState(editorStateFromSerializedDocument(editor, doc));
                 editor.dispatchCommand(CLEAR_HISTORY_COMMAND, undefined);
@@ -35,7 +38,7 @@ export function ShareContentPlugin() {
             <TooltipTrigger asChild>
                 <Button
                     type="button"
-                    variant="ghost"
+                    variant={'ghost'}
                     onClick={() =>
                         shareDoc(
                             serializedDocumentFromEditorState(editor.getEditorState(), {
@@ -48,7 +51,7 @@ export function ShareContentPlugin() {
                     }
                     title="Share"
                     aria-label="Share Playground link to current editor state"
-                    size="sm"
+                    size={'sm'}
                     className="p-2"
                 >
                     <SendIcon className="size-4" />

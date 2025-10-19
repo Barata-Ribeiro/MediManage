@@ -1,11 +1,12 @@
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $getSelection, $isRangeSelection, $setSelection, FOCUS_COMMAND } from 'lexical'; /**
+/**
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
  */
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { $getSelection, $isRangeSelection, $setSelection, FOCUS_COMMAND } from 'lexical';
 import { useEffect } from 'react';
 
 const COMMAND_PRIORITY_LOW = 1;
@@ -15,7 +16,7 @@ let lastTabKeyDownTimestamp = 0;
 let hasRegisteredKeyDownListener = false;
 
 function registerKeyTimeStampTracker() {
-    window.addEventListener(
+    globalThis.window.addEventListener(
         'keydown',
         (event: KeyboardEvent) => {
             // Tab

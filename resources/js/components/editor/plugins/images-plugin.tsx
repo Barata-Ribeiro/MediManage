@@ -1,10 +1,3 @@
-import { $createImageNode, $isImageNode, ImageNode, ImagePayload } from '@/components/editor/nodes/image-node';
-import { CAN_USE_DOM } from '@/components/editor/shared/can-use-dom';
-import { Button } from '@/components/ui/button';
-import { DialogFooter } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 /**
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
@@ -34,10 +27,18 @@ import {
 } from 'lexical';
 import { JSX, useEffect, useRef, useState } from 'react';
 
+import { $createImageNode, $isImageNode, ImageNode, ImagePayload } from '@/components/editor/nodes/image-node';
+import { CAN_USE_DOM } from '@/components/editor/shared/can-use-dom';
+import { Button } from '@/components/ui/button';
+import { DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 export type InsertImagePayload = Readonly<ImagePayload>;
 
 const getDOMSelection = (targetWindow: Window | null): Selection | null =>
-    CAN_USE_DOM ? (targetWindow || window).getSelection() : null;
+    CAN_USE_DOM ? (targetWindow || globalThis.window).getSelection() : null;
 
 export const INSERT_IMAGE_COMMAND: LexicalCommand<InsertImagePayload> = createCommand('INSERT_IMAGE_COMMAND');
 
@@ -71,7 +72,7 @@ export function InsertImageUriDialogBody({ onClick }: Readonly<{ onClick: (paylo
             </div>
             <DialogFooter>
                 <Button
-                    type="button"
+                    type="submit"
                     disabled={isDisabled}
                     onClick={() => onClick({ altText, src })}
                     data-test-id="image-modal-confirm-btn"
@@ -127,7 +128,7 @@ export function InsertImageUploadedDialogBody({
                 />
             </div>
             <Button
-                type="button"
+                type="submit"
                 disabled={isDisabled}
                 onClick={() => onClick({ altText, src })}
                 data-test-id="image-modal-file-upload-btn"
@@ -336,8 +337,7 @@ function canDropImage(event: DragEvent): boolean {
         target &&
         target instanceof HTMLElement &&
         !target.closest('code, span.editor-image') &&
-        target.parentElement &&
-        target.parentElement.closest('div.ContentEditable__root')
+        target?.parentElement?.closest('div.ContentEditable__root')
     );
 }
 
@@ -357,7 +357,7 @@ function getDragSelection(event: DragEvent): Range | null | undefined {
         domSelection.collapse(event.rangeParent, event.rangeOffset || 0);
         range = domSelection.getRangeAt(0);
     } else {
-        throw Error(`Cannot get the selection when dragging`);
+        throw new Error(`Cannot get the selection when dragging`);
     }
 
     return range;

@@ -1,5 +1,5 @@
 import type { EditorConfig, LexicalNode, NodeKey, SerializedTextNode, Spread } from 'lexical';
-import { $applyNodeReplacement, TextNode }                                     from 'lexical';
+import { $applyNodeReplacement, TextNode } from 'lexical';
 
 export type SerializedEmojiNode = Spread<
     {
@@ -11,11 +11,6 @@ export type SerializedEmojiNode = Spread<
 export class EmojiNode extends TextNode {
     __className: string;
 
-    constructor(className: string, text: string, key?: NodeKey) {
-        super(text, key);
-        this.__className = className;
-    }
-
     static getType(): string {
         return 'emoji';
     }
@@ -24,8 +19,9 @@ export class EmojiNode extends TextNode {
         return new EmojiNode(node.__className, node.__text, node.__key);
     }
 
-    static importJSON(serializedNode: SerializedEmojiNode): EmojiNode {
-        return $createEmojiNode(serializedNode.className, serializedNode.text).updateFromJSON(serializedNode);
+    constructor(className: string, text: string, key?: NodeKey) {
+        super(text, key);
+        this.__className = className;
     }
 
     createDOM(config: EditorConfig): HTMLElement {
@@ -44,6 +40,10 @@ export class EmojiNode extends TextNode {
         }
         super.updateDOM(prevNode, inner as HTMLElement, config);
         return false;
+    }
+
+    static importJSON(serializedNode: SerializedEmojiNode): EmojiNode {
+        return $createEmojiNode(serializedNode.className, serializedNode.text).updateFromJSON(serializedNode);
     }
 
     exportJSON(): SerializedEmojiNode {

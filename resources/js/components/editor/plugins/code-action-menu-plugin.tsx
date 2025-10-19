@@ -1,10 +1,11 @@
-import { useDebounce } from '@/components/editor/editor-hooks/use-debounce';
-import { CopyButton } from '@/components/editor/editor-ui/code-button';
-import { $isCodeNode, CodeNode, getLanguageFriendlyName, normalizeCodeLang } from '@lexical/code';
+import { $isCodeNode, CodeNode, getLanguageFriendlyName } from '@lexical/code';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $getNearestNodeFromDOMNode, isHTMLElement } from 'lexical';
-import { type JSX, type ReactPortal, useEffect, useRef, useState } from 'react';
+import { JSX, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+
+import { useDebounce } from '@/components/editor/editor-hooks/use-debounce';
+import { CopyButton } from '@/components/editor/editor-ui/code-button';
 
 const CODE_PADDING = 8;
 
@@ -13,15 +14,11 @@ interface Position {
     right: string;
 }
 
-function CodeActionMenuContainer({
-    anchorElem,
-}: Readonly<{
-    anchorElem: HTMLElement;
-}>): JSX.Element {
+function CodeActionMenuContainer({ anchorElem }: Readonly<{ anchorElem: HTMLElement }>): JSX.Element {
     const [editor] = useLexicalComposerContext();
 
     const [lang, setLang] = useState('');
-    const [isShown, setShown] = useState<boolean>(false);
+    const [isShown, setIsShown] = useState<boolean>(false);
     const [shouldListenMouseMove, setShouldListenMouseMove] = useState<boolean>(false);
     const [position, setPosition] = useState<Position>({
         right: '0',
@@ -38,7 +35,7 @@ function CodeActionMenuContainer({
         (event: MouseEvent) => {
             const { codeDOMNode, isOutside } = getMouseInfo(event);
             if (isOutside) {
-                setShown(false);
+                setIsShown(false);
                 return;
             }
 
@@ -64,7 +61,7 @@ function CodeActionMenuContainer({
                 const { y: editorElemY, right: editorElemRight } = anchorElem.getBoundingClientRect();
                 const { y, right } = codeDOMNode.getBoundingClientRect();
                 setLang(_lang);
-                setShown(true);
+                setIsShown(true);
                 setPosition({
                     right: `${editorElemRight - right + CODE_PADDING}px`,
                     top: `${y - editorElemY}px`,
@@ -83,7 +80,7 @@ function CodeActionMenuContainer({
         document.addEventListener('mousemove', debouncedOnMouseMove);
 
         return () => {
-            setShown(false);
+            setIsShown(false);
             debouncedOnMouseMove.cancel();
             document.removeEventListener('mousemove', debouncedOnMouseMove);
         };
@@ -114,8 +111,6 @@ function CodeActionMenuContainer({
             { skipInitialization: false },
         );
     }, [editor]);
-
-    normalizeCodeLang(lang);
 
     const codeFriendlyName = getLanguageFriendlyName(lang);
 
@@ -151,8 +146,10 @@ export function CodeActionMenuPlugin({
     anchorElem = document.body,
 }: {
     anchorElem: HTMLElement | null;
-}): ReactPortal | null {
-    if (!anchorElem) return null;
+}): React.ReactPortal | null {
+    if (!anchorElem) {
+        return null;
+    }
 
     return createPortal(<CodeActionMenuContainer anchorElem={anchorElem} />, anchorElem);
 }

@@ -1,8 +1,3 @@
-import { useToolbarContext } from '@/components/editor/context/toolbar-context';
-import { useUpdateToolbarHandler } from '@/components/editor/editor-hooks/use-update-toolbar';
-import { getSelectedNode } from '@/components/editor/utils/get-selected-node';
-import { Separator } from '@/components/ui/separator';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { $isLinkNode } from '@lexical/link';
 import { $findMatchingParent } from '@lexical/utils';
 import {
@@ -23,6 +18,12 @@ import {
     IndentIncreaseIcon,
 } from 'lucide-react';
 import { useState } from 'react';
+
+import { useToolbarContext } from '@/components/editor/context/toolbar-context';
+import { useUpdateToolbarHandler } from '@/components/editor/editor-hooks/use-update-toolbar';
+import { getSelectedNode } from '@/components/editor/utils/get-selected-node';
+import { Separator } from '@/components/ui/separator';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
 const ELEMENT_FORMAT_OPTIONS: {
     [key in Exclude<ElementFormatType, 'start' | 'end' | ''>]: {
@@ -53,7 +54,7 @@ const ELEMENT_FORMAT_OPTIONS: {
     },
 } as const;
 
-export function ElementFormatToolbarPlugin() {
+export function ElementFormatToolbarPlugin({ separator = true }: Readonly<{ separator?: boolean }>) {
     const { activeEditor } = useToolbarContext();
     const [elementFormat, setElementFormat] = useState<ElementFormatType>('left');
 
@@ -70,13 +71,18 @@ export function ElementFormatToolbarPlugin() {
                     (parentNode) => $isElementNode(parentNode) && !parentNode.isInline(),
                 );
             }
-            setElementFormat(
-                $isElementNode(matchingParent)
-                    ? matchingParent.getFormatType()
-                    : $isElementNode(node)
-                      ? node.getFormatType()
-                      : parent?.getFormatType() || 'left',
-            );
+
+            // Determine format type without nested ternary
+            let formatType: ElementFormatType = 'left';
+            if ($isElementNode(matchingParent)) {
+                formatType = matchingParent.getFormatType();
+            } else if ($isElementNode(node)) {
+                formatType = node.getFormatType();
+            } else if (parent && typeof parent.getFormatType === 'function') {
+                formatType = parent.getFormatType();
+            }
+
+            setElementFormat(formatType);
         }
     };
 
@@ -111,7 +117,7 @@ export function ElementFormatToolbarPlugin() {
                     </ToggleGroupItem>
                 ))}
             </ToggleGroup>
-            <Separator orientation="vertical" className="!h-7" />
+            {separator && <Separator orientation="vertical" className="!h-7" />}
             {/* Indentation toggles */}
             <ToggleGroup
                 type="single"

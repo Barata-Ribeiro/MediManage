@@ -1,11 +1,3 @@
-import {
-    $createLayoutContainerNode,
-    $isLayoutContainerNode,
-    LayoutContainerNode,
-} from '@/components/editor/nodes/layout-container-node';
-import { $createLayoutItemNode, $isLayoutItemNode, LayoutItemNode } from '@/components/editor/nodes/layout-item-node';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 /**
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
@@ -31,6 +23,15 @@ import {
     LexicalEditor,
 } from 'lexical';
 import { JSX, useEffect, useState } from 'react';
+
+import {
+    $createLayoutContainerNode,
+    $isLayoutContainerNode,
+    LayoutContainerNode,
+} from '@/components/editor/nodes/layout-container-node';
+import { $createLayoutItemNode, $isLayoutItemNode, LayoutItemNode } from '@/components/editor/nodes/layout-item-node';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const LAYOUTS = [
     { label: '2 columns (equal width)', value: '1fr 1fr' },

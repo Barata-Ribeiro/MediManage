@@ -30,7 +30,7 @@ export function ToolbarContext({
     showModal: (title: string, showModal: (onClose: () => void) => JSX.Element) => void;
     children: React.ReactNode;
 }>) {
-    const memoizedValue = useMemo(
+    const contextValue = useMemo(
         () => ({
             activeEditor,
             $updateToolbar,
@@ -41,7 +41,7 @@ export function ToolbarContext({
         [activeEditor, $updateToolbar, blockType, setBlockType, showModal],
     );
 
-    return <Context.Provider value={memoizedValue}>{children}</Context.Provider>;
+    return <Context.Provider value={contextValue}>{children}</Context.Provider>;
 }
 
 export function useToolbarContext() {

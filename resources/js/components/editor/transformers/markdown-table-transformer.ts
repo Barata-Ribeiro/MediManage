@@ -1,7 +1,3 @@
-import { EMOJI } from '@/components/editor/transformers/markdown-emoji-transformer';
-import { HR } from '@/components/editor/transformers/markdown-hr-transformer';
-import { IMAGE } from '@/components/editor/transformers/markdown-image-transformer';
-import { TWEET } from '@/components/editor/transformers/markdown-tweet-transformer';
 import {
     $convertFromMarkdownString,
     $convertToMarkdownString,
@@ -24,7 +20,13 @@ import {
     TableNode,
     TableRowNode,
 } from '@lexical/table';
-import { $isParagraphNode, $isTextNode, LexicalNode } from 'lexical'; // Very primitive table setup
+import { $isParagraphNode, $isTextNode, LexicalNode } from 'lexical';
+
+// import { EMOJI } from "@/registry/new-york-v4/editor/transformers/markdown-emoji-transformer"
+import { HR } from '@/components/editor/transformers/markdown-hr-transformer';
+import { IMAGE } from '@/components/editor/transformers/markdown-image-transformer';
+
+// import { TWEET } from "@/registry/new-york-v4/editor/transformers/markdown-tweet-transformer"
 
 // Very primitive table setup
 const TABLE_ROW_REG_EXP = /^(?:\|)(.+)(?:\|)\s?$/;
@@ -33,8 +35,8 @@ const TABLE_ROW_DIVIDER_REG_EXP = /^(\| ?:?-*:? ?)+\|\s?$/;
 const OTHER_MARKDOWN_TRANSFORMERS = [
     HR,
     IMAGE,
-    EMOJI,
-    TWEET,
+    // EMOJI,
+    // TWEET,
     CHECK_LIST,
     ...ELEMENT_TRANSFORMERS,
     ...MULTILINE_ELEMENT_TRANSFORMERS,
@@ -62,7 +64,7 @@ export const TABLE: ElementTransformer = {
                 // It's TableCellNode so it's just to make flow happy
                 if ($isTableCellNode(cell)) {
                     rowOutput.push(
-                        $convertToMarkdownString(OTHER_MARKDOWN_TRANSFORMERS, cell).replaceAll(/\n/g, String.raw`\n`),
+                        $convertToMarkdownString(OTHER_MARKDOWN_TRANSFORMERS, cell).replaceAll(/\n/g, '\\n'),
                     );
                     if (cell.__headerState === TableCellHeaderStates.ROW) {
                         isHeaderRow = true;
@@ -72,7 +74,7 @@ export const TABLE: ElementTransformer = {
 
             output.push(`| ${rowOutput.join(' | ')} |`);
             if (isHeaderRow) {
-                output.push(`| ${rowOutput.map(() => '---').join(' | ')} |`);
+                output.push(`| ${rowOutput.map((_) => '---').join(' | ')} |`);
             }
         }
 
@@ -89,13 +91,15 @@ export const TABLE: ElementTransformer = {
 
             const rows = table.getChildren();
             const lastRow = rows.at(-1);
-
-            if (!lastRow || !$isTableRowNode(lastRow)) return;
+            if (!lastRow || !$isTableRowNode(lastRow)) {
+                return;
+            }
 
             // Add header state to row cells
             for (const cell of lastRow.getChildren()) {
-                if (!$isTableCellNode(cell)) continue;
-
+                if (!$isTableCellNode(cell)) {
+                    continue;
+                }
                 cell.setHeaderStyles(TableCellHeaderStates.ROW, TableCellHeaderStates.ROW);
             }
 
@@ -179,7 +183,9 @@ const $createTableCell = (textContent: string): TableCellNode => {
 };
 
 const mapToTableCells = (textContent: string): Array<TableCellNode> | null => {
-    const match = new RegExp(TABLE_ROW_REG_EXP).exec(textContent);
-    if (!match?.[1]) return null;
+    const match = TABLE_ROW_REG_EXP.exec(textContent);
+    if (!match?.[1]) {
+        return null;
+    }
     return match[1].split('|').map((text) => $createTableCell(text));
 };

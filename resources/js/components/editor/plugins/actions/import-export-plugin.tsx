@@ -1,8 +1,9 @@
-import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { exportFile, importFile } from '@lexical/file';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { DownloadIcon, UploadIcon } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function ImportExportPlugin() {
     const [editor] = useLexicalComposerContext();
@@ -12,11 +13,11 @@ export function ImportExportPlugin() {
                 <TooltipTrigger asChild>
                     <Button
                         type="button"
-                        variant="ghost"
+                        variant={'ghost'}
                         onClick={() => importFile(editor)}
                         title="Import"
                         aria-label="Import editor state from JSON"
-                        size="sm"
+                        size={'sm'}
                         className="p-2"
                     >
                         <UploadIcon className="size-4" />
@@ -29,7 +30,7 @@ export function ImportExportPlugin() {
                 <TooltipTrigger asChild>
                     <Button
                         type="button"
-                        variant="ghost"
+                        variant={'ghost'}
                         onClick={() =>
                             exportFile(editor, {
                                 fileName: `Playground ${new Date().toISOString()}`,
@@ -38,7 +39,7 @@ export function ImportExportPlugin() {
                         }
                         title="Export"
                         aria-label="Export editor state to JSON"
-                        size="sm"
+                        size={'sm'}
                         className="p-2"
                     >
                         <DownloadIcon className="size-4" />

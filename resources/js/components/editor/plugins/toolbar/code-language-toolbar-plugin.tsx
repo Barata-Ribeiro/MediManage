@@ -1,6 +1,3 @@
-import { useToolbarContext } from '@/components/editor/context/toolbar-context';
-import { useUpdateToolbarHandler } from '@/components/editor/editor-hooks/use-update-toolbar';
-import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import {
     $isCodeNode,
     CODE_LANGUAGE_FRIENDLY_NAME_MAP,
@@ -11,6 +8,10 @@ import { $isListNode } from '@lexical/list';
 import { $findMatchingParent } from '@lexical/utils';
 import { $getNodeByKey, $isRangeSelection, $isRootOrShadowRoot, BaseSelection } from 'lexical';
 import { useCallback, useState } from 'react';
+
+import { useToolbarContext } from '@/components/editor/context/toolbar-context';
+import { useUpdateToolbarHandler } from '@/components/editor/editor-hooks/use-update-toolbar';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 
 function getCodeLanguageOptions(): [string, string][] {
     const options: [string, string][] = [];
@@ -76,7 +77,7 @@ export function CodeLanguageToolbarPlugin() {
     return (
         <Select>
             <SelectTrigger className="!h-8 w-min gap-1">
-                <span>{getLanguageFriendlyName(codeLanguage)}</span>
+                <span>{getLanguageFriendlyName(codeLanguage) || 'Select Language'}</span>
             </SelectTrigger>
             <SelectContent>
                 {CODE_LANGUAGE_OPTIONS.map(([value, label]) => (

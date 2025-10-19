@@ -1,50 +1,57 @@
-import { useToolbarContext } from '@/components/editor/context/toolbar-context';
-import { useUpdateToolbarHandler } from '@/components/editor/editor-hooks/use-update-toolbar';
-import { Toggle } from '@/components/ui/toggle';
 import { $isTableSelection } from '@lexical/table';
 import { $isRangeSelection, BaseSelection, FORMAT_TEXT_COMMAND, TextFormatType } from 'lexical';
-import { BoldIcon, CodeIcon, ItalicIcon, StrikethroughIcon, UnderlineIcon } from 'lucide-react';
-import { useState } from 'react';
+import { BoldIcon, ItalicIcon, StrikethroughIcon, UnderlineIcon } from 'lucide-react';
+import { useCallback, useState } from 'react';
 
-const Icons: Partial<Record<TextFormatType, React.ElementType>> = {
-    bold: BoldIcon,
-    italic: ItalicIcon,
-    underline: UnderlineIcon,
-    strikethrough: StrikethroughIcon,
-    code: CodeIcon,
-} as const;
+import { useToolbarContext } from '@/components/editor/context/toolbar-context';
+import { useUpdateToolbarHandler } from '@/components/editor/editor-hooks/use-update-toolbar';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
-export function FontFormatToolbarPlugin({
-    format,
-}: Readonly<{
-    format: Omit<TextFormatType, 'highlight' | 'subscript' | 'superscript'>;
-}>) {
+const FORMATS = [
+    { format: 'bold', icon: BoldIcon, label: 'Bold' },
+    { format: 'italic', icon: ItalicIcon, label: 'Italic' },
+    { format: 'underline', icon: UnderlineIcon, label: 'Underline' },
+    { format: 'strikethrough', icon: StrikethroughIcon, label: 'Strikethrough' },
+] as const;
+
+export function FontFormatToolbarPlugin() {
     const { activeEditor } = useToolbarContext();
-    const [isSelected, setIsSelected] = useState<boolean>(false);
+    const [activeFormats, setActiveFormats] = useState<string[]>([]);
 
-    const $updateToolbar = (selection: BaseSelection) => {
+    const $updateToolbar = useCallback((selection: BaseSelection) => {
         if ($isRangeSelection(selection) || $isTableSelection(selection)) {
-            setIsSelected(selection.hasFormat(format as TextFormatType));
+            const formats: string[] = [];
+            for (const { format } of FORMATS) {
+                if (selection.hasFormat(format as TextFormatType)) {
+                    formats.push(format);
+                }
+            }
+            setActiveFormats((prev) => {
+                // Only update if formats have changed
+                if (prev.length !== formats.length || !formats.every((f) => prev.includes(f))) {
+                    return formats;
+                }
+                return prev;
+            });
         }
-    };
+    }, []);
 
     useUpdateToolbarHandler($updateToolbar);
 
-    const Icon = Icons[format as TextFormatType] as React.ElementType;
-
     return (
-        <Toggle
-            aria-label="Toggle bold"
-            variant="outline"
-            size="sm"
-            defaultPressed={isSelected}
-            pressed={isSelected}
-            onPressedChange={setIsSelected}
-            onClick={() => {
-                activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, format as TextFormatType);
-            }}
-        >
-            <Icon className="size-4" />
-        </Toggle>
+        <ToggleGroup type="multiple" value={activeFormats} onValueChange={setActiveFormats} variant="outline" size="sm">
+            {FORMATS.map(({ format, icon: Icon, label }) => (
+                <ToggleGroupItem
+                    key={format}
+                    value={format}
+                    aria-label={label}
+                    onClick={() => {
+                        activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, format as TextFormatType);
+                    }}
+                >
+                    <Icon className="h-4 w-4" />
+                </ToggleGroupItem>
+            ))}
+        </ToggleGroup>
     );
 }

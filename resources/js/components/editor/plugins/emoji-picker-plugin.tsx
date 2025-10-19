@@ -1,12 +1,3 @@
-import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import {
-    LexicalTypeaheadMenuPlugin,
-    MenuOption,
-    useBasicTypeaheadTriggerMatch,
-} from '@lexical/react/LexicalTypeaheadMenuPlugin';
-import { $createTextNode, $getSelection, $isRangeSelection, TextNode } from 'lexical';
-
 /**
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
@@ -14,9 +5,17 @@ import { $createTextNode, $getSelection, $isRangeSelection, TextNode } from 'lex
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { useCallback, useMemo, useState } from 'react';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import {
+    LexicalTypeaheadMenuPlugin,
+    MenuOption,
+    useBasicTypeaheadTriggerMatch,
+} from '@lexical/react/LexicalTypeaheadMenuPlugin';
+import { $createTextNode, $getSelection, $isRangeSelection, TextNode } from 'lexical';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-import emojiList from '../utils/emoji-list';
+
+import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
 
 class EmojiOption extends MenuOption {
     title: string;
@@ -53,19 +52,23 @@ const MAX_EMOJI_SUGGESTION_COUNT = 10;
 export function EmojiPickerPlugin() {
     const [editor] = useLexicalComposerContext();
     const [queryString, setQueryString] = useState<string | null>(null);
-    const [emojis] = useState<Array<Emoji>>(emojiList);
-    const [, setIsOpen] = useState(false);
+    const [emojis, setEmojis] = useState<Array<Emoji>>([]);
+    const [isOpen, setIsOpen] = useState(false);
+
+    useEffect(() => {
+        import('../utils/emoji-list').then((file) => setEmojis(file.default));
+    }, []);
 
     const emojiOptions = useMemo(
         () =>
-            emojis != null
-                ? emojis.map(
+            emojis == null
+                ? []
+                : emojis.map(
                       ({ emoji, aliases, tags }) =>
                           new EmojiOption(aliases[0], emoji, {
                               keywords: [...aliases, ...tags],
                           }),
-                  )
-                : [],
+                  ),
         [emojis],
     );
 
@@ -74,13 +77,23 @@ export function EmojiPickerPlugin() {
     });
 
     const options: Array<EmojiOption> = useMemo(() => {
+        if (queryString == null) {
+            return emojiOptions.slice(0, MAX_EMOJI_SUGGESTION_COUNT);
+        }
+
+        const re = new RegExp(queryString, 'i');
+
         return emojiOptions
             .filter((option: EmojiOption) => {
-                return queryString != null
-                    ? new RegExp(queryString, 'gi').exec(option.title) || option.keywords != null
-                        ? option.keywords.some((keyword: string) => new RegExp(queryString, 'gi').exec(keyword))
-                        : false
-                    : emojiOptions;
+                if (re.test(option.title)) {
+                    return true;
+                }
+
+                if (option.keywords == null) {
+                    return false;
+                }
+
+                return option.keywords.some((keyword: string) => re.test(keyword));
             })
             .slice(0, MAX_EMOJI_SUGGESTION_COUNT);
     }, [emojiOptions, queryString]);
@@ -107,7 +120,7 @@ export function EmojiPickerPlugin() {
     );
 
     return (
-        <LexicalTypeaheadMenuPlugin<EmojiOption>
+        <LexicalTypeaheadMenuPlugin
             onQueryChange={setQueryString}
             onSelectOption={onSelectOption}
             triggerFn={checkForTriggerMatch}
@@ -126,16 +139,20 @@ export function EmojiPickerPlugin() {
                                   onKeyDown={(e) => {
                                       if (e.key === 'ArrowUp') {
                                           e.preventDefault();
-                                          setHighlightedIndex(
-                                              selectedIndex !== null
-                                                  ? (selectedIndex - 1 + options.length) % options.length
-                                                  : options.length - 1,
-                                          );
+                                          if (selectedIndex === null) {
+                                              setHighlightedIndex(options.length - 1);
+                                          } else {
+                                              setHighlightedIndex(
+                                                  (selectedIndex - 1 + options.length) % options.length,
+                                              );
+                                          }
                                       } else if (e.key === 'ArrowDown') {
                                           e.preventDefault();
-                                          setHighlightedIndex(
-                                              selectedIndex !== null ? (selectedIndex + 1) % options.length : 0,
-                                          );
+                                          if (selectedIndex === null) {
+                                              setHighlightedIndex(0);
+                                          } else {
+                                              setHighlightedIndex((selectedIndex + 1) % options.length);
+                                          }
                                       }
                                   }}
                               >

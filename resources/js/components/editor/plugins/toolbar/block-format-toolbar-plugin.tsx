@@ -1,11 +1,12 @@
-import { useToolbarContext } from '@/components/editor/context/toolbar-context';
-import { useUpdateToolbarHandler } from '@/components/editor/editor-hooks/use-update-toolbar';
-import { blockTypeToBlockName } from '@/components/editor/plugins/toolbar/block-format/block-format-data';
-import { Select, SelectContent, SelectGroup, SelectTrigger } from '@/components/ui/select';
 import { $isListNode, ListNode } from '@lexical/list';
 import { $isHeadingNode } from '@lexical/rich-text';
 import { $findMatchingParent, $getNearestNodeOfType } from '@lexical/utils';
 import { $isRangeSelection, $isRootOrShadowRoot, BaseSelection } from 'lexical';
+
+import { useToolbarContext } from '@/components/editor/context/toolbar-context';
+import { useUpdateToolbarHandler } from '@/components/editor/editor-hooks/use-update-toolbar';
+import { blockTypeToBlockName } from '@/components/editor/plugins/toolbar/block-format/block-format-data';
+import { Select, SelectContent, SelectGroup, SelectTrigger } from '@/components/ui/select';
 
 export function BlockFormatDropDown({ children }: Readonly<{ children: React.ReactNode }>) {
     const { activeEditor, blockType, setBlockType } = useToolbarContext();
@@ -27,7 +28,6 @@ export function BlockFormatDropDown({ children }: Readonly<{ children: React.Rea
             const elementDOM = activeEditor.getElementByKey(elementKey);
 
             if (elementDOM !== null) {
-                // setSelectedElementKey(elementKey);
                 if ($isListNode(element)) {
                     const parentList = $getNearestNodeOfType<ListNode>(anchorNode, ListNode);
                     const type = parentList ? parentList.getListType() : element.getListType();

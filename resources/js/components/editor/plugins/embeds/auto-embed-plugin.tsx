@@ -1,11 +1,3 @@
-import { useEditorModal } from '@/components/editor/editor-hooks/use-modal';
-import { INSERT_TWEET_COMMAND } from '@/components/editor/plugins/embeds/twitter-plugin';
-import { INSERT_YOUTUBE_COMMAND } from '@/components/editor/plugins/embeds/youtube-plugin';
-import { Button } from '@/components/ui/button';
-import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
-import { DialogFooter } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
     AutoEmbedOption,
     EmbedConfig,
@@ -18,6 +10,15 @@ import { PopoverPortal } from '@radix-ui/react-popover';
 import type { LexicalEditor } from 'lexical';
 import { TwitterIcon, YoutubeIcon } from 'lucide-react';
 import { JSX, useMemo, useState } from 'react';
+
+import { useEditorModal } from '@/components/editor/editor-hooks/use-modal';
+import { INSERT_TWEET_COMMAND } from '@/components/editor/plugins/embeds/twitter-plugin';
+import { INSERT_YOUTUBE_COMMAND } from '@/components/editor/plugins/embeds/youtube-plugin';
+import { Button } from '@/components/ui/button';
+import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
+import { DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 export interface CustomEmbedConfig extends EmbedConfig {
     // Human readable name of the embeded content e.g. Tweet or Google Map.
@@ -54,7 +55,10 @@ export const YoutubeEmbedConfig: CustomEmbedConfig = {
     parseUrl: async (url: string) => {
         const match = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/.exec(url);
 
-        const id = match ? (match?.[2].length === 11 ? match[2] : null) : null;
+        let id: string | null = null;
+        if (match?.[2]?.length === 11) {
+            id = match[2];
+        }
 
         if (id != null) {
             return {
@@ -106,10 +110,10 @@ export const TwitterEmbedConfig: CustomEmbedConfig = {
 export const EmbedConfigs = [TwitterEmbedConfig, YoutubeEmbedConfig];
 
 const debounce = (callback: (text: string) => void, delay: number) => {
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: number;
     return (text: string) => {
-        globalThis.clearTimeout(timeoutId);
-        timeoutId = globalThis.setTimeout(() => {
+        globalThis.window.clearTimeout(timeoutId);
+        timeoutId = globalThis.window.setTimeout(() => {
             callback(text);
         }, delay);
     };
@@ -204,7 +208,10 @@ export function AutoEmbedPlugin(): JSX.Element {
                 embedConfigs={EmbedConfigs}
                 onOpenEmbedModalForConfig={openEmbedModal}
                 getMenuOptions={getMenuOptions}
-                menuRenderFn={(anchorElementRef, { options, selectOptionAndCleanUp }) => {
+                menuRenderFn={(
+                    anchorElementRef,
+                    { selectedIndex, options, selectOptionAndCleanUp, setHighlightedIndex },
+                ) => {
                     return anchorElementRef.current ? (
                         <Popover open={true}>
                             <PopoverPortal container={anchorElementRef.current}>
@@ -214,7 +221,7 @@ export function AutoEmbedPlugin(): JSX.Element {
                                         <Command>
                                             <CommandList>
                                                 <CommandGroup>
-                                                    {options.map((option) => (
+                                                    {options.map((option, i: number) => (
                                                         <CommandItem
                                                             key={option.key}
                                                             value={option.title}

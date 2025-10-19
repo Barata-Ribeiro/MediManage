@@ -1,5 +1,6 @@
 import {
     $applyNodeReplacement,
+    TextNode,
     type DOMConversionMap,
     type DOMConversionOutput,
     type DOMExportOutput,
@@ -8,7 +9,6 @@ import {
     type NodeKey,
     type SerializedTextNode,
     type Spread,
-    TextNode
 } from 'lexical';
 
 export type SerializedMentionNode = Spread<
@@ -35,11 +35,6 @@ const mentionStyle = 'background-color: rgba(24, 119, 232, 0.2)';
 export class MentionNode extends TextNode {
     __mention: string;
 
-    constructor(mentionName: string, text?: string, key?: NodeKey) {
-        super(text ?? mentionName, key);
-        this.__mention = mentionName;
-    }
-
     static getType(): string {
         return 'mention';
     }
@@ -47,7 +42,6 @@ export class MentionNode extends TextNode {
     static clone(node: MentionNode): MentionNode {
         return new MentionNode(node.__mention, node.__text, node.__key);
     }
-
     static importJSON(serializedNode: SerializedMentionNode): MentionNode {
         const node = $createMentionNode(serializedNode.mentionName);
         node.setTextContent(serializedNode.text);
@@ -58,18 +52,9 @@ export class MentionNode extends TextNode {
         return node;
     }
 
-    static importDOM(): DOMConversionMap | null {
-        return {
-            span: (domNode: HTMLElement) => {
-                if (!domNode.hasAttribute('data-lexical-mention')) {
-                    return null;
-                }
-                return {
-                    conversion: $convertMentionElement,
-                    priority: 1,
-                };
-            },
-        };
+    constructor(mentionName: string, text?: string, key?: NodeKey) {
+        super(text ?? mentionName, key);
+        this.__mention = mentionName;
     }
 
     exportJSON(): SerializedMentionNode {
@@ -90,9 +75,23 @@ export class MentionNode extends TextNode {
 
     exportDOM(): DOMExportOutput {
         const element = document.createElement('span');
-        element.setAttribute('data-lexical-mention', 'true');
+        element.dataset.lexicalMention = 'true';
         element.textContent = this.__text;
         return { element };
+    }
+
+    static importDOM(): DOMConversionMap | null {
+        return {
+            span: (domNode: HTMLElement) => {
+                if (!domNode.dataset.lexicalMention) {
+                    return null;
+                }
+                return {
+                    conversion: $convertMentionElement,
+                    priority: 1,
+                };
+            },
+        };
     }
 
     isTextEntity(): true {

@@ -1,8 +1,9 @@
-import { ToolbarContext }                                      from '@/components/editor/context/toolbar-context';
-import { useEditorModal }                                      from '@/components/editor/editor-hooks/use-modal';
-import { useLexicalComposerContext }                           from '@lexical/react/LexicalComposerContext';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { COMMAND_PRIORITY_CRITICAL, SELECTION_CHANGE_COMMAND } from 'lexical';
-import { useEffect, useState }                                 from 'react';
+import { useEffect, useState } from 'react';
+
+import { ToolbarContext } from '@/components/editor/context/toolbar-context';
+import { useEditorModal } from '@/components/editor/editor-hooks/use-modal';
 
 export function ToolbarPlugin({ children }: Readonly<{ children: (props: { blockType: string }) => React.ReactNode }>) {
     const [editor] = useLexicalComposerContext();
@@ -23,7 +24,7 @@ export function ToolbarPlugin({ children }: Readonly<{ children: (props: { block
             },
             COMMAND_PRIORITY_CRITICAL,
         );
-    }, [editor]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [editor]);
 
     return (
         <ToolbarContext

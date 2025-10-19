@@ -5,11 +5,11 @@ import { useEffect, useState } from 'react';
 let textEncoderInstance: null | TextEncoder = null;
 
 function textEncoder(): null | TextEncoder {
-    if (window.TextEncoder === undefined) {
+    if (globalThis.TextEncoder === undefined) {
         return null;
     }
 
-    textEncoderInstance ??= new window.TextEncoder();
+    textEncoderInstance ??= new globalThis.TextEncoder();
 
     return textEncoderInstance;
 }

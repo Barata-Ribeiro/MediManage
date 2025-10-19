@@ -1,8 +1,9 @@
+import * as React from 'react';
+import { HexColorPicker } from 'react-colorful';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import * as React from 'react';
-import { HexColorPicker } from 'react-colorful';
 
 type Props = {
     disabled?: boolean;
@@ -21,7 +22,7 @@ export default function ColorPicker({ disabled = false, color, onChange, icon, .
                     {/* <ChevronDownIcon className='size-4'/> */}
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
+            <PopoverContent className="w-full space-y-2">
                 <HexColorPicker color={color} onChange={(color) => onChange?.(color, false)} />
                 <Input
                     maxLength={7}

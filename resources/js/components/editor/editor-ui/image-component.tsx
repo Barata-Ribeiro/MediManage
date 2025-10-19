@@ -1,6 +1,3 @@
-import { ContentEditable } from '@/components/editor/editor-ui/content-editable';
-import ImageResizer from '@/components/editor/editor-ui/image-resizer';
-import { $isImageNode } from '@/components/editor/nodes/image-node';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
@@ -31,6 +28,11 @@ import {
     TextNode,
 } from 'lexical';
 import { JSX, Suspense, useCallback, useEffect, useRef, useState } from 'react';
+
+import { ContentEditable } from '@/components/editor/editor-ui/content-editable';
+import { ImageResizer } from '@/components/editor/editor-ui/image-resizer';
+import { $isImageNode } from '@/components/editor/nodes/image-node';
+import { cn } from '@/lib/utils';
 
 const imageCache = new Set();
 
@@ -92,13 +94,9 @@ function LazyImage({
 function BrokenImage(): JSX.Element {
     return (
         <img
-            src={''}
-            style={{
-                height: 200,
-                opacity: 0.2,
-                width: 200,
-            }}
-            alt="Broken"
+            src=""
+            alt="It seems the element could not be loaded"
+            style={{ height: 200, opacity: 0.2, width: 200 }}
             draggable="false"
         />
     );
@@ -141,11 +139,13 @@ export default function ImageComponent({
         (payload: KeyboardEvent) => {
             const deleteSelection = $getSelection();
             if (isSelected && $isNodeSelection(deleteSelection)) {
-                payload.preventDefault();
-
+                const event: KeyboardEvent = payload;
+                event.preventDefault();
                 editor.update(() => {
                     for (const node of deleteSelection.getNodes()) {
-                        if ($isImageNode(node)) node.remove();
+                        if ($isImageNode(node)) {
+                            node.remove();
+                        }
                     }
                 });
             }
@@ -256,8 +256,6 @@ export default function ImageComponent({
                 DRAGSTART_COMMAND,
                 (event) => {
                     if (event.target === imageRef.current) {
-                        // TODO This is just a temporary workaround for FF to behave like other browsers.
-                        // Ideally, this handles drag & drop too (and all browsers).
                         event.preventDefault();
                         return true;
                     }
@@ -321,6 +319,9 @@ export default function ImageComponent({
 
     const draggable = isSelected && $isNodeSelection(selection) && !isResizing;
     const isFocused = (isSelected || isResizing) && isEditable;
+
+    const draggableCursorClass = $isNodeSelection(selection) ? 'draggable cursor-grab active:cursor-grabbing' : null;
+
     return (
         <Suspense fallback={null}>
             <>
@@ -329,11 +330,11 @@ export default function ImageComponent({
                         <BrokenImage />
                     ) : (
                         <LazyImage
-                            className={`max-w-full cursor-default ${
-                                isFocused
-                                    ? `${$isNodeSelection(selection) ? 'draggable cursor-grab active:cursor-grabbing' : ''} focused ring-2 ring-primary ring-offset-2`
-                                    : null
-                            }`}
+                            className={cn(
+                                'max-w-full cursor-default',
+                                isFocused && draggableCursorClass,
+                                isFocused && 'focused ring-2 ring-primary ring-offset-2',
+                            )}
                             src={src}
                             altText={altText}
                             imageRef={imageRef}

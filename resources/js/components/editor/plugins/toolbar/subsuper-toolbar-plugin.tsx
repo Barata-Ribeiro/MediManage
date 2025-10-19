@@ -1,10 +1,11 @@
-import { useToolbarContext } from '@/components/editor/context/toolbar-context';
-import { useUpdateToolbarHandler } from '@/components/editor/editor-hooks/use-update-toolbar';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { $isTableSelection } from '@lexical/table';
 import { $isRangeSelection, BaseSelection, FORMAT_TEXT_COMMAND } from 'lexical';
 import { SubscriptIcon, SuperscriptIcon } from 'lucide-react';
 import { useState } from 'react';
+
+import { useToolbarContext } from '@/components/editor/context/toolbar-context';
+import { useUpdateToolbarHandler } from '@/components/editor/editor-hooks/use-update-toolbar';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
 export function SubSuperToolbarPlugin() {
     const { activeEditor } = useToolbarContext();
@@ -13,15 +14,24 @@ export function SubSuperToolbarPlugin() {
 
     const $updateToolbar = (selection: BaseSelection) => {
         if ($isRangeSelection(selection) || $isTableSelection(selection)) {
+            // @ts-ignore
             setIsSubscript(selection.hasFormat('subscript'));
+            // @ts-ignore
             setIsSuperscript(selection.hasFormat('superscript'));
         }
     };
 
     useUpdateToolbarHandler($updateToolbar);
 
+    let defaultValue = '';
+    if (isSubscript) {
+        defaultValue = 'subscript';
+    } else if (isSuperscript) {
+        defaultValue = 'superscript';
+    }
+
     return (
-        <ToggleGroup type="single" defaultValue={isSubscript ? 'subscript' : isSuperscript ? 'superscript' : ''}>
+        <ToggleGroup type="single" defaultValue={defaultValue}>
             <ToggleGroupItem
                 value="subscript"
                 size="sm"
@@ -31,7 +41,7 @@ export function SubSuperToolbarPlugin() {
                 }}
                 variant={'outline'}
             >
-                <SubscriptIcon className="size-4" />
+                <SubscriptIcon className="h-4 w-4" />
             </ToggleGroupItem>
             <ToggleGroupItem
                 value="superscript"
@@ -42,7 +52,7 @@ export function SubSuperToolbarPlugin() {
                 }}
                 variant={'outline'}
             >
-                <SuperscriptIcon className="size-4" />
+                <SuperscriptIcon className="h-4 w-4" />
             </ToggleGroupItem>
         </ToggleGroup>
     );

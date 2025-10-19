@@ -1,4 +1,3 @@
-import { useReport } from '@/components/editor/editor-hooks/use-report';
 /**
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
@@ -7,6 +6,8 @@ import { useReport } from '@/components/editor/editor-hooks/use-report';
  *
  */
 import { JSX, useEffect } from 'react';
+
+import { useReport } from '@/components/editor/editor-hooks/use-report';
 
 const validInputTypes = new Set([
     'insertText',
@@ -95,18 +96,18 @@ export function TypingPerfPlugin(): JSX.Element | null {
             invalidatingEvent = true;
         };
 
-        window.addEventListener('keydown', keyDownHandler, true);
-        window.addEventListener('selectionchange', measureEventEnd, true);
-        window.addEventListener('beforeinput', beforeInputHandler, true);
-        window.addEventListener('paste', pasteHandler, true);
-        window.addEventListener('cut', cutHandler, true);
+        globalThis.window.addEventListener('keydown', keyDownHandler, true);
+        globalThis.window.addEventListener('selectionchange', measureEventEnd, true);
+        globalThis.window.addEventListener('beforeinput', beforeInputHandler, true);
+        globalThis.window.addEventListener('paste', pasteHandler, true);
+        globalThis.window.addEventListener('cut', cutHandler, true);
 
         return () => {
-            window.removeEventListener('keydown', keyDownHandler, true);
-            window.removeEventListener('selectionchange', measureEventEnd, true);
-            window.removeEventListener('beforeinput', beforeInputHandler, true);
-            window.removeEventListener('paste', pasteHandler, true);
-            window.removeEventListener('cut', cutHandler, true);
+            globalThis.window.removeEventListener('keydown', keyDownHandler, true);
+            globalThis.window.removeEventListener('selectionchange', measureEventEnd, true);
+            globalThis.window.removeEventListener('beforeinput', beforeInputHandler, true);
+            globalThis.window.removeEventListener('paste', pasteHandler, true);
+            globalThis.window.removeEventListener('cut', cutHandler, true);
         };
     }, [report]);
 

@@ -12,8 +12,8 @@ import {
     $isRangeSelection,
     COPY_COMMAND,
     CUT_COMMAND,
-    type LexicalNode,
     PASTE_COMMAND,
+    type LexicalNode,
 } from 'lexical';
 import { Clipboard, ClipboardType, Copy, Link2Off, Scissors, Trash2 } from 'lucide-react';
 import type { JSX } from 'react';
@@ -30,7 +30,7 @@ export function ContextMenuPlugin(): JSX.Element {
                 },
                 $showOn: (node: LexicalNode) => $isLinkNode(node.getParent()),
                 disabled: false,
-                icon: <Link2Off className="size-4" />,
+                icon: <Link2Off className="h-4 w-4" />,
             }),
             new NodeContextMenuSeparator({
                 $showOn: (node: LexicalNode) => $isLinkNode(node.getParent()),
@@ -40,18 +40,18 @@ export function ContextMenuPlugin(): JSX.Element {
                     editor.dispatchCommand(CUT_COMMAND, null);
                 },
                 disabled: false,
-                icon: <Scissors className="size-4" />,
+                icon: <Scissors className="h-4 w-4" />,
             }),
             new NodeContextMenuOption(`Copy`, {
                 $onSelect: () => {
                     editor.dispatchCommand(COPY_COMMAND, null);
                 },
                 disabled: false,
-                icon: <Copy className="size-4" />,
+                icon: <Copy className="h-4 w-4" />,
             }),
             new NodeContextMenuOption(`Paste`, {
                 $onSelect: () => {
-                    navigator.clipboard.read().then(async function () {
+                    navigator.clipboard.read().then(async function (...args) {
                         const data = new DataTransfer();
 
                         const readClipboardItems = await navigator.clipboard.read();
@@ -79,11 +79,11 @@ export function ContextMenuPlugin(): JSX.Element {
                     });
                 },
                 disabled: false,
-                icon: <Clipboard className="size-4" />,
+                icon: <Clipboard className="h-4 w-4" />,
             }),
             new NodeContextMenuOption(`Paste as Plain Text`, {
                 $onSelect: () => {
-                    navigator.clipboard.read().then(async function () {
+                    navigator.clipboard.read().then(async function (...args) {
                         const permission = await navigator.permissions.query({
                             // @ts-expect-error These types are incorrect.
                             name: 'clipboard-read',
@@ -105,7 +105,7 @@ export function ContextMenuPlugin(): JSX.Element {
                     });
                 },
                 disabled: false,
-                icon: <ClipboardType className="size-4" />,
+                icon: <ClipboardType className="h-4 w-4" />,
             }),
             new NodeContextMenuSeparator(),
             new NodeContextMenuOption(`Delete Node`, {
@@ -119,12 +119,14 @@ export function ContextMenuPlugin(): JSX.Element {
                     } else if ($isNodeSelection(selection)) {
                         const selectedNodes = selection.getNodes();
                         for (const node of selectedNodes) {
-                            if ($isDecoratorNode(node)) node.remove();
+                            if ($isDecoratorNode(node)) {
+                                node.remove();
+                            }
                         }
                     }
                 },
                 disabled: false,
-                icon: <Trash2 className="size-4" />,
+                icon: <Trash2 className="h-4 w-4" />,
             }),
         ];
     }, [editor]);

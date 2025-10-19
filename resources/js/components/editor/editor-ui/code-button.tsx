@@ -1,8 +1,9 @@
-import { useDebounce } from '@/components/editor/editor-hooks/use-debounce';
 import { $isCodeNode } from '@lexical/code';
 import { $getNearestNodeFromDOMNode, $getSelection, $setSelection, LexicalEditor } from 'lexical';
 import { CircleCheckIcon, CopyIcon } from 'lucide-react';
 import { useState } from 'react';
+
+import { useDebounce } from '@/components/editor/editor-hooks/use-debounce';
 
 interface Props {
     editor: LexicalEditor;
@@ -10,11 +11,9 @@ interface Props {
 }
 
 export function CopyButton({ editor, getCodeDOMNode }: Readonly<Props>) {
-    const [isCopyCompleted, setCopyCompleted] = useState<boolean>(false);
+    const [isCopyCompleted, setIsCopyCompleted] = useState<boolean>(false);
 
-    const removeSuccessIcon = useDebounce(() => {
-        setCopyCompleted(false);
-    }, 1000);
+    const removeSuccessIcon = useDebounce(() => setIsCopyCompleted(false), 1000);
 
     async function handleClick(): Promise<void> {
         const codeDOMNode = getCodeDOMNode();
@@ -38,7 +37,7 @@ export function CopyButton({ editor, getCodeDOMNode }: Readonly<Props>) {
 
         try {
             await navigator.clipboard.writeText(content);
-            setCopyCompleted(true);
+            setIsCopyCompleted(true);
             removeSuccessIcon();
         } catch (err) {
             console.error('Failed to copy: ', err);

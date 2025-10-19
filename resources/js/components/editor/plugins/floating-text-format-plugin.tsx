@@ -1,8 +1,3 @@
-import { getDOMRangeRect } from '@/components/editor/utils/get-dom-range-rect';
-import { getSelectedNode } from '@/components/editor/utils/get-selected-node';
-import { setFloatingElemPosition } from '@/components/editor/utils/set-floating-elem-position';
-import { Separator } from '@/components/ui/separator';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { $isCodeHighlightNode } from '@lexical/code';
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -29,6 +24,12 @@ import {
 } from 'lucide-react';
 import { Dispatch, JSX, useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+
+import { getDOMRangeRect } from '@/components/editor/utils/get-dom-range-rect';
+import { getSelectedNode } from '@/components/editor/utils/get-selected-node';
+import { setFloatingElemPosition } from '@/components/editor/utils/set-floating-elem-position';
+import { Separator } from '@/components/ui/separator';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
 function FloatingTextFormat({
     editor,
@@ -58,10 +59,13 @@ function FloatingTextFormat({
     const popupCharStylesEditorRef = useRef<HTMLDivElement | null>(null);
 
     const insertLink = useCallback(() => {
-        const payload = isLink ? null : 'https://';
-
-        setIsLinkEditMode(!isLink);
-        editor.dispatchCommand(TOGGLE_LINK_COMMAND, payload);
+        if (!isLink) {
+            setIsLinkEditMode(true);
+            editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://');
+        } else {
+            setIsLinkEditMode(false);
+            editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+        }
     }, [editor, isLink, setIsLinkEditMode]);
 
     function mouseMoveListener(e: MouseEvent) {
@@ -79,8 +83,6 @@ function FloatingTextFormat({
         }
     }
     function mouseUpListener(e: MouseEvent) {
-        e.stopImmediatePropagation();
-
         if (popupCharStylesEditorRef?.current) {
             if (popupCharStylesEditorRef.current.style.pointerEvents !== 'auto') {
                 popupCharStylesEditorRef.current.style.pointerEvents = 'auto';
@@ -104,7 +106,7 @@ function FloatingTextFormat({
         const selection = $getSelection();
 
         const popupCharStylesEditorElem = popupCharStylesEditorRef.current;
-        const nativeSelection = globalThis.getSelection();
+        const nativeSelection = globalThis.window.getSelection();
 
         if (popupCharStylesEditorElem === null) {
             return;
@@ -195,7 +197,7 @@ function FloatingTextFormat({
                             }}
                             size="sm"
                         >
-                            <BoldIcon className="size-4" />
+                            <BoldIcon className="h-4 w-4" />
                         </ToggleGroupItem>
                         <ToggleGroupItem
                             value="italic"
@@ -205,7 +207,7 @@ function FloatingTextFormat({
                             }}
                             size="sm"
                         >
-                            <ItalicIcon className="size-4" />
+                            <ItalicIcon className="h-4 w-4" />
                         </ToggleGroupItem>
                         <ToggleGroupItem
                             value="underline"
@@ -215,7 +217,7 @@ function FloatingTextFormat({
                             }}
                             size="sm"
                         >
-                            <UnderlineIcon className="size-4" />
+                            <UnderlineIcon className="h-4 w-4" />
                         </ToggleGroupItem>
                         <ToggleGroupItem
                             value="strikethrough"
@@ -225,7 +227,7 @@ function FloatingTextFormat({
                             }}
                             size="sm"
                         >
-                            <StrikethroughIcon className="size-4" />
+                            <StrikethroughIcon className="h-4 w-4" />
                         </ToggleGroupItem>
                         <Separator orientation="vertical" />
                         <ToggleGroupItem
@@ -236,10 +238,10 @@ function FloatingTextFormat({
                             }}
                             size="sm"
                         >
-                            <CodeIcon className="size-4" />
+                            <CodeIcon className="h-4 w-4" />
                         </ToggleGroupItem>
                         <ToggleGroupItem value="link" aria-label="Toggle link" onClick={insertLink} size="sm">
-                            <LinkIcon className="size-4" />
+                            <LinkIcon className="h-4 w-4" />
                         </ToggleGroupItem>
                         <Separator orientation="vertical" />
                     </ToggleGroup>
@@ -255,7 +257,7 @@ function FloatingTextFormat({
                             }}
                             size="sm"
                         >
-                            <SubscriptIcon className="size-4" />
+                            <SubscriptIcon className="h-4 w-4" />
                         </ToggleGroupItem>
                         <ToggleGroupItem
                             value="superscript"
@@ -265,7 +267,7 @@ function FloatingTextFormat({
                             }}
                             size="sm"
                         >
-                            <SuperscriptIcon className="size-4" />
+                            <SuperscriptIcon className="h-4 w-4" />
                         </ToggleGroupItem>
                     </ToggleGroup>
                 </>
@@ -296,7 +298,7 @@ function useFloatingTextFormatToolbar(
                 return;
             }
             const selection = $getSelection();
-            const nativeSelection = globalThis.getSelection();
+            const nativeSelection = globalThis.window.getSelection();
             const rootElement = editor.getRootElement();
 
             if (
@@ -324,7 +326,11 @@ function useFloatingTextFormatToolbar(
 
             // Update links
             const parent = node.getParent();
-            setIsLink($isLinkNode(parent) || $isLinkNode(node));
+            if ($isLinkNode(parent) || $isLinkNode(node)) {
+                setIsLink(true);
+            } else {
+                setIsLink(false);
+            }
 
             if (!$isCodeHighlightNode(selection.anchor.getNode()) && selection.getTextContent() !== '') {
                 setIsText($isTextNode(node) || $isParagraphNode(node));
