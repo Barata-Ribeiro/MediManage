@@ -8,10 +8,18 @@ import {
 import articles from '@/routes/articles';
 import categories from '@/routes/categories';
 import medicalRecords from '@/routes/medicalRecords';
+import { search } from '@/routes/patient_info';
 import prescriptions from '@/routes/prescriptions';
 import { type NavItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { ChartBarStackedIcon, ClipboardListIcon, ClipboardPlusIcon, NewspaperIcon, PillIcon } from 'lucide-react';
+import {
+    ChartBarStackedIcon,
+    ClipboardListIcon,
+    ClipboardPlusIcon,
+    NewspaperIcon,
+    PillIcon,
+    UserSearchIcon,
+} from 'lucide-react';
 
 export function NavDoctor() {
     const { props, url } = usePage<SharedData>();
@@ -29,6 +37,11 @@ export function NavDoctor() {
         },
         { title: 'Medical Records', href: medicalRecords.index(), icon: ClipboardListIcon },
         { title: 'Initiate Record', href: medicalRecords.create(), icon: ClipboardPlusIcon },
+        {
+            title: 'Find Patient',
+            href: search().url,
+            icon: UserSearchIcon,
+        },
     ];
 
     const artItems: NavItem[] = [
