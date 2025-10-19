@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Item, ItemActions, ItemContent } from '@/components/ui/item';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import Layout from '@/layouts/app-layout';
+import { normalizeString } from '@/lib/utils';
 import medicalRecords from '@/routes/medicalRecords';
 import patient_info from '@/routes/patient_info';
 import type { BreadcrumbItem } from '@/types';
@@ -168,7 +169,9 @@ export default function Show({ medicalRecord, entries }: Readonly<ShowProps>) {
                                         <TableRow key={entry.id} className="[&>*]:not-last:w-max">
                                             <TableCell className="font-medium">{entry.id}</TableCell>
                                             <TableCell>{entry.title}</TableCell>
-                                            <TableCell className="capitalize">{entry.entry_type}</TableCell>
+                                            <TableCell className="capitalize">
+                                                {normalizeString(entry.entry_type)}
+                                            </TableCell>
                                             <TableCell className="inline-flex w-full justify-end gap-2">
                                                 <MedicalEntryModal
                                                     id={entry.id}

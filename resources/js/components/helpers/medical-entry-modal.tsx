@@ -1,9 +1,10 @@
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalTrigger } from '@/components/ui/shadcn-io/animated-modal';
+import { normalizeString } from '@/lib/utils';
 import { MedicalRecordEntry } from '@/types/application/medicalRecord';
 import { format } from 'date-fns';
 import { ViewIcon } from 'lucide-react';
-import { Badge } from '../ui/badge';
 
 export default function MedicalEntryModal(entry: Readonly<MedicalRecordEntry>) {
     return (
@@ -21,7 +22,7 @@ export default function MedicalEntryModal(entry: Readonly<MedicalRecordEntry>) {
                         <h3 className="text-lg font-semibold">{entry.title ?? 'Untitled'}</h3>
                         <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
                             <Badge variant="outline" className="capitalize">
-                                {entry.entry_type}
+                                {normalizeString(entry.entry_type)}
                             </Badge>
 
                             <Badge variant="outline">
