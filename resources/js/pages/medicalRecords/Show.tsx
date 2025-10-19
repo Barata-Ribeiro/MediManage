@@ -17,7 +17,7 @@ import { MedicalRecord, ScrollableMedicalRecordEntry } from '@/types/application
 import { InfiniteScrollRef } from '@inertiajs/core';
 import { Form, Head, InfiniteScroll, Link } from '@inertiajs/react';
 import { EraserIcon, RefreshCcwDotIcon, SearchIcon } from 'lucide-react';
-import { useRef } from 'react';
+import { Fragment, useRef } from 'react';
 
 interface ShowProps {
     medicalRecord: MedicalRecord;
@@ -42,15 +42,25 @@ export default function Show({ medicalRecord, entries }: Readonly<ShowProps>) {
         },
     ];
 
+    const hasEntries = entries.data.length > 0;
+
     return (
         <Layout breadcrumbs={breadcrumbs}>
             <Head title={`Medical Record #${medicalRecord?.id ?? 'Show'}`} />
 
             <div className="container max-w-7xl px-6 py-4">
-                <Heading
-                    title="Medical Record"
-                    description={`These are the medical notes for this record. Record ID: ${medicalRecord.id}`}
-                />
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                    <Heading
+                        title="Medical Record"
+                        description={`These are the medical notes for this record. Record ID: ${medicalRecord.id}`}
+                    />
+
+                    <Button variant="secondary" asChild>
+                        <a href={medicalRecords.generatePdf(medicalRecord.id).url} target="_blank" rel="external">
+                            Get PDF
+                        </a>
+                    </Button>
+                </div>
 
                 <article className="space-y-2 [&>header]:space-y-4">
                     <header>
@@ -84,7 +94,7 @@ export default function Show({ medicalRecord, entries }: Readonly<ShowProps>) {
                             </ItemContent>
 
                             <ItemActions>
-                                <Button variant="secondary" size="sm" asChild>
+                                <Button size="sm" asChild>
                                     <Link href={patient_info.show(medicalRecord.patient_info_id)} as="button" prefetch>
                                         Patient Info
                                     </Link>
@@ -103,95 +113,110 @@ export default function Show({ medicalRecord, entries }: Readonly<ShowProps>) {
 
                 <section className="my-4">
                     <HeadingSmall title="Entries" description="These are the entries for this medical record." />
+                    {/* TODO: Add new empty state design */}
+                    {/* TODO: Add button to create new entry */}
+                    {!hasEntries && (
+                        <p className="mt-2 rounded-md border border-dashed p-4 text-center text-sm text-muted-foreground">
+                            This medical record has no entries.
+                        </p>
+                    )}
+                    {hasEntries && (
+                        <Fragment>
+                            <div className="flex items-end justify-between">
+                                <Form
+                                    {...medicalRecords.show.form(medicalRecord.id)}
+                                    options={{ preserveScroll: true, replace: true }}
+                                    disableWhileProcessing
+                                    className="mt-4 inert:pointer-events-none inert:opacity-50 inert:grayscale-100"
+                                >
+                                    <Field className="max-w-sm">
+                                        <FieldLabel htmlFor="search">Search</FieldLabel>
+                                        <ButtonGroup>
+                                            <Input
+                                                type="search"
+                                                id="search"
+                                                name="search"
+                                                placeholder="e.g. Blood Test"
+                                            />
 
-                    <div className="flex items-end justify-between">
-                        <Form
-                            {...medicalRecords.show.form(medicalRecord.id)}
-                            options={{ preserveScroll: true, replace: true }}
-                            disableWhileProcessing
-                            className="mt-4 inert:pointer-events-none inert:opacity-50 inert:grayscale-100"
-                        >
-                            <Field className="max-w-sm">
-                                <FieldLabel htmlFor="search">Search</FieldLabel>
-                                <ButtonGroup>
-                                    <Input type="search" id="search" name="search" placeholder="e.g. Blood Test" />
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                aria-label="Reset results"
+                                                title="Reset results"
+                                                asChild
+                                            >
+                                                <Link href={medicalRecords.show(medicalRecord.id)} prefetch as="button">
+                                                    <EraserIcon aria-hidden />
+                                                </Link>
+                                            </Button>
+                                            <Button type="submit" aria-label="Search" title="Search">
+                                                <SearchIcon aria-hidden />
+                                            </Button>
+                                        </ButtonGroup>
+                                    </Field>
+                                </Form>
 
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        aria-label="Reset results"
-                                        title="Reset results"
-                                        asChild
-                                    >
-                                        <Link href={medicalRecords.show(medicalRecord.id)} prefetch as="button">
-                                            <EraserIcon aria-hidden />
-                                        </Link>
-                                    </Button>
-                                    <Button type="submit" aria-label="Search" title="Search">
-                                        <SearchIcon aria-hidden />
-                                    </Button>
-                                </ButtonGroup>
-                            </Field>
-                        </Form>
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={fetchNext}
+                                    title="Load more entries"
+                                    aria-label="Load more entries"
+                                    disabled={entries.next_cursor === null && !infiniteScrollRef.current?.hasNext()}
+                                >
+                                    <RefreshCcwDotIcon aria-hidden />
+                                </Button>
+                            </div>
 
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={fetchNext}
-                            title="Load more entries"
-                            aria-label="Load more entries"
-                            disabled={entries.next_cursor === null && !infiniteScrollRef.current?.hasNext()}
-                        >
-                            <RefreshCcwDotIcon aria-hidden />
-                        </Button>
-                    </div>
+                            <div className="mt-2 overflow-hidden rounded-lg border">
+                                <InfiniteScroll
+                                    ref={infiniteScrollRef}
+                                    data="entries"
+                                    manual
+                                    itemsElement="#table-body"
+                                    startElement="#table-body"
+                                >
+                                    <Table>
+                                        <TableHeader id="table-header">
+                                            <TableRow>
+                                                <TableHead className="w-[100px]">ID</TableHead>
+                                                <TableHead>Title</TableHead>
+                                                <TableHead className="w-[150px]">Type</TableHead>
+                                                <TableHead className="w-[150px] text-right">Actions</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
 
-                    <div className="mt-2 overflow-hidden rounded-lg border">
-                        <InfiniteScroll
-                            ref={infiniteScrollRef}
-                            data="entries"
-                            manual
-                            itemsElement="#table-body"
-                            startElement="#table-body"
-                        >
-                            <Table>
-                                <TableHeader id="table-header">
-                                    <TableRow>
-                                        <TableHead className="w-[100px]">ID</TableHead>
-                                        <TableHead>Title</TableHead>
-                                        <TableHead className="w-[150px]">Type</TableHead>
-                                        <TableHead className="w-[150px] text-right">Actions</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-
-                                <TableBody id="table-body">
-                                    {entries?.data.map((entry) => (
-                                        <TableRow key={entry.id} className="[&>*]:not-last:w-max">
-                                            <TableCell className="font-medium">{entry.id}</TableCell>
-                                            <TableCell>{entry.title}</TableCell>
-                                            <TableCell className="capitalize">
-                                                {normalizeString(entry.entry_type)}
-                                            </TableCell>
-                                            <TableCell className="inline-flex w-full justify-end gap-2">
-                                                <MedicalEntryModal
-                                                    id={entry.id}
-                                                    medical_record_id={entry.medical_record_id}
-                                                    employee_info_id={entry.employee_info_id}
-                                                    appointment_id={entry.appointment_id}
-                                                    title={entry.title}
-                                                    content_html={entry.content_html}
-                                                    entry_type={entry.entry_type}
-                                                    is_visible_to_patient={entry.is_visible_to_patient}
-                                                    created_at={entry.created_at}
-                                                    updated_at={entry.updated_at}
-                                                />
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </InfiniteScroll>
-                    </div>
+                                        <TableBody id="table-body">
+                                            {entries?.data.map((entry) => (
+                                                <TableRow key={entry.id} className="[&>*]:not-last:w-max">
+                                                    <TableCell className="font-medium">{entry.id}</TableCell>
+                                                    <TableCell>{entry.title}</TableCell>
+                                                    <TableCell className="capitalize">
+                                                        {normalizeString(entry.entry_type)}
+                                                    </TableCell>
+                                                    <TableCell className="inline-flex w-full justify-end gap-2">
+                                                        <MedicalEntryModal
+                                                            id={entry.id}
+                                                            medical_record_id={entry.medical_record_id}
+                                                            employee_info_id={entry.employee_info_id}
+                                                            appointment_id={entry.appointment_id}
+                                                            title={entry.title}
+                                                            content_html={entry.content_html}
+                                                            entry_type={entry.entry_type}
+                                                            is_visible_to_patient={entry.is_visible_to_patient}
+                                                            created_at={entry.created_at}
+                                                            updated_at={entry.updated_at}
+                                                        />
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </InfiniteScroll>
+                            </div>
+                        </Fragment>
+                    )}
                 </section>
             </div>
         </Layout>
