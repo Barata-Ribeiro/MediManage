@@ -1,3 +1,4 @@
+import HeadingSmall from '@/components/heading-small';
 import DashboardHeader from '@/components/helpers/dashboard-header';
 import AppLayout from '@/layouts/app-layout';
 import DoctorUpcomingApptTable from '@/pages/dashboard/tables/doctor-upcoming-appt-table';
@@ -39,6 +40,10 @@ export default function AttendantDashboard({ data }: Readonly<AttendantDashboard
                 />
 
                 <div className="flex-1">
+                    <HeadingSmall
+                        title="Today's Upcoming Appointments"
+                        description="List of all upcoming appointments for today."
+                    />
                     <DoctorUpcomingApptTable pagination={upcomingToday} />
                 </div>
             </div>
