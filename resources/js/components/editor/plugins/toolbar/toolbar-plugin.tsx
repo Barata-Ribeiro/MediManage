@@ -24,7 +24,7 @@ export function ToolbarPlugin({ children }: Readonly<{ children: (props: { block
             },
             COMMAND_PRIORITY_CRITICAL,
         );
-    }, [editor]);
+    }, [editor]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <ToolbarContext

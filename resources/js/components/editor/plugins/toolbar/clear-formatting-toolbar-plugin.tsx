@@ -25,7 +25,7 @@ export function ClearFormattingToolbarPlugin() {
                     return;
                 }
 
-                for (let [idx, node] of nodes.entries()) {
+                for (const [idx, node] of nodes.entries()) {
                     // We split the first and last node by the selection
                     // So that we don't format unselected text inside those nodes
                     if ($isTextNode(node)) {
@@ -58,8 +58,6 @@ export function ClearFormattingToolbarPlugin() {
                             textNode.setFormat(0);
                             $getNearestBlockElementAncestorOrThrow(textNode).setFormat('');
                         }
-
-                        node = textNode;
                     } else if ($isHeadingNode(node) || $isQuoteNode(node)) {
                         node.replace($createParagraphNode(), true);
                     } else if ($isDecoratorBlockNode(node)) {

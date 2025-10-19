@@ -170,7 +170,7 @@ function FloatingLinkEditor({
             inputRef.current.focus();
             setIsLink(true);
         }
-    }, [isLinkEditMode, isLink]);
+    }, [isLinkEditMode, isLink]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const monitorInputInteraction = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {

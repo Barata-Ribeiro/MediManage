@@ -19,7 +19,7 @@ export function DragDropPastePlugin(): null {
     const [editor] = useLexicalComposerContext();
     useEffect(() => {
         // Process files in a separate async function to avoid deep nesting in the command handler.
-        async function processFiles(files: any) {
+        async function processFiles(files: File[]): Promise<void> {
             const filesResult = await mediaFileReader(files, [ACCEPTABLE_IMAGE_TYPES].flat());
             for (const { file, result } of filesResult) {
                 if (isMimeType(file, ACCEPTABLE_IMAGE_TYPES)) {
