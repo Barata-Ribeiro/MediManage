@@ -1,6 +1,6 @@
-import { editorConfig }                                                from '@/components/blocks/editor-x/editor';
-import { nodes }                                                       from '@/components/blocks/editor-x/nodes';
-import { $generateNodesFromDOM }                                       from '@lexical/html';
+import { editorConfig } from '@/components/blocks/editor-x/editor';
+import { nodes } from '@/components/blocks/editor-x/nodes';
+import { $generateNodesFromDOM } from '@lexical/html';
 import { $getRoot, $insertNodes, createEditor, SerializedEditorState } from 'lexical';
 
 /**
