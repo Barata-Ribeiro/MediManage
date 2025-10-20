@@ -5,6 +5,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import appointments from '@/routes/appointments';
 import articles from '@/routes/articles';
 import categories from '@/routes/categories';
 import medicalRecords from '@/routes/medicalRecords';
@@ -13,6 +14,7 @@ import prescriptions from '@/routes/prescriptions';
 import { type NavItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import {
+    CalendarRangeIcon,
     ChartBarStackedIcon,
     ClipboardListIcon,
     ClipboardPlusIcon,
@@ -31,17 +33,22 @@ export function NavDoctor() {
 
     const docItems: NavItem[] = [
         {
+            title: 'Find Patient',
+            href: search().url,
+            icon: UserSearchIcon,
+        },
+        {
+            title: 'My Schedule',
+            href: appointments.doctor.index(auth.user.employee_info_id),
+            icon: CalendarRangeIcon,
+        },
+        {
             title: 'Prescriptions',
             href: prescriptions.index(auth.user.employee_info_id),
             icon: PillIcon,
         },
         { title: 'Medical Records', href: medicalRecords.index(), icon: ClipboardListIcon },
         { title: 'Initiate Record', href: medicalRecords.create(), icon: ClipboardPlusIcon },
-        {
-            title: 'Find Patient',
-            href: search().url,
-            icon: UserSearchIcon,
-        },
     ];
 
     const artItems: NavItem[] = [
