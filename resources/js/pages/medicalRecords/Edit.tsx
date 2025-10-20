@@ -14,7 +14,7 @@ export default function Edit({ medicalRecord }: Readonly<{ medicalRecord: Medica
             href: medicalRecordController.index().url,
         },
         {
-            title: 'Edit',
+            title: `Edit Record #${medicalRecord.id}`,
             href: medicalRecordController.edit(medicalRecord.id).url,
         },
     ];
