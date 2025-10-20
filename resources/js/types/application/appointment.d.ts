@@ -1,15 +1,7 @@
 import { PaginationMeta } from '@/types';
 import { EmployeeInfo } from '@/types/application/employee';
+import { AppointmentStatus } from '@/types/application/enums';
 import { PatientInfo } from '@/types/application/patient';
-
-export enum AppointmentStatus {
-    scheduled = 'scheduled',
-    confirmed = 'confirmed',
-    checked_in = 'checked_in',
-    canceled = 'canceled',
-    missed = 'missed',
-    completed = 'completed',
-}
 
 export interface Appointment {
     id: number;
