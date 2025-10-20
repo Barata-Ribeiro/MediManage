@@ -1,8 +1,10 @@
+import medicalRecordController from '@/actions/App/Http/Controllers/Medical/MedicalRecordController';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalTrigger } from '@/components/ui/shadcn-io/animated-modal';
 import { normalizeString } from '@/lib/utils';
 import { MedicalRecordEntry } from '@/types/application/medicalRecord';
+import { Link } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { ViewIcon } from 'lucide-react';
 
@@ -54,8 +56,17 @@ export default function MedicalEntryModal(entry: Readonly<MedicalRecordEntry>) {
                 </ModalContent>
 
                 <ModalFooter className="gap-4">
-                    {/* TODO: Add go to edit entry page */}
-                    <Button variant="secondary">Modify</Button>
+                    <Button variant="secondary" aria-label="Modify Entry" title="Modify Entry" asChild>
+                        <Link
+                            href={medicalRecordController.editEntry({
+                                medicalRecord: entry.medical_record_id,
+                                medicalRecordEntry: entry.id,
+                            })}
+                            as="button"
+                        >
+                            Modify
+                        </Link>
+                    </Button>
                 </ModalFooter>
             </ModalBody>
         </Modal>

@@ -16,7 +16,7 @@ import type { BreadcrumbItem } from '@/types';
 import { MedicalRecord, ScrollableMedicalRecordEntry } from '@/types/application/medicalRecord';
 import { InfiniteScrollRef } from '@inertiajs/core';
 import { Form, Head, InfiniteScroll, Link } from '@inertiajs/react';
-import { EraserIcon, RefreshCcwDotIcon, SearchIcon } from 'lucide-react';
+import { EraserIcon, RefreshCcwDotIcon, SearchIcon, SquarePenIcon } from 'lucide-react';
 import { Fragment, useRef } from 'react';
 
 interface ShowProps {
@@ -37,7 +37,7 @@ export default function Show({ medicalRecord, entries }: Readonly<ShowProps>) {
             href: medicalRecordController.index().url,
         },
         {
-            title: 'Show',
+            title: `View Record #${medicalRecord.id}`,
             href: medicalRecordController.show(medicalRecord.id).url,
         },
     ];
@@ -208,6 +208,24 @@ export default function Show({ medicalRecord, entries }: Readonly<ShowProps>) {
                                                             created_at={entry.created_at}
                                                             updated_at={entry.updated_at}
                                                         />
+
+                                                        <Button
+                                                            variant="outline"
+                                                            size="icon"
+                                                            title="Edit Entry"
+                                                            aria-label="Edit Entry"
+                                                            asChild
+                                                        >
+                                                            <Link
+                                                                href={medicalRecordController.editEntry({
+                                                                    medicalRecord: medicalRecord.id,
+                                                                    medicalRecordEntry: entry.id,
+                                                                })}
+                                                                as="button"
+                                                            >
+                                                                <SquarePenIcon aria-hidden />
+                                                            </Link>
+                                                        </Button>
                                                     </TableCell>
                                                 </TableRow>
                                             ))}
