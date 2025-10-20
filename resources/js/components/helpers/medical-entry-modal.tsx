@@ -1,12 +1,38 @@
 import medicalRecordController from '@/actions/App/Http/Controllers/Medical/MedicalRecordController';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Modal, ModalBody, ModalContent, ModalFooter, ModalTrigger } from '@/components/ui/shadcn-io/animated-modal';
+import {
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    ModalTrigger,
+    useModal,
+} from '@/components/ui/shadcn-io/animated-modal';
 import { normalizeString } from '@/lib/utils';
 import { MedicalRecordEntry } from '@/types/application/medicalRecord';
 import { Link } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { ViewIcon } from 'lucide-react';
+
+const ModifyButton = ({ medicalRecordId, entryId }: Readonly<{ medicalRecordId: number; entryId: number }>) => {
+    const { setOpen } = useModal();
+
+    return (
+        <Button variant="secondary" aria-label="Modify Entry" title="Modify Entry" asChild>
+            <Link
+                href={medicalRecordController.editEntry({
+                    medicalRecord: medicalRecordId,
+                    medicalRecordEntry: entryId,
+                })}
+                as="button"
+                onClick={() => setOpen(false)}
+            >
+                Modify
+            </Link>
+        </Button>
+    );
+};
 
 export default function MedicalEntryModal(entry: Readonly<MedicalRecordEntry>) {
     return (
@@ -56,17 +82,7 @@ export default function MedicalEntryModal(entry: Readonly<MedicalRecordEntry>) {
                 </ModalContent>
 
                 <ModalFooter className="gap-4">
-                    <Button variant="secondary" aria-label="Modify Entry" title="Modify Entry" asChild>
-                        <Link
-                            href={medicalRecordController.editEntry({
-                                medicalRecord: entry.medical_record_id,
-                                medicalRecordEntry: entry.id,
-                            })}
-                            as="button"
-                        >
-                            Modify
-                        </Link>
-                    </Button>
+                    <ModifyButton medicalRecordId={entry.medical_record_id} entryId={entry.id} />
                 </ModalFooter>
             </ModalBody>
         </Modal>
