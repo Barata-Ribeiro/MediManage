@@ -15,4 +15,9 @@ Route::middleware(['auth'])->prefix('medical-records')->group(function () {
     Route::delete('/{medicalRecord}', [MedicalRecordController::class, 'destroy'])->name('medicalRecords.destroy')->middleware('permission:medical_record.destroy');
 
     Route::get('/{medicalRecord}/pdf', [MedicalRecordController::class, 'generateMedicalRecordPdf'])->name('medicalRecords.generatePdf')->middleware('permission:medical_record.show');
+
+    Route::prefix('/{medicalRecord}/entries')->group(function () {
+        Route::get('/{medicalRecordEntry}/edit', [MedicalRecordController::class, 'editEntry'])->name('medicalRecords.entries.edit')->middleware('permission:medical_record.edit');
+        Route::patch('/{medicalRecordEntry}/edit', [MedicalRecordController::class, 'updateEntry'])->name('medicalRecords.entries.update')->middleware('permission:medical_record.edit');
+    });
 });

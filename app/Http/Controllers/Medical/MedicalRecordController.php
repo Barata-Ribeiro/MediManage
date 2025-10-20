@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Medical;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Medical\MedicalRecordEntryRequest;
 use App\Http\Requests\Medical\MedicalRecordRequest;
 use App\Models\MedicalRecord;
 use App\Models\MedicalRecordEntry;
@@ -175,6 +176,34 @@ class MedicalRecordController extends Controller
         } catch (Exception $e) {
             Log::error('Medical Records: Failed to update medical record', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id, 'error' => $e->getMessage()]);
             return back()->withInput()->with('error', 'Failed to update medical record. Please try again.');
+        }
+    }
+
+    public function editEntry(MedicalRecord $medicalRecord, MedicalRecordEntry $medicalRecordEntry)
+    {
+        Log::info('Medical Records: Viewed edit medical record entry form', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id, 'medical_record_entry_id' => $medicalRecordEntry->id]);
+
+        return Inertia::render('medicalRecords/entries/Edit', [
+            'medicalRecord' => $medicalRecord->load([
+                'patientInfo' => fn($q) => $q->select(['id', 'first_name', 'last_name', 'date_of_birth', 'gender'])
+            ])->only(['id', 'patient_info_id']) + [
+                'patient_info' => $medicalRecord->patientInfo
+                    ->append(['age', 'full_name'])
+                    ->only(['id', 'first_name', 'last_name', 'date_of_birth', 'gender', 'age', 'full_name']),
+            ],
+            'medicalRecordEntry' => $medicalRecordEntry->load('appointment', 'employeeInfo:id,first_name,last_name,date_of_birth,gender'),
+        ]);
+    }
+
+    public function updateEntry(MedicalRecordEntryRequest $request, MedicalRecord $medicalRecord, MedicalRecordEntry $medicalRecordEntry)
+    {
+        try {
+            Log::info('Medical Records: Updated medical record entry', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id, 'medical_record_entry_id' => $medicalRecordEntry->id]);
+            $medicalRecordEntry->update($request->validated());
+            return to_route('medicalRecords.show', ['medicalRecord' => $medicalRecord])->with('success', 'Medical record entry updated successfully.');
+        } catch (Exception $e) {
+            Log::error('Medical Records: Failed to update medical record entry', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id, 'medical_record_entry_id' => $medicalRecordEntry->id, 'error' => $e->getMessage()]);
+            return back()->withInput()->with('error', 'Failed to update medical record entry. Please try again.');
         }
     }
 }
