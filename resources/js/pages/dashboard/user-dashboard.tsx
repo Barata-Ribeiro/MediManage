@@ -1,8 +1,19 @@
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
+import DashboardHeader from '@/components/helpers/dashboard-header';
+import UserDashboardHeader from '@/components/helpers/user-dashboard-header';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
+import { User } from '@/types/admin/users';
+import { AppointmentWithRelations } from '@/types/application/appointment';
+import { UserWithPatientInfo } from '@/types/application/patient';
 import { Head } from '@inertiajs/react';
+
+interface UserDashboardProps {
+    data: {
+        appointments: AppointmentWithRelations[];
+        profile: UserWithPatientInfo;
+    };
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -11,28 +22,26 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function userDashboard({ data }: Readonly<{ data: unknown }>) {
-    // TODO: Remove console log and implement actual user dashboard features
-    console.log('DATA: ', data);
+export default function userDashboard({ data }: Readonly<UserDashboardProps>) {
+    const hasAppointments = data.appointments.length > 0;
+    const hasPatientInfo = !!data.profile.patient_info;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="User Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                </div>
-                <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                    <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                </div>
+                {hasPatientInfo ? (
+                    <DashboardHeader
+                        avatar={data.profile.avatar}
+                        fullName={data.profile.patient_info?.full_name}
+                        email={data.profile.email}
+                        phoneNumber={data.profile.patient_info!.phone_number}
+                        dateOfBirth={data.profile.patient_info!.date_of_birth}
+                        age={data.profile.patient_info!.age}
+                    />
+                ) : (
+                    <UserDashboardHeader user={data.profile as User} />
+                )}
             </div>
         </AppLayout>
     );
