@@ -132,8 +132,8 @@ export default function Index({ appointments }: Readonly<{ appointments: Appoint
                                     return format(appointmentDate, 'HH:mm') === hour;
                                 });
 
-                                const patientName = appointmentAtThisHour?.patient_info.full_name!;
-                                const patientAvatar = appointmentAtThisHour?.patient_info.user?.avatar;
+                                const patientName = appointmentAtThisHour?.patient_info?.full_name ?? '';
+                                const patientAvatar = appointmentAtThisHour?.patient_info?.user?.avatar ?? undefined;
 
                                 return (
                                     <li key={hour} className="relative flex items-center gap-x-6 py-6 xl:static">
