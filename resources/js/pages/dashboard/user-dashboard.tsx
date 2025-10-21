@@ -1,16 +1,18 @@
+import HeadingSmall from '@/components/heading-small';
 import DashboardHeader from '@/components/helpers/dashboard-header';
 import UserDashboardHeader from '@/components/helpers/user-dashboard-header';
 import AppLayout from '@/layouts/app-layout';
+import PatientUpcomingApptTable from '@/pages/dashboard/tables/patient-upcoming-appt-table';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { User } from '@/types/admin/users';
-import { AppointmentWithRelations } from '@/types/application/appointment';
+import { PaginatedUpcomingAppointments } from '@/types/application/appointment';
 import { UserWithPatientInfo } from '@/types/application/patient';
 import { Head } from '@inertiajs/react';
 
 interface UserDashboardProps {
     data: {
-        appointments: AppointmentWithRelations[];
+        appointments: PaginatedUpcomingAppointments;
         profile: UserWithPatientInfo;
     };
 }
@@ -23,7 +25,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function userDashboard({ data }: Readonly<UserDashboardProps>) {
-    const hasAppointments = data.appointments.length > 0;
     const hasPatientInfo = !!data.profile.patient_info;
 
     return (
@@ -42,6 +43,11 @@ export default function userDashboard({ data }: Readonly<UserDashboardProps>) {
                 ) : (
                     <UserDashboardHeader user={data.profile as User} />
                 )}
+
+                <div className="flex-1">
+                    <HeadingSmall title="Upcoming Appointments" description="Here are your upcoming appointments." />
+                    <PatientUpcomingApptTable pagination={data.appointments} />
+                </div>
             </div>
         </AppLayout>
     );
