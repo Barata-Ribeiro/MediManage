@@ -16,7 +16,9 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         try {
-            $allPermissions = Permission::pluck('name')->toArray();
+            $guard = config('auth.defaults.guard', 'web');
+
+            $allPermissions = Permission::where('guard_name', $guard)->pluck('name')->toArray();
 
             $modulesForRoles = [
                 'Super Admin' => ['all' => true],
@@ -65,6 +67,7 @@ class RoleSeeder extends Seeder
             foreach ($modulesForRoles as $roleName => $mods) {
                 if ($roleName === 'Super Admin' && is_array($mods) && isset($mods['all']) && $mods['all']) {
                     $roles[$roleName] = ['all' => true];
+
                     continue;
                 }
 
@@ -86,11 +89,11 @@ class RoleSeeder extends Seeder
             }
 
             foreach ($roles as $roleName => $permissions) {
-                $role = Role::firstOrCreate(['name' => $roleName]);
+                $role = Role::firstOrCreate(['name' => $roleName, 'guard_name' => $guard]);
                 if (is_array($permissions) && isset($permissions['all']) && $permissions['all']) {
                     $role->syncPermissions($allPermissions);
                 } else {
-                    $role->syncPermissions($permissions);
+                    $role->syncPermissions(array_values(array_intersect($permissions, $allPermissions)));
                 }
             }
         } catch (Exception $e) {
