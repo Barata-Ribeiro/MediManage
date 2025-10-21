@@ -36,6 +36,10 @@ export interface PatientInfo {
     updated_at: Date;
 }
 
+export interface UserWithPatientInfo extends User {
+    patient_info?: PatientInfo;
+}
+
 export type TablePatientInfo = Pick<PatientInfo, 'id' | 'first_name' | 'last_name'>;
 
 export type PaginatedPatientInfo = PaginationMeta<PatientInfo>;
