@@ -21,9 +21,10 @@ export interface AppointmentWithRelations extends Appointment {
 
 export interface UpcomingAppointment {
     id: number;
+    date?: Date;
     time: string;
     doctor: string;
-    patient: string;
+    patient?: string;
     status: AppointmentStatus;
 }
 
