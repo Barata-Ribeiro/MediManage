@@ -20,7 +20,7 @@ class AppointmentFactory extends Factory
     {
         $date = Carbon::instance($this->faker->dateTimeBetween('-1 years', '+1 years'));
         $hour = $this->faker->numberBetween(8, 16); // Business hours between 8 AM and 5 PM
-        $minute = $this->faker->numberBetween(0, 59);
+        $minute = 0; // On the hour
         $appointmentDate = $date->setTime($hour, $minute, 0);
 
         $status = $appointmentDate->isPast()
