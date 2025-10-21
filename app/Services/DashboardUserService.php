@@ -30,22 +30,14 @@ class DashboardUserService implements DashboardUserServiceInterface
     /**
      * Fetch a paginated list of the patient's upcoming appointments.
      *
-     * Queries for future appointments associated with the given patient_info id and
-     * returns them as a length-aware paginator ordered by appointment datetime
-     * ascending (nearest upcoming first). Implementations typically eager-load
-     * related models.
-     *
-     * This is a private helper used by DashboardUserService to supply the dashboard
-     * with the next appointments for a user.
-     *
-     * @param int $patientInfoId The patient_info record identifier to retrieve appointments for.
+     * @param int|null $patientInfoId The patient_info record identifier to retrieve appointments for.
      * @return PaginationLengthAwarePaginator Paginated collection of upcoming appointment models.
      *
      * @internal For use within DashboardUserService only; not part of the public API.
      */
-    private function fetchUserNextAppointments(int $patientInfoId): PaginationLengthAwarePaginator
+    private function fetchUserNextAppointments(?int $patientInfoId): PaginationLengthAwarePaginator
     {
-        if (! $patientInfoId) {
+        if (empty($patientInfoId)) {
             return new PaginationLengthAwarePaginator([], 0, 10);
         }
 
