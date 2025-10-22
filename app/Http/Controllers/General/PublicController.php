@@ -68,12 +68,29 @@ class PublicController extends Controller
             abort(404);
         }
 
-        $article
-            ->load('user')
-            ->load(['categories' => fn($query) => $query->select('id', 'name')]);
+        $article->load([
+            'user:id,name,avatar',
+            'categories:id,name'
+        ]);
+
+        $categoryIds = $article->categories->pluck('id')->all();
+
+        $relatedArticlesQuery = Article::whereIsPublished(true)
+            ->where('id', '<>', $article->id)
+            ->with(['user' => fn($q) => $q->select('id', 'name', 'avatar')]);
+
+        if (!empty($categoryIds)) {
+            $relatedArticlesQuery->whereHas('categories', fn($q) => $q->whereIn('id', $categoryIds));
+        }
+
+        $relatedArticles = $relatedArticlesQuery
+            ->latest()
+            ->take(3)
+            ->get(['id', 'user_id', 'title', 'slug', 'thumbnail', 'created_at']);
 
         return Inertia::render('home/articles/Show', [
             'article' => $article,
+            'relatedArticles' => Inertia::defer(fn() => $relatedArticles),
         ]);
     }
 
@@ -90,8 +107,15 @@ class PublicController extends Controller
      */
     public function prescriptionValidation(Prescription $prescription)
     {
-        $prescription = Prescription::select(['id', 'validation_code', 'is_valid', 'patient_info_id',
-            'employee_info_id', 'date_issued', 'date_expires'])
+        $prescription = Prescription::select([
+            'id',
+            'validation_code',
+            'is_valid',
+            'patient_info_id',
+            'employee_info_id',
+            'date_issued',
+            'date_expires'
+        ])
             ->find($prescription->id);
 
         $prescription->load([
