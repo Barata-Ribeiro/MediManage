@@ -40,5 +40,16 @@ class PermissionController extends Controller
         ]);
     }
 
-    // TODO: Implement view and edit methods for permissions
+    public function show(Permission $permission)
+    {
+        Log::info('Permission Management: Viewed permission details', ['action_user_id' => Auth::id(), 'permission_id' => $permission->id]);
+
+        $permission->load('roles');
+
+        return Inertia::render('admin/permissions/Show', [
+            'permission' => $permission
+        ]);
+    }
+
+    // TODO: Implement edit and update methods later
 }
