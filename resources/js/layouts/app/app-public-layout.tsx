@@ -1,3 +1,4 @@
+import ScrollToTop from '@/components/helpers/scroll-to-top';
 import Footer from '@/components/public/footer';
 import NavIndex from '@/components/public/nav-index';
 import { SharedData } from '@/types';
@@ -17,6 +18,7 @@ export default function AppPublicLayout({ children }: Readonly<{ children: React
             <main>{children}</main>
 
             <Footer />
+            <ScrollToTop />
         </div>
     );
 }
