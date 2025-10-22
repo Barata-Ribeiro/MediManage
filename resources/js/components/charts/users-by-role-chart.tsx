@@ -41,7 +41,7 @@ export default function UsersByRoleChart({ total, chartData }: Readonly<UsersByR
 
             <CardContent className="max-h-[22.5rem] flex-1 pb-0">
                 <ChartContainer config={chartConfig} className="mx-auto aspect-square h-full">
-                    <PieChart>
+                    <PieChart accessibilityLayer>
                         <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
                         <Pie data={transformedData} dataKey="total" nameKey="role" innerRadius={60} strokeWidth={5}>
                             <Label

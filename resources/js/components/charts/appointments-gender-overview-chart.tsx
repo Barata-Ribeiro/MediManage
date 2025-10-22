@@ -40,7 +40,7 @@ export default function AppointmentsGenderOverviewChart({ chartData }: Readonly<
                     config={chartConfig}
                     className="mx-auto aspect-square h-full pb-0 [&_.recharts-pie-label-text]:fill-foreground"
                 >
-                    <PieChart>
+                    <PieChart accessibilityLayer>
                         <ChartTooltip
                             content={<ChartTooltipContent nameKey="gender" className="bg-accent" hideLabel />}
                         />
