@@ -2,8 +2,8 @@ import PublicController from '@/actions/App/Http/Controllers/General/PublicContr
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
+import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { articles as articlesRoute } from '@/routes';
@@ -13,10 +13,8 @@ import { CalendarIcon } from 'lucide-react';
 import { useState } from 'react';
 
 export default function ArticleFilterForm() {
-    const [startingValue, onChangeStarting] = useState<Date | undefined>(undefined);
-    const [endValue, onChangeEnd] = useState<Date | undefined>(undefined);
-
-    // TODO: Adjust form submission to work with Inertia correctly and update URL parameters accordingly
+    const [startingValue, setStartingValue] = useState<Date | undefined>(undefined);
+    const [endValue, setEndValue] = useState<Date | undefined>(undefined);
 
     const currentQuery = new URLSearchParams(globalThis.location.search);
     const searchQuery = currentQuery.get('search') ?? '';
@@ -30,28 +28,32 @@ export default function ArticleFilterForm() {
 
     if (startingDateQuery && !startingValue) {
         const parsed = parseValidDate(startingDateQuery);
-        if (parsed) onChangeStarting(parsed);
+        if (parsed) setStartingValue(parsed);
     }
 
     if (endDateQuery && !endValue) {
         const parsed = parseValidDate(endDateQuery);
-        if (parsed) onChangeEnd(parsed);
+        if (parsed) setEndValue(parsed);
     }
 
     return (
         <Form
             {...PublicController.articles.form()}
-            disableWhileProcessing
+            transform={(data) => ({
+                ...data,
+                start_date_creation: startingValue ? format(startingValue, 'yyyy/MM/dd') : undefined,
+                end_date_creation: endValue ? format(endValue, 'yyyy/MM/dd') : undefined,
+            })}
             options={{ preserveScroll: true }}
             className="grid max-w-md inert:pointer-events-none inert:opacity-50 inert:grayscale-100"
         >
             {({ errors }) => (
                 <>
-                    <div className="grid gap-2">
-                        <Label htmlFor="search">Search Articles</Label>
+                    <Field>
+                        <FieldLabel htmlFor="search">Search Articles</FieldLabel>
                         <Input
-                            type="search"
                             id="search"
+                            type="search"
                             name="search"
                             placeholder="Search articles..."
                             aria-invalid={Boolean(errors.search)}
@@ -60,20 +62,11 @@ export default function ArticleFilterForm() {
                         />
 
                         <InputError id="error-search" message={errors.search} className="mt-2" />
-                    </div>
+                    </Field>
 
                     <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div className="grid gap-2">
-                            <Label htmlFor="start_date_creation">Starting Date</Label>
-                            <input
-                                id="start_date_creation"
-                                type="hidden"
-                                name="start_date_creation"
-                                defaultValue={startingValue ? format(startingValue, 'yyyy-MM-dd') : undefined}
-                                aria-invalid={Boolean(errors.start_date_creation)}
-                                aria-errormessage={errors.start_date_creation ? 'error-start_date_creation' : undefined}
-                                readOnly
-                            />
+                        <Field className="grid gap-2">
+                            <FieldLabel htmlFor="start_date_creation">Starting Date</FieldLabel>
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <Button
@@ -95,7 +88,7 @@ export default function ArticleFilterForm() {
                                     <Calendar
                                         mode="single"
                                         selected={startingValue}
-                                        onSelect={onChangeStarting}
+                                        onSelect={setStartingValue}
                                         disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
                                         captionLayout="dropdown"
                                     />
@@ -106,19 +99,10 @@ export default function ArticleFilterForm() {
                                 message={errors.start_date_creation}
                                 className="mt-2"
                             />
-                        </div>
+                        </Field>
 
-                        <div className="grid gap-2">
-                            <Label htmlFor="end_date_creation">End Date</Label>
-                            <input
-                                id="end_date_creation"
-                                type="hidden"
-                                name="end_date_creation"
-                                defaultValue={endValue ? format(endValue, 'yyyy-MM-dd') : undefined}
-                                aria-invalid={Boolean(errors.end_date_creation)}
-                                aria-errormessage={errors.end_date_creation ? 'error-end_date_creation' : undefined}
-                                readOnly
-                            />
+                        <Field className="grid gap-2">
+                            <FieldLabel htmlFor="end_date_creation">End Date</FieldLabel>
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <Button
@@ -136,7 +120,7 @@ export default function ArticleFilterForm() {
                                     <Calendar
                                         mode="single"
                                         selected={endValue}
-                                        onSelect={onChangeEnd}
+                                        onSelect={setEndValue}
                                         disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
                                         captionLayout="dropdown"
                                     />
@@ -147,7 +131,7 @@ export default function ArticleFilterForm() {
                                 message={errors.end_date_creation}
                                 className="mt-2"
                             />
-                        </div>
+                        </Field>
 
                         <div className="grid gap-2 sm:col-span-2 sm:grid-cols-2">
                             <Button type="submit">Filter Articles</Button>
