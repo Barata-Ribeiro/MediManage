@@ -39,4 +39,6 @@ class PermissionController extends Controller
             'permissions' => $permissions
         ]);
     }
+
+    // TODO: Implement view and edit methods for permissions
 }

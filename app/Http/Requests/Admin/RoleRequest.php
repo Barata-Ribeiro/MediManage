@@ -15,7 +15,6 @@ class RoleRequest extends FormRequest
      */
     public function rules(): array
     {
-        // TODO: Implement permissions field validation later
         return [
             'name' => ['required', 'string', 'max:255', Rule::unique('roles', 'name')->ignore($this->route('role'))],
         ];
