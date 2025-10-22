@@ -27,6 +27,14 @@ class PublicController extends Controller
     }
 
     /**
+     * Display the about page.
+     */
+    public function about()
+    {
+        return Inertia::render('home/about/about');
+    }
+
+    /**
      * Display a listing of all published articles.
      */
     public function articles(Request $request)
