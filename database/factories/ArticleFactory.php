@@ -74,27 +74,52 @@ class ArticleFactory extends Factory
         ]);
     }
 
-    private function fakeImageUrl(int $width, int $height, string $text, string $bg, string $color, string $format = 'jpeg'): string
+    /**
+     * Build a dummyimage.com URL.
+     *
+     * Format examples:
+     *  - https://dummyimage.com/300
+     *  - https://dummyimage.com/300x200.png/09f/fff&text=Hello+World
+     *
+     * @param int $width
+     * @param int $height Use 0 for square (width x width)
+     * @param string $text Optional text to display on the image
+     * @param string $bg Background hex color (with or without #). Defaults to cccccc
+     * @param string $color Text hex color (with or without #). Defaults to 000000
+     * @param string $format Image format/extension: png, jpg, jpeg, gif
+     * @return string
+     */
+    private function fakeImageUrl(int $width, int $height = 0, string $text = '', string $bg = 'cccccc', string $color = '000000', string $format = 'png'): string
     {
-        $baseUrl = 'https://img.itisuniqueofficial.com/';
+        $baseUrl = 'https://dummyimage.com/';
 
-        $allowed = ['png', 'jpeg', 'gif', 'webp', 'svg'];
+        $width = max(1, (int)$width);
+        $height = (int)$height;
+
+        // Size: either "{width}" or "{width}x{height}"
+        $size = $height > 0 ? sprintf('%dx%d', $width, $height) : (string)$width;
+
+        // Normalization and Validation of format
         $format = strtolower(trim((string)$format, ". \t\n\r\0\x0B"));
+        $allowed = ['png', 'jpg', 'jpeg', 'gif'];
         if (!in_array($format, $allowed, true)) {
-            $format = 'webp';
+            $format = 'png';
         }
 
-        $params = [
-            'width' => $width,
-            'height' => $height,
-            'text' => $text,
-            'bg' => $bg,
-            'color' => $color,
-            'format' => $format,
-        ];
+        $bg = ltrim((string)$bg, '#');
+        $color = ltrim((string)$color, '#');
 
-        $query = http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+        $bg = $bg === '' ? 'cccccc' : $bg;
+        $color = $color === '' ? '000000' : $color;
 
-        return $baseUrl . '?' . $query;
+        // Path construction
+        $sizeSegment = $size . '.' . $format;
+        $path = $sizeSegment . '/' . $bg . '/' . $color;
+
+        if ($text !== '') {
+            $path .= '&text=' . urlencode($text);
+        }
+
+        return $baseUrl . $path;
     }
 }
