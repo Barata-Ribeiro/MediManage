@@ -33,6 +33,10 @@ export type TableArticle = Pick<
     'id' | 'user_id' | 'title' | 'slug' | 'is_published' | 'created_at' | 'updated_at' | 'user'
 >;
 
-export type PaginationArticle = PaginationMeta<TableArticle[]>;
+export type RelatedArticle = Pick<
+    Article,
+    'id' | 'user_id' | 'title' | 'slug' | 'thumbnail' | 'created_at' | 'reading_time' | 'user'
+>;
 
+export type PaginationArticle = PaginationMeta<TableArticle[]>;
 export type PaginationCategory = PaginationMeta<Category[]>;
