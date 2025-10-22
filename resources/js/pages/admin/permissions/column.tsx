@@ -9,7 +9,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import permissions from '@/routes/admin/permissions';
 import { Permission } from '@/types/admin/permissions';
+import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { MoreHorizontal } from 'lucide-react';
@@ -52,6 +54,8 @@ export const columns: ColumnDef<Permission>[] = [
         cell: ({ row }) => {
             const perm = row.original;
 
+            const viewLink = permissions.show(perm.id).url;
+
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -69,7 +73,9 @@ export const columns: ColumnDef<Permission>[] = [
                             <DropdownMenuCopyButton content={perm.name}>Copy Name</DropdownMenuCopyButton>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>View</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href={viewLink}>View</Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem>Edit</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
