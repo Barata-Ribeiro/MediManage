@@ -42,7 +42,9 @@ export function NavPatient() {
             <SidebarGroupLabel>Patient</SidebarGroupLabel>
             <SidebarMenu>
                 {patientItems.map((item) => {
-                    const isActive = url.endsWith(typeof item.href === 'string' ? item.href : item.href.url);
+                    const urlWithoutQuery = url.split('?')[0];
+                    const endingPath = typeof item.href === 'string' ? item.href : item.href.url;
+                    const isActive = urlWithoutQuery.endsWith(endingPath);
 
                     return (
                         <SidebarMenuItem key={item.title}>
