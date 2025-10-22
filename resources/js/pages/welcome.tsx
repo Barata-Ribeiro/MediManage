@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useInitials } from '@/hooks/use-initials';
 import Layout from '@/layouts/app/app-public-layout';
-import { article as articleRoute, register } from '@/routes';
+import { about, article as articleRoute, register } from '@/routes';
 import { Article } from '@/types/application/article';
 import { Head, Link } from '@inertiajs/react';
 import { format } from 'date-fns';
@@ -64,9 +64,10 @@ export default function Welcome({ latestArticles }: Readonly<WelcomeProps>) {
                                         </Link>
                                     </Button>
 
-                                    {/*TODO: Link to about us page*/}
-                                    <Button variant="ghost">
-                                        About Us <MoveRightIcon aria-hidden size={16} />
+                                    <Button variant="ghost" asChild>
+                                        <Link href={about()} prefetch>
+                                            About <MoveRightIcon aria-hidden size={16} />
+                                        </Link>
                                     </Button>
                                 </div>
                             </div>
