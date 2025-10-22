@@ -1,16 +1,17 @@
+import RelatedArticleSkeleton from '@/components/blocks/skeletons/related-article-skeleton';
 import LinkedinSvg from '@/components/public/linkedin-svg';
 import XwitterSvg from '@/components/public/xwitter-svg';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
 import { useInitials } from '@/hooks/use-initials';
 import Layout from '@/layouts/app/app-public-layout';
 import { article as articleRoute } from '@/routes';
 import { Article, RelatedArticle } from '@/types/application/article';
 import { Deferred, Head, Link } from '@inertiajs/react';
 import { format } from 'date-fns';
+import { type CSSProperties } from 'react';
 
 interface ShowProps {
     article: Article;
@@ -24,6 +25,13 @@ export default function Show({ article, relatedArticles }: Readonly<ShowProps>) 
     const canonicalUrl = `${globalThis.location.origin}${pathname}`;
 
     const hasRelatedArticles = relatedArticles?.length > 0;
+
+    const headerStyles: CSSProperties = {
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url(${article.thumbnail})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+    };
 
     return (
         <Layout>
@@ -45,12 +53,7 @@ export default function Show({ article, relatedArticles }: Readonly<ShowProps>) 
 
             <article>
                 <header
-                    style={{
-                        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url(${article.thumbnail})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat',
-                    }}
+                    style={headerStyles}
                     className="bg-gradient-overlay flex min-h-dvh flex-col items-center justify-center gap-y-6 text-center"
                 >
                     <div className="flex flex-wrap items-center justify-center gap-2">
@@ -123,14 +126,10 @@ export default function Show({ article, relatedArticles }: Readonly<ShowProps>) 
                             data="relatedArticles"
                             fallback={
                                 <div className="space-y-3">
+                                    <h4 className="mb-2 text-lg font-semibold">Related Articles</h4>
+
                                     {[1, 2, 3].map((i) => (
-                                        <div key={i} className="flex items-center gap-x-3">
-                                            <Skeleton className="h-12 w-20 rounded-md" />
-                                            <div className="flex-1">
-                                                <Skeleton className="mb-2 h-4 w-3/4 rounded-md" />
-                                                <Skeleton className="h-3 w-1/2 rounded-md" />
-                                            </div>
-                                        </div>
+                                        <RelatedArticleSkeleton key={i} />
                                     ))}
                                 </div>
                             }
