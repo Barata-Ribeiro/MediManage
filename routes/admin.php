@@ -15,6 +15,8 @@ Route::middleware(['auth', 'role:Super Admin'])->prefix('admin')->group(function
     Route::prefix('permissions')->group(function () {
         Route::get('/', [PermissionController::class, 'index'])->name('admin.permissions.index');
         Route::get('/{permission}', [PermissionController::class, 'show'])->name('admin.permissions.show');
+        Route::get('/{permission}/edit', [PermissionController::class, 'edit'])->name('admin.permissions.edit');
+        Route::patch('/{permission}', [PermissionController::class, 'update'])->name('admin.permissions.update');
     });
 
     Route::prefix('users')->group(function () {
