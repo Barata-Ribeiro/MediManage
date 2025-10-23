@@ -17,6 +17,8 @@ Route::middleware(['auth'])->prefix('medical-records')->group(function () {
     Route::get('/{medicalRecord}/pdf', [MedicalRecordController::class, 'generateMedicalRecordPdf'])->name('medicalRecords.generatePdf')->middleware('permission:medical_record.show');
 
     Route::prefix('/{medicalRecord}/entries')->group(function () {
+        Route::get('/create', [MedicalRecordController::class, 'createEntry'])->name('medicalRecords.entries.create')->middleware('permission:medical_record.create');
+        Route::post('/', [MedicalRecordController::class, 'storeEntry'])->name('medicalRecords.entries.store')->middleware('permission:medical_record.create');
         Route::get('/{medicalRecordEntry}/edit', [MedicalRecordController::class, 'editEntry'])->name('medicalRecords.entries.edit')->middleware('permission:medical_record.edit');
         Route::patch('/{medicalRecordEntry}/edit', [MedicalRecordController::class, 'updateEntry'])->name('medicalRecords.entries.update')->middleware('permission:medical_record.edit');
     });

@@ -179,6 +179,30 @@ class MedicalRecordController extends Controller
         }
     }
 
+    /**
+     * Show the form for creating a new resource entry.
+     */
+    public function createEntry(MedicalRecord $medicalRecord)
+    {
+        Log::info('Medical Records: Viewed create medical record entry form', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id]);
+
+        return Inertia::render('medicalRecords/entries/Create', [
+            'medicalRecord' => $medicalRecord->load([
+                'patientInfo' => fn($q) => $q->select(['id', 'first_name', 'last_name', 'date_of_birth', 'gender'])
+            ])->only(['id', 'patient_info_id']) + [
+                'patient_info' => $medicalRecord->patientInfo
+                    ->append(['age', 'full_name'])
+                    ->only(['id', 'first_name', 'last_name', 'date_of_birth', 'gender', 'age', 'full_name']),
+            ],
+
+            'appointments' => $medicalRecord->patientInfo->appointments()->whereNotIn('status', ['missed', 'canceled', 'scheduled'])
+                ->orderBy('appointment_date', 'desc')->limit(10)->get(),
+        ]);
+    }
+
+    /**
+     * Show the form for editing the specified resource entry.
+     */
     public function editEntry(MedicalRecord $medicalRecord, MedicalRecordEntry $medicalRecordEntry)
     {
         Log::info('Medical Records: Viewed edit medical record entry form', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id, 'medical_record_entry_id' => $medicalRecordEntry->id]);
@@ -195,6 +219,10 @@ class MedicalRecordController extends Controller
         ]);
     }
 
+
+    /**
+     * Update the specified resource entry in storage.
+     */
     public function updateEntry(MedicalRecordEntryRequest $request, MedicalRecord $medicalRecord, MedicalRecordEntry $medicalRecordEntry)
     {
         try {
