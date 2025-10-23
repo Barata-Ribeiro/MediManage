@@ -1,3 +1,4 @@
+import AppNotice from '@/components/app-notice';
 import ScrollToTop from '@/components/helpers/scroll-to-top';
 import Footer from '@/components/public/footer';
 import NavIndex from '@/components/public/nav-index';
@@ -9,7 +10,7 @@ import { ReactNode } from 'react';
 type LatestArticles = Pick<Article, 'id' | 'title' | 'slug' | 'created_at'>[];
 
 export default function AppPublicLayout({ children }: Readonly<{ children: ReactNode }>) {
-    const { auth, latestArticles } = usePage<SharedData>().props;
+    const { auth, latestArticles, notices } = usePage<SharedData>().props;
 
     return (
         <div className="bg-background">
@@ -19,6 +20,7 @@ export default function AppPublicLayout({ children }: Readonly<{ children: React
 
             <Footer />
             <ScrollToTop />
+            <AppNotice notices={notices} />
         </div>
     );
 }
