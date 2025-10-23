@@ -153,13 +153,11 @@ There are bugs and/or implementations that require some attention.
 
 - Send email to patient with account details.
 - Implement permissions field validation.
-- Fix UI for link insertion; it should never default to an invalid URL.
-- Adjust some form submissions to work with Inertia correctly and update URL parameters accordingly.
 - Check for the patient's ID in the sidebar, and allow users to register their patient info conditionally.
 - Implement status update functionality for doctors and attendants.
-- Implement a better empty state for the medical record.
 - Implement a proper regular user dashboard.
-- Create about page.
+- Add go back button for permission view.
+- Implement a proper manager dashboard.
 
 ## 🤝 Contributing
 
