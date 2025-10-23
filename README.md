@@ -152,11 +152,9 @@ php artisan serve
 There are bugs and/or implementations that require some attention.
 
 - Send email to patient with account details.
-- Implement permissions field validation.
 - Check for the patient's ID in the sidebar, and allow users to register their patient info conditionally.
 - Implement status update functionality for doctors and attendants.
 - Implement a proper regular user dashboard.
-- Add go back button for permission view.
 - Implement a proper manager dashboard.
 
 ## 🤝 Contributing
