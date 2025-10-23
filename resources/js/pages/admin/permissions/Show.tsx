@@ -1,5 +1,6 @@
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import Layout from '@/layouts/app-layout';
 import permissions from '@/routes/admin/permissions';
 import roles from '@/routes/admin/roles';
@@ -63,7 +64,19 @@ export default function Index({ permission }: Readonly<{ permission: Permission 
                     </div>
                 </div>
 
-                {/* TODO: Add go back button, add edit button */}
+                <div className="mt-4 inline-flex items-center gap-x-2">
+                    <Button variant="outline" asChild>
+                        <Link href={permissions.index()} prefetch>
+                            Go Back
+                        </Link>
+                    </Button>
+
+                    <Button>
+                        <Link href={permissions.edit(permission.id)} prefetch>
+                            Edit Permission
+                        </Link>
+                    </Button>
+                </div>
             </div>
         </Layout>
     );
