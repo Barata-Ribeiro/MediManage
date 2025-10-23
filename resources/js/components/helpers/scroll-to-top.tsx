@@ -37,7 +37,7 @@ export default function ScrollToTop() {
                 onClick={scrollTopTop}
                 variant="outline"
                 size="icon-lg"
-                className="fixed right-4 bottom-4 rounded-full"
+                className="fixed right-4 bottom-4 z-40 rounded-full"
                 aria-label={label}
                 title={label}
             >
