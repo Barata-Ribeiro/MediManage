@@ -4,6 +4,7 @@ import HeadingSmall from '@/components/heading-small';
 import MedicalEntryModal from '@/components/helpers/medical-entry-modal';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Item, ItemActions, ItemContent } from '@/components/ui/item';
@@ -16,7 +17,14 @@ import type { BreadcrumbItem } from '@/types';
 import { MedicalRecord, ScrollableMedicalRecordEntry } from '@/types/application/medicalRecord';
 import { InfiniteScrollRef } from '@inertiajs/core';
 import { Form, Head, InfiniteScroll, Link } from '@inertiajs/react';
-import { EraserIcon, RefreshCcwDotIcon, SearchIcon, SquarePenIcon } from 'lucide-react';
+import {
+    ClipboardPlusIcon,
+    EraserIcon,
+    NotebookPenIcon,
+    RefreshCcwDotIcon,
+    SearchIcon,
+    SquarePenIcon,
+} from 'lucide-react';
 import { Fragment, useRef } from 'react';
 
 interface ShowProps {
@@ -111,14 +119,34 @@ export default function Show({ medicalRecord, entries }: Readonly<ShowProps>) {
                     />
                 </article>
 
-                <section className="my-4">
+                <section className="mt-6 mb-4">
                     <HeadingSmall title="Entries" description="These are the entries for this medical record." />
-                    {/* TODO: Add new empty state design */}
-                    {/* TODO: Add button to create new entry */}
                     {!hasEntries && (
-                        <p className="mt-2 rounded-md border border-dashed p-4 text-center text-sm text-muted-foreground">
-                            This medical record has no entries.
-                        </p>
+                        <Empty className="mt-4 border border-dashed">
+                            <EmptyHeader>
+                                <EmptyMedia variant="icon">
+                                    <ClipboardPlusIcon aria-hidden />
+                                </EmptyMedia>
+                                <EmptyTitle>No Medical Entry</EmptyTitle>
+                                <EmptyDescription className="text-balance">
+                                    This medical record does not have any entries yet. Click the button below to add a
+                                    new entry.
+                                </EmptyDescription>
+                            </EmptyHeader>
+                            <EmptyContent>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    aria-label="Add New Entry"
+                                    title="Add New Entry"
+                                    asChild
+                                >
+                                    <Link href={medicalRecords.entries.create(medicalRecord.id)} prefetch as="button">
+                                        Add New Entry
+                                    </Link>
+                                </Button>
+                            </EmptyContent>
+                        </Empty>
                     )}
                     {hasEntries && (
                         <Fragment>
@@ -157,16 +185,33 @@ export default function Show({ medicalRecord, entries }: Readonly<ShowProps>) {
                                     </Field>
                                 </Form>
 
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    onClick={fetchNext}
-                                    title="Load more entries"
-                                    aria-label="Load more entries"
-                                    disabled={entries.next_cursor === null && !infiniteScrollRef.current?.hasNext()}
-                                >
-                                    <RefreshCcwDotIcon aria-hidden />
-                                </Button>
+                                <div className="inline-flex items-center gap-x-2">
+                                    <Button
+                                        variant="secondary"
+                                        size="icon"
+                                        title="Add New Entry"
+                                        aria-label="Add New Entry"
+                                        asChild
+                                    >
+                                        <Link
+                                            href={medicalRecords.entries.create(medicalRecord.id)}
+                                            prefetch
+                                            as="button"
+                                        >
+                                            <NotebookPenIcon aria-hidden />
+                                        </Link>
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        onClick={fetchNext}
+                                        title="Load more entries"
+                                        aria-label="Load more entries"
+                                        disabled={entries.next_cursor === null && !infiniteScrollRef.current?.hasNext()}
+                                    >
+                                        <RefreshCcwDotIcon aria-hidden />
+                                    </Button>
+                                </div>
                             </div>
 
                             <div className="mt-2 overflow-hidden rounded-lg border">
@@ -189,7 +234,7 @@ export default function Show({ medicalRecord, entries }: Readonly<ShowProps>) {
 
                                         <TableBody id="table-body">
                                             {entries?.data.map((entry) => (
-                                                <TableRow key={entry.id} className="[&>*]:not-last:w-max">
+                                                <TableRow key={entry.id} className="*:not-last:w-max">
                                                     <TableCell className="font-medium">{entry.id}</TableCell>
                                                     <TableCell>{entry.title}</TableCell>
                                                     <TableCell className="capitalize">
