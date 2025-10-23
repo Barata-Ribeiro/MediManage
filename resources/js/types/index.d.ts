@@ -1,4 +1,5 @@
 import { User } from '@/types/admin/users';
+import { Notice } from '@/types/application/notice';
 import { InertiaLinkProps } from '@inertiajs/react';
 import { LucideIcon } from 'lucide-react';
 
@@ -30,6 +31,7 @@ export interface SharedData {
     quote: { message: string; author: string };
     auth: Auth;
     flash: Record<'success' | 'error' | 'info' | 'warning', string | null>;
+    notices?: Notice[];
     sidebarOpen: boolean;
     [key: string]: unknown;
 }

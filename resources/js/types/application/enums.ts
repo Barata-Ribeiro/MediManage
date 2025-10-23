@@ -19,3 +19,10 @@ export enum MedicalRecordEntryType {
     Procedure = 'procedure',
     Other = 'other',
 }
+
+export enum NoticeType {
+    Announcement = 'announcement',
+    Info = 'info',
+    Warning = 'warning',
+    Alert = 'alert',
+}
