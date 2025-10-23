@@ -201,6 +201,25 @@ class MedicalRecordController extends Controller
     }
 
     /**
+     * Store a newly created resource entry in storage.
+     */
+    public function storeEntry(MedicalRecordEntryRequest $request, MedicalRecord $medicalRecord)
+    {
+        $validated = $request->validated();
+        $medicalRecordId = $medicalRecord->id;
+        $doctorId = Auth::user()->employeeInfo->id;
+
+        try {
+            Log::info('Medical Records: Created new medical record entry', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecordId]);
+            MedicalRecordEntry::create($validated + ['medical_record_id' => $medicalRecordId, 'employee_info_id' => $doctorId]);
+            return to_route('medicalRecords.show', ['medicalRecord' => $medicalRecordId])->with('success', 'Medical record entry created successfully.');
+        } catch (Exception $e) {
+            Log::error('Medical Records: Failed to create medical record entry', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id, 'error' => $e->getMessage()]);
+            return back()->withInput()->with('error', 'Failed to create medical record entry. Please try again.');
+        }
+    }
+
+    /**
      * Show the form for editing the specified resource entry.
      */
     public function editEntry(MedicalRecord $medicalRecord, MedicalRecordEntry $medicalRecordEntry)
