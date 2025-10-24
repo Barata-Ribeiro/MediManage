@@ -151,6 +151,9 @@ php artisan serve
 
 There are bugs and/or implementations that require some attention.
 
+- Implement new appointment functionality.
+- Add component for status update for attendant and doctor.
+- Install and implement websocket for real-time status updating.
 - Send email to patient with account details.
 - Check for the patient's ID in the sidebar, and allow users to register their patient info conditionally.
 - Implement status update functionality for doctors and attendants.
