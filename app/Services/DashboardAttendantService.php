@@ -40,17 +40,15 @@ class DashboardAttendantService implements DashboardAttendantServiceInterface
      */
     private function getTodayUpcomingAppointments($startOfWorkDay, $endOfWorkDay)
     {
-        return Appointment::with('patientInfo', 'employeeInfo')
+        return Appointment::with([
+            'employeeInfo' => fn($q) => $q->select('id', 'user_id', 'first_name', 'last_name', 'gender', 'specialization')
+                ->with('user:id,name,avatar'),
+            'patientInfo' => fn($q) => $q->select('id', 'user_id', 'first_name', 'last_name', 'gender', 'date_of_birth', 'phone_number')
+                ->with('user:id,name,avatar'),
+        ])
             ->whereDate('appointment_date', Carbon::today())
             ->whereBetween('appointment_date', [$startOfWorkDay, $endOfWorkDay])
             ->orderBy('appointment_date', 'asc')
-            ->paginate(10)
-            ->through(fn($a) => [
-                'id' => $a->id,
-                'time' => Carbon::parse($a->appointment_date)->format('H:i'),
-                'doctor' => $a->employeeInfo->getFullNameAttribute(),
-                'patient' => $a->patientInfo->getFullNameAttribute(),
-                'status' => $a->status,
-            ]);
+            ->paginate(10);
     }
 }
