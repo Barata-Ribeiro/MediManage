@@ -1,6 +1,11 @@
 import HeadingSmall from '@/components/heading-small';
+import { Button } from '@/components/ui/button';
 import { Item, ItemContent, ItemHeader } from '@/components/ui/item';
+import { cn } from '@/lib/utils';
+import patient_info, { search } from '@/routes/patient_info';
+import { SharedData } from '@/types';
 import { PatientInfo } from '@/types/application/patient';
+import { Link, usePage } from '@inertiajs/react';
 import { format } from 'date-fns';
 
 interface PatientPersonalInfoItemProps {
@@ -9,6 +14,16 @@ interface PatientPersonalInfoItemProps {
 }
 
 export default function PatientPersonalInfoItem({ patient, dateOfBirth }: Readonly<PatientPersonalInfoItemProps>) {
+    const { auth } = usePage<SharedData>().props;
+
+    const isAllowedToEdit = auth.permissions.includes('patient_info.edit');
+
+    const editLinkRoute = patient_info.edit(patient.id);
+    const finalEditLinkRoute = isAllowedToEdit ? editLinkRoute : '#';
+
+    const disabledLinkStyles = 'pointer-events-none opacity-50';
+    const disabledLinkClass = cn(!isAllowedToEdit && disabledLinkStyles);
+
     return (
         <Item variant="outline">
             <ItemHeader>
@@ -104,6 +119,20 @@ export default function PatientPersonalInfoItem({ patient, dateOfBirth }: Readon
                         </dd>
                     </div>
                 </dl>
+
+                <div className="inline-flex items-center gap-x-2">
+                    <Button variant="ghost" asChild>
+                        <Link href={search()} prefetch>
+                            Find Other
+                        </Link>
+                    </Button>
+
+                    <Button asChild>
+                        <Link href={finalEditLinkRoute} className={disabledLinkClass} prefetch="hover">
+                            Edit Patient
+                        </Link>
+                    </Button>
+                </div>
             </ItemContent>
         </Item>
     );
