@@ -36,7 +36,7 @@ export default function Show({ patient: data }: Readonly<{ patient: PatientInfo 
             <Head title={rest.full_name} />
 
             <article className="container py-2">
-                <header className="flex items-center gap-4 rounded-lg border p-6">
+                <header className="flex flex-wrap items-center gap-4 rounded-lg border p-6">
                     <Avatar className="size-22">
                         <AvatarImage src={user?.avatar} />
                         <AvatarFallback className="text-2xl">{getInitials(rest.full_name!)}</AvatarFallback>
@@ -63,7 +63,7 @@ export default function Show({ patient: data }: Readonly<{ patient: PatientInfo 
 
                 <div id="tabs">
                     <Tabs defaultValue="personal" className="py-4">
-                        <TabsList>
+                        <TabsList className="flex h-auto flex-wrap items-center justify-start space-y-1">
                             <TabsTrigger value="personal">Personal</TabsTrigger>
                             <TabsTrigger value="account">Account</TabsTrigger>
                             <TabsTrigger value="medicalRecord">Medical Record</TabsTrigger>
