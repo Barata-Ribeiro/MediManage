@@ -167,4 +167,37 @@ class PatientInfoController extends Controller
             return back()->withInput()->with('error', 'Failed to create user account. Please try again.');
         }
     }
+
+    /**
+     * Associate an existing user account with the patient.
+     */
+    public function associateAccount(Request $request, PatientInfo $patientInfo)
+    {
+        if ($patientInfo->user_id) {
+            return to_route('patient_info.show', ['patientInfo' => $patientInfo])->with('error', 'This patient already has an associated user account.');
+        }
+
+        $request->validate([
+            'email' => 'required|exists:users,email|unique:users,patient_info_id',
+        ]);
+
+        try {
+            $user = User::where('email', $request->input('email'))->firstOrFail();
+
+            $patientInfo->user()->associate($user);
+            $patientInfo->save();
+
+            Log::info("Patient Info: Associated existing account with patient", ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id, 'user_id' => $user->id]);
+
+            return to_route('patient_info.show', ['patientInfo' => $patientInfo])->with('success', 'User account associated successfully.');
+        } catch (Exception $e) {
+            Log::error('Patient Info: Failed to associate user account with patient', [
+                'action_user_id' => Auth::id(),
+                'patient_info_id' => $patientInfo->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->withInput()->with('error', 'Failed to associate user account. Please try again.');
+        }
+    }
 }

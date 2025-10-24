@@ -22,4 +22,6 @@ Route::middleware(['auth', 'verified'])->prefix('patients')->group(function () {
         ->middleware('permission:patient_info.edit');
     Route::put('/{patientInfo}', [PatientInfoController::class, 'update'])->name('patient_info.update')
         ->middleware('permission:patient_info.edit');
+    Route::post('/{patientInfo}/associate-account', [PatientInfoController::class, 'associateAccount'])->name('patient_info.associateAccount')
+        ->middleware('permission:patient_info.edit');
 });
