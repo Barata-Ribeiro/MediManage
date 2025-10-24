@@ -10,4 +10,6 @@ Route::middleware(['auth'])->prefix('appointments')->group(function () {
     Route::prefix('/{patient}/patient')->group(function () {
         Route::get('/', [AppointmentController::class, 'indexByPatient'])->name('appointments.patient.index')->middleware('role_or_permission:Patient|appointment.index');
     });
+
+    Route::patch('/{appointment}/status', [AppointmentController::class, 'updateStatus'])->name('appointments.update.status')->middleware('permission:appointment.edit');
 });
