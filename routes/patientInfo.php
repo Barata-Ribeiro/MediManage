@@ -17,4 +17,9 @@ Route::middleware(['auth', 'verified'])->prefix('patients')->group(function () {
         ->middleware('permission:patient_info.create');
     Route::post('{patientInfo}/new-account', [PatientInfoController::class, 'storeNewAccount'])->name('patient_info.storeNewAccount')
         ->middleware('permission:patient_info.create');
+
+    Route::get('/{patientInfo}/edit', [PatientInfoController::class, 'edit'])->name('patient_info.edit')
+        ->middleware('permission:patient_info.edit');
+    Route::put('/{patientInfo}', [PatientInfoController::class, 'update'])->name('patient_info.update')
+        ->middleware('permission:patient_info.edit');
 });

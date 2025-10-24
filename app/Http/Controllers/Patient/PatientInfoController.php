@@ -83,6 +83,38 @@ class PatientInfoController extends Controller
     }
 
     /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(PatientInfo $patientInfo)
+    {
+        Log::info("Patient Info: Viewed edit form for patient", ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id]);
+        return Inertia::render('patient/Edit', ['patient' => $patientInfo]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(PatientRequest $request, PatientInfo $patientInfo)
+    {
+        try {
+            $data = $request->validated();
+
+            $patientInfo->update($data);
+            Log::info("Patient Info: Updated patient info", ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id]);
+
+            return to_route('patient_info.show', ['patientInfo' => $patientInfo])->with('success', 'Patient information updated successfully.');
+        } catch (Exception $e) {
+            Log::error('Patient Info: Failed to update patient info', [
+                'action_user_id' => Auth::id(),
+                'patient_info_id' => $patientInfo->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return back()->withInput()->with('error', 'Failed to update patient information. Please try again.');
+        }
+    }
+
+    /**
      * Show the form for creating a new account for the patient.
      */
     public function newAccount(PatientInfo $patientInfo)
@@ -95,6 +127,9 @@ class PatientInfoController extends Controller
         return Inertia::render('patient/NewAccount', ['patient' => $patientInfo]);
     }
 
+    /**
+     * Store a newly created user account for the patient.
+     */
     public function storeNewAccount(Request $request, PatientInfo $patientInfo)
     {
         if ($patientInfo->user_id) {
