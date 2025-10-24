@@ -51,6 +51,10 @@ class PatientInfoController extends Controller
      */
     public function search(Request $request)
     {
+        if (Auth::user()->hasRole('Patient')) {
+            return to_route('dashboard')->with('error', 'You do not have permission to edit this patient information.');
+        }
+
         $query = PatientInfo::select(['id', 'user_id', 'first_name', 'last_name', 'date_of_birth', 'phone_number']);
 
         if ($request->filled('search')) {
@@ -77,6 +81,10 @@ class PatientInfoController extends Controller
      */
     public function show(PatientInfo $patientInfo)
     {
+        if (Auth::user()->hasRole('Patient') && Auth::id() !== $patientInfo->user_id) {
+            return to_route('dashboard')->with('error', 'You do not have permission to view this patient information.');
+        }
+
         $patientInfo->load(['user:id,name,email,avatar,bio,created_at,updated_at,patient_info_id', 'medicalRecord'])->getAppends();
         Log::info("Patient Info: Viewed patient info", ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id]);
         return Inertia::render('patient/Show', ['patient' => $patientInfo]);
