@@ -34,7 +34,6 @@ class AppointmentController extends Controller
 
     /**
      * Update the status of the specified appointment.
-     * @todo Implement real-time notifications for status updates.
      */
     public function updateStatus(Request $request, Appointment $appointment)
     {

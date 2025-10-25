@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Database\Factories\AppointmentFactory;
 use Eloquent;
+use Illuminate\Database\Eloquent\BroadcastableModelEventOccurred;
+use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
-
 
 /**
  * @property int $id
@@ -39,7 +40,7 @@ use Illuminate\Support\Carbon;
 class Appointment extends Model
 {
     /** @use HasFactory<AppointmentFactory> */
-    use HasFactory;
+    use BroadcastsEvents, HasFactory;
 
     protected $table = 'appointments';
 
@@ -59,5 +60,45 @@ class Appointment extends Model
     public function employeeInfo(): BelongsTo
     {
         return $this->belongsTo(EmployeeInfo::class);
+    }
+
+    /**
+     * Determine whether this Appointment should be broadcast for a given model event.
+     *
+     * Evaluates the provided event name and returns true when this Appointment instance
+     * ought to be broadcast to subscribers/listeners for that event. Typical event names
+     * include Eloquent model events such as "creating", "created", "updating", "updated",
+     * "deleting", "deleted", "saving", "saved", etc.
+     *
+     * @param string $event The name of the model event to evaluate.
+     * @return bool True if the appointment should be broadcast for the given event, false otherwise.
+     */
+    public function broadcastWhen(string $event): bool
+    {
+        if ($event === 'updated') {
+            return $this->wasChanged('status');
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the channels that model events should broadcast on.
+     *
+     * @param  string  $event
+     * @return array<int, \Illuminate\Broadcasting\Channel|\Illuminate\Database\Eloquent\Model>
+     */
+    public function broadcastOn(string $event): array
+    {
+        // Broadcast to the model's private channel using Laravel model channel conventions
+        return [$this];
+    }
+
+    /**
+     * Create a new broadcastable model event for the model.
+     */
+    protected function newBroadcastableEvent(string $event): BroadcastableModelEventOccurred
+    {
+        return (new BroadcastableModelEventOccurred($this, $event))->dontBroadcastToCurrentUser();
     }
 }
