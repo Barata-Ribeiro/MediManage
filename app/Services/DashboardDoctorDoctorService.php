@@ -98,19 +98,17 @@ class DashboardDoctorDoctorService implements DashboardDoctorServiceInterface
             return [];
         }
 
-        return Appointment::with('patientInfo')
+        return Appointment::with([
+            'employeeInfo' => fn($q) => $q->select('id', 'user_id', 'first_name', 'last_name', 'gender', 'specialization')
+                ->with('user:id,name,avatar'),
+            'patientInfo' => fn($q) => $q->select('id', 'user_id', 'first_name', 'last_name', 'gender', 'date_of_birth', 'phone_number')
+                ->with('user:id,name,avatar'),
+        ])
             ->where('employee_info_id', $doctorInfo->id)
             ->whereDate('appointment_date', Carbon::today())
             ->whereBetween('appointment_date', [$startOfWorkDay, $endOfWorkDay])
-            ->orderBy('appointment_date')
-            ->paginate(10)
-            ->through(fn($a) => [
-                'id' => $a->id,
-                'time' => Carbon::parse($a->appointment_date)->format('H:i'),
-                'doctor' => $a->employeeInfo->getFullNameAttribute(),
-                'patient' => $a->patientInfo->getFullNameAttribute(),
-                'status' => $a->status,
-            ]);
+            ->orderBy('appointment_date', 'asc')
+            ->paginate(10);
     }
 
     /**
