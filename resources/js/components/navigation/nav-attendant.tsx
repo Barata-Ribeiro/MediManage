@@ -5,10 +5,11 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import appointments from '@/routes/appointments';
 import { createPartial, search } from '@/routes/patient_info';
 import { type NavItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { UserPlusIcon, UserSearchIcon } from 'lucide-react';
+import { CalendarPlusIcon, UserPlusIcon, UserSearchIcon } from 'lucide-react';
 
 export default function NavAttendant() {
     const { props, url } = usePage<SharedData>();
@@ -18,6 +19,11 @@ export default function NavAttendant() {
     if (!isAttendant || !auth.user.employee_info_id) return null;
 
     const attendantItems: NavItem[] = [
+        {
+            title: 'Schedule Appointment',
+            href: appointments.create().url,
+            icon: CalendarPlusIcon,
+        },
         {
             title: 'New Patient',
             href: createPartial().url,

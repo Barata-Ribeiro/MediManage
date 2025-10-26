@@ -4,10 +4,11 @@ import DashboardHeader from '@/components/helpers/dashboard-header';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
+import { create } from '@/routes/appointments';
 import { BreadcrumbItem } from '@/types';
 import { PaginatedUpcomingAppointments } from '@/types/application/appointment';
 import { EmployeeInfo } from '@/types/application/employee';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { format } from 'date-fns/format';
 import { CalendarPlusIcon } from 'lucide-react';
 
@@ -74,9 +75,10 @@ export default function AttendantDashboard({ data }: Readonly<AttendantDashboard
                             description="List of all upcoming appointments for today."
                         />
 
-                        {/* TODO: Implement new appointment functionality */}
-                        <Button variant="secondary" disabled>
-                            <CalendarPlusIcon aria-hidden size={16} /> Schedule
+                        <Button variant="secondary" asChild>
+                            <Link href={create()} prefetch>
+                                <CalendarPlusIcon aria-hidden size={16} /> Schedule
+                            </Link>
                         </Button>
                     </div>
 
