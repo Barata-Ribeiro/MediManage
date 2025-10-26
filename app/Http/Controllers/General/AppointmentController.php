@@ -56,4 +56,12 @@ class AppointmentController extends Controller
             return response()->json(['message' => 'Failed to update appointment status.'], 500);
         }
     }
+
+    /**
+     * Show the form for creating a new appointment.
+     */
+    public function create()
+    {
+        return Inertia::render('appointments/Create');
+    }
 }
