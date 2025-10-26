@@ -7,6 +7,7 @@ use App\Models\Appointment;
 use App\Models\EmployeeInfo;
 use App\Services\AppointmentService;
 use Auth;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -27,8 +28,9 @@ class AppointmentController extends Controller
     public function indexByDoctor(EmployeeInfo $doctor, Request $request)
     {
         $appointments = $this->appointmentService->getAppointmentsByDoctorWithRequest($doctor, $request);
+
         return Inertia::render('appointments/doctor/Index', [
-            'appointments' => $appointments
+            'appointments' => $appointments,
         ]);
     }
 
@@ -53,6 +55,7 @@ class AppointmentController extends Controller
             return response()->json(['message' => 'Appointment status updated successfully.'], 200);
         } catch (Exception $e) {
             Log::error('Failed to update appointment status', ['action_user_id' => Auth::id(), 'appointment_id' => $appointment->id, 'error' => $e->getMessage()]);
+
             return response()->json(['message' => 'Failed to update appointment status.'], 500);
         }
     }
@@ -62,6 +65,15 @@ class AppointmentController extends Controller
      */
     public function create()
     {
-        return Inertia::render('appointments/Create');
+        $today = Carbon::now();
+
+        $occupiedSlots = Appointment::whereDate('appointment_date', '>=', $today)
+            ->whereStatus('scheduled')
+            ->orderBy('appointment_date', 'asc')
+            ->pluck('appointment_date');
+
+        return Inertia::render('appointments/Create', [
+            'occupiedSlots' => Inertia::defer(fn() => $occupiedSlots),
+        ]);
     }
 }
