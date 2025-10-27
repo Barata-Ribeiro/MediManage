@@ -135,24 +135,6 @@ class MedicalRecordController extends Controller
     }
 
     /**
-     * Simple search for patients (for FETCH/AXIOS requests).
-     */
-    public function patientSimpleSearch(Request $request)
-    {
-        $search = $request->q;
-
-        $patients = PatientInfo::select(['id', 'first_name', 'last_name'])
-            ->where('medical_record_id', null)
-            ->when($request->filled('q'), fn($q) => $q->whereLike('first_name', "%$search%")
-                ->orWhereLike('last_name', "%$search%"))
-            ->orderBy('first_name', 'asc')
-            ->paginate(10)
-            ->withQueryString();
-
-        return response()->json($patients);
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(MedicalRecord $medicalRecord)
