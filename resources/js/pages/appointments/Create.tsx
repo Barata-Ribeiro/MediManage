@@ -1,6 +1,7 @@
 import CalendarSkeleton from '@/components/blocks/skeletons/calendar-skeleton';
 import Heading from '@/components/heading';
 import AppointmentCalendarPicker from '@/components/helpers/appointment-calendar-picker';
+import PatientSelectCombobox from '@/components/helpers/patient-select-combobox';
 import Layout from '@/layouts/app-layout';
 import appointments from '@/routes/appointments';
 import { BreadcrumbItem } from '@/types';
@@ -20,6 +21,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Create({ occupiedSlots }: Readonly<CreateProps>) {
     const [finalDate, setFinalDate] = useState<string | undefined>(undefined);
+    const [patientId, setPatientId] = useState<string | null>(null);
 
     return (
         <Layout breadcrumbs={breadcrumbs}>
@@ -35,22 +37,33 @@ export default function Create({ occupiedSlots }: Readonly<CreateProps>) {
                     <Form
                         {...appointments.store.form()}
                         options={{ preserveScroll: true }}
-                        className="inert:pointer-events-none inert:opacity-50"
+                        className="space-y-6 inert:pointer-events-none inert:opacity-50"
                         transform={(data) => ({
                             ...data,
                             appointment_date: finalDate,
+                            patient_info_id: patientId,
                         })}
                         disableWhileProcessing
                     >
                         {({ errors }) => (
                             <>
-                                {/* TODO: Complete the appointment creation form */}
-                                <Deferred data="occupiedSlots" fallback={<CalendarSkeleton />}>
-                                    <AppointmentCalendarPicker
-                                        occupiedSlots={occupiedSlots}
-                                        setFinalDate={setFinalDate}
+                                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                                    <PatientSelectCombobox
+                                        setPatientId={setPatientId}
+                                        error={errors.patient_info_id}
+                                        size="full"
                                     />
-                                </Deferred>
+                                    {/* TODO: Implement doctor select here */}
+                                </div>
+
+                                <div className="*:mx-auto">
+                                    <Deferred data="occupiedSlots" fallback={<CalendarSkeleton />}>
+                                        <AppointmentCalendarPicker
+                                            occupiedSlots={occupiedSlots}
+                                            setFinalDate={setFinalDate}
+                                        />
+                                    </Deferred>
+                                </div>
 
                                 <pre>{JSON.stringify(finalDate, null, 2)}</pre>
                             </>
