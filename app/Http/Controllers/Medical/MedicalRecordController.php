@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers\Medical;
 
+use App\Common\Helpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Medical\MedicalRecordEntryRequest;
 use App\Http\Requests\Medical\MedicalRecordRequest;
 use App\Models\MedicalRecord;
 use App\Models\MedicalRecordEntry;
-use App\Models\PatientInfo;
 use Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Inertia\Inertia;
 use Log;
-use Illuminate\Support\Facades\Schema;
 
 class MedicalRecordController extends Controller
 {
@@ -25,25 +25,27 @@ class MedicalRecordController extends Controller
     {
         Log::info('Medical Records: Viewed medical records list', ['action_user_id' => Auth::id()]);
 
-        $perPage = (int)$request->input('per_page', 10);
+        $perPage = (int) $request->input('per_page', 10);
         $search = $request->search;
         $sortBy = $request->input('sort_by', 'id');
         $sortDir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
 
         $allowedSorts = ['id', 'patient_info.first_name', 'patient_info.last_name', 'created_at', 'updated_at'];
-        if (!in_array($sortBy, $allowedSorts)) {
+        if (! in_array($sortBy, $allowedSorts)) {
             $sortBy = 'id';
         }
 
         $query = MedicalRecord::select(['medical_records.id', 'medical_records.patient_info_id', 'medical_records.created_at', 'medical_records.updated_at'])
-            ->with(['patientInfo' => fn($q) => $q->select('id', 'first_name', 'last_name')]);
+            ->with(['patientInfo' => fn ($q) => $q->select('id', 'first_name', 'last_name')]);
 
         if (str_starts_with($sortBy, 'patient_info.')) {
             $query->leftJoin('patient_info', 'patient_info.id', '=', 'medical_records.patient_info_id');
         }
 
-        $query->when($request->filled('search'), fn($qr) => $qr->whereFullText('medical_notes_html', "%$search%")
-            ->orWhereHas('patientInfo', fn($q) => $q->whereLike('first_name', "%$search%")->orWhereLike('last_name', "%$search%")));
+        $booleanQuery = Helpers::buildBooleanQuery($search);
+
+        $query->when($request->filled('search'), fn ($qr) => $qr->whereFullText('medical_notes_html', $booleanQuery, ['mode' => 'boolean'])
+            ->orWhereHas('patientInfo', fn ($q) => $q->whereLike('first_name', "%$search%")->orWhereLike('last_name', "%$search%")));
 
         $medicalRecords = $query->orderBy($sortBy, $sortDir)
             ->paginate($perPage)
@@ -60,9 +62,11 @@ class MedicalRecordController extends Controller
         try {
             Log::info('Medical Records: Created new medical record', ['action_user_id' => Auth::id(), 'patient_info_id' => $request->patient_info_id]);
             MedicalRecord::create($request->validated());
+
             return to_route('medicalRecords.index')->with('success', 'Medical record created successfully.');
         } catch (Exception $e) {
             Log::error('Medical Records: Failed to create medical record', ['action_user_id' => Auth::id(), 'error' => $e->getMessage()]);
+
             return back()->withInput()->withErrors('Failed to create medical record. Please try again.');
         }
     }
@@ -73,6 +77,7 @@ class MedicalRecordController extends Controller
     public function create()
     {
         Log::info('Medical Records: Viewed create medical record form', ['action_user_id' => Auth::id()]);
+
         return Inertia::render('medicalRecords/Create');
     }
 
@@ -83,25 +88,23 @@ class MedicalRecordController extends Controller
     {
         Log::info('Medical Records: Viewed medical record', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id]);
 
-        $medicalRecord->load(['patientInfo' => fn($q) => $q->select(['id', 'first_name', 'last_name', 'date_of_birth', 'gender'])]);
-
-
-        // Dynamically get columns except 'content_json'
+        $medicalRecord->load(['patientInfo' => fn ($q) => $q->select(['id', 'first_name', 'last_name', 'date_of_birth', 'gender'])]);
 
         $columns = Schema::getColumnListing((new MedicalRecordEntry)->getTable());
-        $columns = array_values(array_filter($columns, fn($c) => $c !== 'content_json'));
+        $columns = array_values(array_filter($columns, fn ($c) => $c !== 'content_json'));
+        $booleanQuery = Helpers::buildBooleanQuery($request->search);
 
         $entries = MedicalRecordEntry::select($columns)
             ->where('medical_record_id', $medicalRecord->id)
-            ->when($request->filled('search'), fn($q) => $q->where(function ($q2) use ($request) {
-                $q2->whereFullText(['title', 'content_html'], $request->search)
+            ->when($request->filled('search'), fn ($q) => $q->where(function ($q2) use ($request, $booleanQuery) {
+                $q2->whereFullText(['title', 'content_html'], $booleanQuery, ['mode' => 'boolean'])
                     ->orWhereLike('entry_type', "%$request->search%");
             }))
             ->orderBy('created_at', 'desc')
             ->cursorPaginate(10)
             ->withQueryString();
 
-        return Inertia::render('medicalRecords/Show', ['medicalRecord' => $medicalRecord, 'entries' => Inertia::scroll(fn() => $entries)]);
+        return Inertia::render('medicalRecords/Show', ['medicalRecord' => $medicalRecord, 'entries' => Inertia::scroll(fn () => $entries)]);
     }
 
     /**
@@ -126,10 +129,12 @@ class MedicalRecordController extends Controller
                 'isRemoteEnabled' => true,
             ])->setPaper('a4', 'portrait');
 
-            $filename = 'medical_record_' . ($data->id ?? $medicalRecord->id);
-            return $pdf->stream($filename . '.pdf');
+            $filename = 'medical_record_'.($data->id ?? $medicalRecord->id);
+
+            return $pdf->stream($filename.'.pdf');
         } catch (Exception $e) {
             Log::error('Medical Records: Failed to generate medical record PDF', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id, 'error' => $e->getMessage()]);
+
             return to_route('medicalRecords.index')->with('error', 'Failed to generate PDF. Please try again.');
         }
     }
@@ -141,7 +146,7 @@ class MedicalRecordController extends Controller
     {
         Log::info('Medical Records: Viewed edit medical record form', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id]);
 
-        $medicalRecord->load(['patientInfo' => fn($q) => $q->select(['id', 'first_name', 'last_name'])]);
+        $medicalRecord->load(['patientInfo' => fn ($q) => $q->select(['id', 'first_name', 'last_name'])]);
 
         return Inertia::render('medicalRecords/Edit', ['medicalRecord' => $medicalRecord]);
     }
@@ -154,9 +159,11 @@ class MedicalRecordController extends Controller
         try {
             Log::info('Medical Records: Updated medical record', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id]);
             $medicalRecord->update($request->validated());
+
             return to_route('medicalRecords.show', ['medicalRecord' => $medicalRecord])->with('success', 'Medical record updated successfully.');
         } catch (Exception $e) {
             Log::error('Medical Records: Failed to update medical record', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id, 'error' => $e->getMessage()]);
+
             return back()->withInput()->with('error', 'Failed to update medical record. Please try again.');
         }
     }
@@ -170,7 +177,7 @@ class MedicalRecordController extends Controller
 
         return Inertia::render('medicalRecords/entries/Create', [
             'medicalRecord' => $medicalRecord->load([
-                'patientInfo' => fn($q) => $q->select(['id', 'first_name', 'last_name', 'date_of_birth', 'gender'])
+                'patientInfo' => fn ($q) => $q->select(['id', 'first_name', 'last_name', 'date_of_birth', 'gender']),
             ])->only(['id', 'patient_info_id']) + [
                 'patient_info' => $medicalRecord->patientInfo
                     ->append(['age', 'full_name'])
@@ -194,9 +201,11 @@ class MedicalRecordController extends Controller
         try {
             Log::info('Medical Records: Created new medical record entry', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecordId]);
             MedicalRecordEntry::create($validated + ['medical_record_id' => $medicalRecordId, 'employee_info_id' => $doctorId]);
+
             return to_route('medicalRecords.show', ['medicalRecord' => $medicalRecordId])->with('success', 'Medical record entry created successfully.');
         } catch (Exception $e) {
             Log::error('Medical Records: Failed to create medical record entry', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id, 'error' => $e->getMessage()]);
+
             return back()->withInput()->with('error', 'Failed to create medical record entry. Please try again.');
         }
     }
@@ -210,7 +219,7 @@ class MedicalRecordController extends Controller
 
         return Inertia::render('medicalRecords/entries/Edit', [
             'medicalRecord' => $medicalRecord->load([
-                'patientInfo' => fn($q) => $q->select(['id', 'first_name', 'last_name', 'date_of_birth', 'gender'])
+                'patientInfo' => fn ($q) => $q->select(['id', 'first_name', 'last_name', 'date_of_birth', 'gender']),
             ])->only(['id', 'patient_info_id']) + [
                 'patient_info' => $medicalRecord->patientInfo
                     ->append(['age', 'full_name'])
@@ -220,7 +229,6 @@ class MedicalRecordController extends Controller
         ]);
     }
 
-
     /**
      * Update the specified resource entry in storage.
      */
@@ -229,9 +237,11 @@ class MedicalRecordController extends Controller
         try {
             Log::info('Medical Records: Updated medical record entry', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id, 'medical_record_entry_id' => $medicalRecordEntry->id]);
             $medicalRecordEntry->update($request->validated());
+
             return to_route('medicalRecords.show', ['medicalRecord' => $medicalRecord])->with('success', 'Medical record entry updated successfully.');
         } catch (Exception $e) {
             Log::error('Medical Records: Failed to update medical record entry', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id, 'medical_record_entry_id' => $medicalRecordEntry->id, 'error' => $e->getMessage()]);
+
             return back()->withInput()->with('error', 'Failed to update medical record entry. Please try again.');
         }
     }

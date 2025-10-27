@@ -21,7 +21,8 @@ class PatientInfoController extends Controller
      */
     public function createPartial()
     {
-        Log::info("Patient Info: Viewed create partial form", ['action_user_id' => Auth::id()]);
+        Log::info('Patient Info: Viewed create partial form', ['action_user_id' => Auth::id()]);
+
         return Inertia::render('patient/CreatePartial');
     }
 
@@ -34,13 +35,13 @@ class PatientInfoController extends Controller
             $data = $request->validated();
 
             $patient = PatientInfo::create($data);
-            Log::info("Patient Info: Attendant created patient info", ['action_user_id' => Auth::id(), 'patient_info_id' => $patient->id]);
+            Log::info('Patient Info: Attendant created patient info', ['action_user_id' => Auth::id(), 'patient_info_id' => $patient->id]);
 
             return to_route('patient_info.show', ['patientInfo' => $patient])->with('success', 'Patient information created successfully.');
         } catch (Exception $e) {
             Log::error('Patient Info: Failed to create patient info', [
                 'action_user_id' => Auth::id(),
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return back()->withInput()->with('error', 'Failed to create patient information. Please try again.');
@@ -65,16 +66,16 @@ class PatientInfoController extends Controller
                 ['first_name', 'last_name', 'phone_number', 'address', 'insurance_company', 'emergency_contact_name'],
                 $searchTerm
             )
-                ->orWhereHas('user', fn($q) => $q->whereLike('name', "%$searchTerm%")
+                ->orWhereHas('user', fn ($q) => $q->whereLike('name', "%$searchTerm%")
                     ->orWhereLike('email', "%$searchTerm%"));
         } else {
             $query->where('id', 0);
         }
 
         $patients = $query->with('user:id,name,email,avatar')->cursorPaginate(10)->withQueryString();
-        Log::info("Patient Info: Searched for patients", ['action_user_id' => Auth::id(), 'search_term' => $request->input('search')]);
+        Log::info('Patient Info: Searched for patients', ['action_user_id' => Auth::id(), 'search_term' => $request->input('search')]);
 
-        return Inertia::render('patient/Find', ['patients' => Inertia::scroll(fn() => $patients)]);
+        return Inertia::render('patient/Find', ['patients' => Inertia::scroll(fn () => $patients)]);
     }
 
     /**
@@ -87,7 +88,8 @@ class PatientInfoController extends Controller
         }
 
         $patientInfo->load(['user:id,name,email,avatar,bio,created_at,updated_at,patient_info_id', 'medicalRecord'])->getAppends();
-        Log::info("Patient Info: Viewed patient info", ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id]);
+        Log::info('Patient Info: Viewed patient info', ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id]);
+
         return Inertia::render('patient/Show', ['patient' => $patientInfo]);
     }
 
@@ -96,7 +98,8 @@ class PatientInfoController extends Controller
      */
     public function edit(PatientInfo $patientInfo)
     {
-        Log::info("Patient Info: Viewed edit form for patient", ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id]);
+        Log::info('Patient Info: Viewed edit form for patient', ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id]);
+
         return Inertia::render('patient/Edit', ['patient' => $patientInfo]);
     }
 
@@ -109,14 +112,14 @@ class PatientInfoController extends Controller
             $data = $request->validated();
 
             $patientInfo->update($data);
-            Log::info("Patient Info: Updated patient info", ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id]);
+            Log::info('Patient Info: Updated patient info', ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id]);
 
             return to_route('patient_info.show', ['patientInfo' => $patientInfo])->with('success', 'Patient information updated successfully.');
         } catch (Exception $e) {
             Log::error('Patient Info: Failed to update patient info', [
                 'action_user_id' => Auth::id(),
                 'patient_info_id' => $patientInfo->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return back()->withInput()->with('error', 'Failed to update patient information. Please try again.');
@@ -132,7 +135,8 @@ class PatientInfoController extends Controller
             return to_route('patient_info.show', ['patientInfo' => $patientInfo])->with('error', 'This patient already has an associated user account.');
         }
 
-        Log::info("Patient Info: Viewed new account form for patient", ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id]);
+        Log::info('Patient Info: Viewed new account form for patient', ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id]);
+
         return Inertia::render('patient/NewAccount', ['patient' => $patientInfo]);
     }
 
@@ -160,7 +164,7 @@ class PatientInfoController extends Controller
             $patientInfo->user()->associate($user);
             $patientInfo->save();
 
-            Log::info("Patient Info: Created new account for patient", ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id, 'user_id' => $user->id]);
+            Log::info('Patient Info: Created new account for patient', ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id, 'user_id' => $user->id]);
 
             // TODO: Send email to patient with account details
             // Mail::to($user->email)->send(new NewAccountMail($user, $genPassword));
@@ -170,7 +174,7 @@ class PatientInfoController extends Controller
             Log::error('Patient Info: Failed to create user account for patient', [
                 'action_user_id' => Auth::id(),
                 'patient_info_id' => $patientInfo->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return back()->withInput()->with('error', 'Failed to create user account. Please try again.');
@@ -196,20 +200,19 @@ class PatientInfoController extends Controller
             $patientInfo->user()->associate($user);
             $patientInfo->save();
 
-            Log::info("Patient Info: Associated existing account with patient", ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id, 'user_id' => $user->id]);
+            Log::info('Patient Info: Associated existing account with patient', ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id, 'user_id' => $user->id]);
 
             return to_route('patient_info.show', ['patientInfo' => $patientInfo])->with('success', 'User account associated successfully.');
         } catch (Exception $e) {
             Log::error('Patient Info: Failed to associate user account with patient', [
                 'action_user_id' => Auth::id(),
                 'patient_info_id' => $patientInfo->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return back()->withInput()->with('error', 'Failed to associate user account. Please try again.');
         }
     }
-
 
     /**
      * Simple search for patients (for FETCH/AXIOS requests).
@@ -221,13 +224,9 @@ class PatientInfoController extends Controller
 
         $booleanQuery = Helpers::buildBooleanQuery($search);
 
-        $patients = PatientInfo::whereFullText(
-            ['first_name', 'last_name', 'phone_number', 'address', 'insurance_company', 'emergency_contact_name'],
-            $booleanQuery,
-            ['mode' => 'boolean']
-        )
-            ->when($medicalRecordIsNull, fn($q) => $q->whereNull('medical_record_id'))
-            ->orWhereHas('user', fn($q) => $q->whereLike('name', "%$search%")
+        $patients = PatientInfo::whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'insurance_company', 'emergency_contact_name'], $booleanQuery, ['mode' => 'boolean'])
+            ->when($medicalRecordIsNull, fn ($q) => $q->whereNull('medical_record_id'))
+            ->orWhereHas('user', fn ($q) => $q->whereLike('name', "%$search%")
                 ->orWhereLike('email', "%$search%"))
             ->select(['id', 'first_name', 'last_name'])
             ->orderBy('first_name', 'asc')

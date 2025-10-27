@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Medical\Prescription;
 
+use App\Common\Helpers;
 use App\Http\Controllers\Controller;
 use App\Models\Prescription;
 use Auth;
@@ -24,13 +25,13 @@ class PrescriptionController extends Controller
 
         $user = Auth::user();
 
-        $perPage = (int)$request->input('per_page', 10);
+        $perPage = (int) $request->input('per_page', 10);
         $search = $request->search;
         $sortBy = $request->input('sort_by', 'id');
         $sortDir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
 
         $allowedSorts = ['id', 'employee_info.first_name', 'employee_info.last_name', 'date_issued', 'date_expires', 'updated_at'];
-        if (!in_array($sortBy, $allowedSorts)) {
+        if (! in_array($sortBy, $allowedSorts)) {
             $sortBy = 'id';
         }
 
@@ -44,14 +45,16 @@ class PrescriptionController extends Controller
                 'prescriptions.date_expires',
                 'prescriptions.updated_at',
             ])
-            ->with(['doctorInfo' => fn($q) => $q->select('id', 'first_name', 'last_name')]);
+            ->with(['doctorInfo' => fn ($q) => $q->select('id', 'first_name', 'last_name')]);
 
         if (str_starts_with($sortBy, 'employee_info.')) {
             $query->leftJoin('employee_info', 'employee_info.id', '=', 'prescriptions.employee_info_id');
         }
 
-        $query->when($request->filled('search'), fn($qr) => $qr->whereFullText('prescription_details', "%$search%")
-            ->orWhereHas('doctorInfo', fn($q) => $q->whereLike('first_name', "%$search%")->orWhereLike('last_name', "%$search%")));
+        $booleanQuery = Helpers::buildBooleanQuery($request->search);
+
+        $query->when($request->filled('search'), fn ($qr) => $qr->whereFullText('prescription_details', $booleanQuery, ['mode' => 'boolean'])
+            ->orWhereHas('doctorInfo', fn ($q) => $q->whereLike('first_name', "%$search%")->orWhereLike('last_name', "%$search%")));
 
         $prescriptions = $query->orderBy($sortBy, $sortDir)
             ->paginate($perPage)
@@ -80,6 +83,7 @@ class PrescriptionController extends Controller
             return $this->generatePrescriptionPdf($prescription);
         } catch (Exception $e) {
             Log::error('Prescription: Failed to generate PDF', ['action_user_id' => Auth::id(), 'prescription_id' => $prescription->id, 'error' => $e->getMessage()]);
+
             return to_route('prescriptions.index')->with('error', 'Failed to generate prescription PDF. Please try again.');
         }
     }
@@ -87,7 +91,6 @@ class PrescriptionController extends Controller
     /**
      * Generate and stream the prescription PDF.
      *
-     * @param Prescription $prescription
      * @return Response
      */
     private function generatePrescriptionPdf(Prescription $prescription)
@@ -104,7 +107,8 @@ class PrescriptionController extends Controller
             'isHtml5ParserEnabled' => true,
             'isRemoteEnabled' => true,
         ])->setPaper('a4', 'portrait');
-        $fileName = 'prescription_' . Str::slug($prescription->patientInfo->full_name) . '.pdf';
-        return $pdf->stream($fileName . '.pdf');
+        $fileName = 'prescription_'.Str::slug($prescription->patientInfo->full_name).'.pdf';
+
+        return $pdf->stream($fileName.'.pdf');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Medical\Prescription;
 
+use App\Common\Helpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Medical\PrescriptionRequest;
 use App\Models\EmployeeInfo;
@@ -26,13 +27,13 @@ class DoctorPrescriptionController extends Controller
 
         Log::info('Doctor Prescription: Viewed issued prescriptions', ['action_user_id' => Auth::id()]);
 
-        $perPage = (int)$request->input('per_page', 10);
+        $perPage = (int) $request->input('per_page', 10);
         $search = $request->search;
         $sortBy = $request->input('sort_by', 'id');
         $sortDir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
 
         $allowedSorts = ['id', 'patient_info.first_name', 'patient_info.last_name', 'date_issued', 'date_expires', 'is_valid', 'updated_at'];
-        if (!in_array($sortBy, $allowedSorts)) {
+        if (! in_array($sortBy, $allowedSorts)) {
             $sortBy = 'id';
         }
 
@@ -47,20 +48,22 @@ class DoctorPrescriptionController extends Controller
                 'prescriptions.date_expires',
                 'prescriptions.updated_at',
             ])
-            ->with(['patientInfo' => fn($q) => $q->select('id', 'first_name', 'last_name')]);
+            ->with(['patientInfo' => fn ($q) => $q->select('id', 'first_name', 'last_name')]);
 
         if (str_starts_with($sortBy, 'patient_info.')) {
             $query->leftJoin('patient_info', 'patient_info.id', '=', 'prescriptions.patient_info_id');
         }
 
-        $query->when($request->filled('search'), fn($qr) => $qr->whereFullText('prescription_details', "%$search%")
-            ->orWhereHas('patientInfo', fn($q) => $q->whereLike('first_name', "%$search%")->orWhereLike('last_name', "%$search%")));
+        $booleanQuery = Helpers::buildBooleanQuery($request->search);
+
+        $query->when($request->filled('search'), fn ($qr) => $qr->whereFullText('prescription_details', $booleanQuery, ['mode' => 'boolean'])
+            ->orWhereHas('patientInfo', fn ($q) => $q->whereLike('first_name', "%$search%")->orWhereLike('last_name', "%$search%")));
 
         $prescriptions = $query->orderBy($sortBy, $sortDir)
             ->paginate($perPage)
             ->withQueryString();
 
-        $prescriptions->getCollection()->transform(fn($p) => $p->makeHidden('qr_code'));
+        $prescriptions->getCollection()->transform(fn ($p) => $p->makeHidden('qr_code'));
 
         return Inertia::render('doctor/prescriptions/Index', ['prescriptions' => $prescriptions]);
     }
@@ -80,7 +83,7 @@ class DoctorPrescriptionController extends Controller
 
         $prescription->load([
             'employeeInfo:id,first_name,last_name,gender,date_of_birth,license_number,license_expiry_date,specialization,phone_number',
-            'patientInfo:id,first_name,last_name,gender,date_of_birth,phone_number'
+            'patientInfo:id,first_name,last_name,gender,date_of_birth,phone_number',
         ])
             ->makeHidden(['employee_info_id', 'patient_info_id'])
             ->getAppends();
@@ -127,6 +130,7 @@ class DoctorPrescriptionController extends Controller
             return to_route('prescriptions.show', [$doctor->id, $patientInfo->id, $prescription->id])->with('success', 'Prescription updated successfully.');
         } catch (Exception $e) {
             Log::error('Doctor Prescription: Failed to update prescription', ['action_user_id' => Auth::id(), 'prescription_id' => $prescription->id, 'error' => $e->getMessage()]);
+
             return back()->withInput()->with('error', 'Failed to update prescription. Please try again.');
         }
     }

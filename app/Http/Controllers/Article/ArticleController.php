@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Article;
 
+use App\Common\Helpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Article\ArticleRequest;
 use App\Models\Article;
@@ -22,19 +23,21 @@ class ArticleController extends Controller
     {
         Log::info('Articles: Viewed articles list', ['action_user_id' => Auth::id()]);
 
-        $perPage = (int)$request->input('per_page', 10);
+        $perPage = (int) $request->input('per_page', 10);
         $search = $request->search;
         $sortBy = $request->input('sort_by', 'id');
         $sortDir = strtolower($request->input('sort_dir', 'asc')) === 'desc' ? 'desc' : 'asc';
 
         $allowedSorts = ['id', 'title', 'user.name', 'is_published', 'created_at', 'updated_at'];
-        if (!in_array($sortBy, $allowedSorts)) {
+        if (! in_array($sortBy, $allowedSorts)) {
             $sortBy = 'id';
         }
 
         if (str_starts_with($sortBy, 'user.')) {
             $sortBy = 'users.name';
         }
+
+        $booleanQuery = Helpers::buildBooleanQuery($search);
 
         $query = Article::select([
             'articles.id',
@@ -45,11 +48,11 @@ class ArticleController extends Controller
             'articles.created_at',
             'articles.updated_at',
         ])
-            ->with(['user' => fn($q) => $q->select('id', 'name')])
-            ->when($request->filled('search'), fn($qr) => $qr
-                ->whereFullText(['title', 'subtitle', 'excerpt', 'content_html'], $search)
-                ->orWhereHas('user', fn($q) => $q->whereLike('name', "%$search%")))
-            ->when(str_starts_with($sortBy, 'users.'), fn($qr) => $qr->leftJoin('users', 'users.id', '=', 'articles.user_id'));
+            ->with(['user' => fn ($q) => $q->select('id', 'name')])
+            ->when($request->filled('search'), fn ($qr) => $qr
+                ->whereFullText(['title', 'subtitle', 'excerpt', 'content_html'], $booleanQuery, ['mode' => 'boolean'])
+                ->orWhereHas('user', fn ($q) => $q->whereLike('name', "%$search%")))
+            ->when(str_starts_with($sortBy, 'users.'), fn ($qr) => $qr->leftJoin('users', 'users.id', '=', 'articles.user_id'));
 
         $articles = $query->orderBy($sortBy, $sortDir)
             ->paginate($perPage)
@@ -65,22 +68,24 @@ class ArticleController extends Controller
     {
         $user_id = Auth::id();
 
-        Log::info("Articles: Viewed own articles list", ['action_user_id' => $user_id]);
+        Log::info('Articles: Viewed own articles list', ['action_user_id' => $user_id]);
 
-        $perPage = (int)$request->input('per_page', 10);
+        $perPage = (int) $request->input('per_page', 10);
         $search = $request->search;
         $sortBy = $request->input('sort_by', 'id');
         $sortDir = strtolower($request->input('sort_dir', 'arc')) === 'desc' ? 'desc' : 'asc';
 
         $allowedSorts = ['id', 'title', 'is_published', 'created_at', 'updated_at'];
-        if (!in_array($sortBy, $allowedSorts)) {
+        if (! in_array($sortBy, $allowedSorts)) {
             $sortBy = 'id';
         }
 
+        $booleanQuery = Helpers::buildBooleanQuery($search);
+
         $query = Article::select(['id', 'user_id', 'title', 'slug', 'is_published', 'created_at', 'updated_at'])
             ->where('user_id', $user_id)
-            ->when($request->filled('search'), fn($qr) => $qr
-                ->whereFullText(['title', 'subtitle', 'excerpt', 'content_html'], $search));
+            ->when($request->filled('search'), fn ($qr) => $qr
+                ->whereFullText(['title', 'subtitle', 'excerpt', 'content_html'], $booleanQuery, ['mode' => 'boolean']));
 
         $articles = $query->orderBy($sortBy, $sortDir)
             ->paginate($perPage)
@@ -96,7 +101,7 @@ class ArticleController extends Controller
     {
         $requestingUser = Auth::user();
 
-        if ($article->user_id !== $requestingUser->id && !$requestingUser->hasRole('Super Admin|Manager')) {
+        if ($article->user_id !== $requestingUser->id && ! $requestingUser->hasRole('Super Admin|Manager')) {
             abort(403, 'You do not have permission to edit this article.');
         }
 
@@ -119,7 +124,7 @@ class ArticleController extends Controller
         try {
             $requestingUser = Auth::user();
 
-            if ($article->user_id !== $requestingUser->id && !$requestingUser->hasRole('Super Admin|Manager')) {
+            if ($article->user_id !== $requestingUser->id && ! $requestingUser->hasRole('Super Admin|Manager')) {
                 abort(403, 'You do not have permission to update this article.');
             }
 
@@ -132,7 +137,7 @@ class ArticleController extends Controller
             if ($request->has('categories')) {
                 $categoryNames = $data['categories'];
                 $categoryIds = collect($categoryNames)
-                    ->map(fn($name) => Category::firstOrCreate(['name' => $name])->id)
+                    ->map(fn ($name) => Category::firstOrCreate(['name' => $name])->id)
                     ->all();
                 $article->categories()->sync($categoryIds);
             } else {
@@ -146,7 +151,7 @@ class ArticleController extends Controller
             Log::error('Articles: Failed to update article', [
                 'action_user_id' => Auth::id(),
                 'article_id' => $article->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return back()->withInput()->with('error', 'Failed to update article. Please try again.');
@@ -167,7 +172,7 @@ class ArticleController extends Controller
             if ($request->has('categories')) {
                 $categoryNames = $data['categories'];
                 $categoryIds = collect($categoryNames)
-                    ->map(fn($name) => Category::firstOrCreate(['name' => $name])->id)
+                    ->map(fn ($name) => Category::firstOrCreate(['name' => $name])->id)
                     ->all();
                 $article->categories()->sync($categoryIds);
             }
@@ -178,7 +183,7 @@ class ArticleController extends Controller
         } catch (Exception $e) {
             Log::error('Articles: Failed to create article', [
                 'action_user_id' => Auth::id(),
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return back()->withInput()->with('error', 'Failed to create article. Please try again.');
@@ -192,6 +197,7 @@ class ArticleController extends Controller
     {
         Log::info('Articles: Viewed create article page', ['action_user_id' => Auth::id()]);
         $categories = Category::select(['name'])->orderBy('name')->get();
+
         return Inertia::render('manage/articles/Create', ['categories' => $categories]);
     }
 
@@ -203,7 +209,7 @@ class ArticleController extends Controller
         try {
             $requestingUser = Auth::user();
 
-            if ($article->user_id !== $requestingUser->id && !$requestingUser->hasRole('Super Admin|Manager')) {
+            if ($article->user_id !== $requestingUser->id && ! $requestingUser->hasRole('Super Admin|Manager')) {
                 abort(403, 'You do not have permission to delete this article.');
             }
 
@@ -217,7 +223,7 @@ class ArticleController extends Controller
             Log::error('Articles: Failed to delete article', [
                 'action_user_id' => Auth::id(),
                 'article_id' => $article->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return back()->with('error', 'Failed to delete article. Please try again.');
