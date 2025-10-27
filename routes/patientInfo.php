@@ -3,6 +3,9 @@
 use App\Http\Controllers\Patient\PatientInfoController;
 
 Route::middleware(['auth', 'verified'])->prefix('patients')->group(function () {
+    Route::get('/simple-search', [PatientInfoController::class, 'simpleSearch'])->name('patient_info.simpleSearch')
+        ->middleware('role_or_permission:Doctor|patient_info.index');
+
     Route::get('/create-partial', [PatientInfoController::class, 'createPartial'])->name('patient_info.createPartial')
         ->middleware('permission:patient_info.create');
     Route::post('/store-partial', [PatientInfoController::class, 'storePartial'])->name('patient_info.storePartial')

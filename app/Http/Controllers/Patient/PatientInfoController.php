@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Patient;
 
+use App\Common\Helpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Patient\PatientRequest;
 use App\Models\PatientInfo;
@@ -207,5 +208,32 @@ class PatientInfoController extends Controller
 
             return back()->withInput()->with('error', 'Failed to associate user account. Please try again.');
         }
+    }
+
+
+    /**
+     * Simple search for patients (for FETCH/AXIOS requests).
+     */
+    public function simpleSearch(Request $request)
+    {
+        $search = trim($request->q);
+        $medicalRecordIsNull = $request->get('medical_record_is_null', FILTER_VALIDATE_BOOLEAN);
+
+        $booleanQuery = Helpers::buildBooleanQuery($search);
+
+        $patients = PatientInfo::whereFullText(
+            ['first_name', 'last_name', 'phone_number', 'address', 'insurance_company', 'emergency_contact_name'],
+            $booleanQuery,
+            ['mode' => 'boolean']
+        )
+            ->when($medicalRecordIsNull, fn($q) => $q->whereNull('medical_record_id'))
+            ->orWhereHas('user', fn($q) => $q->whereLike('name', "%$search%")
+                ->orWhereLike('email', "%$search%"))
+            ->select(['id', 'first_name', 'last_name'])
+            ->orderBy('first_name', 'asc')
+            ->paginate(10)
+            ->withQueryString();
+
+        return response()->json($patients);
     }
 }
