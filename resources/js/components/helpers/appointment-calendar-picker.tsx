@@ -64,23 +64,15 @@ export default function AppointmentCalendarPicker({
                         selected={date}
                         onSelect={(selected) => {
                             setDate(selected);
-                            setFinalDate(
-                                format(String(selected), 'yyyy-MM-dd') + (selectedTime ? ` ${selectedTime}` : ''),
-                            );
+                            setFinalDate(`${format(String(selected), 'yyyy-MM-dd')} ${selectedTime ?? ''}`);
                         }}
                         defaultMonth={date}
                         disabled={disabledDays}
                         showOutsideDays={false}
-                        modifiers={{
-                            disabledDays: disabledDays,
-                        }}
-                        modifiersClassNames={{
-                            disabledDays: '[&>button]:line-through opacity-100',
-                        }}
+                        modifiers={{ disabledDays: disabledDays }}
+                        modifiersClassNames={{ disabledDays: '[&>button]:line-through opacity-100' }}
                         className="bg-transparent p-0 [--cell-size:--spacing(10)] md:[--cell-size:--spacing(12)]"
-                        formatters={{
-                            formatWeekdayName: (date) => formatWeekdayName(date),
-                        }}
+                        formatters={{ formatWeekdayName: (date) => formatWeekdayName(date) }}
                     />
                 </div>
                 <div className="no-scrollbar inset-y-0 right-0 flex max-h-72 w-full scroll-pb-6 flex-col gap-4 overflow-y-auto border-t p-6 md:absolute md:max-h-none md:w-48 md:border-t-0 md:border-l">
@@ -92,7 +84,7 @@ export default function AppointmentCalendarPicker({
                                 variant={selectedTime === time ? 'default' : 'outline'}
                                 onClick={() => {
                                     setSelectedTime(time);
-                                    if (date) setFinalDate(format(date, 'yyyy-MM-dd') + ` ${time}`);
+                                    if (date) setFinalDate(`${format(date, 'yyyy-MM-dd')} ${time}`);
                                 }}
                                 className="w-full shadow-none"
                                 disabled={disabledTimes.has(time)}
