@@ -60,10 +60,10 @@ class PatientInfoController extends Controller
         if ($request->filled('search')) {
             $searchTerm = $request->input('search');
 
-            $query->where(fn($q) => $q->whereLike('first_name', "%$searchTerm%")
-                ->orWhereLike('last_name', "%$searchTerm%")
-                ->orWhereLike('date_of_birth', "%$searchTerm%")
-                ->orWhereLike('phone_number', "%$searchTerm%"))
+            $query->whereFullText(
+                ['first_name', 'last_name', 'phone_number', 'address', 'insurance_company', 'emergency_contact_name'],
+                $searchTerm
+            )
                 ->orWhereHas('user', fn($q) => $q->whereLike('name', "%$searchTerm%")
                     ->orWhereLike('email', "%$searchTerm%"));
         } else {
