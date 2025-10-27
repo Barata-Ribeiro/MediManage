@@ -6,11 +6,12 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { lexicalToHtml } from '@/lib/lexical-to-html';
+import { simpleSearch } from '@/routes/patient_info';
 import { TablePatientInfo } from '@/types/application/patient';
 import { Form } from '@inertiajs/react';
 import { SerializedEditorState } from 'lexical';
 import { Check, ChevronsUpDown } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 
 export const initialValue = {
     root: {
@@ -38,15 +39,14 @@ export default function NewMedicalRecordForm() {
     const [value, setValue] = useState<string | null>(null);
     const [patients, setPatients] = useState<TablePatientInfo[]>([]);
     const [query, setQuery] = useState('');
-    const [loading, setLoading] = useState(false);
     const [selectedPatientId, setSelectedPatientId] = useState<number | null>(null);
+    const [isPending, startTransition] = useTransition();
 
     const debounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
-    const loadPatients = useCallback(async (q: string) => {
-        try {
-            setLoading(true);
-            const url = medicalRecordController.patientSimpleSearch({ query: { q } }).url;
+    const loadPatients = useCallback((q: string) => {
+        startTransition(async () => {
+            const url = simpleSearch({ query: { q, medical_record_is_null: true } }).url;
             const res = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
 
             if (!res.ok) {
@@ -58,25 +58,21 @@ export default function NewMedicalRecordForm() {
             const items: TablePatientInfo[] = json?.data ?? json ?? [];
 
             setPatients(items);
-        } catch {
-            setPatients([]);
-        } finally {
-            setLoading(false);
-        }
+        });
     }, []);
 
-    useEffect(() => void loadPatients(''), [loadPatients]);
+    useEffect(() => loadPatients(''), [loadPatients]);
 
     // debounce query changes
     useEffect(() => {
         if (debounceRef.current) globalThis.clearTimeout(debounceRef.current);
 
         if (!query) {
-            debounceRef.current = globalThis.setTimeout(() => void loadPatients(''), 150);
+            debounceRef.current = globalThis.setTimeout(() => loadPatients(''), 150);
             return;
         }
 
-        debounceRef.current = globalThis.setTimeout(() => void loadPatients(query), 300);
+        debounceRef.current = globalThis.setTimeout(() => loadPatients(query), 300);
 
         return () => {
             if (debounceRef.current) globalThis.clearTimeout(debounceRef.current);
@@ -107,7 +103,6 @@ export default function NewMedicalRecordForm() {
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    role="combobox"
                                     aria-expanded={open}
                                     className="w-[200px] justify-between"
                                 >
@@ -123,7 +118,9 @@ export default function NewMedicalRecordForm() {
                                         onValueChange={(val: string) => setQuery(val)}
                                     />
                                     <CommandList>
-                                        <CommandEmpty>{loading ? 'Searching...' : 'No Patient Found...'}</CommandEmpty>
+                                        <CommandEmpty>
+                                            {isPending ? 'Searching...' : 'No Patient Found...'}
+                                        </CommandEmpty>
                                         <CommandGroup>
                                             {patients.map((patient) => (
                                                 <CommandItem
