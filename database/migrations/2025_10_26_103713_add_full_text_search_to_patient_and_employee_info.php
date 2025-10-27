@@ -11,19 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('patient_info', function (Blueprint $table) {
-            $table->fullText(
-                ['first_name', 'last_name', 'phone_number', 'address', 'insurance_company', 'emergency_contact_name'],
-                'patient_info_fulltext_index'
-            );
-        });
+        if (DB::getDriverName() === 'mysql' || DB::getDriverName() === 'pgsql') {
+            Schema::table('patient_info', function (Blueprint $table) {
+                $table->fullText(
+                    ['first_name', 'last_name', 'phone_number', 'address', 'insurance_company', 'emergency_contact_name'],
+                    'patient_info_fulltext_index'
+                );
+            });
 
-        Schema::table('employee_info', function (Blueprint $table) {
-            $table->fullText(
-                ['first_name', 'last_name', 'phone_number', 'address', 'specialization', 'position'],
-                'employee_info_fulltext_index'
-            );
-        });
+            Schema::table('employee_info', function (Blueprint $table) {
+                $table->fullText(
+                    ['first_name', 'last_name', 'phone_number', 'address', 'specialization', 'position'],
+                    'employee_info_fulltext_index'
+                );
+            });
+        }
     }
 
     /**
