@@ -1,3 +1,4 @@
+import CalendarSkeleton from '@/components/blocks/skeletons/calendar-skeleton';
 import Heading from '@/components/heading';
 import AppointmentCalendarPicker from '@/components/helpers/appointment-calendar-picker';
 import Layout from '@/layouts/app-layout';
@@ -44,7 +45,7 @@ export default function Create({ occupiedSlots }: Readonly<CreateProps>) {
                         {({ errors }) => (
                             <>
                                 {/* TODO: Complete the appointment creation form */}
-                                <Deferred data="occupiedSlots" fallback={<div>Loading...</div>}>
+                                <Deferred data="occupiedSlots" fallback={<CalendarSkeleton />}>
                                     <AppointmentCalendarPicker
                                         occupiedSlots={occupiedSlots}
                                         setFinalDate={setFinalDate}
