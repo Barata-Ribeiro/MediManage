@@ -14,7 +14,7 @@ use Spatie\Permission\Models\Role;
 class DashboardAdminService implements DashboardAdminServiceInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getAdminDashboardData(): array
     {
@@ -40,8 +40,6 @@ class DashboardAdminService implements DashboardAdminServiceInterface
 
     /**
      * Get users count grouped by their roles.
-     *
-     * @return array
      */
     private function getUsersByRole(): array
     {
@@ -53,8 +51,8 @@ class DashboardAdminService implements DashboardAdminServiceInterface
             ->groupBy('roles.name')
             ->get()
             ->pluck('total', 'role')
-            ->mapWithKeys(fn($v, $k) => [ucfirst(strtolower($k)) => $v])
-            ->only($roles->map(fn($r) => ucfirst(strtolower($r)))->all());
+            ->mapWithKeys(fn ($v, $k) => [ucfirst(strtolower($k)) => $v])
+            ->only($roles->map(fn ($r) => ucfirst(strtolower($r)))->all());
 
         return [
             'labels' => $usersByRole->keys()->all(),
@@ -64,15 +62,12 @@ class DashboardAdminService implements DashboardAdminServiceInterface
 
     /**
      * Get total users and percentage change compared to the previous month.
-     *
-     * @param array $usersByRole
-     * @return array
      */
     private function getTotalUsersWithPastMonthComparison(array $usersByRole): array
     {
         $totalUsers = array_sum($usersByRole['data']);
         $pastMonthDate = Carbon::now()->subMonth();
-        $pastTotalUsers = User::where('created_at', '<', $pastMonthDate)->count();
+        $pastTotalUsers = User::whereCreatedAt('<', $pastMonthDate)->count();
 
         $percentageChange = $pastTotalUsers > 0 ? (($totalUsers - $pastTotalUsers) / $pastTotalUsers) * 100 : 0;
 
@@ -84,9 +79,6 @@ class DashboardAdminService implements DashboardAdminServiceInterface
 
     /**
      * Get total users by role with percentage change compared to the previous month.
-     *
-     * @param array $usersByRole
-     * @return array
      */
     private function getTotalUsersByRoleWithPastMonthComparison(array $usersByRole): array
     {
@@ -96,8 +88,8 @@ class DashboardAdminService implements DashboardAdminServiceInterface
         foreach ($usersByRole['labels'] as $index => $role) {
             $currentTotal = $usersByRole['data'][$index];
             $pastTotal = User::whereHas('roles', function ($query) use ($role) {
-                $query->where('name', $role);
-            })->where('created_at', '<', $pastMonthDate)->count();
+                $query->whereName($role);
+            })->whereCreatedAt('<', $pastMonthDate)->count();
 
             $percentageChange = $pastTotal > 0 ? (($currentTotal - $pastTotal) / $pastTotal) * 100 : 0;
 
@@ -112,8 +104,6 @@ class DashboardAdminService implements DashboardAdminServiceInterface
 
     /**
      * Get new users registered per month for the last 12 months.
-     *
-     * @return array
      */
     private function getNewUsersPerMonth(): array
     {
@@ -138,15 +128,13 @@ class DashboardAdminService implements DashboardAdminServiceInterface
         }
 
         return [
-            'labels' => collect($labels)->map(fn($l) => mb_substr($l, 0, 3))->all(),
+            'labels' => collect($labels)->map(fn ($l) => mb_substr($l, 0, 3))->all(),
             'data' => $data,
         ];
     }
 
     /**
      * Get all user agents from sessions, grouped by user_agent with counts.
-     *
-     * @return array
      */
     private function getAllUserAgents(): array
     {
@@ -154,12 +142,12 @@ class DashboardAdminService implements DashboardAdminServiceInterface
             ->selectRaw('user_agent, COUNT(*) as total')
             ->whereNotNull('user_agent')
             ->groupBy('user_agent')
-            ->orderBy('total', 'desc')
+            ->orderByDesc('total')
             ->get()
             ->pluck('total', 'user_agent');
 
         foreach ($userAgents as $ua => $count) {
-            $agent = new Agent();
+            $agent = new Agent;
             $agent->setUserAgent($ua);
 
             $browser = $agent->browser() ?: 'Unknown Browser';
@@ -167,7 +155,7 @@ class DashboardAdminService implements DashboardAdminServiceInterface
             $os = $agent->platform() ?: 'Unknown OS';
 
             $major = $version ? explode('.', $version)[0] : '';
-            $key = trim($browser . ($major ? " {$major}" : '') . " / {$os}");
+            $key = trim($browser.($major ? " {$major}" : '')." / {$os}");
 
             $agentCounts[$key] = ($agentCounts[$key] ?? 0) + $count;
         }

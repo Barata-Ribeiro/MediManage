@@ -26,11 +26,10 @@ class DashboardUserService implements DashboardUserServiceInterface
         ];
     }
 
-
     /**
      * Fetch a paginated list of the patient's upcoming appointments.
      *
-     * @param int|null $patientInfoId The patient_info record identifier to retrieve appointments for.
+     * @param  int|null  $patientInfoId  The patient_info record identifier to retrieve appointments for.
      * @return PaginationLengthAwarePaginator Paginated collection of upcoming appointment models.
      *
      * @internal For use within DashboardUserService only; not part of the public API.
@@ -41,12 +40,12 @@ class DashboardUserService implements DashboardUserServiceInterface
             return new PaginationLengthAwarePaginator([], 0, 10);
         }
 
-        return Appointment::where('patient_info_id', $patientInfoId)
-            ->where('appointment_date', '>=', now())
+        return Appointment::wherePatientInfoId($patientInfoId)
+            ->whereAppointmentDate('>=', Carbon::now())
             ->with('employeeInfo:id,first_name,last_name,date_of_birth,gender')
-            ->orderBy('appointment_date', 'asc')
+            ->orderBy('appointment_date')
             ->paginate(10)
-            ->through(fn($a) => [
+            ->through(fn ($a) => [
                 'id' => $a->id,
                 'time' => Carbon::parse($a->appointment_date)->format('H:i'),
                 'date' => Carbon::parse($a->appointment_date)->format('F jS, Y'),

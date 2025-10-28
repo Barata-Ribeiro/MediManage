@@ -12,7 +12,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 class DashboardAttendantService implements DashboardAttendantServiceInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getAttendantDashboardData(): array
     {
@@ -34,21 +34,20 @@ class DashboardAttendantService implements DashboardAttendantServiceInterface
     /**
      * Get today's upcoming appointments within working hours.
      *
-     * @param Carbon $startOfWorkDay
-     * @param Carbon $endOfWorkDay
+     * @param  Carbon  $startOfWorkDay
+     * @param  Carbon  $endOfWorkDay
      * @return LengthAwarePaginator
      */
     private function getTodayUpcomingAppointments($startOfWorkDay, $endOfWorkDay)
     {
         return Appointment::with([
-            'employeeInfo' => fn($q) => $q->select('id', 'user_id', 'first_name', 'last_name', 'gender', 'specialization')
+            'employeeInfo' => fn ($q) => $q->select('id', 'user_id', 'first_name', 'last_name', 'gender', 'specialization')
                 ->with('user:id,name,avatar'),
-            'patientInfo' => fn($q) => $q->select('id', 'user_id', 'first_name', 'last_name', 'gender', 'date_of_birth', 'phone_number')
+            'patientInfo' => fn ($q) => $q->select('id', 'user_id', 'first_name', 'last_name', 'gender', 'date_of_birth', 'phone_number')
                 ->with('user:id,name,avatar'),
         ])
-            ->whereDate('appointment_date', Carbon::today())
             ->whereBetween('appointment_date', [$startOfWorkDay, $endOfWorkDay])
-            ->orderBy('appointment_date', 'asc')
+            ->orderBy('appointment_date')
             ->paginate(10);
     }
 }

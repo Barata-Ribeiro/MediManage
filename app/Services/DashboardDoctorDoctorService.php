@@ -16,9 +16,8 @@ use LaravelIdea\Helper\App\Models\_IH_Appointment_C;
 
 class DashboardDoctorDoctorService implements DashboardDoctorServiceInterface
 {
-
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getDoctorDashboardData(): array
     {
@@ -54,31 +53,28 @@ class DashboardDoctorDoctorService implements DashboardDoctorServiceInterface
                 'distinctPatientsLast30Days' => $distinctPatients30Days,
                 'newPatientsThisMonth' => $newPatientsThisMonth,
                 'newPatientsByMonth' => $newPatientsByMonth,
-            ]
+            ],
         ];
     }
 
     /**
      * Get appointments number by patient gender
-     *
-     * @param EmployeeInfo|null $doctorInfo
-     * @return Collection
      */
     private function getAppointmentsGenderOverview(?EmployeeInfo $doctorInfo): Collection
     {
-        if (!$doctorInfo) {
+        if (! $doctorInfo) {
             return collect();
         }
 
-        return Appointment::selectRaw("patient_info.gender as gender, COUNT(*) as total")
+        return Appointment::selectRaw('patient_info.gender as gender, COUNT(*) as total')
             ->join('patient_info', 'appointments.patient_info_id', '=', 'patient_info.id')
-            ->where('employee_info_id', $doctorInfo->id)
+            ->whereEmployeeInfoId($doctorInfo->id)
             ->groupBy('patient_info.gender')
             ->orderBy('patient_info.gender')
             ->pluck('total', 'gender')
-            ->mapWithKeys(fn($v, $k) => [ucfirst(strtolower($k)) => $v])
+            ->mapWithKeys(fn ($v, $k) => [ucfirst(strtolower($k)) => $v])
             ->union(collect(array_fill_keys(
-                DB::table('patient_info')->distinct()->pluck('gender')->map(fn($g) => ucfirst(strtolower($g)))->toArray(),
+                DB::table('patient_info')->distinct()->pluck('gender')->map(fn ($g) => ucfirst(strtolower($g)))->toArray(),
                 0
             )))
             ->sortKeys();
@@ -86,66 +82,54 @@ class DashboardDoctorDoctorService implements DashboardDoctorServiceInterface
 
     /**
      * Today's upcoming appointments for the doctor within working hours (8 AM - 5 PM).
-     *
-     * @param EmployeeInfo|null $doctorInfo
-     * @param Carbon $startOfWorkDay
-     * @param Carbon $endOfWorkDay
-     * @return array|LengthAwarePaginator|_IH_Appointment_C|AbstractPaginator
      */
     private function getTodayUpcomingAppointments(?EmployeeInfo $doctorInfo, Carbon $startOfWorkDay, Carbon $endOfWorkDay): array|LengthAwarePaginator|_IH_Appointment_C|AbstractPaginator
     {
-        if (!$doctorInfo) {
+        if (! $doctorInfo) {
             return [];
         }
 
         return Appointment::with([
-            'employeeInfo' => fn($q) => $q->select('id', 'user_id', 'first_name', 'last_name', 'gender', 'specialization')
+            'employeeInfo' => fn ($q) => $q->select('id', 'user_id', 'first_name', 'last_name', 'gender', 'specialization')
                 ->with('user:id,name,avatar'),
-            'patientInfo' => fn($q) => $q->select('id', 'user_id', 'first_name', 'last_name', 'gender', 'date_of_birth', 'phone_number')
+            'patientInfo' => fn ($q) => $q->select('id', 'user_id', 'first_name', 'last_name', 'gender', 'date_of_birth', 'phone_number')
                 ->with('user:id,name,avatar'),
         ])
-            ->where('employee_info_id', $doctorInfo->id)
-            ->whereDate('appointment_date', Carbon::today())
+            ->whereEmployeeInfoId($doctorInfo->id)
             ->whereBetween('appointment_date', [$startOfWorkDay, $endOfWorkDay])
-            ->orderBy('appointment_date', 'asc')
+            ->orderBy('appointment_date')
             ->paginate(10);
     }
 
     /**
      * Appointment status counts for the doctor. Ensures common statuses appear even if zero.
-     *
-     * @param EmployeeInfo|null $doctorInfo
-     * @return Collection
      */
     private function getAppointmentsStatusOverview(?EmployeeInfo $doctorInfo): Collection
     {
-        if (!$doctorInfo) {
+        if (! $doctorInfo) {
             return collect();
         }
 
         $defaultStatuses = ['scheduled', 'confirmed', 'checked_in', 'canceled', 'missed', 'completed'];
 
-        $counts = Appointment::selectRaw("LOWER(status) as status, COUNT(*) as total")
-            ->where('employee_info_id', $doctorInfo->id)
+        $counts = Appointment::selectRaw('LOWER(status) as status, COUNT(*) as total')
+            ->whereEmployeeInfoId($doctorInfo->id)
             ->groupBy('status')
             ->get()
             ->pluck('total', 'status')
-            ->mapWithKeys(fn($v, $k) => [ucfirst(strtolower($k)) => $v]);
+            ->mapWithKeys(fn ($v, $k) => [ucfirst(strtolower($k)) => $v]);
 
-        $defaultsMap = collect(array_fill_keys(array_map(fn($s) => ucfirst(strtolower($s)), $defaultStatuses), 0));
+        $defaultsMap = collect(array_fill_keys(array_map(fn ($s) => ucfirst(strtolower($s)), $defaultStatuses), 0));
 
         return $counts->union($defaultsMap)->sortKeys();
     }
 
     /**
      * 6-week appointments trend (configurable number of weeks).
-     *
-     * @param EmployeeInfo|null $doctorInfo
-     * @return Collection
      */
     private function getWeeklyAppointmentsTrend(?EmployeeInfo $doctorInfo): Collection
     {
-        if (!$doctorInfo) {
+        if (! $doctorInfo) {
             return collect();
         }
 
@@ -156,29 +140,26 @@ class DashboardDoctorDoctorService implements DashboardDoctorServiceInterface
             $start = Carbon::now()->subWeeks($i)->startOfWeek();
             $end = (clone $start)->endOfWeek();
             $label = $start->format('Y-m-d'); // week start label
-            $count = Appointment::where('employee_info_id', $doctorInfo->id)
+            $count = Appointment::whereEmployeeInfoId($doctorInfo->id)
                 ->whereBetween('appointment_date', [$start, $end])
                 ->count();
             $labels[] = $label;
             $data[] = $count;
         }
 
-        return collect($data)->values()->zip($labels)->mapWithKeys(fn($pair) => [$pair[1] => $pair[0]]);
+        return collect($data)->values()->zip($labels)->mapWithKeys(fn ($pair) => [$pair[1] => $pair[0]]);
     }
 
     /**
      * Distinct patients seen by the doctor in the last 30 days.
-     *
-     * @param EmployeeInfo|null $doctorInfo
-     * @return int
      */
     private function getDistinctPatientsLast30Days(?EmployeeInfo $doctorInfo): int
     {
-        if (!$doctorInfo) {
+        if (! $doctorInfo) {
             return 0;
         }
 
-        return Appointment::where('employee_info_id', $doctorInfo->id)
+        return Appointment::whereEmployeeInfoId($doctorInfo->id)
             ->whereBetween('appointment_date', [Carbon::now()->subDays(30), Carbon::now()])
             ->distinct('patient_info_id')
             ->count('patient_info_id');
@@ -186,13 +167,13 @@ class DashboardDoctorDoctorService implements DashboardDoctorServiceInterface
 
     /**
      * New patients created this month (for the clinic).
-     *
-     * @return int
      */
     private function getNewPatientsThisMonth(): int
     {
-        return PatientInfo::whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
-            ->count();
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
+
+        return PatientInfo::whereBetween('created_at', [$startOfMonth, $endOfMonth])->count();
     }
 
     /**
@@ -223,7 +204,7 @@ class DashboardDoctorDoctorService implements DashboardDoctorServiceInterface
         }
 
         return [
-            'labels' => collect($labels)->map(fn($l) => mb_substr($l, 0, 3))->all(),
+            'labels' => collect($labels)->map(fn ($l) => mb_substr($l, 0, 3))->all(),
             'data' => $data,
         ];
     }
