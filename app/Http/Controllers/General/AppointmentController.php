@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\General;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Patient\AppointmentRequest;
 use App\Models\Appointment;
 use App\Models\EmployeeInfo;
 use App\Services\AppointmentService;
@@ -52,11 +53,11 @@ class AppointmentController extends Controller
 
             $appointment->update(['status' => $validated['status']]);
 
-            return response()->json(['message' => 'Appointment status updated successfully.'], 200);
+            return to_route('dashboard')->with('success', 'Appointment status updated successfully.');
         } catch (Exception $e) {
             Log::error('Failed to update appointment status', ['action_user_id' => Auth::id(), 'appointment_id' => $appointment->id, 'error' => $e->getMessage()]);
 
-            return response()->json(['message' => 'Failed to update appointment status.'], 500);
+            return to_route('dashboard')->with('error', 'Failed to update appointment status.');
         }
     }
 
@@ -73,7 +74,15 @@ class AppointmentController extends Controller
             ->pluck('appointment_date');
 
         return Inertia::render('appointments/Create', [
-            'occupiedSlots' => Inertia::defer(fn() => $occupiedSlots),
+            'occupiedSlots' => Inertia::defer(fn () => $occupiedSlots),
         ]);
+    }
+
+    /**
+     * Store a newly created appointment in storage.
+     */
+    public function store(AppointmentRequest $request)
+    {
+        dd($request->all());
     }
 }
