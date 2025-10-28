@@ -14,10 +14,10 @@ class AppointmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'patient_info_id' => 'required|integer|exists:patient_infos,id',
-            'employee_info_id' => 'required|integer|exists:employee_infos,id',
-            'appointment_date' => 'required|date|after:now',
-            'reason_for_visit' => 'required|string|max:500',
+            'patient_info_id' => ['required', 'integer', 'exists:patient_info,id'],
+            'employee_info_id' => ['required', 'integer', 'exists:employee_info,id'],
+            'appointment_date' => ['required', 'date_format:Y-m-d H:i', 'after_or_equal:today'],
+            'reason_for_visit' => ['required', 'string', 'max:500'],
         ];
     }
 }
