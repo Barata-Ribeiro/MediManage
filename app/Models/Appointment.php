@@ -23,6 +23,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read EmployeeInfo $employeeInfo
  * @property-read PatientInfo $patientInfo
+ *
  * @method static AppointmentFactory factory($count = null, $state = [])
  * @method static Builder<static>|Appointment newModelQuery()
  * @method static Builder<static>|Appointment newQuery()
@@ -35,6 +36,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|Appointment whereReasonForVisit($value)
  * @method static Builder<static>|Appointment whereStatus($value)
  * @method static Builder<static>|Appointment whereUpdatedAt($value)
+ *
  * @mixin Eloquent
  */
 class Appointment extends Model
@@ -70,7 +72,7 @@ class Appointment extends Model
      * include Eloquent model events such as "creating", "created", "updating", "updated",
      * "deleting", "deleted", "saving", "saved", etc.
      *
-     * @param string $event The name of the model event to evaluate.
+     * @param  string  $event  The name of the model event to evaluate.
      * @return bool True if the appointment should be broadcast for the given event, false otherwise.
      */
     public function broadcastWhen(string $event): bool
@@ -85,13 +87,29 @@ class Appointment extends Model
     /**
      * Get the channels that model events should broadcast on.
      *
-     * @param  string  $event
-     * @return array<int, \Illuminate\Broadcasting\Channel|\Illuminate\Database\Eloquent\Model>
+     * @return array<int, \Illuminate\Broadcasting\Channel>
      */
     public function broadcastOn(string $event): array
     {
-        // Broadcast to the model's private channel using Laravel model channel conventions
         return [$this];
+    }
+
+    /**
+     * Customize the data that will be broadcast for this model.
+     *
+     * Ensure related models (patient_info, employee_info, etc.) are loaded
+     * so the client receives the full object instead of null relationships.
+     *
+     * @return array<string, mixed>
+     */
+    public function broadcastWith(): array
+    {
+        return $this->load([
+            'employeeInfo' => fn ($q) => $q->select('id', 'user_id', 'first_name', 'last_name', 'gender', 'specialization')
+                ->with('user:id,name,avatar'),
+            'patientInfo' => fn ($q) => $q->select('id', 'user_id', 'first_name', 'last_name', 'gender', 'date_of_birth', 'phone_number')
+                ->with('user:id,name,avatar'),
+        ])->toArray();
     }
 
     /**
