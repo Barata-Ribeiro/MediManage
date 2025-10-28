@@ -10,9 +10,9 @@ use Illuminate\Http\Request;
 class EmployeeInfoController extends Controller
 {
     /**
-     * Simple search for patients (for FETCH/AXIOS requests).
+     * Simple search for doctors (for FETCH/AXIOS requests).
      */
-    public function simpleSearch(Request $request)
+    public function doctorSimpleSearch(Request $request)
     {
         $search = trim($request->q);
 
