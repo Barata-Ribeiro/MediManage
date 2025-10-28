@@ -19,7 +19,7 @@ class EmployeeInfoController extends Controller
         $booleanQuery = Helpers::buildBooleanQuery($search);
 
         $employees = EmployeeInfo::whereIsActive(true)
-            ->whereHas('user', fn ($q) => $q->where('role', 'Doctor'))
+            ->wherePosition('doctor')
             ->when($request->filled('q'), fn ($q) => $q->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'specialization', 'position'], $booleanQuery, ['mode' => 'boolean'])
                 ->orWhereHas('user', fn ($q2) => $q2->whereLike('name', "%$search%")->orWhereLike('email', "%$search%")))
             ->select(['id', 'first_name', 'last_name'])
