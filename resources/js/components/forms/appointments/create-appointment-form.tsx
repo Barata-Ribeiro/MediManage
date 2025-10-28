@@ -1,5 +1,6 @@
 import CalendarSkeleton from '@/components/blocks/skeletons/calendar-skeleton';
 import AppointmentCalendarPicker from '@/components/helpers/appointment-calendar-picker';
+import DoctorSelectCombobox from '@/components/helpers/doctor-select-combobox';
 import PatientSelectCombobox from '@/components/helpers/patient-select-combobox';
 import InputError from '@/components/input-error';
 import { Field, FieldLabel } from '@/components/ui/field';
@@ -11,6 +12,7 @@ import { useState } from 'react';
 export default function CreateAppointmentForm({ occupiedSlots }: Readonly<{ occupiedSlots: Date[] }>) {
     const [finalDate, setFinalDate] = useState<string | undefined>(undefined);
     const [patientId, setPatientId] = useState<string | null>(null);
+    const [doctorId, setDoctorId] = useState<string | null>(null);
 
     return (
         <Form
@@ -21,6 +23,7 @@ export default function CreateAppointmentForm({ occupiedSlots }: Readonly<{ occu
                 ...data,
                 appointment_date: finalDate,
                 patient_info_id: patientId,
+                employee_info_id: doctorId,
             })}
             disableWhileProcessing
         >
@@ -28,7 +31,7 @@ export default function CreateAppointmentForm({ occupiedSlots }: Readonly<{ occu
                 <>
                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <PatientSelectCombobox setPatientId={setPatientId} error={errors.patient_info_id} size="full" />
-                        {/* TODO: Implement doctor select here */}
+                        <DoctorSelectCombobox setDoctorId={setDoctorId} error={errors.doctor_info_id} size="full" />
                     </div>
 
                     <Field>
@@ -51,9 +54,9 @@ export default function CreateAppointmentForm({ occupiedSlots }: Readonly<{ occu
                         <Deferred data="occupiedSlots" fallback={<CalendarSkeleton />}>
                             <AppointmentCalendarPicker occupiedSlots={occupiedSlots} setFinalDate={setFinalDate} />
                         </Deferred>
-                    </div>
 
-                    <pre>{JSON.stringify(finalDate, null, 2)}</pre>
+                        <InputError message={errors.appointment_date} className="mt-2 text-center" />
+                    </div>
                 </>
             )}
         </Form>
