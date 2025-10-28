@@ -83,6 +83,18 @@ class AppointmentController extends Controller
      */
     public function store(AppointmentRequest $request)
     {
-        dd($request->all());
+        $validated = $request->validated();
+
+        try {
+            $this->appointmentService->createAppointment($validated);
+
+            Log::info('Appointment created successfully', ['action_user_id' => Auth::id(), 'patient_info_id' => $validated['patient_info_id'], 'employee_info_id' => $validated['employee_info_id'], 'appointment_date' => $validated['appointment_date']]);
+
+            return to_route('dashboard')->with('success', 'Appointment created successfully.');
+        } catch (Exception $e) {
+            Log::error('Failed to create appointment', ['action_user_id' => Auth::id(), 'error' => $e->getMessage()]);
+
+            return back()->withInput()->with('error', $e->getMessage());
+        }
     }
 }
