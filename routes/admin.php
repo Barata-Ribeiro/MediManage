@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Models\PatientInfo;
 
 Route::middleware(['auth', 'role:Super Admin'])->prefix('admin')->group(function () {
     Route::prefix('roles')->group(function () {
@@ -25,5 +26,21 @@ Route::middleware(['auth', 'role:Super Admin'])->prefix('admin')->group(function
         Route::get('/{user}/edit', [UserManagementController::class, 'edit'])->name('admin.users.edit');
         Route::patch('/{user}', [UserManagementController::class, 'update'])->name('admin.users.update');
         Route::delete('/{user}', [UserManagementController::class, 'destroy'])->name('admin.users.destroy');
+    });
+
+    Route::prefix('mailable')->group(function () {
+        Route::get('/new-account', function () {
+            $user = Auth::user();
+            $password = 'temporaryPassword123'; // Example password
+
+            return new \App\Mail\NewAccountMail($user, $password);
+        });
+
+        Route::get('/account-association', function () {
+            $user = Auth::user();
+            $patientInfo = PatientInfo::factory()->makeOne()->first();
+
+            return new \App\Mail\AccountAssociationMail($user, $patientInfo);
+        });
     });
 });
