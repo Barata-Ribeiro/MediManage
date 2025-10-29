@@ -30,20 +30,20 @@ class AppointmentService implements AppointmentServiceInterface
 
     public function createAppointment(mixed $validated)
     {
-        // Use application timezone to ensure consistent parsing/comparison and correct "now" message
-        $tz = config('app.timezone') ?? date_default_timezone_get();
-        $appointmentDate = Carbon::parse($validated['appointment_date'], $tz);
+        $appointmentDate = $validated['appointment_date'];
+        $employeeInfoId = $validated['employee_info_id'];
+        $patientInfoId = $validated['patient_info_id'];
 
-        // Define work day bounds for the appointment's date in the app timezone
-        $startOfWorkDay = $appointmentDate->copy()->setTime(8, 0);
-        $endOfWorkDay = $appointmentDate->copy()->setTime(17, 0);
+        $appointmentCarbon = Carbon::parse($appointmentDate);
+        $startOfWorkDay = $appointmentCarbon->copy()->setTime(8, 0);
+        $endOfWorkDay = $appointmentCarbon->copy()->setTime(17, 0);
 
-        $existsAppointmentForDoctorAtSameTime = Appointment::whereEmployeeInfoId($validated['employee_info_id'])
-            ->whereAppointmentDate($appointmentDate->toDateTimeString())
+        $existsAppointmentForDoctorAtSameTime = Appointment::where('employee_info_id', $employeeInfoId)
+            ->where('appointment_date', $appointmentDate)
             ->exists();
 
-        $existsAppointmentForPatientOnSameDay = Appointment::wherePatientInfoId($validated['patient_info_id'])
-            ->whereBetween('appointment_date', [$startOfWorkDay->toDateTimeString(), $endOfWorkDay->toDateTimeString()])
+        $existsAppointmentForPatientOnSameDay = Appointment::where('patient_info_id', $patientInfoId)
+            ->whereBetween('appointment_date', [$startOfWorkDay, $endOfWorkDay])
             ->exists();
 
         if ($existsAppointmentForDoctorAtSameTime) {
