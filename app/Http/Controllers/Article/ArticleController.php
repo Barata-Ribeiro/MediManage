@@ -24,7 +24,7 @@ class ArticleController extends Controller
         Log::info('Articles: Viewed articles list', ['action_user_id' => Auth::id()]);
 
         $perPage = (int) $request->input('per_page', 10);
-        $search = $request->search;
+        $search = trim($request->search);
         $sortBy = $request->input('sort_by', 'id');
         $sortDir = strtolower($request->input('sort_dir', 'asc')) === 'desc' ? 'desc' : 'asc';
 
@@ -71,7 +71,7 @@ class ArticleController extends Controller
         Log::info('Articles: Viewed own articles list', ['action_user_id' => $user_id]);
 
         $perPage = (int) $request->input('per_page', 10);
-        $search = $request->search;
+        $search = trim($request->search);
         $sortBy = $request->input('sort_by', 'id');
         $sortDir = strtolower($request->input('sort_dir', 'arc')) === 'desc' ? 'desc' : 'asc';
 
