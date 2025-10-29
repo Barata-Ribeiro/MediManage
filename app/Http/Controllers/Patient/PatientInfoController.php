@@ -223,7 +223,7 @@ class PatientInfoController extends Controller
      */
     public function simpleSearch(Request $request)
     {
-        $search = trim($request->q);
+        $search = trim($request->query('q'));
         $medicalRecordIsNull = $request->get('medical_record_is_null', FILTER_VALIDATE_BOOLEAN);
 
         $booleanQuery = Helpers::buildBooleanQuery($search);

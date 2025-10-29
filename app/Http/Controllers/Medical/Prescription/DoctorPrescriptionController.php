@@ -27,10 +27,10 @@ class DoctorPrescriptionController extends Controller
 
         Log::info('Doctor Prescription: Viewed issued prescriptions', ['action_user_id' => Auth::id()]);
 
-        $perPage = (int) $request->input('per_page', 10);
-        $search = $request->search;
-        $sortBy = $request->input('sort_by', 'id');
-        $sortDir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $perPage = (int) $request->query('per_page', 10);
+        $search = trim($request->query('search'));
+        $sortBy = $request->query('sort_by', 'id');
+        $sortDir = strtolower($request->query('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
 
         $allowedSorts = ['id', 'patient_info.first_name', 'patient_info.last_name', 'date_issued', 'date_expires', 'is_valid', 'updated_at'];
         if (! in_array($sortBy, $allowedSorts)) {
@@ -54,7 +54,7 @@ class DoctorPrescriptionController extends Controller
             $query->leftJoin('patient_info', 'patient_info.id', '=', 'prescriptions.patient_info_id');
         }
 
-        $booleanQuery = Helpers::buildBooleanQuery($request->search);
+        $booleanQuery = Helpers::buildBooleanQuery($search);
 
         $query->when($request->filled('search'), fn ($qr) => $qr->whereFullText('prescription_details', $booleanQuery, ['mode' => 'boolean'])
             ->orWhereHas('patientInfo', fn ($q) => $q->whereLike('first_name', "%$search%")->orWhereLike('last_name', "%$search%")));

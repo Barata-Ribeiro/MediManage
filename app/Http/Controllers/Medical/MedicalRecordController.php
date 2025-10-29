@@ -25,10 +25,10 @@ class MedicalRecordController extends Controller
     {
         Log::info('Medical Records: Viewed medical records list', ['action_user_id' => Auth::id()]);
 
-        $perPage = (int) $request->input('per_page', 10);
-        $search = $request->search;
-        $sortBy = $request->input('sort_by', 'id');
-        $sortDir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $perPage = (int) $request->query('per_page', 10);
+        $search = trim($request->query('search'));
+        $sortBy = $request->query('sort_by', 'id');
+        $sortDir = strtolower($request->query('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
 
         $allowedSorts = ['id', 'patient_info.first_name', 'patient_info.last_name', 'created_at', 'updated_at'];
         if (! in_array($sortBy, $allowedSorts)) {

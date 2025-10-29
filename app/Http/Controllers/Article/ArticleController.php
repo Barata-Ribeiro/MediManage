@@ -23,10 +23,10 @@ class ArticleController extends Controller
     {
         Log::info('Articles: Viewed articles list', ['action_user_id' => Auth::id()]);
 
-        $perPage = (int) $request->input('per_page', 10);
-        $search = trim($request->search);
-        $sortBy = $request->input('sort_by', 'id');
-        $sortDir = strtolower($request->input('sort_dir', 'asc')) === 'desc' ? 'desc' : 'asc';
+        $perPage = (int) $request->query('per_page', 10);
+        $search = trim($request->query('search'));
+        $sortBy = $request->query('sort_by', 'id');
+        $sortDir = strtolower($request->query('sort_dir', 'asc')) === 'desc' ? 'desc' : 'asc';
 
         $allowedSorts = ['id', 'title', 'user.name', 'is_published', 'created_at', 'updated_at'];
         if (! in_array($sortBy, $allowedSorts)) {
@@ -70,10 +70,10 @@ class ArticleController extends Controller
 
         Log::info('Articles: Viewed own articles list', ['action_user_id' => $user_id]);
 
-        $perPage = (int) $request->input('per_page', 10);
-        $search = trim($request->search);
-        $sortBy = $request->input('sort_by', 'id');
-        $sortDir = strtolower($request->input('sort_dir', 'arc')) === 'desc' ? 'desc' : 'asc';
+        $perPage = (int) $request->query('per_page', 10);
+        $search = trim($request->query('search'));
+        $sortBy = $request->query('sort_by', 'id');
+        $sortDir = strtolower($request->query('sort_dir', 'asc')) === 'desc' ? 'desc' : 'asc';
 
         $allowedSorts = ['id', 'title', 'is_published', 'created_at', 'updated_at'];
         if (! in_array($sortBy, $allowedSorts)) {

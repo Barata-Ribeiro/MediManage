@@ -21,21 +21,21 @@ class UserManagementController extends Controller
     {
         Log::info('User Management: Viewed user list', ['action_user_id' => Auth::id()]);
 
-        $perPage = (int)$request->input('per_page', 10);
-        $search = $request->search;
-        $sortBy = $request->input('sort_by', 'id');
-        $sortDir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $perPage = (int) $request->query('per_page', 10);
+        $search = trim($request->query('search'));
+        $sortBy = $request->query('sort_by', 'id');
+        $sortDir = strtolower($request->query('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
 
         $allowedSorts = ['id', 'name', 'email', 'created_at', 'updated_at', 'roles'];
-        if (!in_array($sortBy, $allowedSorts)) {
+        if (! in_array($sortBy, $allowedSorts)) {
             $sortBy = 'id';
         }
 
         $query = User::with('roles')->select('users.*');
 
-        $query->when($request->filled('search'), fn($qr) => $qr->whereLike('users.name', "%$search%")
+        $query->when($request->filled('search'), fn ($qr) => $qr->whereLike('users.name', "%$search%")
             ->orWhereLike('users.email', "%$search%")
-            ->orWhereHas('roles', fn($q) => $q->whereLike('roles.name', "%$search%")));
+            ->orWhereHas('roles', fn ($q) => $q->whereLike('roles.name', "%$search%")));
 
         if ($sortBy === 'roles') {
             $rolesSub = DB::table('model_has_roles')
@@ -44,7 +44,7 @@ class UserManagementController extends Controller
                 ->where('model_has_roles.model_type', User::class)
                 ->groupBy('model_has_roles.model_id');
 
-            $query->leftJoinSub($rolesSub, 'r', fn($join) => $join->on('users.id', '=', 'r.model_id'));
+            $query->leftJoinSub($rolesSub, 'r', fn ($join) => $join->on('users.id', '=', 'r.model_id'));
 
             $query->orderBy(DB::raw('COALESCE(r.roles_names, "")'), $sortDir);
         } else {
@@ -54,7 +54,7 @@ class UserManagementController extends Controller
         $users = $query->paginate($perPage)->withQueryString();
 
         return Inertia::render('admin/users/Index', [
-            'users' => $users
+            'users' => $users,
         ]);
     }
 
@@ -65,8 +65,9 @@ class UserManagementController extends Controller
     {
         Log::info('User Management: Viewed user details', ['action_user_id' => Auth::id(), 'viewed_user_id' => $user->id]);
         $user->load('roles.permissions');
+
         return Inertia::render('admin/users/Show', [
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
@@ -77,8 +78,9 @@ class UserManagementController extends Controller
     {
         Log::info('User Management: Viewed user edit form', ['action_user_id' => Auth::id(), 'edited_user_id' => $user->id]);
         $user->load('roles');
+
         return Inertia::render('admin/users/Edit', [
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
@@ -102,7 +104,7 @@ class UserManagementController extends Controller
             Log::error('User Management: Failed to update user', [
                 'action_user_id' => Auth::id(),
                 'user_id' => $user->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return back()->with('error', 'Failed to update user. Please try again.');
@@ -125,12 +127,13 @@ class UserManagementController extends Controller
 
             $user->delete();
             Log::info('User Management: Deleted user', ['action_user_id' => Auth::id(), 'deleted_user_id' => $user->id]);
+
             return to_route('admin.users.index')->with('success', 'User deleted successfully.');
         } catch (Exception $e) {
             Log::error('User Management: Failed to delete user', [
                 'action_user_id' => Auth::id(),
                 'user_id' => $user->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return back()->with('error', 'Failed to delete user. Please try again.');

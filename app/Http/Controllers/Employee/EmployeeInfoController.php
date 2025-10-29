@@ -14,7 +14,7 @@ class EmployeeInfoController extends Controller
      */
     public function doctorSimpleSearch(Request $request)
     {
-        $search = trim($request->q);
+        $search = trim($request->query('q'));
 
         $booleanQuery = Helpers::buildBooleanQuery($search);
 

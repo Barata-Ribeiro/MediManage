@@ -40,10 +40,10 @@ class PublicController extends Controller
      */
     public function articles(Request $request)
     {
-        $category = $request->query('category');
-        $search = $request->query('search');
-        $start_date = $request->query('start_date_creation');
-        $end_date = $request->query('end_date_creation');
+        $category = trim($request->query('category'));
+        $search = trim($request->query('search'));
+        $start_date = trim($request->query('start_date_creation'));
+        $end_date = trim($request->query('end_date_creation'));
 
         $booleanQuery = Helpers::buildBooleanQuery($search);
 

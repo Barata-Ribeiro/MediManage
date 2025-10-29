@@ -20,17 +20,17 @@ class CategoryController extends Controller
     {
         Log::info('Categories: Viewed categories list', ['action_user_id' => Auth::id()]);
 
-        $perPage = (int)$request->input('per_page', 10);
-        $search = $request->search;
-        $sortBy = $request->input('sort_by', 'id');
-        $sortDir = strtolower($request->input('sort_dir', 'asc')) === 'desc' ? 'desc' : 'asc';
+        $perPage = (int) $request->query('per_page', 10);
+        $search = trim($request->query('search'));
+        $sortBy = $request->query('sort_by', 'id');
+        $sortDir = strtolower($request->query('sort_dir', 'asc')) === 'desc' ? 'desc' : 'asc';
 
         $allowedSorts = ['id', 'name', 'created_at', 'updated_at'];
-        if (!in_array($sortBy, $allowedSorts)) {
+        if (! in_array($sortBy, $allowedSorts)) {
             $sortBy = 'id';
         }
 
-        $categories = Category::when($request->filled('search'), fn($qr) => $qr
+        $categories = Category::when($request->filled('search'), fn ($qr) => $qr
             ->whereLike('name', "%$search%"))
             ->orderBy($sortBy, $sortDir)
             ->paginate($perPage)
@@ -47,9 +47,11 @@ class CategoryController extends Controller
         try {
             $category = Category::create($request->validated());
             Log::info('Categories: Created new category', ['action_user_id' => Auth::id(), 'category_id' => $category->id]);
+
             return to_route('categories.index')->with('success', 'Category created successfully.');
         } catch (Exception $e) {
             Log::error('Categories: Failed to create category', ['action_user_id' => Auth::id(), 'error' => $e->getMessage()]);
+
             return back()->withInput()->with('error', 'Failed to create category. Please try again.');
         }
     }
@@ -60,6 +62,7 @@ class CategoryController extends Controller
     public function create()
     {
         Log::info('Categories: Viewed create category page', ['action_user_id' => Auth::id()]);
+
         return Inertia::render('manage/categories/Create');
     }
 
@@ -69,6 +72,7 @@ class CategoryController extends Controller
     public function edit(Category $category)
     {
         Log::info('Categories: Viewed edit category page', ['action_user_id' => Auth::id(), 'category_id' => $category->id]);
+
         return Inertia::render('manage/categories/Edit', ['category' => $category]);
     }
 
@@ -80,9 +84,11 @@ class CategoryController extends Controller
         try {
             $category->update($request->validated());
             Log::info('Categories: Updated category', ['action_user_id' => Auth::id(), 'category_id' => $category->id]);
+
             return to_route('categories.index')->with('success', 'Category updated successfully.');
         } catch (Exception $e) {
             Log::error('Categories: Failed to update category', ['action_user_id' => Auth::id(), 'category_id' => $category->id, 'error' => $e->getMessage()]);
+
             return back()->withInput()->with('error', 'Failed to update category. Please try again.');
         }
     }
@@ -95,9 +101,11 @@ class CategoryController extends Controller
         try {
             $category->delete();
             Log::info('Categories: Deleted category', ['action_user_id' => Auth::id(), 'category_id' => $category->id]);
+
             return to_route('categories.index')->with('success', 'Category deleted successfully.');
         } catch (Exception $e) {
             Log::error('Categories: Failed to delete category', ['action_user_id' => Auth::id(), 'category_id' => $category->id, 'error' => $e->getMessage()]);
+
             return back()->with('error', 'Failed to delete category. Please try again.');
         }
     }

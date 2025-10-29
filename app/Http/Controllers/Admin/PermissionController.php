@@ -18,17 +18,17 @@ class PermissionController extends Controller
     {
         Log::info('Permission Management: Viewed permission list', ['action_user_id' => Auth::id()]);
 
-        $perPage = (int)$request->input('per_page', 10);
-        $search = $request->search;
-        $sortBy = $request->input('sort_by', 'id');
-        $sortDir = strtolower($request->input('sort_dir', 'asc')) === 'desc' ? 'desc' : 'asc';
+        $perPage = (int) $request->query('per_page', 10);
+        $search = trim($request->query('search'));
+        $sortBy = $request->query('sort_by', 'id');
+        $sortDir = strtolower($request->query('sort_dir', 'asc')) === 'desc' ? 'desc' : 'asc';
 
         $allowedSorts = ['id', 'title', 'name', 'guard_name', 'created_at', 'updated_at'];
-        if (!in_array($sortBy, $allowedSorts)) {
+        if (! in_array($sortBy, $allowedSorts)) {
             $sortBy = 'id';
         }
 
-        $permissions = Permission::when($request->filled('search'), fn($query) => $query->whereLike('name', "%$search%")
+        $permissions = Permission::when($request->filled('search'), fn ($query) => $query->whereLike('name', "%$search%")
             ->orWhereLike('title', "%$search%")
             ->orWhereLike('guard_name', "%$search%"))
             ->orderBy($sortBy, $sortDir)
@@ -36,7 +36,7 @@ class PermissionController extends Controller
             ->withQueryString();
 
         return Inertia::render('admin/permissions/Index', [
-            'permissions' => $permissions
+            'permissions' => $permissions,
         ]);
     }
 
@@ -50,7 +50,7 @@ class PermissionController extends Controller
         $permission->load('roles');
 
         return Inertia::render('admin/permissions/Show', [
-            'permission' => $permission
+            'permission' => $permission,
         ]);
     }
 

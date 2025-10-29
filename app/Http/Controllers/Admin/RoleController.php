@@ -21,25 +21,25 @@ class RoleController extends Controller
     {
         Log::info('Role Management: Viewed role list', ['action_user_id' => Auth::id()]);
 
-        $perPage = (int)$request->input('per_page', 10);
-        $search = $request->search;
-        $sortBy = $request->input('sort_by', 'id');
-        $sortDir = strtolower($request->input('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $perPage = (int) $request->query('per_page', 10);
+        $search = trim($request->query('search'));
+        $sortBy = $request->query('sort_by', 'id');
+        $sortDir = strtolower($request->query('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
 
         $allowedSorts = ['id', 'name', 'guard_name', 'created_at', 'updated_at', 'users_count'];
-        if (!in_array($sortBy, $allowedSorts)) {
+        if (! in_array($sortBy, $allowedSorts)) {
             $sortBy = 'id';
         }
 
         $roles = Role::withCount('users as users_count')
-            ->when($request->filled('search'), fn($query) => $query->whereLike('name', "%$search%")
+            ->when($request->filled('search'), fn ($query) => $query->whereLike('name', "%$search%")
                 ->orWhereLike('guard_name', "%$search%"))
             ->orderBy($sortBy, $sortDir)
             ->paginate($perPage)
             ->withQueryString();
 
         return Inertia::render('admin/roles/Index', [
-            'roles' => $roles
+            'roles' => $roles,
         ]);
     }
 
@@ -51,7 +51,7 @@ class RoleController extends Controller
         Log::info('Role Management: Viewed role edit form', ['action_user_id' => Auth::id(), 'edited_role_id' => $role->id]);
 
         $allPermissions = Permission::select(['id', 'name'])
-            ->when($request->filled('search'), fn($query) => $query->whereLike('name', "%$request->search%"))
+            ->when($request->filled('search'), fn ($query) => $query->whereLike('name', "%$request->search%"))
             ->orderBy('name', 'ASC')->paginate(10);
 
         return Inertia::render('admin/roles/Edit', [
@@ -76,7 +76,7 @@ class RoleController extends Controller
             Log::error('Role Management: Failed to update role', [
                 'action_user_id' => Auth::id(),
                 'role_id' => $role->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return back()->withInput()->with('error', 'Failed to update role. Please try again.');
@@ -110,7 +110,7 @@ class RoleController extends Controller
                 'action_user_id' => Auth::id(),
                 'role_id' => $role->id,
                 'permission_id' => $permission->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             return back()->withInput()->with('error', 'Failed to update permission. Please try again.');
