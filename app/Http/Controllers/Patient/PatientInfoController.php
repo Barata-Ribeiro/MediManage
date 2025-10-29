@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Patient;
 use App\Common\Helpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Patient\PatientRequest;
+use App\Mail\AccountAssociationMail;
+use App\Mail\NewAccountMail;
 use App\Models\PatientInfo;
 use App\Models\User;
 use Auth;
@@ -12,6 +14,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
+use Mail;
 use Str;
 
 class PatientInfoController extends Controller
@@ -166,8 +169,7 @@ class PatientInfoController extends Controller
 
             Log::info('Patient Info: Created new account for patient', ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id, 'user_id' => $user->id]);
 
-            // TODO: Send email to patient with account details
-            // Mail::to($user->email)->send(new NewAccountMail($user, $genPassword));
+            Mail::to($user->email)->send(new NewAccountMail($user, $genPassword));
 
             return to_route('patient_info.show', ['patientInfo' => $patientInfo])->with('success', 'User account created successfully.');
         } catch (Exception $e) {
@@ -199,6 +201,8 @@ class PatientInfoController extends Controller
 
             $patientInfo->user()->associate($user);
             $patientInfo->save();
+
+            Mail::to($user->email)->send(new AccountAssociationMail($user, $patientInfo));
 
             Log::info('Patient Info: Associated existing account with patient', ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id, 'user_id' => $user->id]);
 
