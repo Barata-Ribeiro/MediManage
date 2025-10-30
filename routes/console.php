@@ -15,13 +15,12 @@ Artisan::command('appointments:mark-missed-appointments', function () {
     $statusToUpdate = ['scheduled', 'confirmed', 'checked_in'];
 
     $missedAppointments = Appointment::whereIn('status', $statusToUpdate)
-        ->where('appointment_date', '<', $now)
-        ->chunk(100, fn($apts) => $apts->each(fn($apt) => $apt->update(['status' => 'missed'])));
+        ->whereAppointmentDate('<', $now)
+        ->chunk(100, fn ($apts) => $apts->each(fn ($apt) => $apt->update(['status' => $apt->status === 'checked_in' ? 'completed' : 'missed'])));
 
     $this->info("Marked $missedAppointments appointments as missed.");
 })->purpose('Mark missed appointments as missed in the system automatically')
     ->describe('This command checks for appointments that were scheduled in the past and updates their status to "missed" if they were not completed or canceled.');
-
 
 $schedule = app(Schedule::class);
 
