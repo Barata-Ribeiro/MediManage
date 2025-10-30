@@ -1,9 +1,11 @@
 import HeadingSmall from '@/components/heading-small';
 import { Button } from '@/components/ui/button';
 import { Item, ItemContent, ItemHeader } from '@/components/ui/item';
+import { cn } from '@/lib/utils';
 import medicalRecords from '@/routes/medicalRecords';
+import { SharedData } from '@/types';
 import { MedicalRecord } from '@/types/application/medicalRecord';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { CalendarPlus2Icon, CalendarSyncIcon } from 'lucide-react';
 
@@ -12,6 +14,13 @@ interface PatientMedicalRecordInfoItemProps {
 }
 
 export default function PatientMedicalRecordInfoItem({ medicalRecord }: Readonly<PatientMedicalRecordInfoItemProps>) {
+    const { auth } = usePage<SharedData>().props;
+
+    const isAllowedToViewRecord = auth.roles.includes('Doctor') || auth.permissions.includes('medical_record.show');
+    const canViewMedicalRecord = medicalRecord && isAllowedToViewRecord;
+    const linkHref = canViewMedicalRecord ? medicalRecords.show(medicalRecord.id!) : '#';
+    const buttonStyles = cn('mx-auto mt-4 w-full max-w-sm', !canViewMedicalRecord && 'pointer-events-none opacity-50');
+
     if (!medicalRecord) return null;
 
     const formatedCreatedAt = format(String(medicalRecord.created_at), 'PPP p');
@@ -52,8 +61,8 @@ export default function PatientMedicalRecordInfoItem({ medicalRecord }: Readonly
                     dangerouslySetInnerHTML={{ __html: medicalRecord.medical_notes_html! }}
                 />
 
-                <Button className="mx-auto mt-4 w-full max-w-sm" asChild>
-                    <Link href={medicalRecords.show(medicalRecord.id!)} prefetch>
+                <Button className={buttonStyles} asChild>
+                    <Link href={linkHref} prefetch>
                         View Full Medical Record
                     </Link>
                 </Button>
