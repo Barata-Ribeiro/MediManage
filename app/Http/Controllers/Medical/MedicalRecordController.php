@@ -31,7 +31,8 @@ class MedicalRecordController extends Controller
         $search = trim($request->query('search'));
 
         try {
-            $medicalRecord = MedicalRecord::wherePatientInfoId($patientInfoId)->firstOrFail();
+            $medicalRecord = MedicalRecord::select(['id', 'patient_info_id', 'medical_notes_html', 'created_at', 'updated_at'])
+                ->wherePatientInfoId($patientInfoId)->with('patientInfo:id,first_name,last_name,gender,date_of_birth')->firstOrFail();
 
             $columns = Schema::getColumnListing((new MedicalRecordEntry)->getTable());
             $columns = array_values(array_filter($columns, fn ($c) => $c !== 'content_json'));
