@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\General;
 
+use App\Common\Helpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Patient\AppointmentRequest;
 use App\Models\Appointment;
 use App\Models\EmployeeInfo;
+use App\Models\PatientInfo;
 use App\Services\AppointmentService;
 use Auth;
 use Carbon\Carbon;
@@ -31,6 +33,52 @@ class AppointmentController extends Controller
         $appointments = $this->appointmentService->getAppointmentsByDoctorWithRequest($doctor, $request);
 
         return Inertia::render('appointments/doctor/Index', [
+            'appointments' => $appointments,
+        ]);
+    }
+
+    /**
+     * Display a listing of the resource for a specific patient.
+     */
+    public function indexByPatient(PatientInfo $patient, Request $request)
+    {
+        if (Auth::user()->hasRole('Patient') && Auth::user()->patient_info_id !== $patient->id) {
+            return to_route('dashboard')->with('error', 'You do not have permission to view these appointments.');
+        }
+
+        $perPage = (int) $request->query('per_page', 10);
+        $search = trim($request->query('search'));
+        $sortBy = $request->query('sort_by', 'id');
+        $sortDir = strtolower($request->query('sort_dir', 'asc')) === 'desc' ? 'desc' : 'asc';
+
+        $allowedSorts = ['id', 'employee_info.first_name', 'employee_info.specialization', 'status', 'appointment_date', 'updated_at'];
+        if (! in_array($sortBy, $allowedSorts)) {
+            $sortBy = 'id';
+        }
+
+        $booleanQuery = Helpers::buildBooleanQuery($search);
+
+        $appointmentsQuery = $patient->appointments()
+            ->with([
+                'employeeInfo' => fn ($q) => $q->select('id', 'user_id', 'first_name', 'last_name', 'specialization'),
+                'employeeInfo.user' => fn ($q) => $q->select('id', 'name', 'email'),
+            ])
+            ->when($request->filled('search'), function ($qr) use ($search, $booleanQuery) {
+                return $qr->where(function ($q) use ($search, $booleanQuery) {
+                    $q->whereLike('status', "%$search%")
+                        ->orWhereLike('reason_for_visit', "%$search%")
+                        ->orWhereHas('employeeInfo', function ($q2) use ($search, $booleanQuery) {
+                            $q2->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'specialization', 'position'], $booleanQuery, ['mode' => 'boolean'])
+                                ->orWhereHas('user', fn ($q3) => $q3->whereLike('name', "%$search%")->orWhereLike('email', "%$search%"));
+                        });
+                });
+            });
+
+        $appointments = $appointmentsQuery->orderBy($sortBy, $sortDir)
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return Inertia::render('appointments/patient/Index', [
             'appointments' => $appointments,
         ]);
     }
