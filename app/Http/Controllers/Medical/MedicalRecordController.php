@@ -19,6 +19,9 @@ use Log;
 
 class MedicalRecordController extends Controller
 {
+    /**
+     * Display the authenticated patient's medical record.
+     */
     public function myMedicalRecord(Request $request)
     {
         $patientInfoId = Auth::user()->patient_info_id;
@@ -158,7 +161,22 @@ class MedicalRecordController extends Controller
      */
     public function generateMedicalRecordPdf(MedicalRecord $medicalRecord)
     {
+
         try {
+            $hasPatientRole = Auth::user()->hasRole('Patient');
+            $hasPatientInfo = is_null(Auth::user()->patient_info_id) === false;
+            $hasMedicalRecord = $hasPatientInfo && MedicalRecord::where('patient_info_id', Auth::user()->patient_info_id)->exists();
+
+            if ($hasPatientRole && $hasPatientInfo && Auth::user()->patient_info_id !== $medicalRecord->patient_info_id) {
+                if ($hasMedicalRecord) {
+                    $userMedicalRecordId = MedicalRecord::select('id')->wherePatientInfoId(Auth::user()->patient_info_id)->first();
+
+                    return to_route('medicalRecords.generatePdf', ['medicalRecord' => $userMedicalRecordId]);
+                }
+
+                return to_route('dashboard')->with('error', 'You either do not have permission to access this medical record or it does not exist.');
+            }
+
             $data = MedicalRecord::with('patientInfo')
                 ->find($medicalRecord->id, ['id', 'patient_info_id', 'medical_notes_html', 'created_at', 'updated_at']);
 
