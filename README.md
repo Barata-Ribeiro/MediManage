@@ -151,7 +151,6 @@ php artisan serve
 
 There are bugs and/or implementations that require some attention.
 
-- Check for the patient's ID in the sidebar, and allow users to register their patient info conditionally.
 - Implement a proper regular user dashboard.
 - Implement a proper manager dashboard.
 
