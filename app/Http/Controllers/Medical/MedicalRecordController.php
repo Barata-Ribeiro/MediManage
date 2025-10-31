@@ -41,10 +41,10 @@ class MedicalRecordController extends Controller
 
             $entries = MedicalRecordEntry::select($columns)
                 ->whereMedicalRecordId($medicalRecord->id)
-                ->when($request->filled('search'), fn ($q) => $q->where(function ($q2) use ($search, $booleanQuery) {
-                    $q2->whereFullText(['title', 'content_html'], $booleanQuery, ['mode' => 'boolean'])
-                        ->orWhereLike('entry_type', "%$search%");
-                }))
+                ->whereIsVisibleToPatient(true)
+                ->when($request->filled('search'), fn ($q) => $q->where(fn ($q2) => $q2->whereFullText(['title', 'content_html'], $booleanQuery, ['mode' => 'boolean'])
+                    ->orWhere('entry_type', 'like', "%$search%")
+                ))
                 ->orderByDesc('created_at')
                 ->cursorPaginate(10)
                 ->withQueryString();

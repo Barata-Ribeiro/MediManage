@@ -1,3 +1,4 @@
+import AppPageAlert from '@/components/app-page-alert';
 import Heading from '@/components/heading';
 import HeadingSmall from '@/components/heading-small';
 import { Button } from '@/components/ui/button';
@@ -112,7 +113,14 @@ export default function MyRecord({ medicalRecord, entries }: Readonly<MyRecordPr
                 </article>
 
                 <section className="mt-6 mb-4">
+                    <AppPageAlert
+                        title="Attention!"
+                        message="Your medical record entries are visible to you only if your medical practitioner has marked them as visible. If you believe there are entries missing from your record, please contact them for clarification."
+                        variant="warning"
+                    />
+
                     <HeadingSmall title="Entries" description="Check your medical record entries." />
+
                     {!hasEntries && (
                         <Empty className="mt-4 border border-dashed">
                             <EmptyHeader>
