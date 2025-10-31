@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Patient\AppointmentRequest;
 use App\Models\Appointment;
 use App\Models\EmployeeInfo;
-use App\Models\PatientInfo;
 use App\Services\AppointmentService;
 use Auth;
 use Carbon\Carbon;
@@ -40,11 +39,8 @@ class AppointmentController extends Controller
     /**
      * Display a listing of the resource for a specific patient.
      */
-    public function indexByPatient(PatientInfo $patient, Request $request)
+    public function indexByPatient(Request $request)
     {
-        if (Auth::user()->hasRole('Patient') && Auth::user()->patient_info_id !== $patient->id) {
-            return to_route('dashboard')->with('error', 'You do not have permission to view these appointments.');
-        }
 
         $perPage = (int) $request->query('per_page', 10);
         $search = trim($request->query('search'));
@@ -58,29 +54,39 @@ class AppointmentController extends Controller
 
         $booleanQuery = Helpers::buildBooleanQuery($search);
 
-        $appointmentsQuery = $patient->appointments()
-            ->with([
-                'employeeInfo' => fn ($q) => $q->select('id', 'user_id', 'first_name', 'last_name', 'specialization'),
-                'employeeInfo.user' => fn ($q) => $q->select('id', 'name', 'email'),
-            ])
-            ->when($request->filled('search'), function ($qr) use ($search, $booleanQuery) {
-                return $qr->where(function ($q) use ($search, $booleanQuery) {
-                    $q->whereLike('status', "%$search%")
-                        ->orWhereLike('reason_for_visit', "%$search%")
-                        ->orWhereHas('employeeInfo', function ($q2) use ($search, $booleanQuery) {
-                            $q2->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'specialization', 'position'], $booleanQuery, ['mode' => 'boolean'])
-                                ->orWhereHas('user', fn ($q3) => $q3->whereLike('name', "%$search%")->orWhereLike('email', "%$search%"));
-                        });
+        try {
+            $patient = Auth::user()->patientInfo;
+
+            Log::info('Fetching patient appointments', ['action_user_id' => Auth::id(), 'patient_info_id' => $patient->id, 'search' => $search, 'sort_by' => $sortBy, 'sort_dir' => $sortDir, 'per_page' => $perPage]);
+
+            $appointmentsQuery = $patient->appointments()
+                ->with([
+                    'employeeInfo' => fn ($q) => $q->select('id', 'user_id', 'first_name', 'last_name', 'specialization'),
+                    'employeeInfo.user' => fn ($q) => $q->select('id', 'name', 'email'),
+                ])
+                ->when($request->filled('search'), function ($qr) use ($search, $booleanQuery) {
+                    return $qr->where(function ($q) use ($search, $booleanQuery) {
+                        $q->whereLike('status', "%$search%")
+                            ->orWhereLike('reason_for_visit', "%$search%")
+                            ->orWhereHas('employeeInfo', function ($q2) use ($search, $booleanQuery) {
+                                $q2->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'specialization', 'position'], $booleanQuery, ['mode' => 'boolean'])
+                                    ->orWhereHas('user', fn ($q3) => $q3->whereLike('name', "%$search%")->orWhereLike('email', "%$search%"));
+                            });
+                    });
                 });
-            });
 
-        $appointments = $appointmentsQuery->orderBy($sortBy, $sortDir)
-            ->paginate($perPage)
-            ->withQueryString();
+            $appointments = $appointmentsQuery->orderBy($sortBy, $sortDir)
+                ->paginate($perPage)
+                ->withQueryString();
 
-        return Inertia::render('appointments/patient/Index', [
-            'appointments' => $appointments,
-        ]);
+            return Inertia::render('appointments/patient/Index', [
+                'appointments' => $appointments,
+            ]);
+        } catch (Exception $e) {
+            Log::error('Failed to fetch patient appointments', ['action_user_id' => Auth::id(), 'error' => $e->getMessage()]);
+
+            return to_route('dashboard')->with('error', 'You either have no permission to access this resource or are not a patient.');
+        }
     }
 
     /**
