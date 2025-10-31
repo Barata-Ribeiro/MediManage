@@ -11,6 +11,7 @@ use App\Models\MedicalRecordEntry;
 use Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Inertia\Inertia;
@@ -18,6 +19,48 @@ use Log;
 
 class MedicalRecordController extends Controller
 {
+    public function myMedicalRecord(Request $request)
+    {
+        $patientInfoId = Auth::user()->patient_info_id;
+
+        Log::info('Medical Records: Patient viewed their own medical record', ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfoId]);
+
+        $search = trim($request->query('search'));
+
+        try {
+            $medicalRecord = MedicalRecord::wherePatientInfoId($patientInfoId)->firstOrFail();
+
+            $columns = Schema::getColumnListing((new MedicalRecordEntry)->getTable());
+            $columns = array_values(array_filter($columns, fn ($c) => $c !== 'content_json'));
+
+            $booleanQuery = Helpers::buildBooleanQuery($search);
+
+            $entries = MedicalRecordEntry::select($columns)
+                ->whereMedicalRecordId($medicalRecord->id)
+                ->when($request->filled('search'), fn ($q) => $q->where(function ($q2) use ($search, $booleanQuery) {
+                    $q2->whereFullText(['title', 'content_html'], $booleanQuery, ['mode' => 'boolean'])
+                        ->orWhereLike('entry_type', "%$search%");
+                }))
+                ->orderByDesc('created_at')
+                ->cursorPaginate(10)
+                ->withQueryString();
+
+            return Inertia::render('medicalRecords/MyRecord', [
+                'medicalRecord' => $medicalRecord,
+                'entries' => Inertia::scroll(fn () => $entries),
+            ]);
+        } catch (ModelNotFoundException $e) {
+            Log::warning('Medical Records: No medical record found for patient', ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfoId]);
+            $errorMessage = 'You have no medical record available yet. Consult with one of our medical professionals to create your record.';
+
+            return to_route('dashboard')->with('error', $errorMessage);
+        } catch (Exception $e) {
+            Log::error('Medical Records: Failed to retrieve patient medical record', ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfoId, 'error' => $e->getMessage()]);
+
+            return to_route('dashboard')->with('error', 'Failed to retrieve your medical record. Please contact support.');
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -116,7 +159,6 @@ class MedicalRecordController extends Controller
     public function generateMedicalRecordPdf(MedicalRecord $medicalRecord)
     {
         try {
-
             $data = MedicalRecord::with('patientInfo')
                 ->find($medicalRecord->id, ['id', 'patient_info_id', 'medical_notes_html', 'created_at', 'updated_at']);
 
@@ -133,6 +175,8 @@ class MedicalRecordController extends Controller
             ])->setPaper('a4', 'portrait');
 
             $filename = 'medical_record_'.($data->id ?? $medicalRecord->id);
+
+            Log::info('Medical Records: Generated medical record PDF', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id]);
 
             return $pdf->stream($filename.'.pdf');
         } catch (Exception $e) {
