@@ -86,21 +86,24 @@ class MedicalRecordController extends Controller
      */
     public function show(MedicalRecord $medicalRecord, Request $request)
     {
+        $search = trim($request->query('search'));
+
         Log::info('Medical Records: Viewed medical record', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id]);
 
         $medicalRecord->load(['patientInfo' => fn ($q) => $q->select(['id', 'first_name', 'last_name', 'date_of_birth', 'gender'])]);
 
         $columns = Schema::getColumnListing((new MedicalRecordEntry)->getTable());
         $columns = array_values(array_filter($columns, fn ($c) => $c !== 'content_json'));
-        $booleanQuery = Helpers::buildBooleanQuery($request->search);
+
+        $booleanQuery = Helpers::buildBooleanQuery($search);
 
         $entries = MedicalRecordEntry::select($columns)
-            ->where('medical_record_id', $medicalRecord->id)
-            ->when($request->filled('search'), fn ($q) => $q->where(function ($q2) use ($request, $booleanQuery) {
+            ->whereMedicalRecordId($medicalRecord->id)
+            ->when($request->filled('search'), fn ($q) => $q->where(function ($q2) use ($search, $booleanQuery) {
                 $q2->whereFullText(['title', 'content_html'], $booleanQuery, ['mode' => 'boolean'])
-                    ->orWhereLike('entry_type', "%$request->search%");
+                    ->orWhereLike('entry_type', "%$search%");
             }))
-            ->orderBy('created_at', 'desc')
+            ->orderByDesc('created_at')
             ->cursorPaginate(10)
             ->withQueryString();
 
