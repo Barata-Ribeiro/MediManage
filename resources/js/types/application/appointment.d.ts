@@ -30,4 +30,14 @@ export interface UpcomingAppointment extends Appointment {
     };
 }
 
+export type TableAppointment = Pick<
+    AppointmentWithRelations,
+    'id' | 'reason_for_visit' | 'status' | 'appointment_date' | 'created_at' | 'updated_at'
+> & {
+    employee_info: Pick<EmployeeInfo, 'id' | 'first_name' | 'last_name' | 'specialization' | 'full_name'> & {
+        user: Pick<User, 'id' | 'name'>;
+    };
+};
+
 export type PaginatedUpcomingAppointments = PaginationMeta<UpcomingAppointment[]>;
+export type PaginatedTableAppointments = PaginationMeta<TableAppointment[]>;
