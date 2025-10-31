@@ -6,6 +6,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import appointments from '@/routes/appointments';
+import { myRecord } from '@/routes/medicalRecords';
 import { NavItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { ClipboardClockIcon, ClipboardListIcon, PillIcon } from 'lucide-react';
@@ -27,7 +28,7 @@ export function NavPatient() {
         },
         {
             title: 'My Medical Record',
-            href: 'placeholder_for_medical_records_url',
+            href: myRecord().url,
             icon: ClipboardListIcon,
         },
         {
