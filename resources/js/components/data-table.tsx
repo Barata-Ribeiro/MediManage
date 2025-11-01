@@ -45,8 +45,10 @@ export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly
     const [search, setSearch] = useState<string>(getInitialSearch());
     const searchDebounce = useRef<NodeJS.Timeout | undefined>(undefined);
 
+    const path = pagination.path;
+
     useEffect(() => {
-        if (!pagination.path) return;
+        if (!path) return;
 
         const params = new URLSearchParams(globalThis.location.search);
         const currentSortBy = params.get('sort_by');
@@ -55,7 +57,7 @@ export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly
         if (!sorting || sorting.length === 0) {
             if (!currentSortBy && !currentSortDir) return;
 
-            router.get(pagination.path, buildParams({ sort_by: undefined, sort_dir: undefined }), {
+            router.get(path, buildParams({ sort_by: undefined, sort_dir: undefined }), {
                 preserveState: true,
                 replace: true,
             });
@@ -69,15 +71,15 @@ export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly
         if (currentSortBy === sortBy && currentSortDir === sortDir) return;
 
         if (sortBy) {
-            router.get(pagination.path, buildParams({ sort_by: sortBy, sort_dir: sortDir }), {
+            router.get(path, buildParams({ sort_by: sortBy, sort_dir: sortDir }), {
                 preserveState: true,
                 replace: true,
             });
         }
-    }, [sorting, pagination.path]);
+    }, [sorting, path]);
 
     useEffect(() => {
-        if (!pagination.path) return;
+        if (!path) return;
 
         globalThis.clearTimeout(searchDebounce.current);
         const params = new URLSearchParams(globalThis.location.search);
@@ -87,15 +89,14 @@ export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly
 
         globalThis.clearTimeout(searchDebounce.current);
         searchDebounce.current = globalThis.setTimeout(() => {
-            router.get(pagination.path, buildParams({ search: search ?? undefined }), {
+            router.get(path, buildParams({ search: search ?? undefined }), {
                 preserveState: true,
                 replace: true,
             });
         }, 400);
 
         return () => globalThis.clearTimeout(searchDebounce.current);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [search]);
+    }, [search, path]);
 
     const table = useReactTable({
         data,
