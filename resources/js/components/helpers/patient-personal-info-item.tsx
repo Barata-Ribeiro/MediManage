@@ -17,12 +17,14 @@ export default function PatientPersonalInfoItem({ patient, dateOfBirth }: Readon
     const { auth } = usePage<SharedData>().props;
 
     const isAllowedToEdit = auth.permissions.includes('patient_info.edit');
+    const isAllowedToList = auth.permissions.includes('patient_info.index');
 
     const editLinkRoute = patient_info.edit(patient.id);
     const finalEditLinkRoute = isAllowedToEdit ? editLinkRoute : '#';
+    const finalSearchLinkRoute = isAllowedToList ? search() : '#';
 
     const disabledLinkStyles = 'pointer-events-none opacity-50';
-    const disabledLinkClass = cn(!isAllowedToEdit && disabledLinkStyles);
+    const disabledLinkClass = cn((!isAllowedToEdit || !isAllowedToList) && disabledLinkStyles);
 
     return (
         <Item variant="outline">
@@ -122,7 +124,7 @@ export default function PatientPersonalInfoItem({ patient, dateOfBirth }: Readon
 
                 <div className="inline-flex items-center gap-x-2">
                     <Button variant="ghost" asChild>
-                        <Link href={search()} prefetch>
+                        <Link href={finalSearchLinkRoute} className={disabledLinkClass} prefetch="hover">
                             Find Other
                         </Link>
                     </Button>
