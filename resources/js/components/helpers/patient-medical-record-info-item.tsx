@@ -2,7 +2,7 @@ import HeadingSmall from '@/components/heading-small';
 import { Button } from '@/components/ui/button';
 import { Item, ItemContent, ItemHeader } from '@/components/ui/item';
 import { cn } from '@/lib/utils';
-import medicalRecords from '@/routes/medicalRecords';
+import medicalRecords, { myRecord } from '@/routes/medicalRecords';
 import { SharedData } from '@/types';
 import { MedicalRecord } from '@/types/application/medicalRecord';
 import { Link, usePage } from '@inertiajs/react';
@@ -16,10 +16,15 @@ interface PatientMedicalRecordInfoItemProps {
 export default function PatientMedicalRecordInfoItem({ medicalRecord }: Readonly<PatientMedicalRecordInfoItemProps>) {
     const { auth } = usePage<SharedData>().props;
 
-    const isAllowedToViewRecord = auth.roles.includes('Doctor') || auth.permissions.includes('medical_record.show');
-    const canViewMedicalRecord = medicalRecord && isAllowedToViewRecord;
-    const linkHref = canViewMedicalRecord ? medicalRecords.show(medicalRecord.id!) : '#';
-    const buttonStyles = cn('mx-auto mt-4 w-full max-w-sm', !canViewMedicalRecord && 'pointer-events-none opacity-50');
+    const hasPermissionToView = auth.roles.includes('Doctor') || auth.permissions.includes('medical_record.show');
+    const isOwnerOfRecord = medicalRecord?.patient_info_id === auth.user.patient_info_id;
+    const isNonOwnerAccess = hasPermissionToView && !isOwnerOfRecord;
+
+    const buttonStyles = cn(
+        'mx-auto mt-4 w-full max-w-sm',
+        !hasPermissionToView || (!isOwnerOfRecord && 'pointer-events-none opacity-50'),
+    );
+    const linkHref = isNonOwnerAccess ? medicalRecords.show(medicalRecord?.patient_info_id ?? 0) : myRecord();
 
     if (!medicalRecord) return null;
 
