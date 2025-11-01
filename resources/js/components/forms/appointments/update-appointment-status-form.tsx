@@ -40,7 +40,7 @@ export default function UpdateAppointmentStatusForm({
             formRef.current.submit();
             localChangeRef.current = false;
         }
-    }, [status]);
+    }, [status, appointment.status]);
 
     useEffect(() => setStatus(appointment.status), [appointment.status]);
 
