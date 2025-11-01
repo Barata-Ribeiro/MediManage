@@ -1,6 +1,7 @@
 import AppPageAlert from '@/components/app-page-alert';
 import Heading from '@/components/heading';
 import HeadingSmall from '@/components/heading-small';
+import PatientEntryViewModal from '@/components/helpers/patient-entry-view-modal';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
@@ -11,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import Layout from '@/layouts/app-layout';
 import { normalizeString } from '@/lib/utils';
 import medicalRecords, { myRecord } from '@/routes/medicalRecords';
+import patient_info from '@/routes/patient_info';
 import type { BreadcrumbItem } from '@/types';
 import { MedicalRecord, ScrollableMedicalRecordEntry } from '@/types/application/medicalRecord';
 import { InfiniteScrollRef } from '@inertiajs/core';
@@ -37,11 +39,6 @@ export default function MyRecord({ medicalRecord, entries }: Readonly<MyRecordPr
     const fetchNext = () => infiniteScrollRef.current?.fetchNext?.();
 
     const hasEntries = entries.data.length > 0;
-
-    console.group('MyRecord Render');
-    console.log('medicalRecord:', medicalRecord);
-    console.log('entries:', entries);
-    console.groupEnd();
 
     const dateOfBirth = String(medicalRecord.patient_info?.date_of_birth).replaceAll('-', '/');
 
@@ -95,8 +92,7 @@ export default function MyRecord({ medicalRecord, entries }: Readonly<MyRecordPr
 
                             <ItemActions>
                                 <Button size="sm" asChild>
-                                    {/* TODO: Implement view own patient info */}
-                                    <Link href="#" as="button" prefetch>
+                                    <Link href={patient_info.show(medicalRecord.patient_info_id)} as="button" prefetch>
                                         View My Info
                                     </Link>
                                 </Button>
@@ -226,7 +222,7 @@ export default function MyRecord({ medicalRecord, entries }: Readonly<MyRecordPr
                                                         {normalizeString(entry.entry_type)}
                                                     </TableCell>
                                                     <TableCell className="inline-flex w-full justify-end gap-2">
-                                                        {/* TODO: Implement view entry details (without edit) */}
+                                                        <PatientEntryViewModal entry={entry} />
                                                     </TableCell>
                                                 </TableRow>
                                             ))}
