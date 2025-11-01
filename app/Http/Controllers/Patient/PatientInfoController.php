@@ -87,7 +87,13 @@ class PatientInfoController extends Controller
     public function show(PatientInfo $patientInfo)
     {
         if (Auth::user()->hasRole('Patient') && Auth::id() !== $patientInfo->user_id) {
-            return to_route('dashboard')->with('error', 'You do not have permission to view this patient information.');
+            $patientInfoId = Auth::user()->patient_info_id;
+
+            if (is_null($patientInfoId)) {
+                return to_route('dashboard')->with('error', 'You do not have permission to view this patient information.');
+            }
+
+            return to_route('patient_info.show', ['patientInfo' => $patientInfoId])->with('error', 'You can only view your own information.');
         }
 
         $patientInfo->load(['user:id,name,email,avatar,bio,created_at,updated_at,patient_info_id', 'medicalRecord'])->getAppends();
