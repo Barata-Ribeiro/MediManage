@@ -7,9 +7,28 @@ import {
 } from '@/components/ui/sidebar';
 import appointments from '@/routes/appointments';
 import { myRecord } from '@/routes/medicalRecords';
+import { myPrescriptions } from '@/routes/prescriptions';
 import { NavItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { ClipboardClockIcon, ClipboardListIcon, PillIcon } from 'lucide-react';
+
+const patientItems: NavItem[] = [
+    {
+        title: 'My Appointments',
+        href: appointments.patient.index().url,
+        icon: ClipboardClockIcon,
+    },
+    {
+        title: 'My Medical Record',
+        href: myRecord().url,
+        icon: ClipboardListIcon,
+    },
+    {
+        title: 'My Prescriptions',
+        href: myPrescriptions().url,
+        icon: PillIcon,
+    },
+];
 
 export function NavPatient() {
     const { props, url } = usePage<SharedData>();
@@ -18,25 +37,6 @@ export function NavPatient() {
 
     const isPatient = auth.roles.includes('Patient') && !!auth.user.patient_info_id;
     if (!isPatient) return null;
-
-    // TODO: Replace placeholder URLs with actual routes when available
-    const patientItems: NavItem[] = [
-        {
-            title: 'My Appointments',
-            href: appointments.patient.index(auth.user.patient_info_id!).url,
-            icon: ClipboardClockIcon,
-        },
-        {
-            title: 'My Medical Record',
-            href: myRecord().url,
-            icon: ClipboardListIcon,
-        },
-        {
-            title: 'My Prescriptions',
-            href: 'placeholder_for_prescriptions_url',
-            icon: PillIcon,
-        },
-    ];
 
     return (
         <SidebarGroup className="px-2 py-0">
