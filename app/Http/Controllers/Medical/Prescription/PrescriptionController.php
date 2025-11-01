@@ -19,7 +19,7 @@ class PrescriptionController extends Controller
     /**
      * Display a listing of the requesting user prescriptions.
      */
-    public function index(Request $request)
+    public function myPrescriptions(Request $request)
     {
         Log::info('Patient Prescription: Viewed own prescriptions', ['action_user_id' => Auth::id()]);
 
@@ -30,7 +30,7 @@ class PrescriptionController extends Controller
         $sortBy = $request->query('sort_by', 'id');
         $sortDir = strtolower($request->query('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
 
-        $allowedSorts = ['id', 'employee_info.first_name', 'employee_info.last_name', 'date_issued', 'date_expires', 'updated_at'];
+        $allowedSorts = ['id', 'employee_info.first_name', 'employee_info.specialization', 'date_issued', 'date_expires', 'updated_at'];
         if (! in_array($sortBy, $allowedSorts)) {
             $sortBy = 'id';
         }
@@ -41,11 +41,12 @@ class PrescriptionController extends Controller
                 'prescriptions.validation_code',
                 'prescriptions.is_valid',
                 'prescriptions.employee_info_id',
+                'prescriptions.patient_info_id',
                 'prescriptions.date_issued',
                 'prescriptions.date_expires',
                 'prescriptions.updated_at',
             ])
-            ->with(['doctorInfo' => fn ($q) => $q->select('id', 'first_name', 'last_name')]);
+            ->with(['employeeInfo' => fn ($q) => $q->select('id', 'first_name', 'last_name', 'specialization')]);
 
         if (str_starts_with($sortBy, 'employee_info.')) {
             $query->leftJoin('employee_info', 'employee_info.id', '=', 'prescriptions.employee_info_id');
@@ -53,8 +54,9 @@ class PrescriptionController extends Controller
 
         $booleanQuery = Helpers::buildBooleanQuery($search);
 
-        $query->when($request->filled('search'), fn ($qr) => $qr->whereFullText('prescription_details', $booleanQuery, ['mode' => 'boolean'])
-            ->orWhereHas('doctorInfo', fn ($q) => $q->whereLike('first_name', "%$search%")->orWhereLike('last_name', "%$search%")));
+        $query->when($request->filled('search'), fn ($qr) => $qr->whereFullText('prescription_details_html', $booleanQuery, ['mode' => 'boolean'])
+            ->orWhereHas('employeeInfo', fn ($q) => $q->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'specialization', 'position'], $booleanQuery, ['mode' => 'boolean'])
+                ->orWhereHas('user', fn ($q2) => $q2->whereLike('name', "%$search%")->orWhereLike('email', "%$search%"))));
 
         $prescriptions = $query->orderBy($sortBy, $sortDir)
             ->paginate($perPage)
