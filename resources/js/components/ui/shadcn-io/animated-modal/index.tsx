@@ -1,9 +1,9 @@
+import { Button } from '@/components/ui/button';
 import { useOnClickOutside } from '@/hooks/use-on-click-outside';
 import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { XIcon } from 'lucide-react';
 import React, { ReactNode, createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { Button } from '../../button';
 
 interface ModalContextType {
     open: boolean;
@@ -30,7 +30,7 @@ export function Modal({ children }: Readonly<{ children: ReactNode }>) {
     return <ModalProvider>{children}</ModalProvider>;
 }
 
-export const ModalTrigger = ({ children, className }: { children: ReactNode; className?: string }) => {
+export const ModalTrigger = ({ children, className }: Readonly<{ children: ReactNode; className?: string }>) => {
     const { setOpen } = useModal();
     return (
         <button
@@ -45,7 +45,7 @@ export const ModalTrigger = ({ children, className }: { children: ReactNode; cla
     );
 };
 
-export const ModalBody = ({ children, className }: { children: ReactNode; className?: string }) => {
+export const ModalBody = ({ children, className }: Readonly<{ children: ReactNode; className?: string }>) => {
     const { open } = useModal();
 
     useEffect(() => {
@@ -64,7 +64,7 @@ export const ModalBody = ({ children, className }: { children: ReactNode; classN
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1, backdropFilter: 'blur(10px)' }}
                     exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-                    className="fixed inset-0 z-50 flex h-full w-full items-center justify-center [perspective:800px] [transform-style:preserve-3d]"
+                    className="fixed inset-0 z-50 flex h-full w-full items-center justify-center perspective-midrange transform-3d"
                 >
                     <Overlay />
 
@@ -106,8 +106,8 @@ export const ModalBody = ({ children, className }: { children: ReactNode; classN
     );
 };
 
-export const ModalContent = ({ children, className }: { children: ReactNode; className?: string }) => {
-    return <div className={cn('flex flex-1 flex-col p-8 md:p-10 overflow-auto', className)}>{children}</div>;
+export const ModalContent = ({ children, className }: Readonly<{ children: ReactNode; className?: string }>) => {
+    return <div className={cn('flex flex-1 flex-col overflow-auto p-8 md:p-10', className)}>{children}</div>;
 };
 
 export const ModalFooter = ({
@@ -127,7 +127,7 @@ export const ModalFooter = ({
     );
 };
 
-const Overlay = ({ className }: { className?: string }) => {
+const Overlay = ({ className }: Readonly<{ className?: string }>) => {
     return (
         <motion.div
             initial={{
@@ -149,7 +149,13 @@ const Overlay = ({ className }: { className?: string }) => {
 const CloseIcon = () => {
     const { setOpen } = useModal();
     return (
-        <button type="button" onClick={() => setOpen(false)} className="group absolute top-4 right-4" aria-label="Close Modal" title="Close Modal">
+        <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="group absolute top-4 right-4"
+            aria-label="Close Modal"
+            title="Close Modal"
+        >
             <XIcon
                 aria-hidden
                 size={16}
@@ -159,7 +165,7 @@ const CloseIcon = () => {
     );
 };
 
-const CancelButton = ({ children, className }: { children: ReactNode; className?: string }) => {
+const CancelButton = ({ children, className }: Readonly<{ children: ReactNode; className?: string }>) => {
     const { setOpen } = useModal();
     return (
         <Button type="button" onClick={() => setOpen(false)} variant="outline" className={className}>
