@@ -24,4 +24,8 @@ export type TablePrescription = Omit<Prescription, 'prescription_details_html' |
     patient_info: TablePatientInfo;
 };
 
+export type TableOwnPrescription = Omit<Prescription, 'prescription_details_html' | 'prescription_details_json'> & {
+    employee_info: Pick<EmployeeInfo, 'id' | 'first_name' | 'last_name' | 'specialization' | 'full_name'>;
+};
+
 export type PaginationPrescriptions = PaginationMeta<TablePrescription[]>;
