@@ -1,4 +1,5 @@
 import { User } from '@/types/admin/users';
+import { Article } from '@/types/application/article';
 import { Notice } from '@/types/application/notice';
 import { InertiaLinkProps } from '@inertiajs/react';
 import { LucideIcon } from 'lucide-react';
@@ -32,6 +33,7 @@ export interface SharedData {
     auth: Auth;
     flash: Record<'success' | 'error' | 'info' | 'warning', string | null>;
     notices?: Notice[];
+    latestArticles?: Pick<Article, 'id' | 'title' | 'slug' | 'created_at'>[];
     sidebarOpen: boolean;
     [key: string]: unknown;
 }
