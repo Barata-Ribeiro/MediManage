@@ -35,9 +35,7 @@ export default function NewMedicalRecordForm() {
     return (
         <Form
             {...medicalRecordController.store.form()}
-            options={{
-                preserveScroll: true,
-            }}
+            options={{ preserveScroll: true }}
             className="space-y-6 inert:pointer-events-none inert:opacity-50"
             transform={(data) => ({
                 ...data,
@@ -49,7 +47,7 @@ export default function NewMedicalRecordForm() {
         >
             {({ errors }) => (
                 <>
-                    <PatientSelectCombobox setPatientId={setPatientId} error={errors.patient_info_id} size="large" />
+                    <PatientSelectCombobox setPatientId={setPatientId} error={errors.patient_info_id} size="md" />
 
                     <div className="grid gap-2">
                         <Editor

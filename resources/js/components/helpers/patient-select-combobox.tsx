@@ -30,6 +30,13 @@ export default function PatientSelectCombobox({
     const [patients, setPatients] = useState<SimplePatientInfo[]>([]);
     const [isPending, startTransition] = useTransition();
 
+    function resetSelection() {
+        setValue(null);
+        setPatientId(null);
+        setOpen(false);
+        performSearch('');
+    }
+
     const performSearch = useCallback((q: string) => {
         startTransition(async () => {
             const url = simpleSearch({ mergeQuery: { q, medical_record_is_null: true } }).url;
@@ -112,10 +119,7 @@ export default function PatientSelectCombobox({
                     variant="outline"
                     aria-label="Clear selected patient"
                     title="Clear selected patient"
-                    onClick={() => {
-                        setValue(null);
-                        setPatientId(null);
-                    }}
+                    onClick={resetSelection}
                 >
                     <EraserIcon aria-hidden size={16} />
                 </Button>
