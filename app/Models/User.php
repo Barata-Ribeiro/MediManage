@@ -38,21 +38,21 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon|null $updated_at
  * @property int|null $patient_info_id
  * @property int|null $employee_info_id
- * @property-read Collection<int, Article> $articles
+ * @property-read Collection<int, \App\Models\Article> $articles
  * @property-read int|null $articles_count
  * @property-read Collection<int, Audit> $audits
  * @property-read int|null $audits_count
- * @property-read EmployeeInfo|null $employeeInfo
- * @property-read Collection<int, Notice> $notices
+ * @property-read \App\Models\EmployeeInfo|null $employeeInfo
+ * @property-read Collection<int, \App\Models\Notice> $notices
  * @property-read int|null $notices_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read PatientInfo|null $patientInfo
+ * @property-read \App\Models\PatientInfo|null $patientInfo
  * @property-read Collection<int, Permission> $permissions
  * @property-read int|null $permissions_count
  * @property-read Collection<int, Role> $roles
  * @property-read int|null $roles_count
- * @method static UserFactory factory($count = null, $state = [])
+ * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static Builder<static>|User newModelQuery()
  * @method static Builder<static>|User newQuery()
  * @method static Builder<static>|User permission($permissions, $without = false)

@@ -28,10 +28,10 @@ use UnexpectedValueException;
  * @property string|null $date_expires
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read EmployeeInfo $employeeInfo
+ * @property-read \App\Models\EmployeeInfo $employeeInfo
  * @property-read string $qr_code
- * @property-read PatientInfo $patientInfo
- * @method static PrescriptionFactory factory($count = null, $state = [])
+ * @property-read \App\Models\PatientInfo $patientInfo
+ * @method static \Database\Factories\PrescriptionFactory factory($count = null, $state = [])
  * @method static Builder<static>|Prescription newModelQuery()
  * @method static Builder<static>|Prescription newQuery()
  * @method static Builder<static>|Prescription query()

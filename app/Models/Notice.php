@@ -19,8 +19,8 @@ use Illuminate\Support\Carbon;
  * @property int $is_active
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read User $user
- * @method static NoticeFactory factory($count = null, $state = [])
+ * @property-read \App\Models\User $user
+ * @method static \Database\Factories\NoticeFactory factory($count = null, $state = [])
  * @method static Builder<static>|Notice newModelQuery()
  * @method static Builder<static>|Notice newQuery()
  * @method static Builder<static>|Notice query()

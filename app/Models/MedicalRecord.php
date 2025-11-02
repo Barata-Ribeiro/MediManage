@@ -20,10 +20,10 @@ use Illuminate\Support\Carbon;
  * @property string|null $medical_notes_json
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Collection<int, MedicalRecordEntry> $medicalRecordEntries
+ * @property-read Collection<int, \App\Models\MedicalRecordEntry> $medicalRecordEntries
  * @property-read int|null $medical_record_entries_count
- * @property-read PatientInfo $patientInfo
- * @method static MedicalRecordFactory factory($count = null, $state = [])
+ * @property-read \App\Models\PatientInfo $patientInfo
+ * @method static \Database\Factories\MedicalRecordFactory factory($count = null, $state = [])
  * @method static Builder<static>|MedicalRecord newModelQuery()
  * @method static Builder<static>|MedicalRecord newQuery()
  * @method static Builder<static>|MedicalRecord query()

@@ -17,9 +17,9 @@ use Illuminate\Support\Carbon;
  * @property string|null $description
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Collection<int, Article> $articles
+ * @property-read Collection<int, \App\Models\Article> $articles
  * @property-read int|null $articles_count
- * @method static CategoryFactory factory($count = null, $state = [])
+ * @method static \Database\Factories\CategoryFactory factory($count = null, $state = [])
  * @method static Builder<static>|Category newModelQuery()
  * @method static Builder<static>|Category newQuery()
  * @method static Builder<static>|Category query()

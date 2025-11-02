@@ -26,11 +26,11 @@ use Illuminate\Support\Carbon;
  * @property int $is_published
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Collection<int, Category> $categories
+ * @property-read Collection<int, \App\Models\Category> $categories
  * @property-read int|null $categories_count
  * @property-read int $reading_time
- * @property-read User $user
- * @method static ArticleFactory factory($count = null, $state = [])
+ * @property-read \App\Models\User $user
+ * @method static \Database\Factories\ArticleFactory factory($count = null, $state = [])
  * @method static Builder<static>|Article newModelQuery()
  * @method static Builder<static>|Article newQuery()
  * @method static Builder<static>|Article query()

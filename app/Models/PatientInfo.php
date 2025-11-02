@@ -37,16 +37,16 @@ use Illuminate\Support\Carbon;
  * @property string|null $family_medical_history
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Collection<int, Appointment> $appointments
+ * @property-read Collection<int, \App\Models\Appointment> $appointments
  * @property-read int|null $appointments_count
  * @property-read int|null $age
  * @property-read string $full_name
- * @property-read MedicalRecord|null $medicalRecord
- * @property-read Collection<int, MedicalRecordEntry> $medicalRecordEntries
+ * @property-read \App\Models\MedicalRecord|null $medicalRecord
+ * @property-read Collection<int, \App\Models\MedicalRecordEntry> $medicalRecordEntries
  * @property-read int|null $medical_record_entries_count
- * @property-read Collection<int, Prescription> $prescriptions
+ * @property-read Collection<int, \App\Models\Prescription> $prescriptions
  * @property-read int|null $prescriptions_count
- * @property-read User|null $user
+ * @property-read \App\Models\User|null $user
  * @method static \Database\Factories\PatientInfoFactory factory($count = null, $state = [])
  * @method static Builder<static>|PatientInfo newModelQuery()
  * @method static Builder<static>|PatientInfo newQuery()

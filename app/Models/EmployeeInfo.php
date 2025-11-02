@@ -32,16 +32,16 @@ use Illuminate\Support\Carbon;
  * @property string|null $termination_date
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Collection<int, Appointment> $appointments
+ * @property-read Collection<int, \App\Models\Appointment> $appointments
  * @property-read int|null $appointments_count
  * @property-read int|null $age
  * @property-read string $full_name
- * @property-read Collection<int, MedicalRecordEntry> $medicalRecordEntries
+ * @property-read Collection<int, \App\Models\MedicalRecordEntry> $medicalRecordEntries
  * @property-read int|null $medical_record_entries_count
- * @property-read Collection<int, Prescription> $prescriptions
+ * @property-read Collection<int, \App\Models\Prescription> $prescriptions
  * @property-read int|null $prescriptions_count
- * @property-read User $user
- * @method static EmployeeInfoFactory factory($count = null, $state = [])
+ * @property-read \App\Models\User $user
+ * @method static \Database\Factories\EmployeeInfoFactory factory($count = null, $state = [])
  * @method static Builder<static>|EmployeeInfo newModelQuery()
  * @method static Builder<static>|EmployeeInfo newQuery()
  * @method static Builder<static>|EmployeeInfo query()

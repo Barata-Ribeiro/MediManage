@@ -23,9 +23,10 @@ use Database\Factories\MedicalRecordEntryFactory;
  * @property int $is_visible_to_patient
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Appointment $appointment
- * @property-read EmployeeInfo $employeeInfo
- * @property-read MedicalRecord $medicalRecord
+ * @property-read \App\Models\Appointment $appointment
+ * @property-read \App\Models\EmployeeInfo $employeeInfo
+ * @property-read \App\Models\MedicalRecord $medicalRecord
+ * @method static \Database\Factories\MedicalRecordEntryFactory factory($count = null, $state = [])
  * @method static Builder<static>|MedicalRecordEntry newModelQuery()
  * @method static Builder<static>|MedicalRecordEntry newQuery()
  * @method static Builder<static>|MedicalRecordEntry query()
