@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Prescription;
 use Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
+use DB;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -16,6 +17,13 @@ use Str;
 
 class PrescriptionController extends Controller
 {
+    private bool $isSqlDriver;
+
+    public function __construct()
+    {
+        $this->isSqlDriver = in_array(DB::getDriverName(), ['mysql', 'pgsql']);
+    }
+
     /**
      * Display a listing of the requesting user prescriptions.
      */
@@ -35,28 +43,41 @@ class PrescriptionController extends Controller
             $sortBy = 'id';
         }
 
+        $select = [
+            'prescriptions.id',
+            'prescriptions.validation_code',
+            'prescriptions.is_valid',
+            'prescriptions.employee_info_id',
+            'prescriptions.patient_info_id',
+            'prescriptions.date_issued',
+            'prescriptions.date_expires',
+            'prescriptions.updated_at',
+        ];
+
+        $isSql = $this->isSqlDriver;
+
         $query = $user->patientInfo->prescriptions()
-            ->select([
-                'prescriptions.id',
-                'prescriptions.validation_code',
-                'prescriptions.is_valid',
-                'prescriptions.employee_info_id',
-                'prescriptions.patient_info_id',
-                'prescriptions.date_issued',
-                'prescriptions.date_expires',
-                'prescriptions.updated_at',
-            ])
+            ->select($select)
             ->with(['employeeInfo' => fn ($q) => $q->select('id', 'first_name', 'last_name', 'specialization')]);
 
         if (str_starts_with($sortBy, 'employee_info.')) {
             $query->leftJoin('employee_info', 'employee_info.id', '=', 'prescriptions.employee_info_id');
         }
 
-        $booleanQuery = Helpers::buildBooleanQuery($search);
-
-        $query->when($request->filled('search'), fn ($qr) => $qr->whereFullText('prescription_details_html', $booleanQuery, ['mode' => 'boolean'])
-            ->orWhereHas('employeeInfo', fn ($q) => $q->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'specialization', 'position'], $booleanQuery, ['mode' => 'boolean'])
-                ->orWhereHas('user', fn ($q2) => $q2->whereLike('name', "%$search%")->orWhereLike('email', "%$search%"))));
+        $query->when($request->filled('search'), function ($qr) use ($search, $isSql) {
+            if ($isSql) {
+                $booleanQuery = Helpers::buildBooleanQuery($search);
+                $qr->whereFullText('prescription_details_html', $booleanQuery, ['mode' => 'boolean'])
+                    ->orWhereHas('employeeInfo', fn ($q) => $q->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'specialization', 'position'], $booleanQuery, ['mode' => 'boolean'])
+                        ->orWhereHas('user', fn ($q2) => $q2->whereLike('name', "%$search%")->orWhereLike('email', "%$search%")));
+            } else {
+                $qr->whereLike('prescription_details_html', "%$search%")
+                    ->orWhereHas('employeeInfo', fn ($q) => $q->whenLike('first_name', "%$search%")
+                        ->orWhenLike('last_name', "%$search%")->orWhenLike('phone_number', "%$search%")
+                        ->orWhenLike('address', "%$search%")->orWhenLike('specialization', "%$search%")->orWhenLike('position', "%$search%")
+                        ->orWhereHas('user', fn ($q2) => $q2->whereLike('name', "%$search%")->orWhereLike('email', "%$search%")));
+            }
+        });
 
         $prescriptions = $query->orderBy($sortBy, $sortDir)
             ->paginate($perPage)

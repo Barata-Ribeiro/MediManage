@@ -10,6 +10,7 @@ use App\Mail\NewAccountMail;
 use App\Models\PatientInfo;
 use App\Models\User;
 use Auth;
+use DB;
 use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -19,6 +20,16 @@ use Str;
 
 class PatientInfoController extends Controller
 {
+    private bool $isSqlDriver;
+
+    private string $patientAlreadyHasUserAccount;
+
+    public function __construct()
+    {
+        $this->isSqlDriver = in_array(DB::getDriverName(), ['mysql', 'pgsql']);
+        $this->patientAlreadyHasUserAccount = 'This patient already has an associated user account.';
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -63,12 +74,15 @@ class PatientInfoController extends Controller
         $query = PatientInfo::select(['id', 'user_id', 'first_name', 'last_name', 'date_of_birth', 'phone_number']);
 
         if ($request->filled('search')) {
-            $searchTerm = $request->input('search');
+            $searchTerm = trim($request->query('search'));
+            $isSql = $this->isSqlDriver;
+            $booleanQuery = Helpers::buildBooleanQuery($searchTerm);
 
-            $query->whereFullText(
-                ['first_name', 'last_name', 'phone_number', 'address', 'insurance_company', 'emergency_contact_name'],
-                $searchTerm
-            )
+            $query->when($isSql, fn ($q) => $q->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'insurance_company', 'emergency_contact_name'], $booleanQuery, ['mode' => 'boolean']))
+                ->when(! $isSql, fn ($q) => $q->whereLike('first_name', "%$searchTerm%")
+                    ->orWhereLike('last_name', "%$searchTerm%")->orWhereLike('phone_number', "%$searchTerm%")
+                    ->orWhereLike('address', "%$searchTerm%")->orWhereLike('insurance_company', "%$searchTerm%")
+                    ->orWhereLike('emergency_contact_name', "%$searchTerm%"))
                 ->orWhereHas('user', fn ($q) => $q->whereLike('name', "%$searchTerm%")
                     ->orWhereLike('email', "%$searchTerm%"));
         } else {
@@ -141,7 +155,7 @@ class PatientInfoController extends Controller
     public function newAccount(PatientInfo $patientInfo)
     {
         if ($patientInfo->user_id) {
-            return to_route('patient_info.show', ['patientInfo' => $patientInfo])->with('error', 'This patient already has an associated user account.');
+            return to_route('patient_info.show', ['patientInfo' => $patientInfo])->with('error', $this->patientAlreadyHasUserAccount);
         }
 
         Log::info('Patient Info: Viewed new account form for patient', ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfo->id]);
@@ -155,7 +169,7 @@ class PatientInfoController extends Controller
     public function storeNewAccount(Request $request, PatientInfo $patientInfo)
     {
         if ($patientInfo->user_id) {
-            return to_route('patient_info.show', ['patientInfo' => $patientInfo])->with('error', 'This patient already has an associated user account.');
+            return to_route('patient_info.show', ['patientInfo' => $patientInfo])->with('error', $this->patientAlreadyHasUserAccount);
         }
 
         $request->validate([
@@ -195,7 +209,7 @@ class PatientInfoController extends Controller
     public function associateAccount(Request $request, PatientInfo $patientInfo)
     {
         if ($patientInfo->user_id) {
-            return to_route('patient_info.show', ['patientInfo' => $patientInfo])->with('error', 'This patient already has an associated user account.');
+            return to_route('patient_info.show', ['patientInfo' => $patientInfo])->with('error', $this->patientAlreadyHasUserAccount);
         }
 
         $request->validate([
@@ -232,9 +246,18 @@ class PatientInfoController extends Controller
         $search = trim($request->query('q'));
         $medicalRecordIsNull = $request->get('medical_record_is_null', FILTER_VALIDATE_BOOLEAN);
 
-        $booleanQuery = Helpers::buildBooleanQuery($search);
+        $isSql = $this->isSqlDriver;
 
-        $patients = PatientInfo::whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'insurance_company', 'emergency_contact_name'], $booleanQuery, ['mode' => 'boolean'])
+        $patients = PatientInfo::when($request->filled('q'), function ($q) use ($isSql, $search) {
+            if ($isSql) {
+                $booleanQuery = Helpers::buildBooleanQuery($search);
+                $q->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'insurance_company', 'emergency_contact_name'], $booleanQuery, ['mode' => 'boolean']);
+            } else {
+                $q->whereLike('first_name', "%$search%")->orWhereLike('last_name', "%$search%")
+                    ->orWhereLike('phone_number', "%$search%")->orWhereLike('address', "%$search%")
+                    ->orWhereLike('insurance_company', "%$search%")->orWhereLike('emergency_contact_name', "%$search%");
+            }
+        })
             ->when($medicalRecordIsNull, fn ($q) => $q->whereNull('medical_record_id'))
             ->orWhereHas('user', fn ($q) => $q->whereLike('name', "%$search%")
                 ->orWhereLike('email', "%$search%"))

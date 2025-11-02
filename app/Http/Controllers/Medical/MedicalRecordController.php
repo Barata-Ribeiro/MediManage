@@ -10,6 +10,7 @@ use App\Models\MedicalRecord;
 use App\Models\MedicalRecordEntry;
 use Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
+use DB;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -19,6 +20,13 @@ use Log;
 
 class MedicalRecordController extends Controller
 {
+    private bool $isSqlDriver;
+
+    public function __construct()
+    {
+        $this->isSqlDriver = in_array(DB::getDriverName(), ['mysql', 'pgsql']);
+    }
+
     /**
      * Display the authenticated patient's medical record.
      */
@@ -37,14 +45,22 @@ class MedicalRecordController extends Controller
             $columns = Schema::getColumnListing((new MedicalRecordEntry)->getTable());
             $columns = array_values(array_filter($columns, fn ($c) => $c !== 'content_json'));
 
-            $booleanQuery = Helpers::buildBooleanQuery($search);
+            $isSql = $this->isSqlDriver;
 
             $entries = MedicalRecordEntry::select($columns)
                 ->whereMedicalRecordId($medicalRecord->id)
                 ->whereIsVisibleToPatient(true)
-                ->when($request->filled('search'), fn ($q) => $q->where(fn ($q2) => $q2->whereFullText(['title', 'content_html'], $booleanQuery, ['mode' => 'boolean'])
-                    ->orWhere('entry_type', 'like', "%$search%")
-                ))
+                ->when($request->filled('search'), function ($q) use ($isSql, $search) {
+                    if ($isSql) {
+                        $booleanQuery = Helpers::buildBooleanQuery($search);
+                        $q->where(function ($q2) use ($search, $booleanQuery) {
+                            $q2->whereFullText(['title', 'content_html'], $booleanQuery, ['mode' => 'boolean'])
+                                ->orWhere('entry_type', 'like', "%$search%");
+                        });
+                    } else {
+                        $q->where(fn ($q2) => $q2->whereLike('title', "%$search%")->orWhereLike('content_html', "%$search%")->orWhere('entry_type', 'like', "%$search%"));
+                    }
+                })
                 ->orderByDesc('created_at')
                 ->cursorPaginate(10)
                 ->withQueryString();
@@ -89,10 +105,16 @@ class MedicalRecordController extends Controller
             $query->leftJoin('patient_info', 'patient_info.id', '=', 'medical_records.patient_info_id');
         }
 
-        $booleanQuery = Helpers::buildBooleanQuery($search);
+        $isSql = $this->isSqlDriver;
 
-        $query->when($request->filled('search'), fn ($qr) => $qr->whereFullText('medical_notes_html', $booleanQuery, ['mode' => 'boolean'])
-            ->orWhereHas('patientInfo', fn ($q) => $q->whereLike('first_name', "%$search%")->orWhereLike('last_name', "%$search%")));
+        $query->when($request->filled('search'), function ($qr) use ($isSql, $search) {
+            if ($isSql) {
+                $booleanQuery = Helpers::buildBooleanQuery($search);
+                $qr->whereFullText('medical_notes_html', $booleanQuery, ['mode' => 'boolean']);
+            } else {
+                $qr->whereLike('medical_notes_html', "%$search%");
+            }
+        })->orWhereHas('patientInfo', fn ($q) => $q->whereLike('first_name', "%$search%")->orWhereLike('last_name', "%$search%"));
 
         $medicalRecords = $query->orderBy($sortBy, $sortDir)
             ->paginate($perPage)
@@ -142,13 +164,18 @@ class MedicalRecordController extends Controller
         $columns = Schema::getColumnListing((new MedicalRecordEntry)->getTable());
         $columns = array_values(array_filter($columns, fn ($c) => $c !== 'content_json'));
 
-        $booleanQuery = Helpers::buildBooleanQuery($search);
+        $isSql = $this->isSqlDriver;
 
         $entries = MedicalRecordEntry::select($columns)
             ->whereMedicalRecordId($medicalRecord->id)
-            ->when($request->filled('search'), fn ($q) => $q->where(function ($q2) use ($search, $booleanQuery) {
-                $q2->whereFullText(['title', 'content_html'], $booleanQuery, ['mode' => 'boolean'])
-                    ->orWhereLike('entry_type', "%$search%");
+            ->when($request->filled('search'), fn ($q) => $q->where(function ($q2) use ($search, $isSql) {
+                if ($isSql) {
+                    $booleanQuery = Helpers::buildBooleanQuery($search);
+                    $q2->whereFullText(['title', 'content_html'], $booleanQuery, ['mode' => 'boolean']);
+                } else {
+                    $q2->whereLike('title', "%$search%")->orWhereLike('content_html', "%$search%");
+                }
+                $q2->orWhereLike('entry_type', "%$search%");
             }))
             ->orderByDesc('created_at')
             ->cursorPaginate(10)

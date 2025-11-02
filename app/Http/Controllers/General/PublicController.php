@@ -7,11 +7,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Prescription;
+use DB;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class PublicController extends Controller
 {
+    private bool $isSqlDriver;
+
+    public function __construct()
+    {
+        $this->isSqlDriver = in_array(DB::getDriverName(), ['mysql', 'pgsql']);
+    }
+
     /**
      * Display the homepage with the latest 3 published articles.
      */
@@ -45,7 +53,7 @@ class PublicController extends Controller
         $start_date = trim($request->query('start_date_creation'));
         $end_date = trim($request->query('end_date_creation'));
 
-        $booleanQuery = Helpers::buildBooleanQuery($search);
+        $isSql = $this->isSqlDriver;
 
         $articles = Article::whereIsPublished(true)
             ->with(['user' => fn ($query) => $query->select('id', 'name', 'avatar')])
@@ -55,8 +63,15 @@ class PublicController extends Controller
 
                 return $query->whereHas('categories', fn ($q) => $q->whereIn('name', $names));
             })
-            ->when($request->filled('search'), fn ($query) => $query->whereFullText(['title', 'subtitle', 'excerpt', 'content_html'], $booleanQuery, ['mode' => 'boolean'])
-                ->orWhereHas('user', fn ($q) => $q->whereLike('name', "%$search%")))
+            ->when($request->filled('search'), fn ($q) => $q->where(function ($query) use ($search, $isSql) {
+                if ($isSql) {
+                    $booleanQuery = Helpers::buildBooleanQuery($search);
+                    $query->whereFullText(['title', 'subtitle', 'excerpt', 'content_html'], $booleanQuery, ['mode' => 'boolean']);
+                } else {
+                    $query->whereLike('title', "%$search%")->orWhereLike('subtitle', "%$search%")
+                        ->orWhereLike('excerpt', "%$search%")->orWhereLike('content_html', "%$search%");
+                }
+            })->orWhereHas('user', fn ($q) => $q->whereLike('name', "%$search%")))
             ->when($request->filled('start_date_creation'), fn ($query) => $query->whereDate('created_at', '>=', $start_date))
             ->when($request->filled('end_date_creation'), fn ($query) => $query->whereDate('created_at', '<=', $end_date))
             ->latest()

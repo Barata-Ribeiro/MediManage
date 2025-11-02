@@ -8,6 +8,7 @@ use App\Http\Requests\Article\ArticleRequest;
 use App\Models\Article;
 use App\Models\Category;
 use Auth;
+use DB;
 use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,6 +17,16 @@ use Str;
 
 class ArticleController extends Controller
 {
+    private bool $isSqlDriver;
+
+    private string $roleSuperAdminManager;
+
+    public function __construct()
+    {
+        $this->isSqlDriver = in_array(DB::getDriverName(), ['mysql', 'pgsql']);
+        $this->roleSuperAdminManager = 'Super Admin|Manager';
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -37,9 +48,7 @@ class ArticleController extends Controller
             $sortBy = 'users.name';
         }
 
-        $booleanQuery = Helpers::buildBooleanQuery($search);
-
-        $query = Article::select([
+        $select = [
             'articles.id',
             'articles.user_id',
             'articles.title',
@@ -47,11 +56,23 @@ class ArticleController extends Controller
             'articles.is_published',
             'articles.created_at',
             'articles.updated_at',
-        ])
+        ];
+
+        $isSql = $this->isSqlDriver;
+
+        $query = Article::select($select)
             ->with(['user' => fn ($q) => $q->select('id', 'name')])
-            ->when($request->filled('search'), fn ($qr) => $qr
-                ->whereFullText(['title', 'subtitle', 'excerpt', 'content_html'], $booleanQuery, ['mode' => 'boolean'])
-                ->orWhereHas('user', fn ($q) => $q->whereLike('name', "%$search%")))
+            ->when($request->filled('search'), function ($qr) use ($search, $isSql) {
+                if ($isSql) {
+                    $booleanQuery = Helpers::buildBooleanQuery($search);
+                    $qr->whereFullText(['title', 'subtitle', 'excerpt', 'content_html'], $booleanQuery, ['mode' => 'boolean'])
+                        ->orWhereHas('user', fn ($q) => $q->whereLike('name', "%$search%"));
+                } else {
+                    $qr->whenLike('title', "%$search%")->orWhenLike('subtitle', "%$search%")
+                        ->orWhenLike('excerpt', "%$search%")->orWhenLike('content_html', "%$search%")
+                        ->orWhereHas('user', fn ($q) => $q->whereLike('name', "%$search%"));
+                }
+            })
             ->when(str_starts_with($sortBy, 'users.'), fn ($qr) => $qr->leftJoin('users', 'users.id', '=', 'articles.user_id'));
 
         $articles = $query->orderBy($sortBy, $sortDir)
@@ -80,12 +101,19 @@ class ArticleController extends Controller
             $sortBy = 'id';
         }
 
-        $booleanQuery = Helpers::buildBooleanQuery($search);
+        $isSql = $this->isSqlDriver;
 
         $query = Article::select(['id', 'user_id', 'title', 'slug', 'is_published', 'created_at', 'updated_at'])
             ->where('user_id', $user_id)
-            ->when($request->filled('search'), fn ($qr) => $qr
-                ->whereFullText(['title', 'subtitle', 'excerpt', 'content_html'], $booleanQuery, ['mode' => 'boolean']));
+            ->when($request->filled('search'), function ($qr) use ($search, $isSql) {
+                if ($isSql) {
+                    $booleanQuery = Helpers::buildBooleanQuery($search);
+                    $qr->whereFullText(['title', 'subtitle', 'excerpt', 'content_html'], $booleanQuery, ['mode' => 'boolean']);
+                } else {
+                    $qr->whenLike('title', "%$search%")->orWhenLike('subtitle', "%$search%")
+                        ->orWhenLike('excerpt', "%$search%")->orWhenLike('content_html', "%$search%");
+                }
+            });
 
         $articles = $query->orderBy($sortBy, $sortDir)
             ->paginate($perPage)
@@ -101,7 +129,7 @@ class ArticleController extends Controller
     {
         $requestingUser = Auth::user();
 
-        if ($article->user_id !== $requestingUser->id && ! $requestingUser->hasRole('Super Admin|Manager')) {
+        if ($article->user_id !== $requestingUser->id && ! $requestingUser->hasRole($this->roleSuperAdminManager)) {
             abort(403, 'You do not have permission to edit this article.');
         }
 
@@ -124,7 +152,7 @@ class ArticleController extends Controller
         try {
             $requestingUser = Auth::user();
 
-            if ($article->user_id !== $requestingUser->id && ! $requestingUser->hasRole('Super Admin|Manager')) {
+            if ($article->user_id !== $requestingUser->id && ! $requestingUser->hasRole($this->roleSuperAdminManager)) {
                 abort(403, 'You do not have permission to update this article.');
             }
 

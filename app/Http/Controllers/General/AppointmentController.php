@@ -10,6 +10,7 @@ use App\Models\EmployeeInfo;
 use App\Services\AppointmentService;
 use Auth;
 use Carbon\Carbon;
+use DB;
 use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -19,9 +20,12 @@ class AppointmentController extends Controller
 {
     private AppointmentService $appointmentService;
 
+    private bool $isSqlDriver;
+
     public function __construct(AppointmentService $appointmentService)
     {
         $this->appointmentService = $appointmentService;
+        $this->isSqlDriver = in_array(DB::getDriverName(), ['mysql', 'pgsql']);
     }
 
     /**
@@ -52,7 +56,7 @@ class AppointmentController extends Controller
             $sortBy = 'id';
         }
 
-        $booleanQuery = Helpers::buildBooleanQuery($search);
+        $isSql = $this->isSqlDriver;
 
         try {
             $patient = Auth::user()->patientInfo;
@@ -64,16 +68,18 @@ class AppointmentController extends Controller
                     'employeeInfo' => fn ($q) => $q->select('id', 'user_id', 'first_name', 'last_name', 'specialization'),
                     'employeeInfo.user' => fn ($q) => $q->select('id', 'name', 'email'),
                 ])
-                ->when($request->filled('search'), function ($qr) use ($search, $booleanQuery) {
-                    return $qr->where(function ($q) use ($search, $booleanQuery) {
-                        $q->whereLike('status', "%$search%")
-                            ->orWhereLike('reason_for_visit', "%$search%")
-                            ->orWhereHas('employeeInfo', function ($q2) use ($search, $booleanQuery) {
-                                $q2->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'specialization', 'position'], $booleanQuery, ['mode' => 'boolean'])
-                                    ->orWhereHas('user', fn ($q3) => $q3->whereLike('name', "%$search%")->orWhereLike('email', "%$search%"));
-                            });
-                    });
-                });
+                ->when($request->filled('search'), fn ($q) => $q->where(fn ($q) => $q->whereLike('status', "%$search%")
+                    ->orWhereLike('reason_for_visit', "%$search%")
+                    ->orWhereHas('employeeInfo', function ($q2) use ($search, $isSql) {
+                        if ($isSql) {
+                            $booleanQuery = Helpers::buildBooleanQuery($search);
+                            $q2->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'specialization', 'position'], $booleanQuery, ['mode' => 'boolean']);
+                        } else {
+                            $q2->whenLike('first_name', "%$search%")->orWhenLike('last_name', "%$search%")
+                                ->orWhenLike('phone_number', "%$search%")->orWhenLike('address', "%$search%")
+                                ->orWhenLike('specialization', "%$search%")->orWhenLike('position', "%$search%");
+                        }
+                    })));
 
             $appointments = $appointmentsQuery->orderBy($sortBy, $sortDir)
                 ->paginate($perPage)
