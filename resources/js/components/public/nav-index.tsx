@@ -1,5 +1,6 @@
 import AppLogo from '@/components/app-logo';
 import AppLogoIcon from '@/components/app-logo-icon';
+import AppNotice from '@/components/app-notice';
 import TextLink from '@/components/text-link';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
@@ -13,34 +14,22 @@ import {
 } from '@/components/ui/navigation-menu';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { cn } from '@/lib/utils';
 import { article as articleRoute, articles as articlesRoute, dashboard, home, login, register } from '@/routes';
 import { prescription } from '@/routes/public';
-import type { Auth } from '@/types';
-import { Article } from '@/types/application/article';
-import { Link } from '@inertiajs/react';
+import type { SharedData } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { Menu, NewspaperIcon } from 'lucide-react';
 import { Fragment } from 'react/jsx-runtime';
 
-interface NavIndexProps {
-    auth: Auth;
-    articles?: Pick<Article, 'id' | 'title' | 'slug' | 'created_at'>[];
-}
-
-export default function NavIndex({ articles, auth }: Readonly<NavIndexProps>) {
+export default function NavIndex() {
+    const { auth, latestArticles, notices } = usePage<SharedData>().props;
     const isMobile = useIsMobile();
 
-    const currentPath = globalThis.location.pathname;
-    const isIndex = currentPath === '/';
-    const headerStyles = cn(
-        'fixed inset-x-0 top-0 z-50 py-6 dark:border-b dark:bg-white/10 dark:shadow dark:backdrop-blur-sm',
-        !isIndex && cn('border-b bg-white/20 shadow backdrop-blur-sm'),
-    );
-
     return (
-        <header className={headerStyles}>
-            <div className="container flex items-center justify-between">
+        <header className="fixed inset-x-0 top-0 z-50 border-b bg-white/20 shadow backdrop-blur-sm dark:border-b dark:bg-white/10 dark:shadow dark:backdrop-blur-sm">
+            <AppNotice notices={notices} />
+            <div className="container flex items-center justify-between py-6">
                 <Link href={home()} className="w-max">
                     <AppLogo />
                 </Link>
@@ -65,13 +54,13 @@ export default function NavIndex({ articles, auth }: Readonly<NavIndexProps>) {
                                     <Link href={home()} className="text-md font-semibold">
                                         Home
                                     </Link>
-                                    {articles && (
+                                    {latestArticles && (
                                         <AccordionItem value="articles" className="border-b-0">
                                             <AccordionTrigger className="text-md cursor-pointer py-0 font-semibold hover:no-underline">
                                                 Articles
                                             </AccordionTrigger>
                                             <AccordionContent className="mt-2">
-                                                {articles.map((article) => (
+                                                {latestArticles.map((article) => (
                                                     <Link
                                                         key={article.id}
                                                         href={articleRoute(article.slug)}
@@ -132,14 +121,14 @@ export default function NavIndex({ articles, auth }: Readonly<NavIndexProps>) {
                                     </NavigationMenuLink>
                                 </NavigationMenuItem>
 
-                                {articles && (
+                                {latestArticles && (
                                     <NavigationMenuItem>
                                         <NavigationMenuTrigger className="cursor-pointer">
                                             Articles
                                         </NavigationMenuTrigger>
                                         <NavigationMenuContent>
                                             <ul className="grid w-[300px] gap-4">
-                                                {articles.map((article) => (
+                                                {latestArticles.map((article) => (
                                                     <li key={article.id}>
                                                         <NavigationMenuLink asChild>
                                                             <Link href={articleRoute(article.slug)} prefetch="hover">
