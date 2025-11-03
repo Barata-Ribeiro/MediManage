@@ -1,0 +1,99 @@
+import { DataTableColumnHeader } from '@/components/data-table-column-header';
+import DropdownMenuCopyButton from '@/components/ui-helpers/dropdown-menu-copy-button';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { normalizeString } from '@/lib/utils';
+import { Invoice } from '@/types/application/invoice';
+import { ColumnDef } from '@tanstack/react-table';
+import { format } from 'date-fns';
+import { MoreHorizontal } from 'lucide-react';
+
+export const column: ColumnDef<Invoice>[] = [
+    {
+        accessorKey: 'id',
+        header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
+        enableSorting: true,
+    },
+    {
+        accessorKey: 'consultation_date',
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Consultation Date" />,
+        cell: ({ row }) => format(row.original.consultation_date, 'PPP'),
+        enableSorting: true,
+    },
+    {
+        accessorKey: 'amount',
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Amount" />,
+        cell: ({ row }) => {
+            const formattedAmount = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+            }).format(Number.parseFloat(row.original.amount));
+            return formattedAmount;
+        },
+        enableSorting: true,
+    },
+    {
+        accessorKey: 'due_date',
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Due Date" />,
+        cell: ({ row }) => format(row.original.due_date, 'PPP'),
+        enableSorting: true,
+    },
+    {
+        accessorKey: 'payment_method',
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Payment Method" />,
+        cell: ({ row }) => normalizeString(row.original.payment_method),
+        enableSorting: true,
+    },
+    {
+        accessorKey: 'status',
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+        cell: ({ row }) => {
+            const variant = row.original.status === 'paid' ? 'default' : 'destructive';
+            return (
+                <Badge variant={variant} className="select-none">
+                    {normalizeString(row.original.status)}
+                </Badge>
+            );
+        },
+        enableSorting: true,
+    },
+
+    {
+        id: 'actions',
+        cell: ({ row }) => {
+            const notes = row.original.notes;
+            return (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem asChild>
+                            <DropdownMenuCopyButton content={notes}>Copy Notes</DropdownMenuCopyButton>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                            {/* TODO: Implement PDF generation */}
+                            <a href="#" target="_blank" rel="external">
+                                Generate PDF
+                            </a>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            );
+        },
+    },
+];
