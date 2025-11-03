@@ -107,7 +107,7 @@ class DashboardAdminService implements DashboardAdminServiceInterface
      */
     private function getNewUsersPerMonth(): array
     {
-        $startMonthDate = Carbon::now()->subMonth(11)->startOfMonth();
+        $startMonthDate = Carbon::now()->subMonths(11)->startOfMonth();
         $endMonthDate = Carbon::now()->endOfMonth();
 
         $userByMonth = User::selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as total")
