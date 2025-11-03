@@ -41,6 +41,8 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $appointments_count
  * @property-read int|null $age
  * @property-read string $full_name
+ * @property-read Collection<int, \App\Models\Invoice> $invoices
+ * @property-read int|null $invoices_count
  * @property-read \App\Models\MedicalRecord|null $medicalRecord
  * @property-read Collection<int, \App\Models\MedicalRecordEntry> $medicalRecordEntries
  * @property-read int|null $medical_record_entries_count
@@ -78,7 +80,6 @@ use Illuminate\Support\Carbon;
  */
 class PatientInfo extends Model
 {
-
     /**
      * @use HasFactory<PatientInfoFactory>
      */
@@ -115,13 +116,11 @@ class PatientInfo extends Model
      */
     protected $appends = [
         'full_name',
-        'age'
+        'age',
     ];
 
     /**
      * Get the patient's full name.
-     *
-     * @return string
      */
     public function getFullNameAttribute(): string
     {
@@ -130,21 +129,24 @@ class PatientInfo extends Model
 
     /**
      * Calculate age from date_of_birth on the fly.
-     *
-     * @return int|null
      */
     public function getAgeAttribute(): ?int
     {
-        if (!$this->date_of_birth) {
+        if (! $this->date_of_birth) {
             return null;
         }
 
         return Carbon::parse($this->date_of_birth)->age;
     }
 
-    public function user(): BelongsTo
+    public function appointments(): HasMany
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(Appointment::class, 'patient_info_id');
+    }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class, 'patient_info_id');
     }
 
     public function medicalRecord(): HasOne
@@ -154,16 +156,16 @@ class PatientInfo extends Model
 
     public function medicalRecordEntries(): HasMany
     {
-        return $this->hasMany(MedicalRecordEntry::class);
-    }
-
-    public function appointments(): HasMany
-    {
-        return $this->hasMany(Appointment::class);
+        return $this->hasMany(MedicalRecordEntry::class, 'patient_info_id');
     }
 
     public function prescriptions(): HasMany
     {
         return $this->hasMany(Prescription::class, 'patient_info_id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

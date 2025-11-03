@@ -34,10 +34,15 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read Collection<int, \App\Models\Appointment> $appointments
  * @property-read int|null $appointments_count
+ * @property-read Collection<int, \App\Models\Contract> $contracts
+ * @property-read int|null $contracts_count
+ * @property-read \App\Models\Contract|null $active_contract
  * @property-read int|null $age
  * @property-read string $full_name
  * @property-read Collection<int, \App\Models\MedicalRecordEntry> $medicalRecordEntries
  * @property-read int|null $medical_record_entries_count
+ * @property-read Collection<int, \App\Models\EmployeePayment> $payments
+ * @property-read int|null $payments_count
  * @property-read Collection<int, \App\Models\Prescription> $prescriptions
  * @property-read int|null $prescriptions_count
  * @property-read \App\Models\User $user
@@ -101,13 +106,11 @@ class EmployeeInfo extends Model
      */
     protected $appends = [
         'full_name',
-        'age'
+        'age',
     ];
 
     /**
      * Get the patient's full name.
-     *
-     * @return string
      */
     public function getFullNameAttribute(): string
     {
@@ -116,35 +119,61 @@ class EmployeeInfo extends Model
 
     /**
      * Calculate age from date_of_birth on the fly.
-     *
-     * @return int|null
      */
     public function getAgeAttribute(): ?int
     {
-        if (!$this->date_of_birth) {
+        if (! $this->date_of_birth) {
             return null;
         }
 
         return Carbon::parse($this->date_of_birth)->age;
     }
 
-    public function user(): BelongsTo
+    /**
+     * Get the active contract for the employee within an optional date range.
+     */
+    public function getActiveContractAttribute($startDate = null, $endDate = null): ?Contract
     {
-        return $this->belongsTo(User::class);
+        $start_date = Carbon::parse($startDate ?? now());
+        $end_date = Carbon::parse($endDate ?? now());
+
+        if ($start_date->gt($end_date)) {
+            return null;
+        }
+
+        return $this->contracts()
+            ->whereDate('start_date', '<=', $end_date)
+            ->whereDate('end_date', '>=', $start_date)
+            ->first();
     }
 
     public function appointments(): HasMany
     {
-        return $this->hasMany(Appointment::class);
+        return $this->hasMany(Appointment::class, 'employee_info_id');
+    }
+
+    public function contracts(): HasMany
+    {
+        return $this->hasMany(Contract::class, 'employee_info_id');
     }
 
     public function medicalRecordEntries(): HasMany
     {
-        return $this->hasMany(MedicalRecordEntry::class);
+        return $this->hasMany(MedicalRecordEntry::class, 'employee_info_id');
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(EmployeePayment::class, 'employee_info_id');
     }
 
     public function prescriptions(): HasMany
     {
         return $this->hasMany(Prescription::class, 'employee_info_id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }
