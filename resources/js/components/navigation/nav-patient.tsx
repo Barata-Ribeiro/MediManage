@@ -6,11 +6,12 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import appointments from '@/routes/appointments';
+import { myInvoices } from '@/routes/invoices';
 import { myRecord } from '@/routes/medicalRecords';
 import { myPrescriptions } from '@/routes/prescriptions';
 import { NavItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { ClipboardClockIcon, ClipboardListIcon, PillIcon } from 'lucide-react';
+import { ClipboardClockIcon, ClipboardListIcon, PillIcon, ScrollTextIcon } from 'lucide-react';
 
 const patientItems: NavItem[] = [
     {
@@ -27,6 +28,11 @@ const patientItems: NavItem[] = [
         title: 'My Prescriptions',
         href: myPrescriptions().url,
         icon: PillIcon,
+    },
+    {
+        title: 'My Invoices',
+        href: myInvoices().url,
+        icon: ScrollTextIcon,
     },
 ];
 
