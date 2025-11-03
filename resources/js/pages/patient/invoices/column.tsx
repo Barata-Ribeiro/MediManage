@@ -11,6 +11,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { normalizeString } from '@/lib/utils';
+import { generatePdf } from '@/routes/invoices';
 import { Invoice } from '@/types/application/invoice';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
@@ -87,7 +88,7 @@ export const column: ColumnDef<Invoice>[] = [
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
                             {/* TODO: Implement PDF generation */}
-                            <a href="#" target="_blank" rel="external">
+                            <a href={generatePdf(row.original.id).url} target="_blank" rel="external">
                                 Generate PDF
                             </a>
                         </DropdownMenuItem>
