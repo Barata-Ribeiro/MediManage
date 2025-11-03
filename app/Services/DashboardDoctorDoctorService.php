@@ -8,11 +8,9 @@ use App\Models\EmployeeInfo;
 use App\Models\PatientInfo;
 use Auth;
 use Carbon\Carbon;
-use Illuminate\Pagination\AbstractPaginator;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use LaravelIdea\Helper\App\Models\_IH_Appointment_C;
 
 class DashboardDoctorDoctorService implements DashboardDoctorServiceInterface
 {
@@ -83,7 +81,7 @@ class DashboardDoctorDoctorService implements DashboardDoctorServiceInterface
     /**
      * Today's upcoming appointments for the doctor within working hours (8 AM - 5 PM).
      */
-    private function getTodayUpcomingAppointments(?EmployeeInfo $doctorInfo, Carbon $startOfWorkDay, Carbon $endOfWorkDay): array|LengthAwarePaginator|_IH_Appointment_C|AbstractPaginator
+    private function getTodayUpcomingAppointments(?EmployeeInfo $doctorInfo, Carbon $startOfWorkDay, Carbon $endOfWorkDay): array|LengthAwarePaginator
     {
         if (! $doctorInfo) {
             return [];
