@@ -20,25 +20,30 @@ class AppServiceProvider extends ServiceProvider
             DashboardDoctorDoctorService::class
         );
 
-		$this->app->bind(
-			\App\Interfaces\DashboardAdminServiceInterface::class,
-			\App\Services\DashboardAdminService::class
-		);
+        $this->app->bind(
+            \App\Interfaces\DashboardAdminServiceInterface::class,
+            \App\Services\DashboardAdminService::class
+        );
 
-		$this->app->bind(
-			\App\Interfaces\DashboardAttendantServiceInterface::class,
-			\App\Services\DashboardAttendantService::class
-		);
+        $this->app->bind(
+            \App\Interfaces\DashboardAttendantServiceInterface::class,
+            \App\Services\DashboardAttendantService::class
+        );
 
-		$this->app->bind(
-			\App\Interfaces\AppointmentServiceInterface::class,
-			\App\Services\AppointmentService::class
-		);
+        $this->app->bind(
+            \App\Interfaces\AppointmentServiceInterface::class,
+            \App\Services\AppointmentService::class
+        );
 
-		$this->app->bind(
-			\App\Interfaces\DashboardUserServiceInterface::class,
-			\App\Services\DashboardUserService::class
-		);
+        $this->app->bind(
+            \App\Interfaces\DashboardUserServiceInterface::class,
+            \App\Services\DashboardUserService::class
+        );
+
+        $this->app->bind(
+            \App\Interfaces\DashboardManagerServiceInterface::class,
+            \App\Services\DashboardManagerService::class
+        );
     }
 
     /**
