@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App;
 use Illuminate\Database\Seeder;
 
-
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -20,13 +19,16 @@ class DatabaseSeeder extends Seeder
                 UserSeeder::class,
                 PatientInfoSeeder::class,
                 EmployeeInfoSeeder::class,
+                ContractSeeder::class,
+                EmployeePaymentSeeder::class,
                 PrescriptionSeeder::class,
                 MedicalRecordSeeder::class,
                 AppointmentSeeder::class,
                 MedicalRecordEntriesSeeder::class,
+                InvoiceSeeder::class,
                 CategorySeeder::class,
                 ArticleSeeder::class,
-                NoticeSeeder::class
+                NoticeSeeder::class,
             ]);
         }
     }
