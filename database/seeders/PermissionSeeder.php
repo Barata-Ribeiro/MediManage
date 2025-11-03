@@ -34,6 +34,9 @@ class PermissionSeeder extends Seeder
             ['name' => 'medical_record_entries', 'label' => ['singular' => 'medical record entry', 'plural' => 'medical record entries']],
             ['name' => 'article', 'label' => ['singular' => 'article', 'plural' => 'articles']],
             ['name' => 'category', 'label' => ['singular' => 'category', 'plural' => 'categories']],
+            ['name' => 'contract', 'label' => ['singular' => 'contract', 'plural' => 'contracts']],
+            ['name' => 'employee_payment', 'label' => ['singular' => 'employee payment', 'plural' => 'employee payments']],
+            ['name' => 'invoice', 'label' => ['singular' => 'invoice', 'plural' => 'invoices']],
         ];
 
         $extraPermissions = [];
@@ -49,7 +52,7 @@ class PermissionSeeder extends Seeder
                     }
 
                     $permissions[] = [
-                        'name' => $mod['name'] . '.' . $ac['name'],
+                        'name' => $mod['name'].'.'.$ac['name'],
                         'label' => $label,
                     ];
                 }
