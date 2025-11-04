@@ -13,6 +13,8 @@ class ContractSeeder extends Seeder
      */
     public function run(): void
     {
+        $now = Carbon::today();
+
         foreach (EmployeeInfo::all() as $employee) {
             $employeePosition = $employee->position;
 
@@ -23,13 +25,26 @@ class ContractSeeder extends Seeder
                 default => fake()->numberBetween(2000, 4000),
             };
 
-            $employee->contracts()->create([
-                'start_date' => $employee->hire_date,
-                'end_date' => Carbon::parse($employee->hire_date)->addYear(),
-                'rate_type' => 'monthly',
-                'rate' => $rate,
-                'contract_type' => 'full_time',
-            ]);
+            $hireDate = Carbon::parse($employee->hire_date);
+            $startDate = $hireDate->copy();
+
+            while ($startDate->lessThan($now)) {
+                $endDate = $startDate->copy()->addYear();
+
+                if ($endDate->greaterThan($now)) {
+                    $endDate = $now->copy();
+                }
+
+                $employee->contracts()->create([
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                    'rate_type' => 'monthly',
+                    'rate' => $rate,
+                    'contract_type' => 'full_time',
+                ]);
+
+                $startDate = $endDate;
+            }
         }
     }
 }
