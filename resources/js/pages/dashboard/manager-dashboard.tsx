@@ -1,4 +1,5 @@
 import EmployeePaymentByMonthChart from '@/components/charts/employee-payment-by-month-chart';
+import EmployeesByPositionChart from '@/components/charts/employees-by-position-chart';
 import NewPatientsByMonthChart from '@/components/charts/new-patients-by-month-chart';
 import DashboardHeader from '@/components/helpers/dashboard-header';
 import AppLayout from '@/layouts/app-layout';
@@ -7,11 +8,13 @@ import { BreadcrumbItem, ChartItem } from '@/types';
 import { EmployeeInfo } from '@/types/application/employee';
 import { Head } from '@inertiajs/react';
 
+// TODO: Add element to display total patients
 export interface TotalPatients {
     total: number;
     percentage_change: number;
 }
 
+// TODO: Add element to display contracts data and chart
 export interface ContractsData {
     total_contracts: number;
     active_contracts: number;
@@ -19,6 +22,7 @@ export interface ContractsData {
     total_earnings_current_month: number;
 }
 
+// TODO: Add element to display invoices data
 export interface InvoicesData {
     total_invoices: number;
     total_amount: number;
@@ -53,10 +57,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function ManagerDashboard({ data }: Readonly<ManagerDashboardProps>) {
-    console.group('Manager Info');
-    console.log(data);
-    console.groupEnd();
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Manager Dashboard" />
@@ -74,7 +74,8 @@ export default function ManagerDashboard({ data }: Readonly<ManagerDashboardProp
                     <NewPatientsByMonthChart chartData={data.newPatientsByMonth} />
 
                     <EmployeePaymentByMonthChart chartData={data.employeePaymentsData} />
-                    {/* TODO: Implement other charts and data displays for contracts, invoices, and employee payments */}
+
+                    <EmployeesByPositionChart chartData={data.employeesByPosition} />
                 </div>
             </div>
         </AppLayout>
