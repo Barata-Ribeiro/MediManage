@@ -10,7 +10,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { normalizeString } from '@/lib/utils';
+import { formatCurrency, normalizeString } from '@/lib/utils';
 import { generatePdf } from '@/routes/invoices';
 import { Invoice } from '@/types/application/invoice';
 import { ColumnDef } from '@tanstack/react-table';
@@ -32,13 +32,7 @@ export const column: ColumnDef<Invoice>[] = [
     {
         accessorKey: 'amount',
         header: ({ column }) => <DataTableColumnHeader column={column} title="Amount" />,
-        cell: ({ row }) => {
-            const formattedAmount = new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-            }).format(Number.parseFloat(row.original.amount));
-            return formattedAmount;
-        },
+        cell: ({ row }) => formatCurrency(row.original.amount),
         enableSorting: true,
     },
     {
@@ -87,7 +81,6 @@ export const column: ColumnDef<Invoice>[] = [
 
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
-                            {/* TODO: Implement PDF generation */}
                             <a href={generatePdf(row.original.id).url} target="_blank" rel="external">
                                 Generate PDF
                             </a>
