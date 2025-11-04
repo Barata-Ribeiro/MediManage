@@ -33,3 +33,16 @@ export function normalizeString(str: string) {
         .replaceAll(/[^\p{L}\p{N} ]+/gu, '') // Remove non-letter/number characters (keep spaces) - Unicode aware
         .replaceAll(/(^|\s)\p{L}/gu, (match) => match.toUpperCase()); // Capitalize first letter of each word - Unicode aware
 }
+
+export function formatCurrency(
+    amount: string | number,
+    currency: Intl.NumberFormatOptions['currency'] = 'USD',
+    locale: Intl.LocalesArgument = 'en-US',
+) {
+    const parsedAmount = Number.parseFloat(String(amount));
+
+    return new Intl.NumberFormat(locale, {
+        style: 'currency',
+        currency,
+    }).format(parsedAmount);
+}
