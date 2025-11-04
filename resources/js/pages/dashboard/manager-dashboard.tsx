@@ -2,13 +2,13 @@ import EmployeePaymentByMonthChart from '@/components/charts/employee-payment-by
 import EmployeesByPositionChart from '@/components/charts/employees-by-position-chart';
 import NewPatientsByMonthChart from '@/components/charts/new-patients-by-month-chart';
 import DashboardHeader from '@/components/helpers/dashboard-header';
+import ManagerSectionCards from '@/components/helpers/manager-section-cards';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { BreadcrumbItem, ChartItem } from '@/types';
 import { EmployeeInfo } from '@/types/application/employee';
 import { Head } from '@inertiajs/react';
 
-// TODO: Add element to display total patients
 export interface TotalPatients {
     total: number;
     percentage_change: number;
@@ -22,7 +22,6 @@ export interface ContractsData {
     total_earnings_current_month: number;
 }
 
-// TODO: Add element to display invoices data
 export interface InvoicesData {
     total_invoices: number;
     total_amount: number;
@@ -70,12 +69,18 @@ export default function ManagerDashboard({ data }: Readonly<ManagerDashboardProp
                     age={data.managerInfo.age}
                 />
 
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <NewPatientsByMonthChart chartData={data.newPatientsByMonth} />
+                <div className="@container/main flex flex-1 flex-col gap-2">
+                    <div className="flex flex-col gap-4 md:gap-6">
+                        <ManagerSectionCards invoiceData={data.invoicesData} totalPatients={data.totalPatients} />
 
-                    <EmployeePaymentByMonthChart chartData={data.employeePaymentsData} />
+                        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+                            <NewPatientsByMonthChart chartData={data.newPatientsByMonth} />
 
-                    <EmployeesByPositionChart chartData={data.employeesByPosition} />
+                            <EmployeePaymentByMonthChart chartData={data.employeePaymentsData} />
+
+                            <EmployeesByPositionChart chartData={data.employeesByPosition} />
+                        </div>
+                    </div>
                 </div>
             </div>
         </AppLayout>
