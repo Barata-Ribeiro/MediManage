@@ -1,3 +1,4 @@
+import EmployeePaymentByMonthChart from '@/components/charts/employee-payment-by-month-chart';
 import NewPatientsByMonthChart from '@/components/charts/new-patients-by-month-chart';
 import DashboardHeader from '@/components/helpers/dashboard-header';
 import AppLayout from '@/layouts/app-layout';
@@ -72,6 +73,7 @@ export default function ManagerDashboard({ data }: Readonly<ManagerDashboardProp
                 <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                     <NewPatientsByMonthChart chartData={data.newPatientsByMonth} />
 
+                    <EmployeePaymentByMonthChart chartData={data.employeePaymentsData} />
                     {/* TODO: Implement other charts and data displays for contracts, invoices, and employee payments */}
                 </div>
             </div>
