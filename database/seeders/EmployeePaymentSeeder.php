@@ -19,27 +19,32 @@ class EmployeePaymentSeeder extends Seeder
             if ($contract) {
                 $startDate = Carbon::parse($contract->start_date);
                 $endDate = Carbon::parse($contract->end_date)->min(now());
+                $rate = $contract->rate;
 
                 if ($contract->rate_type === 'monthly') {
                     $current = $startDate->copy()->endOfMonth();
+
                     while ($current->lte($endDate)) {
                         $employee->payments()->create([
                             'payment_date' => $current->toDateString(),
-                            'amount' => $contract->rate,
+                            'amount' => $rate,
                             'payment_method' => 'bank_transfer',
                             'transaction_reference' => fake()->uuid(),
                         ]);
+
                         $current->addMonth()->endOfMonth();
                     }
                 } elseif ($contract->rate_type === 'daily') {
                     $current = $startDate->copy();
+
                     while ($current->lte($endDate)) {
                         $employee->payments()->create([
                             'payment_date' => $current->toDateString(),
-                            'amount' => $contract->rate,
+                            'amount' => $rate / 30, // Assuming 30 days in a month for daily rate
                             'payment_method' => 'bank_transfer',
                             'transaction_reference' => fake()->uuid(),
                         ]);
+
                         $current->addDay();
                     }
                 }
