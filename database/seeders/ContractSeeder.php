@@ -17,10 +17,10 @@ class ContractSeeder extends Seeder
             $employeePosition = $employee->position;
 
             $rate = match ($employeePosition) {
-                'Doctor' => 8000,
-                'Attendant' => 5500,
-                'Manager' => 10000,
-                default => fake()->numberBetween(3000, 5000),
+                'Doctor' => 7500,
+                'Attendant' => 2500,
+                'Manager' => 5000,
+                default => fake()->numberBetween(2000, 4000),
             };
 
             $employee->contracts()->create([
