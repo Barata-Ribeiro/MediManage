@@ -113,22 +113,14 @@ class DashboardManagerService implements DashboardManagerServiceInterface
     private function getContractsData(): array
     {
         $totalContracts = Contract::count();
-        $activeContracts = Contract::whereStartDate('<=', now())
-            ->whereEndDate('>=', now())
+        $activeContracts = Contract::where('start_date', '<=', Carbon::today())
+            ->where('end_date', '>=', Carbon::today())
             ->count();
 
         $contractsByType = Contract::selectRaw('contract_type, COUNT(id) as total')
             ->groupBy('contract_type')
             ->get()
             ->pluck('total', 'contract_type');
-
-        $currentMonth = now()->format('Y-m');
-        $totalEarningsCurrentMonth = Contract::whereStartDate('<=', now()->endOfMonth())
-            ->whereEndDate('>=', now()->startOfMonth())
-            ->get()
-            ->sum(function ($contract) use ($currentMonth) {
-                return $contract->getTotalEarningsAttribute($currentMonth);
-            });
 
         return [
             'total_contracts' => $totalContracts,
@@ -137,7 +129,6 @@ class DashboardManagerService implements DashboardManagerServiceInterface
                 'labels' => $contractsByType->keys()->all(),
                 'data' => $contractsByType->values()->all(),
             ],
-            'total_earnings_current_month' => round($totalEarningsCurrentMonth, 2),
         ];
     }
 
@@ -150,9 +141,9 @@ class DashboardManagerService implements DashboardManagerServiceInterface
     {
         $totalInvoices = Invoice::count();
         $totalAmount = Invoice::sum('amount');
-        $pendingInvoices = Invoice::whereStatus('!=', 'paid')->count();
-        $paidInvoices = Invoice::whereStatus('=', 'paid')->count();
-        $pendingAmount = Invoice::whereStatus('!=', 'paid')->sum('amount');
+        $pendingInvoices = Invoice::where('status', '!=', 'paid')->count();
+        $paidInvoices = Invoice::whereStatus('paid')->count();
+        $pendingAmount = Invoice::where('status', '!=', 'paid')->sum('amount');
 
         return [
             'total_invoices' => $totalInvoices,
@@ -177,6 +168,7 @@ class DashboardManagerService implements DashboardManagerServiceInterface
         $endMonthDate = Carbon::now()->endOfMonth();
 
         $paymentsByMonth = EmployeePayment::selectRaw("DATE_FORMAT(payment_date, '%Y-%m') as month, SUM(amount) as total")
+            ->whereNotNull('payment_date')
             ->whereBetween('payment_date', [$startMonthDate, $endMonthDate])
             ->groupBy('month')
             ->orderBy('month')
