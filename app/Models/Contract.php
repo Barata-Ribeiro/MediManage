@@ -7,12 +7,31 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property-read \App\Models\EmployeeInfo|null $employeeInfo
+ * @property int $id
+ * @property int $employee_info_id
+ * @property string $start_date
+ * @property string $end_date
+ * @property string $rate_type
+ * @property string $rate
+ * @property string $contract_type
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\EmployeeInfo $employeeInfo
  * @property-read mixed $duration
- * @property-read mixed $total_earnings
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contract newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contract newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contract query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contract whereContractType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contract whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contract whereEmployeeInfoId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contract whereEndDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contract whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contract whereRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contract whereRateType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contract whereStartDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Contract whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class Contract extends Model
@@ -32,14 +51,6 @@ class Contract extends Model
     public function getDurationAttribute()
     {
         return Carbon::parse($this->start_date)->diffForHumans($this->end_date);
-    }
-
-    /**
-     * Calculate total earnings for the contract based on rate type.
-     */
-    public function getTotalEarningsAttribute($monthYear)
-    {
-        return $this->rate_type === 'monthly' ? $this->rate : $this->rate * Carbon::parse($monthYear)->daysInMonth;
     }
 
     public function employeeInfo(): BelongsTo
