@@ -3,7 +3,10 @@
 namespace App\Services;
 
 use App\Interfaces\DashboardManagerServiceInterface;
+use App\Models\Contract;
 use App\Models\EmployeeInfo;
+use App\Models\EmployeePayment;
+use App\Models\Invoice;
 use App\Models\PatientInfo;
 use Auth;
 use Carbon\Carbon;
@@ -12,18 +15,23 @@ class DashboardManagerService implements DashboardManagerServiceInterface
 {
     public function getManagerDashboardData(): array
     {
-        $requestingUser = Auth::user();
 
-        $managerInfo = $requestingUser->employeeInfo->with('user')->first();
+        $managerInfo = EmployeeInfo::with('user')->whereUserId(Auth::id())->first();
         $employeesByPosition = $this->getEmployeesByPosition();
         $totalPatients = $this->getTotalPatientsWithPastMonthComparison();
         $newPatientsByMonth = $this->getNewPatientsByMonth();
+        $contractsData = $this->getContractsData();
+        $invoicesData = $this->getInvoicesData();
+        $employeePaymentsData = $this->getEmployeePaymentsData();
 
         return ['data' => [
             'managerInfo' => $managerInfo,
             'employeesByPosition' => $employeesByPosition,
             'totalPatients' => $totalPatients,
             'newPatientsByMonth' => $newPatientsByMonth,
+            'contractsData' => $contractsData,
+            'invoicesData' => $invoicesData,
+            'employeePaymentsData' => $employeePaymentsData,
         ]];
     }
 
@@ -94,6 +102,104 @@ class DashboardManagerService implements DashboardManagerServiceInterface
         return [
             'labels' => collect($labels)->map(fn ($l) => mb_substr($l, 0, 3))->all(),
             'data' => $data,
+        ];
+    }
+
+    /**
+     * Get contracts data for the dashboard.
+     *
+     * @return array{total_contracts: int, active_contracts: int, contracts_by_type: array, total_earnings_current_month: float}
+     */
+    private function getContractsData(): array
+    {
+        $totalContracts = Contract::count();
+        $activeContracts = Contract::whereStartDate('<=', now())
+            ->whereEndDate('>=', now())
+            ->count();
+
+        $contractsByType = Contract::selectRaw('contract_type, COUNT(id) as total')
+            ->groupBy('contract_type')
+            ->get()
+            ->pluck('total', 'contract_type');
+
+        $currentMonth = now()->format('Y-m');
+        $totalEarningsCurrentMonth = Contract::whereStartDate('<=', now()->endOfMonth())
+            ->whereEndDate('>=', now()->startOfMonth())
+            ->get()
+            ->sum(function ($contract) use ($currentMonth) {
+                return $contract->getTotalEarningsAttribute($currentMonth);
+            });
+
+        return [
+            'total_contracts' => $totalContracts,
+            'active_contracts' => $activeContracts,
+            'contracts_by_type' => [
+                'labels' => $contractsByType->keys()->all(),
+                'data' => $contractsByType->values()->all(),
+            ],
+            'total_earnings_current_month' => round($totalEarningsCurrentMonth, 2),
+        ];
+    }
+
+    /**
+     * Get invoices data for the dashboard.
+     *
+     * @return array{total_invoices: int, total_amount: float, pending_invoices: int, paid_invoices: int, pending_amount: float}
+     */
+    private function getInvoicesData(): array
+    {
+        $totalInvoices = Invoice::count();
+        $totalAmount = Invoice::sum('amount');
+        $pendingInvoices = Invoice::whereStatus('!=', 'paid')->count();
+        $paidInvoices = Invoice::whereStatus('=', 'paid')->count();
+        $pendingAmount = Invoice::whereStatus('!=', 'paid')->sum('amount');
+
+        return [
+            'total_invoices' => $totalInvoices,
+            'total_amount' => round($totalAmount, 2),
+            'pending_invoices' => $pendingInvoices,
+            'paid_invoices' => $paidInvoices,
+            'pending_amount' => round($pendingAmount, 2),
+        ];
+    }
+
+    /**
+     * Get employee payments data for the dashboard.
+     *
+     * @return array{total_payments: int, total_amount_paid: float, payments_by_month: array}
+     */
+    private function getEmployeePaymentsData(): array
+    {
+        $totalPayments = EmployeePayment::count();
+        $totalAmountPaid = EmployeePayment::sum('amount');
+
+        $startMonthDate = Carbon::now()->subMonths(11)->startOfMonth();
+        $endMonthDate = Carbon::now()->endOfMonth();
+
+        $paymentsByMonth = EmployeePayment::selectRaw("DATE_FORMAT(payment_date, '%Y-%m') as month, SUM(amount) as total")
+            ->whereBetween('payment_date', [$startMonthDate, $endMonthDate])
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->pluck('total', 'month');
+
+        $labels = [];
+        $data = [];
+
+        for ($i = 0; $i < 12; $i++) {
+            $month = $startMonthDate->copy()->addMonths($i);
+            $key = $month->format('Y-m');
+            $labels[] = ucfirst($month->translatedFormat('F'));
+            $data[] = round($paymentsByMonth->get($key, 0), 2);
+        }
+
+        return [
+            'total_payments' => $totalPayments,
+            'total_amount_paid' => round($totalAmountPaid, 2),
+            'payments_by_month' => [
+                'labels' => collect($labels)->map(fn ($l) => mb_substr($l, 0, 3))->all(),
+                'data' => $data,
+            ],
         ];
     }
 }
