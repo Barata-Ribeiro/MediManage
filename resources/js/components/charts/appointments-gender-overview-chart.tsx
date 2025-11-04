@@ -35,7 +35,7 @@ export default function AppointmentsGenderOverviewChart({ chartData }: Readonly<
                 <CardDescription>Overview of appointments distribution by patient&apos;s gender.</CardDescription>
             </CardHeader>
 
-            <CardContent className="max-h-[16rem] flex-1 pb-0">
+            <CardContent className="max-h-64 flex-1 pb-0">
                 <ChartContainer
                     config={chartConfig}
                     className="mx-auto aspect-square h-full pb-0 [&_.recharts-pie-label-text]:fill-foreground"

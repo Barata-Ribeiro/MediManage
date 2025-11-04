@@ -39,7 +39,7 @@ export default function UsersByRoleChart({ total, chartData }: Readonly<UsersByR
                 <CardDescription>Number of users by role in the system</CardDescription>
             </CardHeader>
 
-            <CardContent className="max-h-[22.5rem] flex-1 pb-0">
+            <CardContent className="max-h-90 flex-1 pb-0">
                 <ChartContainer config={chartConfig} className="mx-auto aspect-square h-full">
                     <PieChart accessibilityLayer>
                         <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
@@ -82,7 +82,7 @@ export default function UsersByRoleChart({ total, chartData }: Readonly<UsersByR
                 {transformedData.map((entry) => (
                     <div key={entry.role} className="flex items-center gap-2">
                         <span
-                            className="inline-block size-3 flex-shrink-0 rounded-sm"
+                            className="inline-block size-3 shrink-0 rounded-sm"
                             style={{ backgroundColor: entry.fill }}
                         />
                         <div className="text-sm">
