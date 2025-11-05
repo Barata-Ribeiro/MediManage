@@ -62,7 +62,7 @@ export function DataTablePagination<TData>({ pagination }: Readonly<DataTablePag
                     onClick={() => (serverLink ? goToUrl(serverLink.url) : goToPage(pageNumber))}
                     disabled={isActive}
                     aria-current={isActive ? 'page' : undefined}
-                    className="h-8 min-w-[36px] px-2"
+                    className="h-8 min-w-9 px-2"
                 >
                     {pageNumber}
                 </Button>
@@ -109,7 +109,7 @@ export function DataTablePagination<TData>({ pagination }: Readonly<DataTablePag
                         disabled={pagination.current_page === 1}
                     >
                         <span className="sr-only">Go to first page</span>
-                        <ChevronsLeft />
+                        <ChevronsLeft aria-hidden />
                     </Button>
                     <Button
                         variant="outline"
@@ -123,7 +123,7 @@ export function DataTablePagination<TData>({ pagination }: Readonly<DataTablePag
                         disabled={!pagination.prev_page_url && pagination.current_page === 1}
                     >
                         <span className="sr-only">Go to previous page</span>
-                        <ChevronLeft />
+                        <ChevronLeft aria-hidden />
                     </Button>
 
                     <div className="flex items-center gap-x-1 px-2">{renderPageLinks()}</div>
@@ -140,7 +140,7 @@ export function DataTablePagination<TData>({ pagination }: Readonly<DataTablePag
                         disabled={!pagination.next_page_url && pagination.current_page === pagination.last_page}
                     >
                         <span className="sr-only">Go to next page</span>
-                        <ChevronRight />
+                        <ChevronRight aria-hidden />
                     </Button>
                     <Button
                         variant="outline"
@@ -154,7 +154,7 @@ export function DataTablePagination<TData>({ pagination }: Readonly<DataTablePag
                         disabled={pagination.current_page === pagination.last_page}
                     >
                         <span className="sr-only">Go to last page</span>
-                        <ChevronsRight />
+                        <ChevronsRight aria-hidden />
                     </Button>
                 </div>
             </div>

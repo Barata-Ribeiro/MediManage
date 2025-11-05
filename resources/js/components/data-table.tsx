@@ -15,7 +15,7 @@ import {
     VisibilityState,
 } from '@tanstack/react-table';
 import { TrashIcon } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { Activity, useEffect, useRef, useState } from 'react';
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -113,7 +113,13 @@ export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly
     return (
         <div className="mx-auto w-full flex-col space-y-4">
             <div className="flex items-center py-4">
-                {(pagination.total > 10 || new URLSearchParams(globalThis.location.search).toString() !== '') && (
+                <Activity
+                    mode={
+                        pagination.total > 10 || new URLSearchParams(globalThis.location.search).toString() !== ''
+                            ? 'visible'
+                            : 'hidden'
+                    }
+                >
                     <div className="inline-flex w-full flex-1 items-center gap-x-2">
                         <Input
                             type="search"
@@ -128,7 +134,7 @@ export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly
                             </Link>
                         </Button>
                     </div>
-                )}
+                </Activity>
 
                 <DataTableViewOptions table={table} />
             </div>
@@ -172,7 +178,9 @@ export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly
                 </Table>
             </div>
 
-            {pagination.total > 10 && <DataTablePagination pagination={pagination} />}
+            <Activity mode={pagination.total > 10 ? 'visible' : 'hidden'}>
+                <DataTablePagination pagination={pagination} />
+            </Activity>
         </div>
     );
 }

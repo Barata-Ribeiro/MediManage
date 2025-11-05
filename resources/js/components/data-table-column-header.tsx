@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 
 import { Column } from '@tanstack/react-table';
 import { ArrowDown, ArrowUp, ChevronsUpDown, EyeOff } from 'lucide-react';
-import { HTMLAttributes } from 'react';
+import { Activity, HTMLAttributes } from 'react';
 
 interface DataTableColumnHeaderProps<TData, TValue> extends HTMLAttributes<HTMLDivElement> {
     column: Column<TData, TValue>;
@@ -26,19 +26,21 @@ export function DataTableColumnHeader<TData, TValue>({
         return <div className={cn(className)}>{title}</div>;
     }
 
+    const columnSortDir = column.getIsSorted();
+
+    const columnSortIndicator = {
+        asc: <ArrowUp aria-hidden />,
+        desc: <ArrowDown aria-hidden />,
+        default: <ChevronsUpDown aria-hidden />,
+    };
+
     return (
         <div className={cn('flex items-center gap-2', className)}>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm" className="-ml-3 h-8 data-[state=open]:bg-accent">
                         <span>{title}</span>
-                        {column.getIsSorted() === 'desc' ? (
-                            <ArrowDown />
-                        ) : column.getIsSorted() === 'asc' ? (
-                            <ArrowUp />
-                        ) : (
-                            <ChevronsUpDown />
-                        )}
+                        {columnSortDir ? columnSortIndicator[columnSortDir] : columnSortIndicator['default']}
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
@@ -50,16 +52,14 @@ export function DataTableColumnHeader<TData, TValue>({
                         <ArrowDown />
                         Desc
                     </DropdownMenuItem>
-                    {column.getCanHide() && (
-                        <>
-                            <DropdownMenuSeparator />
+                    <Activity mode={column.getCanHide() ? 'visible' : 'hidden'}>
+                        <DropdownMenuSeparator />
 
-                            <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
-                                <EyeOff />
-                                Hide
-                            </DropdownMenuItem>
-                        </>
-                    )}
+                        <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
+                            <EyeOff />
+                            Hide
+                        </DropdownMenuItem>
+                    </Activity>
                 </DropdownMenuContent>
             </DropdownMenu>
         </div>
