@@ -34,7 +34,7 @@ export default function Edit({ role, allPermissions }: Readonly<EditProps>) {
             href: RoleController.edit(role.id).url,
         },
     ];
-    console.log({ role, allPermissions });
+
     return (
         <Layout breadcrumbs={breadcrumbs}>
             <Head title={`Edit ${role.name}`} />
