@@ -1,5 +1,12 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    ChartConfig,
+    ChartContainer,
+    ChartLegend,
+    ChartLegendContent,
+    ChartTooltip,
+    ChartTooltipContent,
+} from '@/components/ui/chart';
 import { ChartItem } from '@/types';
 import { useMemo } from 'react';
 import { Label, Pie, PieChart } from 'recharts';
@@ -8,6 +15,26 @@ interface UsersByRoleChartProps {
     total: number;
     chartData: ChartItem;
 }
+
+const PieLabel = ({ viewBox, totalUsers }: { viewBox?: unknown; totalUsers: number }) => {
+    if (viewBox && typeof viewBox === 'object' && viewBox !== null && 'cx' in viewBox && 'cy' in viewBox) {
+        const { cx, cy } = viewBox as { cx: number; cy: number };
+
+        return (
+            <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle">
+                <tspan x={cx} y={cy} className="fill-foreground text-3xl font-bold">
+                    {totalUsers}
+                </tspan>
+
+                <tspan x={cx} y={cy + 24} className="fill-muted-foreground">
+                    Total
+                </tspan>
+            </text>
+        );
+    }
+
+    return null;
+};
 
 export default function UsersByRoleChart({ total, chartData }: Readonly<UsersByRoleChartProps>) {
     const normalizeKey = (s: string) => s.toLowerCase().replaceAll(/\s+/g, '_');
@@ -39,58 +66,20 @@ export default function UsersByRoleChart({ total, chartData }: Readonly<UsersByR
                 <CardDescription>Number of users by role in the system</CardDescription>
             </CardHeader>
 
-            <CardContent className="max-h-90 flex-1 pb-0">
+            <CardContent className="max-h-116 flex-1 pb-0">
                 <ChartContainer config={chartConfig} className="mx-auto aspect-square h-full">
                     <PieChart accessibilityLayer>
                         <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
                         <Pie data={transformedData} dataKey="total" nameKey="role" innerRadius={60} strokeWidth={5}>
-                            <Label
-                                content={({ viewBox }) => {
-                                    if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-                                        return (
-                                            <text
-                                                x={viewBox.cx}
-                                                y={viewBox.cy}
-                                                textAnchor="middle"
-                                                dominantBaseline="middle"
-                                            >
-                                                <tspan
-                                                    x={viewBox.cx}
-                                                    y={viewBox.cy}
-                                                    className="fill-foreground text-3xl font-bold"
-                                                >
-                                                    {total}
-                                                </tspan>
-                                                <tspan
-                                                    x={viewBox.cx}
-                                                    y={(viewBox.cy || 0) + 24}
-                                                    className="fill-muted-foreground"
-                                                >
-                                                    Total
-                                                </tspan>
-                                            </text>
-                                        );
-                                    }
-                                }}
-                            />
+                            <Label content={<PieLabel totalUsers={total} />} />
                         </Pie>
+                        <ChartLegend
+                            content={<ChartLegendContent nameKey="role" />}
+                            className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
+                        />
                     </PieChart>
                 </ChartContainer>
             </CardContent>
-
-            <CardFooter className="flex flex-wrap items-center-safe justify-center-safe gap-4">
-                {transformedData.map((entry) => (
-                    <div key={entry.role} className="flex items-center gap-2">
-                        <span
-                            className="inline-block size-3 shrink-0 rounded-sm"
-                            style={{ backgroundColor: entry.fill }}
-                        />
-                        <div className="text-sm">
-                            <span className="font-semibold">{chartConfig[entry.role]?.label}:</span> {entry.total}
-                        </div>
-                    </div>
-                ))}
-            </CardFooter>
         </Card>
     );
 }
