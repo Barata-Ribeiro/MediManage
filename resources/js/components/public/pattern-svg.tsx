@@ -5,7 +5,7 @@ export default function PatternSVG(props: Readonly<SVGAttributes<SVGElement>>) {
         <svg
             {...props}
             aria-hidden
-            className="absolute inset-x-0 top-0 -z-10 h-[64rem] w-full [mask-image:radial-gradient(32rem_32rem_at_center,white,transparent)] stroke-gray-200 dark:stroke-gray-500"
+            className="absolute inset-x-0 top-0 -z-10 h-256 w-full mask-[radial-gradient(32rem_32rem_at_center,white,transparent)] stroke-gray-200 dark:stroke-gray-500"
         >
             <defs>
                 <pattern

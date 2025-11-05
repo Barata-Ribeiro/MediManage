@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { useDebounceCallback } from '@/hooks/use-debounce-callback';
 import { ChevronsUpIcon } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { Activity, useEffect, useRef, useState } from 'react';
 
 function scrollTopTop() {
     globalThis.document.documentElement.style.scrollBehavior = 'smooth';
@@ -31,7 +31,7 @@ export default function ScrollToTop() {
     }, [debouncedHandleScroll]);
 
     return (
-        showScroll && (
+        <Activity mode={showScroll ? 'visible' : 'hidden'}>
             <Button
                 ref={buttonRef}
                 onClick={scrollTopTop}
@@ -43,6 +43,6 @@ export default function ScrollToTop() {
             >
                 <ChevronsUpIcon aria-hidden />
             </Button>
-        )
+        </Activity>
     );
 }

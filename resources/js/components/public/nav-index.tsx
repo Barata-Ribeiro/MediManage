@@ -20,7 +20,7 @@ import type { SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { Menu, NewspaperIcon } from 'lucide-react';
-import { Fragment } from 'react/jsx-runtime';
+import { Activity, Fragment } from 'react';
 
 export default function NavIndex() {
     const { auth, latestArticles, notices } = usePage<SharedData>().props;
@@ -35,7 +35,7 @@ export default function NavIndex() {
                 </Link>
 
                 {/*Mobile Menu*/}
-                {isMobile && (
+                <Activity mode={isMobile ? 'visible' : 'hidden'}>
                     <Sheet>
                         <SheetTrigger asChild>
                             <Button variant="ghost" size="icon" className="mr-2 cursor-pointer">
@@ -96,88 +96,84 @@ export default function NavIndex() {
                                             <Link href={dashboard()}>Dashboard</Link>
                                         </Button>
                                     ) : (
-                                        <>
+                                        <Fragment>
                                             <Button asChild variant="outline">
                                                 <Link href={login()}>Login</Link>
                                             </Button>
                                             <Button asChild>
                                                 <Link href={register()}>Register</Link>
                                             </Button>
-                                        </>
+                                        </Fragment>
                                     )}
                                 </div>
                             </div>
                         </SheetContent>
                     </Sheet>
-                )}
+                </Activity>
 
-                {!isMobile && (
-                    <Fragment>
-                        <NavigationMenu>
-                            <NavigationMenuList>
+                <Activity mode={!isMobile ? 'visible' : 'hidden'}>
+                    <NavigationMenu>
+                        <NavigationMenuList>
+                            <NavigationMenuItem>
+                                <NavigationMenuLink asChild>
+                                    <Link href={home()}>Home</Link>
+                                </NavigationMenuLink>
+                            </NavigationMenuItem>
+
+                            {latestArticles && (
                                 <NavigationMenuItem>
-                                    <NavigationMenuLink asChild>
-                                        <Link href={home()}>Home</Link>
-                                    </NavigationMenuLink>
+                                    <NavigationMenuTrigger className="cursor-pointer">Articles</NavigationMenuTrigger>
+                                    <NavigationMenuContent>
+                                        <ul className="grid w-[300px] gap-4">
+                                            {latestArticles.map((article) => (
+                                                <li key={article.id}>
+                                                    <NavigationMenuLink asChild>
+                                                        <Link href={articleRoute(article.slug)} prefetch="hover">
+                                                            <div className="font-medium">{article.title}</div>
+                                                            <time
+                                                                dateTime={article.created_at}
+                                                                className="text-muted-foreground"
+                                                            >
+                                                                Published on {format(article.created_at, 'PPP')}
+                                                            </time>
+                                                        </Link>
+                                                    </NavigationMenuLink>
+                                                </li>
+                                            ))}
+                                        </ul>
+
+                                        <div className="-mx-2 mt-2 border-t p-4 text-center">
+                                            <TextLink href={articlesRoute()}>Browse all articles</TextLink>
+                                        </div>
+                                    </NavigationMenuContent>
                                 </NavigationMenuItem>
-
-                                {latestArticles && (
-                                    <NavigationMenuItem>
-                                        <NavigationMenuTrigger className="cursor-pointer">
-                                            Articles
-                                        </NavigationMenuTrigger>
-                                        <NavigationMenuContent>
-                                            <ul className="grid w-[300px] gap-4">
-                                                {latestArticles.map((article) => (
-                                                    <li key={article.id}>
-                                                        <NavigationMenuLink asChild>
-                                                            <Link href={articleRoute(article.slug)} prefetch="hover">
-                                                                <div className="font-medium">{article.title}</div>
-                                                                <time
-                                                                    dateTime={article.created_at}
-                                                                    className="text-muted-foreground"
-                                                                >
-                                                                    Published on {format(article.created_at, 'PPP')}
-                                                                </time>
-                                                            </Link>
-                                                        </NavigationMenuLink>
-                                                    </li>
-                                                ))}
-                                            </ul>
-
-                                            <div className="-mx-2 mt-2 border-t p-4 text-center">
-                                                <TextLink href={articlesRoute()}>Browse all articles</TextLink>
-                                            </div>
-                                        </NavigationMenuContent>
-                                    </NavigationMenuItem>
-                                )}
-
-                                <NavigationMenuItem>
-                                    <NavigationMenuLink asChild>
-                                        <Link href={prescription()}>Validate Prescription</Link>
-                                    </NavigationMenuLink>
-                                </NavigationMenuItem>
-                            </NavigationMenuList>
-                        </NavigationMenu>
-
-                        <div className="hidden items-center gap-x-4 md:flex">
-                            {auth.user ? (
-                                <Button variant="outline" asChild>
-                                    <Link href={dashboard()}>Dashboard</Link>
-                                </Button>
-                            ) : (
-                                <div className="inline-flex items-center gap-x-4">
-                                    <Button variant="outline" asChild>
-                                        <Link href={login()}>Log in</Link>
-                                    </Button>
-                                    <Button asChild>
-                                        <Link href={register()}>Register</Link>
-                                    </Button>
-                                </div>
                             )}
-                        </div>
-                    </Fragment>
-                )}
+
+                            <NavigationMenuItem>
+                                <NavigationMenuLink asChild>
+                                    <Link href={prescription()}>Validate Prescription</Link>
+                                </NavigationMenuLink>
+                            </NavigationMenuItem>
+                        </NavigationMenuList>
+                    </NavigationMenu>
+
+                    <div className="hidden items-center gap-x-4 md:flex">
+                        {auth.user ? (
+                            <Button variant="outline" asChild>
+                                <Link href={dashboard()}>Dashboard</Link>
+                            </Button>
+                        ) : (
+                            <div className="inline-flex items-center gap-x-4">
+                                <Button variant="outline" asChild>
+                                    <Link href={login()}>Log in</Link>
+                                </Button>
+                                <Button asChild>
+                                    <Link href={register()}>Register</Link>
+                                </Button>
+                            </div>
+                        )}
+                    </div>
+                </Activity>
             </div>
         </header>
     );
