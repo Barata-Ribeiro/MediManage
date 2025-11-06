@@ -18,3 +18,4 @@ export interface InvoiceWithRelations extends Invoice {
 }
 
 export type PaginationInvoice = PaginationMeta<Invoice[]>;
+export type PaginationInvoiceWithRelations = PaginationMeta<InvoiceWithRelations[]>;
