@@ -1,3 +1,4 @@
+import ContractByTypeChart from '@/components/charts/contract-by-type-chart';
 import EmployeePaymentByMonthChart from '@/components/charts/employee-payment-by-month-chart';
 import EmployeesByPositionChart from '@/components/charts/employees-by-position-chart';
 import NewPatientsByMonthChart from '@/components/charts/new-patients-by-month-chart';
@@ -14,12 +15,10 @@ export interface TotalPatients {
     percentage_change: number;
 }
 
-// TODO: Add element to display contracts data and chart
 export interface ContractsData {
     total_contracts: number;
     active_contracts: number;
     contracts_by_type: ChartItem;
-    total_earnings_current_month: number;
 }
 
 export interface InvoicesData {
@@ -73,12 +72,14 @@ export default function ManagerDashboard({ data }: Readonly<ManagerDashboardProp
                     <div className="flex flex-col gap-4 md:gap-6">
                         <ManagerSectionCards invoiceData={data.invoicesData} totalPatients={data.totalPatients} />
 
-                        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                            <NewPatientsByMonthChart chartData={data.newPatientsByMonth} />
+                        <NewPatientsByMonthChart chartData={data.newPatientsByMonth} />
 
+                        <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                             <EmployeePaymentByMonthChart chartData={data.employeePaymentsData} />
 
                             <EmployeesByPositionChart chartData={data.employeesByPosition} />
+
+                            <ContractByTypeChart {...data.contractsData} />
                         </div>
                     </div>
                 </div>
