@@ -151,8 +151,8 @@ php artisan serve
 
 There are bugs and/or implementations that require some attention.
 
-- Implement a proper regular user dashboard.
-- Implement a proper manager dashboard.
+- Adjust user's home dashboard with better info.
+- Add dashboard's routes for manager.
 
 ## 🤝 Contributing
 
