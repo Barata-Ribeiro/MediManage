@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
 import { Form, Head } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
+import { Activity } from 'react';
 
 interface ResetPasswordProps {
     token: string;
@@ -22,6 +23,8 @@ export default function ResetPassword({ token, email }: Readonly<ResetPasswordPr
                 {...NewPasswordController.store.form()}
                 transform={(data) => ({ ...data, token, email })}
                 resetOnSuccess={['password', 'password_confirmation']}
+                disableWhileProcessing
+                className="inert:pointer-events-none inert:opacity-50 inert:grayscale-100"
             >
                 {({ processing, errors }) => (
                     <div className="grid gap-6">
@@ -66,13 +69,10 @@ export default function ResetPassword({ token, email }: Readonly<ResetPasswordPr
                             <InputError message={errors.password_confirmation} className="mt-2" />
                         </div>
 
-                        <Button
-                            type="submit"
-                            className="mt-4 w-full"
-                            disabled={processing}
-                            data-test="reset-password-button"
-                        >
-                            {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                        <Button type="submit" className="mt-4 w-full" data-test="reset-password-button">
+                            <Activity mode={processing ? 'visible' : 'hidden'}>
+                                <LoaderCircle className="size-4 animate-spin" />
+                            </Activity>
                             Reset password
                         </Button>
                     </div>

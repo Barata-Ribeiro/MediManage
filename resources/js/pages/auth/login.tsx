@@ -10,6 +10,7 @@ import { register } from '@/routes';
 import { request } from '@/routes/password';
 import { Form, Head } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
+import { Activity } from 'react';
 
 interface LoginProps {
     status?: string;
@@ -24,7 +25,8 @@ export default function Login({ status, canResetPassword }: Readonly<LoginProps>
             <Form
                 {...AuthenticatedSessionController.store.form()}
                 resetOnSuccess={['password']}
-                className="flex flex-col gap-6"
+                disableWhileProcessing
+                className="space-y-6 inert:pointer-events-none inert:opacity-50 inert:grayscale-100"
             >
                 {({ processing, errors }) => (
                     <>
@@ -47,11 +49,11 @@ export default function Login({ status, canResetPassword }: Readonly<LoginProps>
                             <div className="grid gap-2">
                                 <div className="flex items-center">
                                     <Label htmlFor="password">Password</Label>
-                                    {canResetPassword && (
+                                    <Activity mode={canResetPassword ? 'visible' : 'hidden'}>
                                         <TextLink href={request()} className="ml-auto text-sm" tabIndex={5}>
                                             Forgot password?
                                         </TextLink>
-                                    )}
+                                    </Activity>
                                 </div>
                                 <Input
                                     id="password"
@@ -70,14 +72,10 @@ export default function Login({ status, canResetPassword }: Readonly<LoginProps>
                                 <Label htmlFor="remember">Remember me</Label>
                             </div>
 
-                            <Button
-                                type="submit"
-                                className="mt-4 w-full"
-                                tabIndex={4}
-                                disabled={processing}
-                                data-test="login-button"
-                            >
-                                {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                            <Button type="submit" className="mt-4 w-full" tabIndex={4} data-test="login-button">
+                                <Activity mode={processing ? 'visible' : 'hidden'}>
+                                    <LoaderCircle className="size-4 animate-spin" />
+                                </Activity>
                                 Log in
                             </Button>
                         </div>

@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/layouts/auth-layout';
+import { Activity } from 'react';
 
 export default function Register() {
     return (
@@ -18,7 +19,7 @@ export default function Register() {
                 {...RegisteredUserController.store.form()}
                 resetOnSuccess={['password', 'password_confirmation']}
                 disableWhileProcessing
-                className="flex flex-col gap-6"
+                className="space-y-6 inert:pointer-events-none inert:opacity-50 inert:grayscale-100"
             >
                 {({ processing, errors }) => (
                     <>
@@ -81,7 +82,9 @@ export default function Register() {
                             </div>
 
                             <Button type="submit" className="mt-2 w-full" tabIndex={5} data-test="register-user-button">
-                                {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                                <Activity mode={processing ? 'visible' : 'hidden'}>
+                                    <LoaderCircle className="size-4 animate-spin" />
+                                </Activity>
                                 Create account
                             </Button>
                         </div>

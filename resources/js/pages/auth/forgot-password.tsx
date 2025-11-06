@@ -10,6 +10,7 @@ import AuthLayout from '@/layouts/auth-layout';
 import { login } from '@/routes';
 import { Form, Head } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
+import { Activity } from 'react';
 
 export default function ForgotPassword({ status }: Readonly<{ status?: string }>) {
     return (
@@ -19,7 +20,11 @@ export default function ForgotPassword({ status }: Readonly<{ status?: string }>
             {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}
 
             <div className="space-y-6">
-                <Form {...PasswordResetLinkController.store.form()}>
+                <Form
+                    {...PasswordResetLinkController.store.form()}
+                    disableWhileProcessing
+                    className="inert:pointer-events-none inert:opacity-50 inert:grayscale-100"
+                >
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
@@ -37,12 +42,10 @@ export default function ForgotPassword({ status }: Readonly<{ status?: string }>
                             </div>
 
                             <div className="my-6 flex items-center justify-start">
-                                <Button
-                                    className="w-full"
-                                    disabled={processing}
-                                    data-test="email-password-reset-link-button"
-                                >
-                                    {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                                <Button className="w-full" data-test="email-password-reset-link-button">
+                                    <Activity mode={processing ? 'visible' : 'hidden'}>
+                                        <LoaderCircle className="size-4 animate-spin" />
+                                    </Activity>
                                     Email password reset link
                                 </Button>
                             </div>

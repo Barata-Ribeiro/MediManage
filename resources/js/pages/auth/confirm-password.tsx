@@ -6,6 +6,7 @@ import AuthLayout from '@/layouts/auth-layout';
 import { store } from '@/routes/password/confirm';
 import { Form, Head } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
+import { Activity } from 'react';
 
 export default function ConfirmPassword() {
     return (
@@ -15,7 +16,12 @@ export default function ConfirmPassword() {
         >
             <Head title="Confirm password" />
 
-            <Form {...store.form()} resetOnSuccess={['password']}>
+            <Form
+                {...store.form()}
+                disableWhileProcessing
+                className="inert:pointer-events-none inert:opacity-50 inert:grayscale-100"
+                resetOnSuccess={['password']}
+            >
                 {({ processing, errors }) => (
                     <div className="space-y-6">
                         <div className="grid gap-2">
@@ -33,8 +39,10 @@ export default function ConfirmPassword() {
                         </div>
 
                         <div className="flex items-center">
-                            <Button className="w-full" disabled={processing} data-test="confirm-password-button">
-                                {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                            <Button className="w-full" data-test="confirm-password-button">
+                                <Activity mode={processing ? 'visible' : 'hidden'}>
+                                    <LoaderCircle className="size-4 animate-spin" />
+                                </Activity>
                                 Confirm password
                             </Button>
                         </div>
