@@ -130,7 +130,7 @@
         <div class="patient-grid">
             <div class="patient-field"><strong>Name:</strong> {{ $invoice->patientInfo->full_name }}</div>
             <div class="patient-field"><strong>Phone:</strong> {{ $invoice->patientInfo->phone_number ?? '—' }}</div>
-            <div class="patient-field"><strong>Email:</strong> {{ $invoice->patientInfo->email ?? '—' }}</div>
+            <div class="patient-field"><strong>Email:</strong> {{ $invoice->patientInfo->user->email ?? '—' }}</div>
             <div class="patient-field"><strong>Address:</strong> {{ $invoice->patientInfo->address ?? '—' }}</div>
         </div>
     </div>
@@ -144,11 +144,11 @@
             </div>
             <div class="detail-row">
                 <span class="detail-label">Payment Method:</span>
-                <span class="detail-value">{{ $invoice->payment_method }}</span>
+                <span class="detail-value">{{ str_replace('_', ' ', ucwords($invoice->payment_method)) }}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Status:</span>
-                <span class="detail-value">{{ $invoice->status }}</span>
+                <span class="detail-value">{{ str_replace('_', ' ', ucwords($invoice->status)) }}</span>
             </div>
             @if($invoice->notes)
             <div class="detail-row" style="grid-column: 1 / -1; border-bottom: none;">
