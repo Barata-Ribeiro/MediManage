@@ -15,6 +15,40 @@ use Str;
 class InvoiceController extends Controller
 {
     /**
+     * Display a listing of all invoices.
+     */
+    public function index(Request $request)
+    {
+        Log::info('Invoice: Viewed all invoices', ['action_user_id' => Auth::id()]);
+
+        $perPage = (int) $request->query('per_page', 10);
+        $search = trim($request->query('search'));
+        $sortBy = $request->query('sort_by', 'id');
+        $sortDir = strtolower($request->query('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+
+        $allowedSorts = ['id', 'consultation_date', 'patient_info.first_name', 'due_date', 'amount', 'payment_method', 'status'];
+        if (! in_array($sortBy, $allowedSorts)) {
+            $sortBy = 'id';
+        }
+
+        $invoices = Invoice::select(['invoices.*'])
+            ->with(['patientInfo' => fn ($q) => $q->select('id', 'first_name', 'last_name')]);
+
+        if (str_starts_with($sortBy, 'patient_info.')) {
+            $invoices->leftJoin('patient_info', 'patient_info.id', '=', 'invoices.patient_info_id');
+        }
+
+        $invoices = $invoices->when($request->filled('search'), fn ($q) => $q->whereLike('notes', "%$search%")
+            ->orWhereLike('payment_method', "%$search%")->orWhereLike('status', "%$search%"))
+            ->orWhereHas('patientInfo', fn ($q) => $q->whereLike('first_name', "%$search%")->orWhereLike('last_name', "%$search%"))
+            ->orderBy($sortBy, $sortDir)
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return Inertia::render('invoices/Index', ['invoices' => $invoices]);
+    }
+
+    /**
      * Display a listing of the patient's invoices.
      */
     public function myInvoices(Request $request)
@@ -49,7 +83,7 @@ class InvoiceController extends Controller
     /**
      * Generate PDF for a specific invoice.
      */
-    public function generateInvoicePdf(Invoice $invoice, Request $request)
+    public function generateInvoicePdf(Invoice $invoice)
     {
         try {
             Log::info('Generating PDF for Invoice ID: '.$invoice->id, ['action_user_id' => Auth::id()]);
