@@ -79,7 +79,7 @@ class DashboardManagerService implements DashboardManagerServiceInterface
      */
     private function getNewPatientsByMonth(): array
     {
-        $startMonthDate = Carbon::now()->subMonths(11)->startOfMonth();
+        $startMonthDate = Carbon::now()->subMonths(23)->startOfMonth();
         $endMonthDate = Carbon::now()->endOfMonth();
 
         $labels = [];
@@ -92,7 +92,7 @@ class DashboardManagerService implements DashboardManagerServiceInterface
             ->get()
             ->pluck('total', 'month');
 
-        for ($i = 0; $i < 12; $i++) {
+        for ($i = 0; $i < 24; $i++) {
             $month = $startMonthDate->copy()->addMonths($i);
             $key = $month->format('Y-m');
             $labels[] = ucfirst($month->translatedFormat('F'));

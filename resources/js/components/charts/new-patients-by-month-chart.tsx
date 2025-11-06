@@ -1,5 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import {
+    ChartConfig,
+    ChartContainer,
+    ChartLegend,
+    ChartLegendContent,
+    ChartTooltip,
+    ChartTooltipContent,
+} from '@/components/ui/chart';
 import { ChartItem } from '@/types';
 import { useMemo } from 'react';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
@@ -31,7 +38,7 @@ export default function NewPatientsByMonthChart({ chartData }: Readonly<NewPatie
             </CardHeader>
 
             <CardContent>
-                <ChartContainer config={chartConfig}>
+                <ChartContainer config={chartConfig} className="aspect-auto h-40 w-full">
                     <AreaChart accessibilityLayer data={points} margin={{ left: -30, right: 12 }}>
                         <CartesianGrid vertical={false} />
                         <XAxis
@@ -39,6 +46,7 @@ export default function NewPatientsByMonthChart({ chartData }: Readonly<NewPatie
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
+                            minTickGap={32}
                             tickFormatter={(value) => String(value).slice(0, 3)}
                         />
                         <YAxis tickLine={false} axisLine={false} tickMargin={8} />
@@ -48,8 +56,10 @@ export default function NewPatientsByMonthChart({ chartData }: Readonly<NewPatie
                             type="bump"
                             fill="var(--chart-1)"
                             fillOpacity={0.4}
+                            stackId="a"
                             stroke="var(--chart-1)"
                         />
+                        <ChartLegend content={<ChartLegendContent />} />
                     </AreaChart>
                 </ChartContainer>
             </CardContent>
