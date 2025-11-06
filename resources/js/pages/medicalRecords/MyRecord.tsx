@@ -19,7 +19,7 @@ import { InfiniteScrollRef } from '@inertiajs/core';
 import { Form, Head, InfiniteScroll, Link } from '@inertiajs/react';
 import { format } from 'date-fns/format';
 import { ClipboardIcon, EraserIcon, RefreshCcwDotIcon, SearchIcon } from 'lucide-react';
-import { Fragment, useRef } from 'react';
+import { Activity, useRef } from 'react';
 
 interface MyRecordProps {
     medicalRecord: MedicalRecord;
@@ -117,7 +117,8 @@ export default function MyRecord({ medicalRecord, entries }: Readonly<MyRecordPr
 
                     <HeadingSmall title="Entries" description="Check your medical record entries." />
 
-                    {!hasEntries && (
+                    {/* EMPTY STATE */}
+                    <Activity mode={hasEntries ? 'hidden' : 'visible'}>
                         <Empty className="mt-4 border border-dashed">
                             <EmptyHeader>
                                 <EmptyMedia variant="icon">
@@ -144,94 +145,88 @@ export default function MyRecord({ medicalRecord, entries }: Readonly<MyRecordPr
                                 </Button>
                             </EmptyContent>
                         </Empty>
-                    )}
+                    </Activity>
 
-                    {hasEntries && (
-                        <Fragment>
-                            <div className="flex items-end justify-between">
-                                <Form
-                                    {...medicalRecords.myRecord.form()}
-                                    options={{ preserveScroll: true, replace: true }}
-                                    disableWhileProcessing
-                                    className="mt-4 inert:pointer-events-none inert:opacity-50 inert:grayscale-100"
-                                >
-                                    <Field className="max-w-sm">
-                                        <FieldLabel htmlFor="search">Search</FieldLabel>
-                                        <ButtonGroup>
-                                            <Input
-                                                type="search"
-                                                id="search"
-                                                name="search"
-                                                placeholder="e.g. Blood Test"
-                                            />
+                    {/* ENTRIES LIST */}
+                    <Activity mode={hasEntries ? 'visible' : 'hidden'}>
+                        <div className="flex items-end justify-between">
+                            <Form
+                                {...medicalRecords.myRecord.form()}
+                                options={{ preserveScroll: true, replace: true }}
+                                disableWhileProcessing
+                                className="mt-4 inert:pointer-events-none inert:opacity-50 inert:grayscale-100"
+                            >
+                                <Field className="max-w-sm">
+                                    <FieldLabel htmlFor="search">Search</FieldLabel>
+                                    <ButtonGroup>
+                                        <Input type="search" id="search" name="search" placeholder="e.g. Blood Test" />
 
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                aria-label="Reset results"
-                                                title="Reset results"
-                                                asChild
-                                            >
-                                                <Link href={myRecord()} prefetch as="button">
-                                                    <EraserIcon aria-hidden />
-                                                </Link>
-                                            </Button>
-                                            <Button type="submit" aria-label="Search" title="Search">
-                                                <SearchIcon aria-hidden />
-                                            </Button>
-                                        </ButtonGroup>
-                                    </Field>
-                                </Form>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            aria-label="Reset results"
+                                            title="Reset results"
+                                            asChild
+                                        >
+                                            <Link href={myRecord()} prefetch as="button">
+                                                <EraserIcon aria-hidden />
+                                            </Link>
+                                        </Button>
+                                        <Button type="submit" aria-label="Search" title="Search">
+                                            <SearchIcon aria-hidden />
+                                        </Button>
+                                    </ButtonGroup>
+                                </Field>
+                            </Form>
 
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    onClick={fetchNext}
-                                    title="Load more entries"
-                                    aria-label="Load more entries"
-                                    disabled={entries.next_cursor === null && !infiniteScrollRef.current?.hasNext()}
-                                >
-                                    <RefreshCcwDotIcon aria-hidden />
-                                </Button>
-                            </div>
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={fetchNext}
+                                title="Load more entries"
+                                aria-label="Load more entries"
+                                disabled={entries.next_cursor === null && !infiniteScrollRef.current?.hasNext()}
+                            >
+                                <RefreshCcwDotIcon aria-hidden />
+                            </Button>
+                        </div>
 
-                            <div className="mt-2 overflow-hidden rounded-lg border">
-                                <InfiniteScroll
-                                    ref={infiniteScrollRef}
-                                    data="entries"
-                                    manual
-                                    itemsElement="#table-body"
-                                    startElement="#table-body"
-                                >
-                                    <Table>
-                                        <TableHeader id="table-header">
-                                            <TableRow>
-                                                <TableHead className="w-[100px]">ID</TableHead>
-                                                <TableHead>Title</TableHead>
-                                                <TableHead className="w-[150px]">Type</TableHead>
-                                                <TableHead className="w-[150px] text-right">Actions</TableHead>
+                        <div className="mt-2 overflow-hidden rounded-lg border">
+                            <InfiniteScroll
+                                ref={infiniteScrollRef}
+                                data="entries"
+                                manual
+                                itemsElement="#table-body"
+                                startElement="#table-body"
+                            >
+                                <Table>
+                                    <TableHeader id="table-header">
+                                        <TableRow>
+                                            <TableHead className="w-[100px]">ID</TableHead>
+                                            <TableHead>Title</TableHead>
+                                            <TableHead className="w-[150px]">Type</TableHead>
+                                            <TableHead className="w-[150px] text-right">Actions</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+
+                                    <TableBody id="table-body">
+                                        {entries?.data.map((entry) => (
+                                            <TableRow key={entry.id} className="*:not-last:w-max">
+                                                <TableCell className="font-medium">{entry.id}</TableCell>
+                                                <TableCell>{entry.title}</TableCell>
+                                                <TableCell className="capitalize">
+                                                    {normalizeString(entry.entry_type)}
+                                                </TableCell>
+                                                <TableCell className="inline-flex w-full justify-end gap-2">
+                                                    <PatientEntryViewModal entry={entry} />
+                                                </TableCell>
                                             </TableRow>
-                                        </TableHeader>
-
-                                        <TableBody id="table-body">
-                                            {entries?.data.map((entry) => (
-                                                <TableRow key={entry.id} className="*:not-last:w-max">
-                                                    <TableCell className="font-medium">{entry.id}</TableCell>
-                                                    <TableCell>{entry.title}</TableCell>
-                                                    <TableCell className="capitalize">
-                                                        {normalizeString(entry.entry_type)}
-                                                    </TableCell>
-                                                    <TableCell className="inline-flex w-full justify-end gap-2">
-                                                        <PatientEntryViewModal entry={entry} />
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </InfiniteScroll>
-                            </div>
-                        </Fragment>
-                    )}
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </InfiniteScroll>
+                        </div>
+                    </Activity>
                 </section>
             </div>
         </Layout>
