@@ -41,7 +41,7 @@ export default function Welcome({ latestArticles }: Readonly<WelcomeProps>) {
                             clipPath:
                                 'polygon(63.1% 29.5%, 100% 17.1%, 76.6% 3%, 48.4% 0%, 44.6% 4.7%, 54.5% 25.3%, 59.8% 49%, 55.2% 57.8%, 44.4% 57.2%, 27.8% 47.9%, 35.1% 81.5%, 0% 97.7%, 39.2% 100%, 35.2% 81.4%, 97.2% 52.8%, 63.1% 29.5%)',
                         }}
-                        className="aspect-801/1036 w-[50.0625rem] bg-linear-to-tr from-[#12ABC9] to-[#124fc9] opacity-30"
+                        className="aspect-801/1036 w-200.25 bg-linear-to-tr from-[#12ABC9] to-[#124fc9] opacity-30"
                     />
                 </div>
 
@@ -72,7 +72,7 @@ export default function Welcome({ latestArticles }: Readonly<WelcomeProps>) {
                                 </div>
                             </div>
                             <div className="mt-14 flex justify-end gap-8 sm:-mt-44 sm:justify-start sm:pl-20 lg:mt-0 lg:pl-0">
-                                <div className="ml-auto w-44 flex-none space-y-8 pt-32 sm:ml-0 sm:pt-80 lg:order-last lg:pt-36 xl:order-none xl:pt-80">
+                                <div className="ml-auto w-44 flex-none space-y-8 pt-32 sm:ml-0 sm:pt-80 lg:order-last lg:pt-36 xl:order-0 xl:pt-80">
                                     <div className="relative">
                                         <img
                                             alt="Doctor wearing a mask, with a stethoscope around his neck"

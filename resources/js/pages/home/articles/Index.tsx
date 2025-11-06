@@ -64,7 +64,7 @@ export default function Index({ articles: paginatedArticles, categories }: Reado
 
                         return (
                             <li key={key} className="group relative grid gap-4">
-                                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg">
+                                <div className="relative aspect-video w-full overflow-hidden rounded-lg">
                                     <img
                                         src={thumbnail}
                                         alt={article.title}

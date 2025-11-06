@@ -35,9 +35,9 @@ export default function Show({ prescription }: Readonly<ShowProps>) {
                         Prescription Details - #{prescription.id}
                     </h1>
 
-                    <span aria-live="polite" role="status" title={validLabel} className={validationClass}>
+                    <output aria-live="polite" title={validLabel} className={validationClass}>
                         {validLabel}
-                    </span>
+                    </output>
 
                     <ItemHeader className="mx-auto grid text-center">
                         <p>

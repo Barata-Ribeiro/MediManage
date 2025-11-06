@@ -34,7 +34,7 @@ export default function Edit({ medicalRecord, medicalRecordEntry }: Readonly<Edi
         },
     ];
 
-    const appointmentInfo = medicalRecordEntry.appointment!;
+    const appointmentInfo = medicalRecordEntry.appointment;
     const appointmentDate = String(appointmentInfo.appointment_date).replaceAll('-', '/');
 
     const patientFullName = medicalRecord.patient_info.full_name;
