@@ -1,8 +1,11 @@
+import AppLogo from '@/components/app-logo';
 import { NavAdmin } from '@/components/navigation/nav-admin';
 import NavAttendant from '@/components/navigation/nav-attendant';
 import { NavDoctor } from '@/components/navigation/nav-doctor';
 import { NavFooter } from '@/components/navigation/nav-footer';
 import { NavMain } from '@/components/navigation/nav-main';
+import NavManager from '@/components/navigation/nav-manager';
+import { NavPatient } from '@/components/navigation/nav-patient';
 import { NavUser } from '@/components/navigation/nav-user';
 import {
     Sidebar,
@@ -17,8 +20,6 @@ import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { BriefcaseBusinessIcon, FolderIcon, LayoutGrid } from 'lucide-react';
-import AppLogo from './app-logo';
-import { NavPatient } from './navigation/nav-patient';
 
 const mainNavItems: NavItem[] = [
     {
@@ -61,6 +62,7 @@ export function AppSidebar() {
                 <NavPatient />
                 <NavAttendant />
                 <NavDoctor />
+                <NavManager />
                 <NavAdmin />
             </SidebarContent>
 
