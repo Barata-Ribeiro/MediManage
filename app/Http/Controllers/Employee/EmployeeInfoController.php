@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Employee;
 use App\Common\Helpers;
 use App\Http\Controllers\Controller;
 use App\Models\EmployeeInfo;
+use Auth;
 use DB;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Log;
 
 class EmployeeInfoController extends Controller
 {
@@ -45,5 +48,44 @@ class EmployeeInfoController extends Controller
             ->withQueryString();
 
         return response()->json($employees);
+    }
+
+    /**
+     * Display a listing of the employee info.
+     */
+    public function index(Request $request)
+    {
+        Log::info('Employee Info: Employees registered list', ['action_user_id' => Auth::id()]);
+
+        $perPage = (int) $request->query('per_page', 10);
+        $search = trim($request->query('search'));
+        $sortBy = $request->query('sort_by', 'id');
+        $sortDir = strtolower($request->query('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+
+        $allowedSorts = ['id', 'first_name', 'last_name', 'position', 'is_active', 'created_at', 'updated_at'];
+        if (! in_array($sortBy, $allowedSorts)) {
+            $sortBy = 'id';
+        }
+
+        $isSql = $this->isSqlDriver;
+
+        $employees = EmployeeInfo::select(['id', 'first_name', 'last_name', 'position', 'is_active', 'created_at', 'updated_at'])
+            ->with('user')->when($request->filled('search'), function ($q) use ($isSql, $search) {
+                if ($isSql) {
+                    $booleanQuery = Helpers::buildBooleanQuery($search);
+                    $q->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'specialization', 'position'], $booleanQuery, ['mode' => 'boolean'])
+                        ->orWhereHas('user', fn ($q2) => $q2->whereLike('name', "%$search%")->orWhereLike('email', "%$search%"));
+                } else {
+                    $q->whenLike('first_name', "%$search%")
+                        ->orWhenLike('last_name', "%$search%")->orWhenLike('phone_number', "%$search%")
+                        ->orWhenLike('address', "%$search%")->orWhenLike('specialization', "%$search%")->orWhenLike('position', "%$search%")
+                        ->orWhereHas('user', fn ($q2) => $q2->whereLike('name', "%$search%")->orWhereLike('email', "%$search%"));
+                }
+            })
+            ->orderBy($sortBy, $sortDir)
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return Inertia::render('employees/Index', ['employees' => $employees]);
     }
 }
