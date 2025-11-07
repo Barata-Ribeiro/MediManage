@@ -44,9 +44,46 @@ export default function NewEmployeeForm() {
                 <Fragment>
                     <h3 className="text-lg leading-6 font-bold underline underline-offset-2">Employee Information</h3>
 
-                    {/* NAME */}
+                    {/* ACCOUNT */}
                     <FieldSet className="rounded-lg border bg-background p-4">
-                        <FieldLegend className="px-1 font-semibold">Name</FieldLegend>
+                        <FieldLegend className="px-1 font-semibold">Account Information</FieldLegend>
+                        <FieldGroup className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                            <Field aria-invalid={Boolean(errors.name)}>
+                                <FieldLabel htmlFor="name">Username</FieldLabel>
+                                <Input
+                                    id="name"
+                                    type="text"
+                                    autoFocus
+                                    tabIndex={0}
+                                    name="name"
+                                    placeholder="e.g. johndoe"
+                                    required
+                                    aria-required
+                                    aria-invalid={Boolean(errors.name)}
+                                />
+
+                                <InputError message={errors.name} className="mt-2" />
+                            </Field>
+                            <Field aria-invalid={Boolean(errors.email)}>
+                                <FieldLabel htmlFor="email">Email address</FieldLabel>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    name="email"
+                                    placeholder="e.g. email@example.com"
+                                    required
+                                    aria-required
+                                    aria-invalid={Boolean(errors.email)}
+                                />
+
+                                <InputError message={errors.email} className="mt-2" />
+                            </Field>
+                        </FieldGroup>
+                    </FieldSet>
+
+                    {/* PERSONAL DETAILS */}
+                    <FieldSet className="rounded-lg border bg-background p-4">
+                        <FieldLegend className="px-1 font-semibold">Personal Details</FieldLegend>
                         <FieldGroup className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                             <Field>
                                 <FieldLabel htmlFor="first_name">First Name</FieldLabel>
@@ -74,13 +111,6 @@ export default function NewEmployeeForm() {
                                 />
                                 <InputError message={errors.last_name} className="mt-2" />
                             </Field>
-                        </FieldGroup>
-                    </FieldSet>
-
-                    {/* PERSONAL DETAILS */}
-                    <FieldSet className="rounded-lg border bg-background p-4">
-                        <FieldLegend className="px-1 font-semibold">Personal Details</FieldLegend>
-                        <FieldGroup className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                             <Field>
                                 <FieldLabel htmlFor="gender">Gender</FieldLabel>
                                 <Input
@@ -112,6 +142,8 @@ export default function NewEmployeeForm() {
                                             mode="single"
                                             selected={dateOfBirth ?? undefined}
                                             captionLayout="dropdown"
+                                            showOutsideDays={false}
+                                            disabled={(date) => date < new Date('1900-01-01')}
                                             onSelect={(date) => {
                                                 setDateOfBirth(date);
                                                 setBodOpen(false);
@@ -221,6 +253,10 @@ export default function NewEmployeeForm() {
                                             mode="single"
                                             selected={licenseExpirationDate ?? undefined}
                                             captionLayout="dropdown"
+                                            showOutsideDays={false}
+                                            startMonth={new Date()}
+                                            endMonth={new Date(2030, 11)}
+                                            disabled={(date) => date < new Date('1900-01-01')}
                                             onSelect={(date) => {
                                                 setLicenseExpirationDate(date);
                                                 setLedOpen(false);
@@ -297,6 +333,8 @@ export default function NewEmployeeForm() {
                                             mode="single"
                                             selected={hireDate ?? undefined}
                                             captionLayout="dropdown"
+                                            showOutsideDays={false}
+                                            disabled={(date) => date < new Date('1900-01-01')}
                                             onSelect={(date) => {
                                                 setHireDate(date);
                                                 setHdOpen(false);
@@ -325,6 +363,10 @@ export default function NewEmployeeForm() {
                                             mode="single"
                                             selected={terminationDate ?? undefined}
                                             captionLayout="dropdown"
+                                            showOutsideDays={false}
+                                            startMonth={new Date()}
+                                            endMonth={new Date(2030, 11)}
+                                            disabled={(date) => date < new Date('1900-01-01')}
                                             onSelect={(date) => {
                                                 setTerminationDate(date);
                                                 setTdOpen(false);
