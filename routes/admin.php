@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Models\EmployeeInfo;
 use App\Models\PatientInfo;
 
 Route::middleware(['auth', 'role:Super Admin'])->prefix('admin')->group(function () {
@@ -31,7 +32,7 @@ Route::middleware(['auth', 'role:Super Admin'])->prefix('admin')->group(function
     Route::prefix('mailable')->group(function () {
         Route::get('/new-account', function () {
             $user = Auth::user();
-            $password = 'temporaryPassword123'; // Example password
+            $password = Str::random(12);
 
             return new \App\Mail\NewAccountMail($user, $password);
         });
@@ -41,6 +42,13 @@ Route::middleware(['auth', 'role:Super Admin'])->prefix('admin')->group(function
             $patientInfo = PatientInfo::factory()->makeOne()->first();
 
             return new \App\Mail\AccountAssociationMail($user, $patientInfo);
+        });
+
+        Route::get('/employee-registration', function () {
+            $employee = EmployeeInfo::with('user')->inRandomOrder()->first();
+            $password = Str::random(12);
+
+            return new \App\Mail\EmployeeInfoMail($employee, $password);
         });
     });
 });
