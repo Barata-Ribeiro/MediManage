@@ -5,10 +5,11 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import employee_info from '@/routes/employee_info';
 import invoices from '@/routes/invoices';
 import { type NavItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { ScrollTextIcon } from 'lucide-react';
+import { IdCardLanyardIcon, ScrollTextIcon } from 'lucide-react';
 
 export default function NavManager() {
     const { props, url } = usePage<SharedData>();
@@ -22,6 +23,11 @@ export default function NavManager() {
             title: 'Invoices',
             href: invoices.index().url,
             icon: ScrollTextIcon,
+        },
+        {
+            title: 'Employees',
+            href: employee_info.index().url,
+            icon: IdCardLanyardIcon,
         },
     ];
 
