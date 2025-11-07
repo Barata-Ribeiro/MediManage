@@ -34,3 +34,5 @@ export type TableEmployeeInfo = Pick<
     EmployeeInfo,
     'id' | 'first_name' | 'last_name' | 'position' | 'is_active' | 'created_at' | 'updated_at'
 >;
+
+export type PaginationEmployees = Pagination<TableEmployeeInfo>;
