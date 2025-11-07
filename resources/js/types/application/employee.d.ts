@@ -3,9 +3,8 @@ import { User } from '@/types/admin/users';
 export interface EmployeeInfo {
     id: number;
     user_id?: number;
-    user?: User;
     medical_record_id: number;
-    medical_record?: MedicalRecord;
+
     first_name: string;
     last_name: string;
     full_name?: string;
@@ -28,6 +27,12 @@ export interface EmployeeInfo {
 
     created_at: Date;
     updated_at: Date;
+}
+
+export interface EmployeeInfoWithRelations extends EmployeeInfo {
+    user?: User;
+    medical_record?: MedicalRecord;
+    contracts?: unknown[];
 }
 
 export type TableEmployeeInfo = Pick<

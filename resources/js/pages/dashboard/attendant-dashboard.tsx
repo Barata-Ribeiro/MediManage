@@ -7,14 +7,14 @@ import { dashboard } from '@/routes';
 import { create } from '@/routes/appointments';
 import { BreadcrumbItem } from '@/types';
 import { PaginatedUpcomingAppointments } from '@/types/application/appointment';
-import { EmployeeInfo } from '@/types/application/employee';
+import { EmployeeInfoWithRelations } from '@/types/application/employee';
 import { Head, Link } from '@inertiajs/react';
 import { format } from 'date-fns/format';
 import { CalendarPlusIcon } from 'lucide-react';
 
 interface AttendantDashboardProps {
     data: {
-        attendantInfo: EmployeeInfo;
+        attendantInfo: EmployeeInfoWithRelations;
         upcomingToday: PaginatedUpcomingAppointments;
     };
 }

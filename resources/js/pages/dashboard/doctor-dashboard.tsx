@@ -8,13 +8,13 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem, ChartItem } from '@/types';
 import { PaginatedUpcomingAppointments } from '@/types/application/appointment';
-import { EmployeeInfo } from '@/types/application/employee';
+import { EmployeeInfoWithRelations } from '@/types/application/employee';
 import { Head } from '@inertiajs/react';
 import { format } from 'date-fns';
 
 interface DoctorDashboardProps {
     data: {
-        doctorInfo: EmployeeInfo;
+        doctorInfo: EmployeeInfoWithRelations;
         appointmentsGenderOverview: ChartItem;
         appointmentsStatusOverview: ChartItem;
         weeklyAppointmentsTrend: ChartItem;

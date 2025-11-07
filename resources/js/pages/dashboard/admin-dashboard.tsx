@@ -6,14 +6,14 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem, ChartItem, ComparisonItem } from '@/types';
 import { Role } from '@/types/admin/roles';
-import { EmployeeInfo } from '@/types/application/employee';
+import { EmployeeInfoWithRelations } from '@/types/application/employee';
 import { Head } from '@inertiajs/react';
 
 export type TotalUsersByRole = Record<Pick<Role, 'name'>['name'], ComparisonItem>;
 
 interface AdminDashboardProps {
     data: {
-        adminInfo: EmployeeInfo;
+        adminInfo: EmployeeInfoWithRelations;
         usersByRole: ChartItem;
         totalUsers: ComparisonItem;
         newUsersPerMonth: ChartItem;
