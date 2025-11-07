@@ -88,4 +88,11 @@ class EmployeeInfoController extends Controller
 
         return Inertia::render('employees/Index', ['employees' => $employees]);
     }
+
+    public function create()
+    {
+        Log::info('Employee Info: Accessed employee registration page', ['action_user_id' => Auth::id()]);
+
+        return Inertia::render('employees/Create');
+    }
 }
