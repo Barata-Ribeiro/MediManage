@@ -1,4 +1,5 @@
 import { User } from '@/types/admin/users';
+import { Contract } from '@/types/application/contract';
 
 export interface EmployeeInfo {
     id: number;
@@ -32,12 +33,12 @@ export interface EmployeeInfo {
 export interface EmployeeInfoWithRelations extends EmployeeInfo {
     user?: User;
     medical_record?: MedicalRecord;
-    contracts?: unknown[];
+    contracts?: Contract[];
 }
 
 export type TableEmployeeInfo = Pick<
     EmployeeInfo,
-    'id' | 'first_name' | 'last_name' | 'position' | 'is_active' | 'created_at' | 'updated_at'
+    'id' | 'first_name' | 'last_name' | 'position' | 'is_active' | 'created_at' | 'updated_at' | 'full_name'
 >;
 
 export type PaginationEmployees = Pagination<TableEmployeeInfo>;
