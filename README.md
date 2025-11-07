@@ -153,6 +153,7 @@ There are bugs and/or implementations that require some attention.
 
 - Adjust user's home dashboard with better info.
 - Add dashboard's routes for manager.
+- Implement employee details UI.
 
 ## 🤝 Contributing
 
