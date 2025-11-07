@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Employee;
 use App\Common\Helpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Employee\EmployeeRequest;
+use App\Mail\EmployeeInfoMail;
 use App\Models\EmployeeInfo;
 use Auth;
 use DB;
@@ -127,11 +128,9 @@ class EmployeeInfoController extends Controller
 
             Log::info('Employee Info: A new employee was registered in the system.', ['action_user_id' => Auth::id()]);
 
-            // TODO: Enable email sending after setting up mail server
-            // Mail::to($employee->user->email)->send(new EmployeeInfoMail($employee, $genPassword));
+            Mail::to($employee->user->email)->send(new EmployeeInfoMail($employee, $genPassword));
 
-            // TODO: Redirect to employee details page after implementing the show page
-            return to_route('employees.show', ['employee' => $employee->id])->with('success', 'Employee registered successfully.');
+            return to_route('employee_info.show', ['employee' => $employee->id])->with('success', 'Employee registered successfully.');
         } catch (Exception $e) {
             Log::error('Employee Info: Error while registering new employee', [
                 'action_user_id' => Auth::id(),
@@ -141,5 +140,20 @@ class EmployeeInfoController extends Controller
             return back()->withInput()->with('error', 'An error occurred while registering the employee. Please try again.');
         }
 
+    }
+
+    /**
+     * Display the specified employee info.
+     */
+    public function show(EmployeeInfo $employeeInfo)
+    {
+        Log::info('Employee Info: Accessed employee details page', [
+            'action_user_id' => Auth::id(),
+            'employee_info_id' => $employeeInfo->id,
+        ]);
+
+        $employeeInfo->load(['user', 'contracts']);
+
+        return Inertia::render('employees/Show', ['employee' => $employeeInfo]);
     }
 }
