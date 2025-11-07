@@ -1,9 +1,22 @@
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
+import DropdownMenuCopyButton from '@/components/ui-helpers/dropdown-menu-copy-button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { normalizeString } from '@/lib/utils';
+import employee_info from '@/routes/employee_info';
 import { TableEmployeeInfo } from '@/types/application/employee';
+import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
+import { MoreHorizontal } from 'lucide-react';
 
 export const column: ColumnDef<TableEmployeeInfo>[] = [
     {
@@ -50,5 +63,32 @@ export const column: ColumnDef<TableEmployeeInfo>[] = [
         header: ({ column }) => <DataTableColumnHeader column={column} title="Updated At" />,
         cell: ({ row }) => format(row.original.updated_at, 'PPpp'),
         enableSorting: true,
+    },
+
+    {
+        id: 'actions',
+        cell: ({ row }) => (
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuItem asChild>
+                        <DropdownMenuCopyButton content={row.original.full_name}>Copy Name</DropdownMenuCopyButton>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                        <Link href={employee_info.show(row.original.id)} prefetch>
+                            Show
+                        </Link>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        ),
     },
 ];
