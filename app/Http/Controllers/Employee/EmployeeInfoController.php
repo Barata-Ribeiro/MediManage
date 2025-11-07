@@ -4,12 +4,16 @@ namespace App\Http\Controllers\Employee;
 
 use App\Common\Helpers;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Employee\EmployeeRequest;
 use App\Models\EmployeeInfo;
 use Auth;
 use DB;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
+use Mail;
+use Str;
 
 class EmployeeInfoController extends Controller
 {
@@ -89,10 +93,53 @@ class EmployeeInfoController extends Controller
         return Inertia::render('employees/Index', ['employees' => $employees]);
     }
 
+    /**
+     * Show the form for creating a new employee info.
+     */
     public function create()
     {
         Log::info('Employee Info: Accessed employee registration page', ['action_user_id' => Auth::id()]);
 
         return Inertia::render('employees/Create');
+    }
+
+    /**
+     * Store a newly created employee info in storage.
+     */
+    public function store(EmployeeRequest $request)
+    {
+        try {
+            $data = $request->validated();
+
+            $genPassword = Str::random(12);
+            $request->merge(['password' => $genPassword]);
+
+            $userData = [
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => $request['password'],
+            ];
+
+            $employeeData = $request->except(['name', 'email', 'password']);
+
+            $employee = EmployeeInfo::create($employeeData);
+            $employee->user()->create($userData);
+
+            Log::info('Employee Info: A new employee was registered in the system.', ['action_user_id' => Auth::id()]);
+
+            // TODO: Enable email sending after setting up mail server
+            // Mail::to($employee->user->email)->send(new EmployeeInfoMail($employee, $genPassword));
+
+            // TODO: Redirect to employee details page after implementing the show page
+            return to_route('employees.show', ['employee' => $employee->id])->with('success', 'Employee registered successfully.');
+        } catch (Exception $e) {
+            Log::error('Employee Info: Error while registering new employee', [
+                'action_user_id' => Auth::id(),
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->withInput()->with('error', 'An error occurred while registering the employee. Please try again.');
+        }
+
     }
 }
