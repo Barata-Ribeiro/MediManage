@@ -26,8 +26,7 @@ export default function Index({ employees }: Readonly<{ employees: PaginationEmp
                     <Heading title="Employees" description="Listing all employees in the system." />
 
                     <Button variant="secondary" asChild>
-                        {/* TODO: Implement route for employee creation */}
-                        <Link href={``} prefetch>
+                        <Link href={employee_info.create()} prefetch>
                             <UserPlusIcon aria-hidden /> Register Employee
                         </Link>
                     </Button>
