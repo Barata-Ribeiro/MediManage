@@ -43,6 +43,8 @@ class ContractSeeder extends Seeder
                     'contract_type' => 'full_time',
                 ]);
 
+                $employee->update(['termination_date' => $endDate->copy()->subDay()]);
+
                 $startDate = $endDate;
             }
         }
