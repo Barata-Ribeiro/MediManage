@@ -1,3 +1,4 @@
+import EmployeeAccountInfoItem from '@/components/helpers/employee-account-info-item';
 import EmployeePersonalInfoItem from '@/components/helpers/employee-personal-info-item';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -98,9 +99,13 @@ export default function Show({ employee: data }: Readonly<{ employee: EmployeeIn
                             <EmployeePersonalInfoItem employee={rest} dateOfBirth={dateOfBirth} />
                         </TabsContent>
 
-                        <TabsContent value="account"></TabsContent>
+                        <TabsContent value="account">
+                            <EmployeeAccountInfoItem account={user!} />
+                        </TabsContent>
 
-                        <TabsContent value="contracts"></TabsContent>
+                        <TabsContent value="contracts">
+                            {/* TODO: Employee Contracts With Progress Component */}
+                        </TabsContent>
                     </Tabs>
                 </div>
             </article>
