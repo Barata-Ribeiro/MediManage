@@ -1,5 +1,7 @@
+import EmployeePersonalInfoItem from '@/components/helpers/employee-personal-info-item';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useInitials } from '@/hooks/use-initials';
 import Layout from '@/layouts/app-layout';
 import employee_info from '@/routes/employee_info';
@@ -84,7 +86,23 @@ export default function Show({ employee: data }: Readonly<{ employee: EmployeeIn
                     </div>
                 </header>
 
-                {/* TODO: Employee Details Content Goes Here */}
+                <div id="tabs">
+                    <Tabs defaultValue="personal" className="py-4">
+                        <TabsList className="flex h-auto flex-wrap items-center justify-start space-y-1">
+                            <TabsTrigger value="personal">Personal</TabsTrigger>
+                            <TabsTrigger value="account">Account</TabsTrigger>
+                            <TabsTrigger value="contracts">Contracts</TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="personal">
+                            <EmployeePersonalInfoItem employee={rest} dateOfBirth={dateOfBirth} />
+                        </TabsContent>
+
+                        <TabsContent value="account"></TabsContent>
+
+                        <TabsContent value="contracts"></TabsContent>
+                    </Tabs>
+                </div>
             </article>
         </Layout>
     );
