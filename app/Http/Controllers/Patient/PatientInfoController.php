@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Patient;
 use App\Common\Helpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Patient\PatientRequest;
+use App\Http\Requests\QueryRequest;
 use App\Mail\AccountAssociationMail;
 use App\Mail\NewAccountMail;
 use App\Models\PatientInfo;
@@ -65,7 +66,7 @@ class PatientInfoController extends Controller
     /**
      * Search for patients based on query parameters.
      */
-    public function search(Request $request)
+    public function search(QueryRequest $request)
     {
         if (Auth::user()->hasRole('Patient')) {
             return to_route('dashboard')->with('error', 'You do not have permission to edit this patient information.');
@@ -74,7 +75,10 @@ class PatientInfoController extends Controller
         $query = PatientInfo::select(['id', 'user_id', 'first_name', 'last_name', 'date_of_birth', 'phone_number']);
 
         if ($request->filled('search')) {
-            $searchTerm = trim($request->query('search'));
+            $validated = $request->validated();
+
+            $searchTerm = trim($validated['search'] ?? '');
+
             $isSql = $this->isSqlDriver;
             $booleanQuery = Helpers::buildBooleanQuery($searchTerm);
 
@@ -173,8 +177,8 @@ class PatientInfoController extends Controller
         }
 
         $request->validate([
-            'name' => 'required|string|max:255|unique:users,name',
-            'email' => 'required|string|email|max:255|unique:users,email',
+            'name' => ['required', 'string', 'between:5,255', 'unique:users,name'],
+            'email' => ['required', 'string', 'email', 'between:5,255', 'unique:users,email'],
         ]);
 
         $genPassword = Str::random(12);
@@ -213,7 +217,7 @@ class PatientInfoController extends Controller
         }
 
         $request->validate([
-            'email' => 'required|exists:users,email|unique:users,patient_info_id',
+            'email' => ['required', 'exists:users,email', 'unique:users,patient_info_id'],
         ]);
 
         try {
@@ -241,14 +245,17 @@ class PatientInfoController extends Controller
     /**
      * Simple search for patients (for FETCH/AXIOS requests).
      */
-    public function simpleSearch(Request $request)
+    public function simpleSearch(QueryRequest $request)
     {
-        $search = trim($request->query('q'));
+        $validated = $request->validated();
+
+        $search = trim($validated['q'] ?? '');
+
         $medicalRecordIsNull = $request->get('medical_record_is_null', FILTER_VALIDATE_BOOLEAN);
 
         $isSql = $this->isSqlDriver;
 
-        $patients = PatientInfo::when($request->filled('q'), function ($q) use ($isSql, $search) {
+        $patients = PatientInfo::when($search, function ($q) use ($isSql, $search) {
             if ($isSql) {
                 $booleanQuery = Helpers::buildBooleanQuery($search);
                 $q->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'insurance_company', 'emergency_contact_name'], $booleanQuery, ['mode' => 'boolean']);

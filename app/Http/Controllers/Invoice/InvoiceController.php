@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Invoice;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\QueryRequest;
 use App\Models\Invoice;
 use Auth;
 use Exception;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
 use PDF;
@@ -17,14 +17,16 @@ class InvoiceController extends Controller
     /**
      * Display a listing of all invoices.
      */
-    public function index(Request $request)
+    public function index(QueryRequest $request)
     {
         Log::info('Invoice: Viewed all invoices', ['action_user_id' => Auth::id()]);
 
-        $perPage = (int) $request->query('per_page', 10);
-        $search = trim($request->query('search'));
-        $sortBy = $request->query('sort_by', 'id');
-        $sortDir = strtolower($request->query('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $validated = $request->validated();
+
+        $perPage = $validated['per_page'] ?? 10;
+        $search = trim($validated['search'] ?? '');
+        $sortBy = $validated['sort_by'] ?? 'id';
+        $sortDir = $validated['sort_dir'] ?? 'asc';
 
         $allowedSorts = ['id', 'consultation_date', 'patient_info.first_name', 'due_date', 'amount', 'payment_method', 'status'];
         if (! in_array($sortBy, $allowedSorts)) {
@@ -38,7 +40,7 @@ class InvoiceController extends Controller
             $invoices->leftJoin('patient_info', 'patient_info.id', '=', 'invoices.patient_info_id');
         }
 
-        $invoices = $invoices->when($request->filled('search'), fn ($q) => $q->whereLike('notes', "%$search%")
+        $invoices = $invoices->when($search, fn ($q) => $q->whereLike('notes', "%$search%")
             ->orWhereLike('payment_method', "%$search%")->orWhereLike('status', "%$search%"))
             ->orWhereHas('patientInfo', fn ($q) => $q->whereLike('first_name', "%$search%")->orWhereLike('last_name', "%$search%"))
             ->orderBy($sortBy, $sortDir)
@@ -51,16 +53,18 @@ class InvoiceController extends Controller
     /**
      * Display a listing of the patient's invoices.
      */
-    public function myInvoices(Request $request)
+    public function myInvoices(QueryRequest $request)
     {
         Log::info('Patient Invoice: Viewed own invoices', ['action_user_id' => Auth::id()]);
 
         $patientInfo = Auth::user()->patientInfo;
 
-        $perPage = (int) $request->query('per_page', 10);
-        $search = trim($request->query('search'));
-        $sortBy = $request->query('sort_by', 'id');
-        $sortDir = strtolower($request->query('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $validated = $request->validated();
+
+        $perPage = $validated['per_page'] ?? 10;
+        $search = trim($validated['search'] ?? '');
+        $sortBy = $validated['sort_by'] ?? 'id';
+        $sortDir = $validated['sort_dir'] ?? 'asc';
 
         $allowedSorts = ['id', 'consultation_date', 'due_date', 'amount', 'payment_method', 'status'];
         if (! in_array($sortBy, $allowedSorts)) {
@@ -68,7 +72,7 @@ class InvoiceController extends Controller
         }
 
         $invoices = $patientInfo->invoices()
-            ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($search) {
+            ->when($search, fn ($q) => $q->where(function ($q) use ($search) {
                 $q->whereLike('notes', "%$search%")
                     ->orWhereLike('payment_method', "%$search%")
                     ->orWhereLike('status', "%$search%");

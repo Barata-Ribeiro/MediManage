@@ -6,6 +6,7 @@ use App\Common\Helpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Medical\MedicalRecordEntryRequest;
 use App\Http\Requests\Medical\MedicalRecordRequest;
+use App\Http\Requests\QueryRequest;
 use App\Models\MedicalRecord;
 use App\Models\MedicalRecordEntry;
 use Auth;
@@ -153,9 +154,11 @@ class MedicalRecordController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(MedicalRecord $medicalRecord, Request $request)
+    public function show(MedicalRecord $medicalRecord, QueryRequest $request)
     {
-        $search = trim($request->query('search'));
+        $validated = $request->validated();
+
+        $search = trim($validated['search'] ?? '');
 
         Log::info('Medical Records: Viewed medical record', ['action_user_id' => Auth::id(), 'medical_record_id' => $medicalRecord->id]);
 
@@ -168,7 +171,7 @@ class MedicalRecordController extends Controller
 
         $entries = MedicalRecordEntry::select($columns)
             ->whereMedicalRecordId($medicalRecord->id)
-            ->when($request->filled('search'), fn ($q) => $q->where(function ($q2) use ($search, $isSql) {
+            ->when($search, fn ($q) => $q->where(function ($q2) use ($search, $isSql) {
                 if ($isSql) {
                     $booleanQuery = Helpers::buildBooleanQuery($search);
                     $q2->whereFullText(['title', 'content_html'], $booleanQuery, ['mode' => 'boolean']);

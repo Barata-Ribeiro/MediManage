@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Medical\Prescription;
 use App\Common\Helpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Medical\PrescriptionRequest;
+use App\Http\Requests\QueryRequest;
 use App\Models\EmployeeInfo;
 use App\Models\PatientInfo;
 use App\Models\Prescription;
 use Auth;
 use DB;
 use Exception;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
 
@@ -27,7 +27,7 @@ class DoctorPrescriptionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(EmployeeInfo $doctor, Request $request)
+    public function index(EmployeeInfo $doctor, QueryRequest $request)
     {
         if (Auth::user()->id !== $doctor->user_id) {
             return to_route('prescriptions.index', Auth::user()->employeeInfo->id);
@@ -35,10 +35,12 @@ class DoctorPrescriptionController extends Controller
 
         Log::info('Doctor Prescription: Viewed issued prescriptions', ['action_user_id' => Auth::id()]);
 
-        $perPage = (int) $request->query('per_page', 10);
-        $search = trim($request->query('search'));
-        $sortBy = $request->query('sort_by', 'id');
-        $sortDir = strtolower($request->query('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $validated = $request->validated();
+
+        $perPage = $validated['per_page'] ?? 10;
+        $search = trim($validated['search'] ?? '');
+        $sortBy = $validated['sort_by'] ?? 'id';
+        $sortDir = $validated['sort_dir'] ?? 'asc';
 
         $allowedSorts = ['id', 'patient_info.first_name', 'patient_info.last_name', 'date_issued', 'date_expires', 'is_valid', 'updated_at'];
         if (! in_array($sortBy, $allowedSorts)) {
@@ -66,7 +68,7 @@ class DoctorPrescriptionController extends Controller
             $query->leftJoin('patient_info', 'patient_info.id', '=', 'prescriptions.patient_info_id');
         }
 
-        $query->when($request->filled('search'), function ($qr) use ($search, $isSql) {
+        $query->when($search, function ($qr) use ($search, $isSql) {
             if ($isSql) {
                 $booleanQuery = Helpers::buildBooleanQuery($search);
                 $qr->whereFullText('prescription_details_html', $booleanQuery, ['mode' => 'boolean'])

@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Medical\Prescription;
 
 use App\Common\Helpers;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\QueryRequest;
 use App\Models\Prescription;
 use Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use DB;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Inertia\Inertia;
 use Log;
@@ -27,16 +27,18 @@ class PrescriptionController extends Controller
     /**
      * Display a listing of the requesting user prescriptions.
      */
-    public function myPrescriptions(Request $request)
+    public function myPrescriptions(QueryRequest $request)
     {
         Log::info('Patient Prescription: Viewed own prescriptions', ['action_user_id' => Auth::id()]);
 
         $user = Auth::user();
 
-        $perPage = (int) $request->query('per_page', 10);
-        $search = trim($request->query('search'));
-        $sortBy = $request->query('sort_by', 'id');
-        $sortDir = strtolower($request->query('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $validated = $request->validated();
+
+        $perPage = $validated['per_page'] ?? 10;
+        $search = trim($validated['search'] ?? '');
+        $sortBy = $validated['sort_by'] ?? 'id';
+        $sortDir = $validated['sort_dir'] ?? 'asc';
 
         $allowedSorts = ['id', 'employee_info.first_name', 'employee_info.specialization', 'date_issued', 'date_expires', 'updated_at'];
         if (! in_array($sortBy, $allowedSorts)) {
@@ -64,7 +66,7 @@ class PrescriptionController extends Controller
             $query->leftJoin('employee_info', 'employee_info.id', '=', 'prescriptions.employee_info_id');
         }
 
-        $query->when($request->filled('search'), function ($qr) use ($search, $isSql) {
+        $query->when($search, function ($qr) use ($search, $isSql) {
             if ($isSql) {
                 $booleanQuery = Helpers::buildBooleanQuery($search);
                 $qr->whereFullText('prescription_details_html', $booleanQuery, ['mode' => 'boolean'])
