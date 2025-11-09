@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Employee;
 use App\Common\Helpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Employee\EmployeeRequest;
+use App\Http\Requests\QueryRequest;
 use App\Mail\EmployeeInfoMail;
 use App\Models\EmployeeInfo;
 use Auth;
 use DB;
 use Exception;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
 use Mail;
@@ -28,15 +28,17 @@ class EmployeeInfoController extends Controller
     /**
      * Simple search for doctors (for FETCH/AXIOS requests).
      */
-    public function doctorSimpleSearch(Request $request)
+    public function doctorSimpleSearch(QueryRequest $request)
     {
-        $search = trim($request->query('q'));
+        $validated = $request->validated();
+
+        $search = trim($validated['q'] ?? '');
 
         $isSql = $this->isSqlDriver;
 
         $employees = EmployeeInfo::whereIsActive(true)
             ->wherePosition('doctor')
-            ->when($request->filled('q'), function ($q) use ($search, $isSql) {
+            ->when($search, function ($q) use ($search, $isSql) {
                 if ($isSql) {
                     $booleanQuery = Helpers::buildBooleanQuery($search);
                     $q->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'specialization', 'position'], $booleanQuery, ['mode' => 'boolean'])
@@ -58,14 +60,16 @@ class EmployeeInfoController extends Controller
     /**
      * Display a listing of the employee info.
      */
-    public function index(Request $request)
+    public function index(QueryRequest $request)
     {
         Log::info('Employee Info: Employees registered list', ['action_user_id' => Auth::id()]);
 
-        $perPage = (int) $request->query('per_page', 10);
-        $search = trim($request->query('search'));
-        $sortBy = $request->query('sort_by', 'id');
-        $sortDir = strtolower($request->query('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $validated = $request->validated();
+
+        $perPage = $validated['per_page'] ?? 10;
+        $search = trim($validated['search'] ?? '');
+        $sortBy = $validated['sort_by'] ?? 'id';
+        $sortDir = $validated['sort_dir'] ?? 'asc';
 
         $allowedSorts = ['id', 'first_name', 'last_name', 'position', 'is_active', 'created_at', 'updated_at'];
         if (! in_array($sortBy, $allowedSorts)) {
@@ -75,7 +79,7 @@ class EmployeeInfoController extends Controller
         $isSql = $this->isSqlDriver;
 
         $employees = EmployeeInfo::select(['id', 'first_name', 'last_name', 'position', 'is_active', 'created_at', 'updated_at'])
-            ->with('user')->when($request->filled('search'), function ($q) use ($isSql, $search) {
+            ->with('user')->when($search, function ($q) use ($isSql, $search) {
                 if ($isSql) {
                     $booleanQuery = Helpers::buildBooleanQuery($search);
                     $q->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'specialization', 'position'], $booleanQuery, ['mode' => 'boolean'])

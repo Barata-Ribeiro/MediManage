@@ -25,6 +25,7 @@ class QueryRequest extends FormRequest
             'page' => ['sometimes', 'integer', 'min:1'],
             'per_page' => ['sometimes', 'integer', 'between:1,75'],
             'search' => ['sometimes', 'nullable', 'string', 'between:1,255'],
+            'q' => ['sometimes', 'nullable', 'string', 'between:1,255'],
             'sort_by' => ['sometimes', 'string', 'between:1,50', 'regex:/^[A-Za-z0-9_\.]+$/'],
             'sort_dir' => ['sometimes', 'string', 'in:asc,desc'],
         ];
