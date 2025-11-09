@@ -13,8 +13,13 @@ class AppointmentService implements AppointmentServiceInterface
 {
     public function getAppointmentsByDoctorWithRequest(EmployeeInfo $doctor, Request $request)
     {
-        $month = $request->query('month', Carbon::now()->month);
-        $year = $request->query('year', Carbon::now()->year);
+        $validated = $request->validate([
+            'month' => ['sometimes', 'nullable', 'integer', 'between:1,12'],
+            'year' => ['sometimes', 'nullable', 'integer', 'min:1900'],
+        ]);
+
+        $month = $validated['month'] ?? Carbon::now()->month;
+        $year = $validated['year'] ?? Carbon::now()->year;
 
         $appointmentsQuery = $doctor->appointments()
             ->whereYear('appointment_date', $year)
