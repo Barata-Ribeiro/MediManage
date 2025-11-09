@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\QueryRequest;
 use Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -14,14 +15,16 @@ class PermissionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(QueryRequest $request)
     {
         Log::info('Permission Management: Viewed permission list', ['action_user_id' => Auth::id()]);
 
-        $perPage = (int) $request->query('per_page', 10);
-        $search = trim($request->query('search'));
-        $sortBy = $request->query('sort_by', 'id');
-        $sortDir = strtolower($request->query('sort_dir', 'asc')) === 'desc' ? 'desc' : 'asc';
+        $validated = $request->validated();
+
+        $perPage = $validated['per_page'] ?? 10;
+        $search = trim($validated['search'] ?? '');
+        $sortBy = $validated['sort_by'] ?? 'id';
+        $sortDir = $validated['sort_dir'] ?? 'asc';
 
         $allowedSorts = ['id', 'title', 'name', 'guard_name', 'created_at', 'updated_at'];
         if (! in_array($sortBy, $allowedSorts)) {
@@ -74,8 +77,8 @@ class PermissionController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'title' => 'required|string|max:255',
-                'guard_name' => 'required|string|max:255',
+                'title' => ['required', 'string', 'max:255'],
+                'guard_name' => ['required', 'string', 'max:255'],
             ]);
 
             $permission->update($validatedData);

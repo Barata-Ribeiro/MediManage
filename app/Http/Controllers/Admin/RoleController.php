@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\RoleRequest;
+use App\Http\Requests\QueryRequest;
 use Auth;
 use Exception;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
 use Spatie\Permission\Models\Permission;
@@ -17,14 +17,16 @@ class RoleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(QueryRequest $request)
     {
         Log::info('Role Management: Viewed role list', ['action_user_id' => Auth::id()]);
 
-        $perPage = (int) $request->query('per_page', 10);
-        $search = trim($request->query('search'));
-        $sortBy = $request->query('sort_by', 'id');
-        $sortDir = strtolower($request->query('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $validated = $request->validated();
+
+        $perPage = $validated['per_page'] ?? 10;
+        $search = trim($validated['search'] ?? '');
+        $sortBy = $validated['sort_by'] ?? 'id';
+        $sortDir = $validated['sort_dir'] ?? 'asc';
 
         $allowedSorts = ['id', 'name', 'guard_name', 'created_at', 'updated_at', 'users_count'];
         if (! in_array($sortBy, $allowedSorts)) {
@@ -46,12 +48,15 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Role $role, Request $request)
+    public function edit(Role $role, QueryRequest $request)
     {
         Log::info('Role Management: Viewed role edit form', ['action_user_id' => Auth::id(), 'edited_role_id' => $role->id]);
 
+        $validated = $request->validated();
+        $search = trim($validated['search'] ?? '');
+
         $allPermissions = Permission::select(['id', 'name'])
-            ->when($request->filled('search'), fn ($query) => $query->whereLike('name', "%$request->search%"))
+            ->when($search, fn ($query) => $query->whereLike('name', "%$search%"))
             ->orderBy('name', 'ASC')->paginate(10);
 
         return Inertia::render('admin/roles/Edit', [

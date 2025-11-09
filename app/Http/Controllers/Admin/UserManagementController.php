@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserAccountRequest;
+use App\Http\Requests\QueryRequest;
 use App\Models\User;
 use Auth;
 use DB;
@@ -17,14 +18,16 @@ class UserManagementController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(QueryRequest $request)
     {
         Log::info('User Management: Viewed user list', ['action_user_id' => Auth::id()]);
 
-        $perPage = (int) $request->query('per_page', 10);
-        $search = trim($request->query('search'));
-        $sortBy = $request->query('sort_by', 'id');
-        $sortDir = strtolower($request->query('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $validated = $request->validated();
+
+        $perPage = $validated['per_page'] ?? 10;
+        $search = trim($validated['search'] ?? '');
+        $sortBy = $validated['sort_by'] ?? 'id';
+        $sortDir = $validated['sort_dir'] ?? 'asc';
 
         $allowedSorts = ['id', 'name', 'email', 'created_at', 'updated_at', 'roles'];
         if (! in_array($sortBy, $allowedSorts)) {
@@ -33,7 +36,7 @@ class UserManagementController extends Controller
 
         $query = User::with('roles')->select('users.*');
 
-        $query->when($request->filled('search'), fn ($qr) => $qr->whereLike('users.name', "%$search%")
+        $query->when($search, fn ($qr) => $qr->whereLike('users.name', "%$search%")
             ->orWhereLike('users.email', "%$search%")
             ->orWhereHas('roles', fn ($q) => $q->whereLike('roles.name', "%$search%")));
 
