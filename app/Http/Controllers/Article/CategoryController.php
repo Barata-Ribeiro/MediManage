@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Article;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Article\CategoryRequest;
+use App\Http\Requests\QueryRequest;
 use App\Models\Category;
 use Auth;
 use Exception;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
 
@@ -16,21 +16,23 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(QueryRequest $request)
     {
         Log::info('Categories: Viewed categories list', ['action_user_id' => Auth::id()]);
 
-        $perPage = (int) $request->query('per_page', 10);
-        $search = trim($request->query('search'));
-        $sortBy = $request->query('sort_by', 'id');
-        $sortDir = strtolower($request->query('sort_dir', 'asc')) === 'desc' ? 'desc' : 'asc';
+        $validated = $request->validated();
+
+        $perPage = $validated['per_page'] ?? 10;
+        $search = trim($validated['search'] ?? '');
+        $sortBy = $validated['sort_by'] ?? 'id';
+        $sortDir = $validated['sort_dir'] ?? 'asc';
 
         $allowedSorts = ['id', 'name', 'created_at', 'updated_at'];
         if (! in_array($sortBy, $allowedSorts)) {
             $sortBy = 'id';
         }
 
-        $categories = Category::when($request->filled('search'), fn ($qr) => $qr
+        $categories = Category::when($search, fn ($qr) => $qr
             ->whereLike('name', "%$search%"))
             ->orderBy($sortBy, $sortDir)
             ->paginate($perPage)

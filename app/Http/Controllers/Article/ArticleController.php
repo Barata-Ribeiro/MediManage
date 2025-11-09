@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Article;
 use App\Common\Helpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Article\ArticleRequest;
+use App\Http\Requests\QueryRequest;
 use App\Models\Article;
 use App\Models\Category;
 use Auth;
 use DB;
 use Exception;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
 use Str;
@@ -30,14 +30,16 @@ class ArticleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(QueryRequest $request)
     {
         Log::info('Articles: Viewed articles list', ['action_user_id' => Auth::id()]);
 
-        $perPage = (int) $request->query('per_page', 10);
-        $search = trim($request->query('search'));
-        $sortBy = $request->query('sort_by', 'id');
-        $sortDir = strtolower($request->query('sort_dir', 'asc')) === 'desc' ? 'desc' : 'asc';
+        $validated = $request->validated();
+
+        $perPage = $validated['per_page'] ?? 10;
+        $search = trim($validated['search'] ?? '');
+        $sortBy = $validated['sort_by'] ?? 'id';
+        $sortDir = $validated['sort_dir'] ?? 'asc';
 
         $allowedSorts = ['id', 'title', 'user.name', 'is_published', 'created_at', 'updated_at'];
         if (! in_array($sortBy, $allowedSorts)) {
@@ -62,7 +64,7 @@ class ArticleController extends Controller
 
         $query = Article::select($select)
             ->with(['user' => fn ($q) => $q->select('id', 'name')])
-            ->when($request->filled('search'), function ($qr) use ($search, $isSql) {
+            ->when($search, function ($qr) use ($search, $isSql) {
                 if ($isSql) {
                     $booleanQuery = Helpers::buildBooleanQuery($search);
                     $qr->whereFullText(['title', 'subtitle', 'excerpt', 'content_html'], $booleanQuery, ['mode' => 'boolean'])
@@ -85,16 +87,18 @@ class ArticleController extends Controller
     /**
      * Display a listing of the resource owned by the authenticated user.
      */
-    public function myIndex(Request $request)
+    public function myIndex(QueryRequest $request)
     {
         $user_id = Auth::id();
 
         Log::info('Articles: Viewed own articles list', ['action_user_id' => $user_id]);
 
-        $perPage = (int) $request->query('per_page', 10);
-        $search = trim($request->query('search'));
-        $sortBy = $request->query('sort_by', 'id');
-        $sortDir = strtolower($request->query('sort_dir', 'asc')) === 'desc' ? 'desc' : 'asc';
+        $validated = $request->validated();
+
+        $perPage = $validated['per_page'] ?? 10;
+        $search = trim($validated['search'] ?? '');
+        $sortBy = $validated['sort_by'] ?? 'id';
+        $sortDir = $validated['sort_dir'] ?? 'asc';
 
         $allowedSorts = ['id', 'title', 'is_published', 'created_at', 'updated_at'];
         if (! in_array($sortBy, $allowedSorts)) {
@@ -105,7 +109,7 @@ class ArticleController extends Controller
 
         $query = Article::select(['id', 'user_id', 'title', 'slug', 'is_published', 'created_at', 'updated_at'])
             ->where('user_id', $user_id)
-            ->when($request->filled('search'), function ($qr) use ($search, $isSql) {
+            ->when($search, function ($qr) use ($search, $isSql) {
                 if ($isSql) {
                     $booleanQuery = Helpers::buildBooleanQuery($search);
                     $qr->whereFullText(['title', 'subtitle', 'excerpt', 'content_html'], $booleanQuery, ['mode' => 'boolean']);
