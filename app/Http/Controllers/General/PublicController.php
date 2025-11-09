@@ -48,22 +48,29 @@ class PublicController extends Controller
      */
     public function articles(Request $request)
     {
-        $category = trim($request->query('category'));
-        $search = trim($request->query('search'));
-        $start_date = trim($request->query('start_date_creation'));
-        $end_date = trim($request->query('end_date_creation'));
+        $validated = $request->validate([
+            'category' => ['sometimes', 'nullable', 'string'],
+            'search' => ['sometimes', 'nullable', 'string'],
+            'start_date_creation' => ['sometimes', 'nullable', 'date'],
+            'end_date_creation' => ['sometimes', 'nullable', 'date'],
+        ]);
+
+        $category = trim($validated['category'] ?? '');
+        $search = trim($validated['search'] ?? '');
+        $start_date = trim($validated['start_date_creation'] ?? '');
+        $end_date = trim($validated['end_date_creation'] ?? '');
 
         $isSql = $this->isSqlDriver;
 
         $articles = Article::whereIsPublished(true)
             ->with(['user' => fn ($query) => $query->select('id', 'name', 'avatar')])
             ->with(['categories' => fn ($query) => $query->select('id', 'name')])
-            ->when($request->filled('category'), function ($query) use ($category) {
+            ->when($category, function ($query) use ($category) {
                 $names = array_filter(array_map('trim', explode(',', $category)));
 
                 return $query->whereHas('categories', fn ($q) => $q->whereIn('name', $names));
             })
-            ->when($request->filled('search'), fn ($q) => $q->where(function ($query) use ($search, $isSql) {
+            ->when($search, fn ($q) => $q->where(function ($query) use ($search, $isSql) {
                 if ($isSql) {
                     $booleanQuery = Helpers::buildBooleanQuery($search);
                     $query->whereFullText(['title', 'subtitle', 'excerpt', 'content_html'], $booleanQuery, ['mode' => 'boolean']);
@@ -72,8 +79,8 @@ class PublicController extends Controller
                         ->orWhereLike('excerpt', "%$search%")->orWhereLike('content_html', "%$search%");
                 }
             })->orWhereHas('user', fn ($q) => $q->whereLike('name', "%$search%")))
-            ->when($request->filled('start_date_creation'), fn ($query) => $query->whereDate('created_at', '>=', $start_date))
-            ->when($request->filled('end_date_creation'), fn ($query) => $query->whereDate('created_at', '<=', $end_date))
+            ->when($start_date, fn ($query) => $query->whereDate('created_at', '>=', $start_date))
+            ->when($end_date, fn ($query) => $query->whereDate('created_at', '<=', $end_date))
             ->latest()
             ->paginate(10, ['id', 'user_id', 'title', 'slug', 'excerpt', 'thumbnail', 'created_at'])
             ->withQueryString();
