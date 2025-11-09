@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\EmployeeInfo $employeeInfo
  * @property-read mixed $duration
- *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contract newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contract newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contract query()
@@ -31,7 +30,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contract whereRateType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contract whereStartDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Contract whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 class Contract extends Model
