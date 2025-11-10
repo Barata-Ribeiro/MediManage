@@ -156,7 +156,10 @@ class EmployeeInfoController extends Controller
             'employee_info_id' => $employeeInfo->id,
         ]);
 
-        $employeeInfo->load(['user', 'contracts']);
+        $employeeInfo->load([
+            'user',
+            'contracts' => fn ($q) => $q->orderByDesc('end_date'),
+        ]);
 
         return Inertia::render('employees/Show', ['employee' => $employeeInfo]);
     }
