@@ -1,3 +1,4 @@
+import ContractItemListItem from '@/components/helpers/contract-item-list-item';
 import EmployeeAccountInfoItem from '@/components/helpers/employee-account-info-item';
 import EmployeePersonalInfoItem from '@/components/helpers/employee-personal-info-item';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -26,13 +27,6 @@ export default function Show({ employee: data }: Readonly<{ employee: EmployeeIn
             href: employee_info.show(data.id).url,
         },
     ];
-
-    // TODO: Remove console logs after finishing page implementation
-    console.group('Employee Details');
-    console.log('User Data:', user);
-    console.log('Contracts:', contracts);
-    console.log('Employee Info:', rest);
-    console.groupEnd();
 
     const dateOfBirth = String(rest?.date_of_birth).replaceAll('-', '/');
 
@@ -104,7 +98,15 @@ export default function Show({ employee: data }: Readonly<{ employee: EmployeeIn
                         </TabsContent>
 
                         <TabsContent value="contracts">
-                            {/* TODO: Employee Contracts With Progress Component */}
+                            {(contracts?.length ?? 0) > 0 ? (
+                                <ul className="mt-2 grid gap-4">
+                                    {contracts!.map((contract) => (
+                                        <ContractItemListItem key={contract.id} contract={contract} />
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>No contracts available.</p>
+                            )}
                         </TabsContent>
                     </Tabs>
                 </div>
