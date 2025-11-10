@@ -1,5 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import {
+    ChartConfig,
+    ChartContainer,
+    ChartLegend,
+    ChartLegendContent,
+    ChartTooltip,
+    ChartTooltipContent,
+} from '@/components/ui/chart';
 import { formatCurrency } from '@/lib/utils';
 import { EmployeePaymentsData } from '@/pages/dashboard/manager-dashboard';
 import { useMemo } from 'react';
@@ -45,6 +52,10 @@ export default function EmployeePaymentByMonthChart({ chartData }: Readonly<{ ch
                         />
                         <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
                         <Bar dataKey="value" fill="var(--chart-4)" radius={8} />
+                        <ChartLegend
+                            content={<ChartLegendContent nameKey="value" />}
+                            className="flex-wrap gap-2 *:basis-1/4 *:justify-center"
+                        />
                     </BarChart>
                 </ChartContainer>
             </CardContent>
