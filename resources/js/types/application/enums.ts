@@ -26,3 +26,10 @@ export enum NoticeType {
     Warning = 'warning',
     Alert = 'alert',
 }
+
+export enum ContractType {
+    FullTime = 'full_time',
+    PartTime = 'part_time',
+    Contractor = 'contractor',
+    Intern = 'intern',
+}

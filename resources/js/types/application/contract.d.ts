@@ -1,4 +1,5 @@
 import { EmployeeInfo } from '@/types/application/employee';
+import { ContractType } from '@/types/application/enums';
 
 export interface Contract {
     id: number;
@@ -9,7 +10,7 @@ export interface Contract {
 
     rate_type: string;
     rate: string;
-    contract_type: string;
+    contract_type: ContractType;
 
     created_at: Date;
     updated_at: Date;
