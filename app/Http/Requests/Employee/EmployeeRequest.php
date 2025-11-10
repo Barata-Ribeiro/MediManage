@@ -16,7 +16,7 @@ class EmployeeRequest extends FormRequest
         return [
             // Account info
             'name' => ['required', 'string', 'max:255', 'unique:users,name'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
 
             // Personal info
             'first_name' => ['required', 'string', 'max:255'],
@@ -27,11 +27,11 @@ class EmployeeRequest extends FormRequest
             'address' => ['required', 'string', 'max:255'],
 
             // Doctor specific info
-            'registration_number' => ['nullable', 'required_with:registration_origin,specialization,license_number,license_expiry_date', 'string', 'max:100'],
-            'registration_origin' => ['nullable', 'required_with:registration_number,specialization,license_number,license_expiry_date', 'string', 'max:255'],
-            'specialization' => ['nullable', 'required_with:registration_number,registration_origin,license_number,license_expiry_date', 'string', 'max:255'],
-            'license_number' => ['nullable', 'required_with:registration_number,registration_origin,specialization,license_expiry_date', 'string', 'max:100'],
-            'license_expiry_date' => ['nullable', 'required_with:registration_number,registration_origin,specialization,license_number', 'date', 'after:today'],
+            'registration_number' => ['nullable', 'required_with_all:registration_origin,specialization,license_number,license_expiry_date', 'string', 'max:100'],
+            'registration_origin' => ['nullable', 'required_with_all:registration_number,specialization,license_number,license_expiry_date', 'string', 'max:255'],
+            'specialization' => ['nullable', 'required_with_all:registration_number,registration_origin,license_number,license_expiry_date', 'string', 'max:255'],
+            'license_number' => ['nullable', 'required_with_all:registration_number,registration_origin,specialization,license_expiry_date', 'string', 'max:100'],
+            'license_expiry_date' => ['nullable', 'required_with_all:registration_number,registration_origin,specialization,license_number', 'date', 'after:today'],
 
             // Employment info
             'position' => ['required', 'string', 'max:100'],
