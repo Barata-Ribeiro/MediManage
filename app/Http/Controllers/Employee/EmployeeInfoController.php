@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Employee;
 
 use App\Common\Helpers;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Employee\CompleteEmployeeRequest;
 use App\Http\Requests\Employee\EmployeeRequest;
 use App\Http\Requests\QueryRequest;
 use App\Mail\EmployeeInfoMail;
@@ -162,5 +163,39 @@ class EmployeeInfoController extends Controller
         ]);
 
         return Inertia::render('employees/Show', ['employee' => $employeeInfo]);
+    }
+
+    /**
+     * Show the form for editing the specified employee info.
+     */
+    public function edit(EmployeeInfo $employeeInfo)
+    {
+        Log::info('Employee Info: Accessed employee edit page', [
+            'action_user_id' => Auth::id(),
+            'employee_info_id' => $employeeInfo->id,
+        ]);
+
+        $employeeInfo->load('user');
+
+        return Inertia::render('employees/Edit', ['employee' => $employeeInfo]);
+    }
+
+    /**
+     * Update the specified employee info in storage.
+     */
+    public function update(CompleteEmployeeRequest $request, EmployeeInfo $employeeInfo)
+    {
+        try {
+            dd($request->all());
+            // TODO: implement update logic
+        } catch (Exception $e) {
+            Log::error('Employee Info: Error while updating employee info', [
+                'action_user_id' => Auth::id(),
+                'employee_info_id' => $employeeInfo->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->withInput()->with('error', 'An error occurred while updating the employee info. Please try again.');
+        }
     }
 }

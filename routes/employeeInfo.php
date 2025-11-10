@@ -14,4 +14,9 @@ Route::middleware(['auth', 'verified'])->prefix('employees')->group(function () 
 
     Route::get('/{employeeInfo}', [EmployeeInfoController::class, 'show'])->name('employee_info.show')
         ->middleware('permission:employee_info.show');
+
+    Route::get('/{employeeInfo}/edit', [EmployeeInfoController::class, 'edit'])->name('employee_info.edit')
+        ->middleware('permission:employee_info.edit');
+    Route::put('/{employeeInfo}/update', [EmployeeInfoController::class, 'update'])->name('employee_info.update')
+        ->middleware('permission:employee_info.edit');
 });
