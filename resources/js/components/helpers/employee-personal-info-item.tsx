@@ -1,4 +1,5 @@
 import HeadingSmall from '@/components/heading-small';
+import { Button } from '@/components/ui/button';
 import { Item, ItemContent, ItemHeader } from '@/components/ui/item';
 import { cn } from '@/lib/utils';
 import employee_info from '@/routes/employee_info';
@@ -7,7 +8,6 @@ import { EmployeeInfo } from '@/types/application/employee';
 import { Link, usePage } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { Activity } from 'react';
-import { Button } from '../ui/button';
 
 interface EmployeePersonalInfoItemProps {
     employee: EmployeeInfo;
@@ -17,16 +17,17 @@ interface EmployeePersonalInfoItemProps {
 export default function EmployeePersonalInfoItem({ employee, dateOfBirth }: Readonly<EmployeePersonalInfoItemProps>) {
     const { auth } = usePage<SharedData>().props;
 
+    const isNonAdminEmployee = employee.position !== 'System Administrator';
     const isAllowedToList = auth.permissions.includes('employee_info.index');
-    const isAllowedToEdit = auth.permissions.includes('employee_info.edit');
+    const isAllowedToEdit = auth.permissions.includes('employee_info.edit') && isNonAdminEmployee;
 
     const employeeListLinkRoute = employee_info.index();
     const finalEmployeeListLinkRoute = isAllowedToList ? employeeListLinkRoute : '#';
-    const editLinkRoute = '#'; // TODO: Update route when edit page is available
+
+    const editLinkRoute = employee_info.edit(employee.id);
     const finalEditLinkRoute = isAllowedToEdit ? editLinkRoute : '#';
 
     const disabledLinkStyles = 'pointer-events-none opacity-50';
-    const disabledLinkClass = cn((!isAllowedToEdit || !isAllowedToList) && disabledLinkStyles);
 
     return (
         <Item variant="outline">
@@ -113,13 +114,21 @@ export default function EmployeePersonalInfoItem({ employee, dateOfBirth }: Read
 
                 <div className="inline-flex items-center gap-x-2 md:col-span-2">
                     <Button variant="ghost" asChild>
-                        <Link href={finalEmployeeListLinkRoute} className={disabledLinkClass} prefetch="hover">
+                        <Link
+                            href={finalEmployeeListLinkRoute}
+                            className={cn(!isAllowedToList && disabledLinkStyles)}
+                            prefetch="hover"
+                        >
                             List Employees
                         </Link>
                     </Button>
 
                     <Button asChild>
-                        <Link href={finalEditLinkRoute} className={disabledLinkClass} prefetch="hover">
+                        <Link
+                            href={finalEditLinkRoute}
+                            className={cn(!isAllowedToEdit && disabledLinkStyles)}
+                            prefetch="hover"
+                        >
                             Edit Employee
                         </Link>
                     </Button>
