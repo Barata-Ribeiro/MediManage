@@ -1,6 +1,7 @@
 import ContractItemListItem from '@/components/helpers/contract-item-list-item';
 import EmployeeAccountInfoItem from '@/components/helpers/employee-account-info-item';
 import EmployeePersonalInfoItem from '@/components/helpers/employee-personal-info-item';
+import NoContract from '@/components/helpers/no-contract';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -105,7 +106,7 @@ export default function Show({ employee: data }: Readonly<{ employee: EmployeeIn
                                     ))}
                                 </ul>
                             ) : (
-                                <p>No contracts available.</p>
+                                <NoContract />
                             )}
                         </TabsContent>
                     </Tabs>
