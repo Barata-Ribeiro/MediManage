@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('payment_date')->nullable();
             $table->decimal('amount', 10, 2);
             $table->string('payment_method');
-            $table->string('transaction_reference')->nullable();
+            $table->string('transaction_reference')->nullable()->unique();
             $table->timestamps();
         });
     }

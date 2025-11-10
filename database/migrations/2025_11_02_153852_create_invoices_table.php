@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('patient_info_id')->constrained('patient_info')->cascadeOnUpdate()->cascadeOnDelete();
             $table->date('consultation_date');
-            $table->string('notes')->nullable();
+            $table->string('notes', 500)->nullable();
             $table->date('due_date');
             $table->decimal('amount', 10, 2);
             $table->string('payment_method');
