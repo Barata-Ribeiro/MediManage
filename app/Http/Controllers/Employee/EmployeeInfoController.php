@@ -186,8 +186,24 @@ class EmployeeInfoController extends Controller
     public function update(CompleteEmployeeRequest $request, EmployeeInfo $employeeInfo)
     {
         try {
-            dd($request->all());
-            // TODO: implement update logic
+            $data = $request->validated();
+
+            $userData = [
+                'name' => $data['name'],
+                'email' => $data['email'],
+            ];
+
+            $employeeData = $request->except(['name', 'email']);
+
+            $employeeInfo->update($employeeData);
+            $employeeInfo->user->update($userData);
+
+            Log::info('Employee Info: Employee info updated successfully', [
+                'action_user_id' => Auth::id(),
+                'employee_info_id' => $employeeInfo->id,
+            ]);
+
+            return to_route('employee_info.show', ['employeeInfo' => $employeeInfo])->with('success', 'The employee info has been updated successfully.');
         } catch (Exception $e) {
             Log::error('Employee Info: Error while updating employee info', [
                 'action_user_id' => Auth::id(),
