@@ -31,10 +31,6 @@ class ContractSeeder extends Seeder
             while ($startDate->lessThan($now)) {
                 $endDate = $startDate->copy()->addYear();
 
-                if ($endDate->greaterThan($now)) {
-                    $endDate = $now->copy();
-                }
-
                 $employee->contracts()->create([
                     'start_date' => $startDate,
                     'end_date' => $endDate,
