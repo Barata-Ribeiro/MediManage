@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -17,7 +18,7 @@ return new class extends Migration {
             $table->foreignId('employee_info_id')->constrained('employee_info')->cascadeOnUpdate()->cascadeOnDelete();
 
             $table->text('prescription_details_html');
-            $table->text('prescription_details_json')->nullable();
+            $table->json('prescription_details_json')->nullable();
 
             $table->date('date_issued');
             $table->date('date_expires')->nullable();

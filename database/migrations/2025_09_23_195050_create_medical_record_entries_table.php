@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -19,7 +20,7 @@ return new class extends Migration {
 
             $table->string('title');
             $table->text('content_html');
-            $table->text('content_json')->nullable();
+            $table->json('content_json')->nullable();
 
             $table->enum('entry_type', ['allergy', 'diagnosis', 'observation', 'note', 'vitals', 'immunization', 'lab_result', 'treatment', 'procedure', 'other'])->default('note');
             $table->boolean('is_visible_to_patient')->default(true);
