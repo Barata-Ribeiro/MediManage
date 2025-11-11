@@ -16,16 +16,18 @@ class CompleteEmployeeRequest extends FormRequest
      */
     public function rules(): array
     {
+        $routeEmployee = $this->route('employeeInfo');
+
         return [
             // Account info
-            'name' => ['required', 'string', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
+            'name' => ['required', 'string', 'max:255', Rule::unique(User::class, 'name')->ignore($routeEmployee?->user_id)],
             'email' => [
                 'required',
                 'string',
                 'lowercase',
                 'email',
                 'max:255',
-                Rule::unique(User::class)->ignore($this->user()->id),
+                Rule::unique(User::class, 'email')->ignore($routeEmployee?->user_id),
             ],
             'avatar' => ['nullable', 'url', 'max:2048', new IsImageRule],
             'bio' => ['nullable', 'string', 'max:500'],
@@ -44,12 +46,6 @@ class CompleteEmployeeRequest extends FormRequest
             'specialization' => ['nullable', 'required_with_all:registration_number,registration_origin,license_number,license_expiry_date', 'string', 'max:255'],
             'license_number' => ['nullable', 'required_with_all:registration_number,registration_origin,specialization,license_expiry_date', 'string', 'max:100'],
             'license_expiry_date' => ['nullable', 'required_with_all:registration_number,registration_origin,specialization,license_number', 'date', 'after:today'],
-
-            // Employment info
-            'position' => ['required', 'string', 'max:100'],
-            'is_active' => ['required', 'boolean'],
-            'hire_date' => ['required', 'date'],
-            'termination_date' => ['nullable', 'date', 'after:hire_date'],
         ];
     }
 }
