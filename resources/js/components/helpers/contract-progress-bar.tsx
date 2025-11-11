@@ -43,8 +43,7 @@ export default function ContractProgressBar({ startDate, endDate }: Readonly<Con
 
     let detailText: string;
     if (isCompleted) detailText = `Ended ${formatDistanceToNowStrict(endMs, { addSuffix: true })}`;
-    else if (isActive)
-        detailText = `${percent}% Complete - ${formatDistanceToNowStrict(endMs, { addSuffix: true })} left`;
+    else if (isActive) detailText = `Ends ${formatDistanceToNowStrict(endMs, { addSuffix: true })}`;
     else detailText = `Not Started - Starts in ${formatDistanceToNowStrict(startMs, { addSuffix: true })}`;
 
     return (
