@@ -81,6 +81,7 @@ class RoleSeeder extends Seeder
                 'prescription' => ['index', 'show', 'destroy'],
                 'medical_record' => ['index', 'show', 'destroy'],
                 'medical_record_entries' => ['index', 'show', 'destroy'],
+                'notice' => ['index', 'show', 'create', 'edit', 'destroy'],
                 'article' => ['index', 'show', 'create', 'edit', 'destroy'],
                 'category' => ['index', 'show', 'create', 'edit', 'destroy'],
                 'contract' => ['index', 'show', 'create', 'edit', 'destroy'],

@@ -32,6 +32,7 @@ class PermissionSeeder extends Seeder
             ['name' => 'prescription', 'label' => ['singular' => 'prescription', 'plural' => 'prescriptions']],
             ['name' => 'medical_record', 'label' => ['singular' => 'medical record', 'plural' => 'medical records']],
             ['name' => 'medical_record_entries', 'label' => ['singular' => 'medical record entry', 'plural' => 'medical record entries']],
+            ['name' => 'notice', 'label' => ['singular' => 'notice', 'plural' => 'notices']],
             ['name' => 'article', 'label' => ['singular' => 'article', 'plural' => 'articles']],
             ['name' => 'category', 'label' => ['singular' => 'category', 'plural' => 'categories']],
             ['name' => 'contract', 'label' => ['singular' => 'contract', 'plural' => 'contracts']],
