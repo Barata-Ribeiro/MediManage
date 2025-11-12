@@ -31,3 +31,4 @@ require __DIR__.'/medicalRecords.php';
 require __DIR__.'/appointments.php';
 require __DIR__.'/article.php';
 require __DIR__.'/invoices.php';
+require __DIR__.'/notices.php';
