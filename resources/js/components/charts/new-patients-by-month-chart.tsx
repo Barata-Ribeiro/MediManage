@@ -7,7 +7,10 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from '@/components/ui/chart';
-import { ChartItem } from '@/types';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { cn } from '@/lib/utils';
+import { ChartItem, SharedData } from '@/types';
+import { usePage } from '@inertiajs/react';
 import { useMemo } from 'react';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
@@ -23,6 +26,11 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function NewPatientsByMonthChart({ chartData }: Readonly<NewPatientsByMonthChartProps>) {
+    const { auth } = usePage<SharedData>().props;
+    const { isMobile } = useIsMobile();
+
+    const isDoctor = auth.roles.includes('Doctor');
+
     const points = useMemo(() => {
         return chartData.labels.map((label, i) => ({
             month: label,
@@ -38,7 +46,10 @@ export default function NewPatientsByMonthChart({ chartData }: Readonly<NewPatie
             </CardHeader>
 
             <CardContent>
-                <ChartContainer config={chartConfig} className="aspect-auto h-40 w-full">
+                <ChartContainer
+                    config={chartConfig}
+                    className={cn(!isDoctor && !isMobile && 'aspect-auto h-40 w-full')}
+                >
                     <AreaChart accessibilityLayer data={points} margin={{ left: -30, right: 12 }}>
                         <CartesianGrid vertical={false} />
                         <XAxis
