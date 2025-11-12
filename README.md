@@ -152,8 +152,10 @@ php artisan serve
 There are bugs and/or implementations that require some attention.
 
 - Adjust user's home dashboard with better info.
-- Add dashboard's routes for manager.
-- Implement employee details UI.
+- Implement notice creation form.
+- Implement notice creation logic.
+- Implement routes for contract creation.
+- Implement routes for contract editing.
 
 ## 🤝 Contributing
 
