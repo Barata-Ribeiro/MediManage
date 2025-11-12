@@ -3,7 +3,7 @@ import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import Layout from '@/layouts/app-layout';
 import { column } from '@/pages/notices/column';
-import notices from '@/routes/notices';
+import { create, index } from '@/routes/notices';
 import { BreadcrumbItem } from '@/types';
 import { PaginationNotice } from '@/types/application/notice';
 import { Head, Link } from '@inertiajs/react';
@@ -16,7 +16,7 @@ interface IndexProps {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Notices',
-        href: notices.index().url,
+        href: index().url,
     },
 ];
 
@@ -30,8 +30,7 @@ export default function Index({ notices }: Readonly<IndexProps>) {
                     <Heading title="Notices" description="Listing all notices." />
 
                     <Button variant="secondary" asChild>
-                        {/* TODO: Implement notice creation */}
-                        <Link href={'#'} prefetch>
+                        <Link href={create()} prefetch>
                             <NotebookPenIcon aria-hidden /> Write Notice
                         </Link>
                     </Button>
