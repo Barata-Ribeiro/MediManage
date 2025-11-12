@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\QueryRequest;
 use App\Models\Notice;
 use Auth;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
@@ -36,5 +37,24 @@ class NoticeController extends Controller
             ->orderBy($sortBy, $sortDir)->paginate($perPage)->withQueryString();
 
         return Inertia::render('notices/Index', ['notices' => $notices]);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        Log::info('Notices: Accessed create notice page', ['action_user_id' => Auth::id()]);
+
+        return Inertia::render('notices/Create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        // TODO: Implement notice creation after frontend is ready
+        dd($request->all());
     }
 }
