@@ -10,6 +10,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { normalizeString } from '@/lib/utils';
 import { TableNotice } from '@/types/application/notice';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns/format';
@@ -26,6 +27,12 @@ export const column: ColumnDef<TableNotice>[] = [
         header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
         enableSorting: true,
         enableHiding: false,
+    },
+    {
+        accessorKey: 'type',
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Type" />,
+        cell: ({ row }) => normalizeString(row.original.type),
+        enableSorting: true,
     },
     {
         accessorKey: 'is_active',
