@@ -24,7 +24,7 @@ import { Activity, Fragment } from 'react';
 
 export default function NavIndex() {
     const { auth, latestArticles, notices } = usePage<SharedData>().props;
-    const isMobile = useIsMobile();
+    const { isMobile } = useIsMobile();
 
     return (
         <header className="fixed inset-x-0 top-0 z-50 border-b bg-white/20 shadow backdrop-blur-sm dark:border-b dark:bg-white/10 dark:shadow dark:backdrop-blur-sm">

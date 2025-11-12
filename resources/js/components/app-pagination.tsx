@@ -16,7 +16,7 @@ interface PaginationProps {
 }
 
 export default function AppPagination({ pagination }: Readonly<PaginationProps>) {
-    const isMobile = useIsMobile();
+    const { isMobile } = useIsMobile();
 
     const filteredLinks = pagination.links.filter((link) => {
         if (link.label === '...') return true;
