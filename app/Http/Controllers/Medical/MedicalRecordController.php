@@ -14,7 +14,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use DB;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Inertia\Inertia;
 use Log;
@@ -31,13 +30,15 @@ class MedicalRecordController extends Controller
     /**
      * Display the authenticated patient's medical record.
      */
-    public function myMedicalRecord(Request $request)
+    public function myMedicalRecord(QueryRequest $request)
     {
         $patientInfoId = Auth::user()->patient_info_id;
 
         Log::info('Medical Records: Patient viewed their own medical record', ['action_user_id' => Auth::id(), 'patient_info_id' => $patientInfoId]);
 
-        $search = trim($request->query('search'));
+        $validated = $request->validated();
+
+        $search = trim($validated['search'] ?? '');
 
         try {
             $medicalRecord = MedicalRecord::select(['id', 'patient_info_id', 'medical_notes_html', 'created_at', 'updated_at'])
@@ -51,13 +52,11 @@ class MedicalRecordController extends Controller
             $entries = MedicalRecordEntry::select($columns)
                 ->whereMedicalRecordId($medicalRecord->id)
                 ->whereIsVisibleToPatient(true)
-                ->when($request->filled('search'), function ($q) use ($isSql, $search) {
+                ->when($search, function ($q) use ($isSql, $search) {
                     if ($isSql) {
                         $booleanQuery = Helpers::buildBooleanQuery($search);
-                        $q->where(function ($q2) use ($search, $booleanQuery) {
-                            $q2->whereFullText(['title', 'content_html'], $booleanQuery, ['mode' => 'boolean'])
-                                ->orWhere('entry_type', 'like', "%$search%");
-                        });
+                        $q->whereFullText(['title', 'content_html'], $booleanQuery, ['mode' => 'boolean'])
+                            ->orWhere('entry_type', 'like', "%$search%");
                     } else {
                         $q->where(fn ($q2) => $q2->whereLike('title', "%$search%")->orWhereLike('content_html', "%$search%")->orWhere('entry_type', 'like', "%$search%"));
                     }
@@ -85,14 +84,16 @@ class MedicalRecordController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(QueryRequest $request)
     {
         Log::info('Medical Records: Viewed medical records list', ['action_user_id' => Auth::id()]);
 
-        $perPage = (int) $request->query('per_page', 10);
-        $search = trim($request->query('search'));
-        $sortBy = $request->query('sort_by', 'id');
-        $sortDir = strtolower($request->query('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $validated = $request->validated();
+
+        $perPage = $validated['per_page'] ?? 10;
+        $search = trim($validated['search'] ?? '');
+        $sortBy = $validated['sort_by'] ?? 'id';
+        $sortDir = $validated['sort_dir'] ?? 'asc';
 
         $allowedSorts = ['id', 'patient_info.first_name', 'patient_info.last_name', 'created_at', 'updated_at'];
         if (! in_array($sortBy, $allowedSorts)) {
@@ -108,7 +109,7 @@ class MedicalRecordController extends Controller
 
         $isSql = $this->isSqlDriver;
 
-        $query->when($request->filled('search'), function ($qr) use ($isSql, $search) {
+        $query->when($search, function ($qr) use ($isSql, $search) {
             if ($isSql) {
                 $booleanQuery = Helpers::buildBooleanQuery($search);
                 $qr->whereFullText('medical_notes_html', $booleanQuery, ['mode' => 'boolean']);
