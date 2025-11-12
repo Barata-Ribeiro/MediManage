@@ -1,22 +1,22 @@
-import medicalRecordController from '@/actions/App/Http/Controllers/Medical/MedicalRecordController';
 import { DataTable } from '@/components/data-table';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import Layout from '@/layouts/app-layout';
 import { column } from '@/pages/medicalRecords/column';
+import { create, index } from '@/routes/medicalRecords';
 import type { BreadcrumbItem } from '@/types';
 import { PaginationMedicalRecord } from '@/types/application/medicalRecord';
 import { Head, Link } from '@inertiajs/react';
 import { NotebookPenIcon } from 'lucide-react';
 
-export default function Index({ medicalRecords }: Readonly<{ medicalRecords: PaginationMedicalRecord }>) {
-    const breadcrumbs: BreadcrumbItem[] = [
-        {
-            title: 'Medical Records',
-            href: medicalRecordController.index().url,
-        },
-    ];
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Medical Records',
+        href: index().url,
+    },
+];
 
+export default function Index({ medicalRecords }: Readonly<{ medicalRecords: PaginationMedicalRecord }>) {
     return (
         <Layout breadcrumbs={breadcrumbs}>
             <Head title="Medical Records" />
@@ -26,7 +26,7 @@ export default function Index({ medicalRecords }: Readonly<{ medicalRecords: Pag
                     <Heading title="Medical Records" description="Listing all medical records." />
 
                     <Button variant="secondary" asChild>
-                        <Link href={medicalRecordController.create()} prefetch>
+                        <Link href={create().url} prefetch>
                             <NotebookPenIcon aria-hidden /> Initiate Record
                         </Link>
                     </Button>
