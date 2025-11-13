@@ -11,7 +11,9 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { normalizeString } from '@/lib/utils';
+import notices from '@/routes/notices';
 import { TableNotice } from '@/types/application/notice';
+import { Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns/format';
 import { MoreHorizontal } from 'lucide-react';
@@ -75,7 +77,11 @@ export const column: ColumnDef<TableNotice>[] = [
 
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>Show</DropdownMenuItem>
-                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <Link href={notices.edit(row.original.id)} className="w-full" as="button">
+                            Edit
+                        </Link>
+                    </DropdownMenuItem>
                     <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
