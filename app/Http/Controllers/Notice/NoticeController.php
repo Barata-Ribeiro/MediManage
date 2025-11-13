@@ -70,4 +70,19 @@ class NoticeController extends Controller
             return redirect()->back()->withInput()->with('error', 'Failed to create notice. Please try again.');
         }
     }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Notice $notice)
+    {
+        Log::info('Notices: Accessed edit notice page', ['action_user_id' => Auth::id(), 'notice_id' => $notice->id]);
+
+        return Inertia::render('notices/Edit', ['notice' => $notice]);
+    }
+
+    public function update(NoticeRequest $request, Notice $notice)
+    {
+        dd($request->validated(), $notice);
+    }
 }
