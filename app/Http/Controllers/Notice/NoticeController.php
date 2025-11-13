@@ -81,8 +81,23 @@ class NoticeController extends Controller
         return Inertia::render('notices/Edit', ['notice' => $notice]);
     }
 
+    /**
+     * Update the specified resource in storage.
+     */
     public function update(NoticeRequest $request, Notice $notice)
     {
-        dd($request->validated(), $notice);
+        try {
+            $user = Auth::user();
+            $data = $request->validated();
+
+            Log::info('Notices: Updated notice', ['action_user_id' => $user->id, 'notice_id' => $notice->id]);
+            $notice->update($data);
+
+            return to_route('notices.index')->with('success', 'Notice updated successfully.');
+        } catch (Exception $e) {
+            Log::error('Notices: Failed to update notice', ['action_user_id' => $user->id, 'notice_id' => $notice->id, 'error' => $e->getMessage()]);
+
+            return redirect()->back()->withInput()->with('error', 'Failed to update notice. Please try again.');
+        }
     }
 }
