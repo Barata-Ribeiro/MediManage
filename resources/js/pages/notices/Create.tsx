@@ -1,3 +1,4 @@
+import NewNoticeForm from '@/components/forms/notices/new-notice-form';
 import Heading from '@/components/heading';
 import Layout from '@/layouts/app-layout';
 import { create, index } from '@/routes/notices';
@@ -24,7 +25,7 @@ export default function Create() {
                 <Heading title="Create Notice" description="Fill out the form to create a new notice." />
 
                 <section className="rounded-md bg-card p-4 shadow sm:p-6">
-                    {/* TODO: Implement notice creation form */}
+                    <NewNoticeForm />
                 </section>
             </div>
         </Layout>
