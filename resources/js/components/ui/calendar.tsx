@@ -142,7 +142,7 @@ function CalendarDayButton({ className, day, modifiers, ...props }: ComponentPro
     return (
         <Button
             ref={ref}
-            type='button'
+            type="button"
             variant="ghost"
             size="icon"
             data-day={day.date.toLocaleDateString()}

@@ -3,7 +3,7 @@ const SUPPORTED_URL_PROTOCOLS = new Set(['http:', 'https:', 'mailto:', 'sms:', '
 export function sanitizeUrl(url: string): string {
     try {
         const parsedUrl = new URL(url);
-         
+
         if (!SUPPORTED_URL_PROTOCOLS.has(parsedUrl.protocol)) {
             return 'about:blank';
         }
