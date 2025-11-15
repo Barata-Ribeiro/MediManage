@@ -152,10 +152,10 @@ php artisan serve
 There are bugs and/or implementations that require some attention.
 
 - Adjust user's home dashboard with better info.
-- Implement notice creation form.
-- Implement notice creation logic.
-- Implement routes for contract creation.
-- Implement routes for contract editing.
+- Implement route for notice details view.
+- Implement route for notice deletion.
+- Implement route for contract creation.
+- Implement route for contract editing.
 
 ## 🤝 Contributing
 
