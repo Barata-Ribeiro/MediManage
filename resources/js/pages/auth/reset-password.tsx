@@ -1,14 +1,16 @@
-import NewPasswordController from '@/actions/App/Http/Controllers/Auth/NewPasswordController';
+import { update } from '@/routes/password';
+import { Form, Head } from '@inertiajs/react';
+
+import { Button } from '@/components/ui/button';
+import { Field, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
+import AuthLayout from '@/layouts/auth-layout';
 
 import InputError from '@/components/input-error';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import AuthLayout from '@/layouts/auth-layout';
-import { Form, Head } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
-import { Activity } from 'react';
-
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { InfoIcon } from 'lucide-react';
 interface ResetPasswordProps {
     token: string;
     email: string;
@@ -20,59 +22,83 @@ export default function ResetPassword({ token, email }: Readonly<ResetPasswordPr
             <Head title="Reset password" />
 
             <Form
-                {...NewPasswordController.store.form()}
+                {...update.form()}
                 transform={(data) => ({ ...data, token, email })}
                 resetOnSuccess={['password', 'password_confirmation']}
                 disableWhileProcessing
-                className="inert:pointer-events-none inert:opacity-50 inert:grayscale-100"
+                className="inert:pointer-events-none inert:opacity-60 inert:grayscale-100"
             >
                 {({ processing, errors }) => (
-                    <div className="grid gap-6">
-                        <div className="grid gap-2">
-                            <Label htmlFor="email">Email</Label>
+                    <div className="space-y-6">
+                        <Field>
+                            <FieldLabel htmlFor="email">Email</FieldLabel>
                             <Input
-                                id="email"
                                 type="email"
+                                id="email"
                                 name="email"
                                 autoComplete="email"
                                 value={email}
                                 className="mt-1 block w-full"
                                 readOnly
+                                aria-invalid={!!errors.email}
                             />
                             <InputError message={errors.email} className="mt-2" />
-                        </div>
+                        </Field>
 
-                        <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                name="password"
-                                autoComplete="new-password"
-                                className="mt-1 block w-full"
-                                autoFocus
-                                placeholder="Password"
-                            />
+                        <Field>
+                            <FieldLabel htmlFor="password">Password</FieldLabel>
+                            <InputGroup>
+                                <InputGroupInput
+                                    id="password"
+                                    type="password"
+                                    name="password"
+                                    autoComplete="new-password"
+                                    className="mt-1 block w-full"
+                                    autoFocus
+                                    placeholder="Password"
+                                    required
+                                    aria-required
+                                    aria-invalid={!!errors.password}
+                                />
+                                <InputGroupAddon align="inline-end">
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <InputGroupButton variant="ghost" aria-label="Info" size="icon-xs">
+                                                <InfoIcon aria-hidden />
+                                            </InputGroupButton>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Password must be at least 8 characters</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </InputGroupAddon>
+                            </InputGroup>
                             <InputError message={errors.password} />
-                        </div>
+                        </Field>
 
-                        <div className="grid gap-2">
-                            <Label htmlFor="password_confirmation">Confirm password</Label>
+                        <Field>
+                            <FieldLabel htmlFor="password_confirmation">Confirm password</FieldLabel>
                             <Input
-                                id="password_confirmation"
                                 type="password"
+                                id="password_confirmation"
                                 name="password_confirmation"
                                 autoComplete="new-password"
                                 className="mt-1 block w-full"
                                 placeholder="Confirm password"
+                                required
+                                aria-required
+                                aria-invalid={!!errors.password_confirmation}
                             />
                             <InputError message={errors.password_confirmation} className="mt-2" />
-                        </div>
+                        </Field>
 
-                        <Button type="submit" className="mt-4 w-full" data-test="reset-password-button">
-                            <Activity mode={processing ? 'visible' : 'hidden'}>
-                                <LoaderCircle className="size-4 animate-spin" />
-                            </Activity>
+                        <Button
+                            type="submit"
+                            className="mt-4 w-full"
+                            disabled={processing}
+                            data-test="reset-password-button"
+                        >
+                            {processing && <Spinner />}
                             Reset password
                         </Button>
                     </div>

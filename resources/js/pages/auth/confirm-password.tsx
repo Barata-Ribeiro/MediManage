@@ -1,12 +1,11 @@
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/auth-layout';
 import { store } from '@/routes/password/confirm';
 import { Form, Head } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
-import { Activity } from 'react';
 
 export default function ConfirmPassword() {
     return (
@@ -18,35 +17,35 @@ export default function ConfirmPassword() {
 
             <Form
                 {...store.form()}
-                disableWhileProcessing
-                className="inert:pointer-events-none inert:opacity-50 inert:grayscale-100"
                 resetOnSuccess={['password']}
+                disableWhileProcessing
+                className="space-y-6 inert:pointer-events-none inert:opacity-60 inert:grayscale-100"
             >
                 {({ processing, errors }) => (
-                    <div className="space-y-6">
-                        <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
+                    <>
+                        <Field>
+                            <FieldLabel htmlFor="password">Password</FieldLabel>
                             <Input
-                                id="password"
                                 type="password"
+                                id="password"
                                 name="password"
-                                placeholder="Password"
                                 autoComplete="current-password"
-                                autoFocus
+                                placeholder="Password"
+                                required
+                                aria-required
+                                aria-invalid={!!errors.password}
                             />
 
                             <InputError message={errors.password} />
-                        </div>
+                        </Field>
 
                         <div className="flex items-center">
-                            <Button className="w-full" data-test="confirm-password-button">
-                                <Activity mode={processing ? 'visible' : 'hidden'}>
-                                    <LoaderCircle className="size-4 animate-spin" />
-                                </Activity>
+                            <Button className="w-full" disabled={processing} data-test="confirm-password-button">
+                                {processing && <Spinner />}
                                 Confirm password
                             </Button>
                         </div>
-                    </div>
+                    </>
                 )}
             </Form>
         </AuthLayout>

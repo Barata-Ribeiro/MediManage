@@ -1,90 +1,126 @@
-import RegisteredUserController from '@/actions/App/Http/Controllers/Auth/RegisteredUserController';
 import { login } from '@/routes';
+import { store } from '@/routes/register';
 import { Form, Head } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
 
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
+import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group';
+import { Spinner } from '@/components/ui/spinner';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import AuthLayout from '@/layouts/auth-layout';
-import { Activity } from 'react';
+import { HelpCircle, InfoIcon } from 'lucide-react';
 
 export default function Register() {
     return (
         <AuthLayout title="Create an account" description="Enter your details below to create your account">
             <Head title="Register" />
             <Form
-                {...RegisteredUserController.store.form()}
+                {...store.form()}
                 resetOnSuccess={['password', 'password_confirmation']}
                 disableWhileProcessing
-                className="space-y-6 inert:pointer-events-none inert:opacity-50 inert:grayscale-100"
+                className="flex flex-col gap-6 inert:pointer-events-none inert:opacity-60 inert:grayscale-100"
             >
                 {({ processing, errors }) => (
                     <>
-                        <div className="grid gap-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
+                        <div className="space-y-6">
+                            <Field>
+                                <FieldLabel htmlFor="name">Name</FieldLabel>
                                 <Input
-                                    id="name"
                                     type="text"
-                                    required
+                                    id="name"
+                                    name="name"
                                     autoFocus
                                     tabIndex={1}
                                     autoComplete="name"
-                                    name="name"
                                     placeholder="Full name"
+                                    required
+                                    aria-required
+                                    aria-invalid={!!errors.name}
                                 />
                                 <InputError message={errors.name} className="mt-2" />
-                            </div>
+                            </Field>
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    required
-                                    tabIndex={2}
-                                    autoComplete="email"
-                                    name="email"
-                                    placeholder="email@example.com"
-                                />
+                            <Field>
+                                <FieldLabel htmlFor="email">Email address</FieldLabel>
+                                <InputGroup>
+                                    <InputGroupInput
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        tabIndex={2}
+                                        autoComplete="email"
+                                        placeholder="email@example.com"
+                                        required
+                                        aria-required
+                                        aria-invalid={!!errors.email}
+                                    />
+                                    <InputGroupAddon align="inline-end">
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <InputGroupButton variant="ghost" aria-label="Help" size="icon-xs">
+                                                    <HelpCircle aria-hidden />
+                                                </InputGroupButton>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>We&apos;ll use this to send you account related emails.</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </InputGroupAddon>
+                                </InputGroup>
                                 <InputError message={errors.email} />
-                            </div>
+                            </Field>
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    required
-                                    tabIndex={3}
-                                    autoComplete="new-password"
-                                    name="password"
-                                    placeholder="Password"
-                                />
+                            <Field>
+                                <FieldLabel htmlFor="password">Password</FieldLabel>
+                                <InputGroup>
+                                    <InputGroupInput
+                                        type="password"
+                                        id="password"
+                                        name="password"
+                                        tabIndex={3}
+                                        autoComplete="new-password"
+                                        placeholder="Password"
+                                        required
+                                        aria-required
+                                        aria-invalid={!!errors.password}
+                                    />
+                                    <InputGroupAddon align="inline-end">
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <InputGroupButton variant="ghost" aria-label="Info" size="icon-xs">
+                                                    <InfoIcon aria-hidden />
+                                                </InputGroupButton>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>Password must be at least 8 characters</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </InputGroupAddon>
+                                </InputGroup>
                                 <InputError message={errors.password} />
-                            </div>
+                            </Field>
 
-                            <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation">Confirm password</Label>
+                            <Field>
+                                <FieldLabel htmlFor="password_confirmation">Confirm password</FieldLabel>
                                 <Input
-                                    id="password_confirmation"
                                     type="password"
-                                    required
+                                    id="password_confirmation"
+                                    name="password_confirmation"
                                     tabIndex={4}
                                     autoComplete="new-password"
-                                    name="password_confirmation"
                                     placeholder="Confirm password"
+                                    required
+                                    aria-required
+                                    aria-invalid={!!errors.password_confirmation}
                                 />
                                 <InputError message={errors.password_confirmation} />
-                            </div>
+                            </Field>
 
                             <Button type="submit" className="mt-2 w-full" tabIndex={5} data-test="register-user-button">
-                                <Activity mode={processing ? 'visible' : 'hidden'}>
-                                    <LoaderCircle className="size-4 animate-spin" />
-                                </Activity>
+                                {processing && <Spinner />}
                                 Create account
                             </Button>
                         </div>
