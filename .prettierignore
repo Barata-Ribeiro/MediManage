@@ -1,2 +1,2 @@
-resources/js/components/ui/*
-resources/views/mail/*
+resources/views/emails/*
+resources/views/pdfs/*
