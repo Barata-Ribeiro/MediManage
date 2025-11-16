@@ -3430,7 +3430,7 @@ namespace PHPSTORM_META {
 'articles.update','articles.destroy','categories.index','categories.create','categories.store',
 'categories.edit','categories.update','categories.destroy','invoices.index','invoices.myInvoices',
 'invoices.generatePdf','notices.index','notices.create','notices.store','notices.edit',
-'notices.update','storage.local',);
+'notices.update','notices.destroy','storage.local',);
         registerArgumentsSet('views', 
 'app','emails.account_association','emails.employee_registration','emails.new_account','pdfs.invoice',
 'pdfs.medical-record','pdfs.prescription','laravel-exceptions-renderer::components.badge','laravel-exceptions-renderer::components.empty-state','laravel-exceptions-renderer::components.file-with-line',
