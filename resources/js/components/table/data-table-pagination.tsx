@@ -41,10 +41,10 @@ export function DataTablePagination<TData>({ pagination }: Readonly<DataTablePag
     const renderPageLinks = () => {
         const items = createPageRange(pagination.current_page, pagination.last_page);
 
-        return items.map((item, idx) => {
+        return items.map((item) => {
             if (typeof item === 'string') {
                 return (
-                    <span key={`ellipsis-${idx}`} className="px-2 text-sm text-muted-foreground">
+                    <span key={`ellipsis-${item}`} className="px-2 text-sm text-muted-foreground">
                         {item}
                     </span>
                 );
@@ -56,7 +56,7 @@ export function DataTablePagination<TData>({ pagination }: Readonly<DataTablePag
 
             return (
                 <Button
-                    key={`page-${pageNumber}-${idx}`}
+                    key={`page-${pageNumber}-${item}`}
                     variant={isActive ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => (serverLink ? goToUrl(serverLink.url) : goToPage(pageNumber))}
