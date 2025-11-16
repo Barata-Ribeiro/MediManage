@@ -1,4 +1,4 @@
-import { DataTableColumnHeader } from '@/components/data-table-column-header';
+import { DataTableColumnHeader } from '@/components/table/data-table-column-header';
 import DropdownMenuCopyButton from '@/components/ui-helpers/dropdown-menu-copy-button';
 import { Button } from '@/components/ui/button';
 import {

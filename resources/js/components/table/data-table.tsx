@@ -1,5 +1,5 @@
-import { DataTablePagination } from '@/components/data-table-pagination';
-import { DataTableViewOptions } from '@/components/data-table-view-options';
+import { DataTablePagination } from '@/components/table/data-table-pagination';
+import { DataTableViewOptions } from '@/components/table/data-table-view-options';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';

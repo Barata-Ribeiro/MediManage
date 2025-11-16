@@ -1,5 +1,5 @@
-import { DataTable } from '@/components/data-table';
 import Heading from '@/components/heading';
+import { DataTable } from '@/components/table/data-table';
 import Layout from '@/layouts/app-layout';
 import { columns } from '@/pages/admin/permissions/column';
 import permissions from '@/routes/admin/permissions';

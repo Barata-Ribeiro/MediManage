@@ -1,6 +1,6 @@
 import categoryController from '@/actions/App/Http/Controllers/Article/CategoryController';
-import { DataTable } from '@/components/data-table';
 import Heading from '@/components/heading';
+import { DataTable } from '@/components/table/data-table';
 import { Button } from '@/components/ui/button';
 import Layout from '@/layouts/app-layout';
 import { column } from '@/pages/manage/categories/column';

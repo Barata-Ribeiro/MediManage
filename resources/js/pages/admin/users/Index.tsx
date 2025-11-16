@@ -1,6 +1,6 @@
 import UserManagementController from '@/actions/App/Http/Controllers/Admin/UserManagementController';
-import { DataTable } from '@/components/data-table';
 import Heading from '@/components/heading';
+import { DataTable } from '@/components/table/data-table';
 import Layout from '@/layouts/app-layout';
 import { columns } from '@/pages/admin/users/column';
 import type { BreadcrumbItem } from '@/types';

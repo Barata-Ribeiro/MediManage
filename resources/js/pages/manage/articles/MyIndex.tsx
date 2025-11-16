@@ -1,6 +1,6 @@
 import articleController from '@/actions/App/Http/Controllers/Article/ArticleController';
-import { DataTable } from '@/components/data-table';
 import Heading from '@/components/heading';
+import { DataTable } from '@/components/table/data-table';
 import { Button } from '@/components/ui/button';
 import Layout from '@/layouts/app-layout';
 import { myColumn } from '@/pages/manage/articles/my-column';

@@ -1,5 +1,5 @@
 import articleController from '@/actions/App/Http/Controllers/Article/ArticleController';
-import { DataTableColumnHeader } from '@/components/data-table-column-header';
+import { DataTableColumnHeader } from '@/components/table/data-table-column-header';
 import TextLink from '@/components/text-link';
 import DropdownMenuCopyButton from '@/components/ui-helpers/dropdown-menu-copy-button';
 import { Button } from '@/components/ui/button';

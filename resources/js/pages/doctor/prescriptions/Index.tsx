@@ -1,6 +1,6 @@
 import doctorPrescriptionController from '@/actions/App/Http/Controllers/Medical/Prescription/DoctorPrescriptionController';
-import { DataTable } from '@/components/data-table';
 import Heading from '@/components/heading';
+import { DataTable } from '@/components/table/data-table';
 import Layout from '@/layouts/app-layout';
 import { column } from '@/pages/doctor/prescriptions/column';
 import { dashboard } from '@/routes';

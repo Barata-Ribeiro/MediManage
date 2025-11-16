@@ -1,4 +1,4 @@
-import { DataTableColumnHeader } from '@/components/data-table-column-header';
+import { DataTableColumnHeader } from '@/components/table/data-table-column-header';
 import { Badge } from '@/components/ui/badge';
 import { normalizeString } from '@/lib/utils';
 import { TableAppointment } from '@/types/application/appointment';
