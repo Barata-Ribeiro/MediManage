@@ -55,10 +55,10 @@ class NoticeController extends Controller
      */
     public function store(NoticeRequest $request)
     {
-        try {
-            $user = Auth::user();
-            $data = $request->validated();
+        $user = Auth::user();
+        $data = $request->validated();
 
+        try {
             Log::info('Notices: Created new notice', ['action_user_id' => $user->id, 'notice_title' => $data['title']]);
             $data['user_id'] = $user->id;
             Notice::create($data);
@@ -86,10 +86,10 @@ class NoticeController extends Controller
      */
     public function update(NoticeRequest $request, Notice $notice)
     {
-        try {
-            $user = Auth::user();
-            $data = $request->validated();
+        $user = Auth::user();
+        $data = $request->validated();
 
+        try {
             Log::info('Notices: Updated notice', ['action_user_id' => $user->id, 'notice_id' => $notice->id]);
             $notice->update($data);
 
@@ -98,6 +98,25 @@ class NoticeController extends Controller
             Log::error('Notices: Failed to update notice', ['action_user_id' => $user->id, 'notice_id' => $notice->id, 'error' => $e->getMessage()]);
 
             return redirect()->back()->withInput()->with('error', 'Failed to update notice. Please try again.');
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Notice $notice)
+    {
+        $user = Auth::user();
+
+        try {
+            Log::info('Notices: Deleted notice', ['action_user_id' => $user->id, 'notice_id' => $notice->id]);
+            $notice->delete();
+
+            return to_route('notices.index')->with('success', 'Notice deleted successfully.');
+        } catch (Exception $e) {
+            Log::error('Notices: Failed to delete notice', ['action_user_id' => $user->id, 'notice_id' => $notice->id, 'error' => $e->getMessage()]);
+
+            return redirect()->back()->with('error', 'Failed to delete notice. Please try again.');
         }
     }
 }

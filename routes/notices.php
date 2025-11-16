@@ -10,4 +10,6 @@ Route::middleware(['auth', 'verified'])->prefix('notices')->group(function () {
 
     Route::get('/{notice}/edit', [NoticeController::class, 'edit'])->name('notices.edit')->middleware('permission:notice.edit');
     Route::patch('/{notice}/update', [NoticeController::class, 'update'])->name('notices.update')->middleware('permission:notice.edit');
+
+    Route::delete('/{notice}/delete', [NoticeController::class, 'destroy'])->name('notices.destroy')->middleware('permission:notice.destroy');
 });
