@@ -111,7 +111,7 @@ export default function NavIndex() {
                     </Sheet>
                 </Activity>
 
-                <Activity mode={!isMobile ? 'visible' : 'hidden'}>
+                <Activity mode={isMobile ? 'hidden' : 'visible'}>
                     <NavigationMenu>
                         <NavigationMenuList>
                             <NavigationMenuItem>
