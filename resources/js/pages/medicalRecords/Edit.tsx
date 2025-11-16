@@ -1,5 +1,5 @@
 import medicalRecordController from '@/actions/App/Http/Controllers/Medical/MedicalRecordController';
-import AppPageAlert from '@/components/app-page-alert';
+import AppPageAlert from '@/components/application/app-page-alert';
 import EditMedicalRecordForm from '@/components/forms/medicalRecords/edit-medical-record-form';
 import Heading from '@/components/heading';
 import Layout from '@/layouts/app-layout';

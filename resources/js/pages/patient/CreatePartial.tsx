@@ -1,4 +1,4 @@
-import AppPageAlert from '@/components/app-page-alert';
+import AppPageAlert from '@/components/application/app-page-alert';
 import PartialNewPatientForm from '@/components/forms/patients/partial-new-patient-form';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';

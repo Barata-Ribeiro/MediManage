@@ -1,4 +1,4 @@
-import AppPageAlert from '@/components/app-page-alert';
+import AppPageAlert from '@/components/application/app-page-alert';
 import EditPermissionForm from '@/components/forms/permissions/edit-permission-form';
 import Heading from '@/components/heading';
 import { Item, ItemContent } from '@/components/ui/item';

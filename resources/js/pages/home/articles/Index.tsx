@@ -1,5 +1,5 @@
 import PublicController from '@/actions/App/Http/Controllers/General/PublicController';
-import AppPagination from '@/components/app-pagination';
+import AppPagination from '@/components/application/app-pagination';
 import ArticleFilterForm from '@/components/forms/home/article-filter-form';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';

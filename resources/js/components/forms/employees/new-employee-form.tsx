@@ -1,4 +1,4 @@
-import AppPageAlert from '@/components/app-page-alert';
+import AppPageAlert from '@/components/application/app-page-alert';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';

@@ -1,6 +1,6 @@
-import AppLogo from '@/components/app-logo';
-import AppLogoIcon from '@/components/app-logo-icon';
-import AppNotice from '@/components/app-notice';
+import AppLogo from '@/components/application/app-logo';
+import AppLogoIcon from '@/components/application/app-logo-icon';
+import AppNotice from '@/components/application/app-notice';
 import TextLink from '@/components/text-link';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';

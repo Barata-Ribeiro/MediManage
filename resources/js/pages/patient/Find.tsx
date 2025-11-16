@@ -1,4 +1,4 @@
-import AppPageAlert from '@/components/app-page-alert';
+import AppPageAlert from '@/components/application/app-page-alert';
 import Heading from '@/components/heading';
 import renderLoadMore from '@/components/helpers/load-more-button';
 import PatientSimpleCard from '@/components/helpers/patient-simple-card';

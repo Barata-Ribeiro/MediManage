@@ -1,4 +1,4 @@
-import AppLogo from '@/components/app-logo';
+import AppLogo from '@/components/application/app-logo';
 import { NavAdmin } from '@/components/navigation/nav-admin';
 import NavAttendant from '@/components/navigation/nav-attendant';
 import { NavDoctor } from '@/components/navigation/nav-doctor';

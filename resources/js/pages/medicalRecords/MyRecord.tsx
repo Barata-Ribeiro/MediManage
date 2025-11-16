@@ -1,4 +1,4 @@
-import AppPageAlert from '@/components/app-page-alert';
+import AppPageAlert from '@/components/application/app-page-alert';
 import Heading from '@/components/heading';
 import HeadingSmall from '@/components/heading-small';
 import PatientEntryViewModal from '@/components/helpers/patient-entry-view-modal';

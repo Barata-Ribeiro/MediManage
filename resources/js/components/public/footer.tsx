@@ -1,4 +1,4 @@
-import AppLogo from '@/components/app-logo';
+import AppLogo from '@/components/application/app-logo';
 import TextLink from '@/components/text-link';
 import { home } from '@/routes';
 import { Link } from '@inertiajs/react';

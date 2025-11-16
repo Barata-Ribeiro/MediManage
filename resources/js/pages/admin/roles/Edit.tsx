@@ -1,4 +1,4 @@
-import AppPagination from '@/components/app-pagination';
+import AppPagination from '@/components/application/app-pagination';
 import EditRoleForm from '@/components/forms/admin/roles/edit-role-form';
 import SearchPermissionsForm from '@/components/forms/admin/roles/search-permissions-form';
 import Heading from '@/components/heading';

@@ -1,4 +1,4 @@
-import AppPageAlert from '@/components/app-page-alert';
+import AppPageAlert from '@/components/application/app-page-alert';
 import EditPatientPrescriptionForm from '@/components/forms/prescriptions/edit-patient-prescription-form';
 import Heading from '@/components/heading';
 import { Separator } from '@/components/ui/separator';

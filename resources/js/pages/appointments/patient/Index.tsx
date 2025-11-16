@@ -1,4 +1,4 @@
-import AppPageAlert from '@/components/app-page-alert';
+import AppPageAlert from '@/components/application/app-page-alert';
 import { DataTable } from '@/components/data-table';
 import Heading from '@/components/heading';
 import Layout from '@/layouts/app-layout';
