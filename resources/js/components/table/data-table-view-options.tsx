@@ -1,3 +1,5 @@
+'use no memo';
+
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -6,6 +8,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import { normalizeString } from '@/lib/utils';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 import { Table } from '@tanstack/react-table';
 import { Settings2 } from 'lucide-react';
@@ -18,8 +21,8 @@ export function DataTableViewOptions<TData>({
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="ml-auto hidden h-8 lg:flex">
-                    <Settings2 />
+                <Button variant="outline" size="sm" className="ml-auto">
+                    <Settings2 aria-hidden />
                     View
                 </Button>
             </DropdownMenuTrigger>
@@ -33,11 +36,10 @@ export function DataTableViewOptions<TData>({
                         return (
                             <DropdownMenuCheckboxItem
                                 key={column.id}
-                                className="capitalize"
                                 checked={column.getIsVisible()}
-                                onCheckedChange={(value) => column.toggleVisibility(value)}
+                                onCheckedChange={(value) => column.toggleVisibility(!!value)}
                             >
-                                {column.id.replace(/[_-]+/g, ' ')}
+                                {normalizeString(column.id)}
                             </DropdownMenuCheckboxItem>
                         );
                     })}
