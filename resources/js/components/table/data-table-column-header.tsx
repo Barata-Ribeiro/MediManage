@@ -45,12 +45,16 @@ export function DataTableColumnHeader<TData, TValue>({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
                     <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
-                        <ArrowUp />
+                        {columnSortIndicator['asc']}
                         Asc
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
-                        <ArrowDown />
+                        {columnSortIndicator['desc']}
                         Desc
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => column.clearSorting()}>
+                        {columnSortIndicator['default']}
+                        Clear
                     </DropdownMenuItem>
                     <Activity mode={column.getCanHide() ? 'visible' : 'hidden'}>
                         <DropdownMenuSeparator />
