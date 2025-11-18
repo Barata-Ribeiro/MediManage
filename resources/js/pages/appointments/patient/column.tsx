@@ -10,6 +10,8 @@ export const column: ColumnDef<TableAppointment>[] = [
         accessorKey: 'id',
         header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
         enableSorting: true,
+        enableHiding: false,
+        size: 40,
     },
     {
         accessorKey: 'reason_for_visit',

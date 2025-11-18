@@ -22,6 +22,8 @@ export const columns: ColumnDef<User>[] = [
         accessorKey: 'id',
         header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
         enableSorting: true,
+        enableHiding: false,
+        size: 40,
     },
     {
         accessorKey: 'name',
@@ -66,7 +68,7 @@ export const columns: ColumnDef<User>[] = [
     },
     {
         id: 'actions',
-        cell: ({ row }) => {
+        cell: function Cell({ row }) {
             const user = row.original;
 
             return (
@@ -87,14 +89,19 @@ export const columns: ColumnDef<User>[] = [
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
-                            <Link href={users.show(user.id)}>View</Link>
+                            <Link href={users.show(user.id)} as="button">
+                                View
+                            </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                            <Link href={users.edit(user.id)}>Edit</Link>
+                            <Link href={users.edit(user.id)} as="button">
+                                Edit
+                            </Link>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );
         },
+        size: 40,
     },
 ];

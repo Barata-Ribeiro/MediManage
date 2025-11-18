@@ -23,6 +23,8 @@ export const column: ColumnDef<TableEmployeeInfo>[] = [
         accessorKey: 'id',
         header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
         enableSorting: true,
+        enableHiding: false,
+        size: 40,
     },
     {
         accessorKey: 'first_name',
@@ -67,28 +69,31 @@ export const column: ColumnDef<TableEmployeeInfo>[] = [
 
     {
         id: 'actions',
-        cell: ({ row }) => (
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem asChild>
-                        <DropdownMenuCopyButton content={row.original.full_name}>Copy Name</DropdownMenuCopyButton>
-                    </DropdownMenuItem>
+        cell: function Cell({ row }) {
+            return (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="size-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="size-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem asChild>
+                            <DropdownMenuCopyButton content={row.original.full_name}>Copy Name</DropdownMenuCopyButton>
+                        </DropdownMenuItem>
 
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                        <Link href={employee_info.show(row.original.id)} prefetch>
-                            Show
-                        </Link>
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        ),
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                            <Link href={employee_info.show(row.original.id)} as="button">
+                                Show
+                            </Link>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            );
+        },
+        size: 40,
     },
 ];

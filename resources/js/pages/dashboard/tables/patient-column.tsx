@@ -6,8 +6,9 @@ import { ColumnDef } from '@tanstack/react-table';
 export const patientColumn: ColumnDef<UpcomingAppointment>[] = [
     {
         accessorKey: 'id',
-        header: 'ID',
         enableSorting: false,
+        enableHiding: false,
+        size: 40,
     },
     {
         accessorKey: 'date',

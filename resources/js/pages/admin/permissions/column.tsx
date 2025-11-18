@@ -21,6 +21,8 @@ export const columns: ColumnDef<Permission>[] = [
         accessorKey: 'id',
         header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
         enableSorting: true,
+        enableHiding: false,
+        size: 40,
     },
     {
         accessorKey: 'title',
@@ -51,17 +53,18 @@ export const columns: ColumnDef<Permission>[] = [
     },
     {
         id: 'actions',
-        cell: ({ row }) => {
+        cell: function Cell({ row }) {
             const perm = row.original;
 
-            const viewLink = permissions.show(perm.id).url;
+            const viewRoute = permissions.show(perm.id);
+            const editRoute = permissions.edit(perm.id);
 
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Button variant="ghost" className="size-8 p-0">
                             <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
+                            <MoreHorizontal className="size-4" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -74,12 +77,19 @@ export const columns: ColumnDef<Permission>[] = [
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
-                            <Link href={viewLink}>View</Link>
+                            <Link href={viewRoute} as="button">
+                                View
+                            </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href={editRoute} as="button">
+                                Edit
+                            </Link>
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );
         },
+        size: 40,
     },
 ];

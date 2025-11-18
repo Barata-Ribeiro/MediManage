@@ -21,6 +21,8 @@ export const patientColumn: ColumnDef<TablePrescription>[] = [
         accessorKey: 'id',
         header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
         enableSorting: true,
+        enableHiding: false,
+        size: 40,
     },
     {
         accessorKey: 'employee_info.first_name',
@@ -82,15 +84,15 @@ export const patientColumn: ColumnDef<TablePrescription>[] = [
 
     {
         id: 'actions',
-        cell: ({ row }) => {
+        cell: function Cell({ row }) {
             const doctor = row.original.employee_info;
 
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Button variant="ghost" className="size-8 p-0">
                             <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
+                            <MoreHorizontal className="size-4" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">

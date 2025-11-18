@@ -29,6 +29,8 @@ export const column: ColumnDef<Category>[] = [
         accessorKey: 'id',
         header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
         enableSorting: true,
+        enableHiding: false,
+        size: 40,
     },
     {
         accessorKey: 'name',
@@ -55,30 +57,33 @@ export const column: ColumnDef<Category>[] = [
 
     {
         id: 'actions',
-        cell: ({ row }) => (
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="size-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="size-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem asChild>
-                        <DropdownMenuCopyButton content={row.original.name}>Copy Name</DropdownMenuCopyButton>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                        <Link href={categories.edit(row.original.id)} className="w-full" as="button">
-                            Edit
-                        </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem variant="destructive" onClick={(e) => handleDelete(e, row.original)}>
-                        Delete
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        ),
+        cell: function Cell({ row }) {
+            return (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="size-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="size-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem asChild>
+                            <DropdownMenuCopyButton content={row.original.name}>Copy Name</DropdownMenuCopyButton>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                            <Link href={categories.edit(row.original.id)} className="w-full" as="button">
+                                Edit
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem variant="destructive" onClick={(e) => handleDelete(e, row.original)}>
+                            Delete
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            );
+        },
+        size: 40,
     },
 ];

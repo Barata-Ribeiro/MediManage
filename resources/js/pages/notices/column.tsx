@@ -34,6 +34,8 @@ export const column: ColumnDef<TableNotice>[] = [
         accessorKey: 'id',
         header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
         enableSorting: true,
+        enableHiding: false,
+        size: 40,
     },
     {
         accessorKey: 'title',
@@ -72,72 +74,67 @@ export const column: ColumnDef<TableNotice>[] = [
 
     {
         id: 'actions',
-        cell: ({ row }) => {
-            function Actions() {
-                const [isDialogOpen, setIsDialogOpen] = useState(false);
+        cell: function Cell({ row }) {
+            const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-                return (
-                    <>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                    <span className="sr-only">Open menu</span>
-                                    <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuItem asChild>
-                                    <DropdownMenuCopyButton content={row.original.title}>
-                                        Copy Title
-                                    </DropdownMenuCopyButton>
-                                </DropdownMenuItem>
+            return (
+                <>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="size-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="size-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem asChild>
+                                <DropdownMenuCopyButton content={row.original.title}>Copy Title</DropdownMenuCopyButton>
+                            </DropdownMenuItem>
 
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>Show</DropdownMenuItem>
-                                <DropdownMenuItem asChild>
-                                    <Link href={notices.edit(row.original.id)} className="w-full" as="button">
-                                        Edit
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>Show</DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link href={notices.edit(row.original.id)} className="w-full" as="button">
+                                    Edit
+                                </Link>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem onClick={() => setIsDialogOpen(true)} variant="destructive">
+                                Delete
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This action cannot be undone. This will permanently delete the notice{' '}
+                                    <strong>{row.original.title}</strong> from our servers.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel asChild>
+                                    <Button variant="outline" onClick={() => setIsDialogOpen(false)} autoFocus>
+                                        Cancel
+                                    </Button>
+                                </AlertDialogCancel>
+                                <AlertDialogAction
+                                    asChild
+                                    className="bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40"
+                                >
+                                    <Link href={notices.destroy(row.original.id)} as="button">
+                                        Yes, delete notice
                                     </Link>
-                                </DropdownMenuItem>
-
-                                <DropdownMenuItem onClick={() => setIsDialogOpen(true)} variant="destructive">
-                                    Delete
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-
-                        <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                            <AlertDialogContent>
-                                <AlertDialogHeader>
-                                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        This action cannot be undone. This will permanently delete the notice{' '}
-                                        <strong>{row.original.title}</strong> from our servers.
-                                    </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                    <AlertDialogCancel asChild>
-                                        <Button variant="outline" onClick={() => setIsDialogOpen(false)} autoFocus>
-                                            Cancel
-                                        </Button>
-                                    </AlertDialogCancel>
-                                    <AlertDialogAction
-                                        asChild
-                                        className="bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40"
-                                    >
-                                        <Link href={notices.destroy(row.original.id)} as="button">
-                                            Yes, delete notice
-                                        </Link>
-                                    </AlertDialogAction>
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
-                    </>
-                );
-            }
-
-            return <Actions />;
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                </>
+            );
         },
+        size: 40,
     },
 ];

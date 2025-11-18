@@ -21,6 +21,8 @@ export const columns: ColumnDef<Role>[] = [
         accessorKey: 'id',
         header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
         enableSorting: true,
+        enableHiding: false,
+        size: 40,
     },
     {
         accessorKey: 'name',
@@ -51,19 +53,19 @@ export const columns: ColumnDef<Role>[] = [
     },
     {
         id: 'actions',
-        cell: ({ row }) => {
+        cell: function Cell({ row }) {
             const role = row.original;
             const disabled = role.name === 'Super Admin';
 
-            const editLink = disabled ? '' : roles.edit(role.id);
+            const editRoute = disabled ? '' : roles.edit(role.id);
             const disabledStyle = disabled ? 'opacity-50 pointer-events-none' : '';
 
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Button variant="ghost" className="size-8 p-0">
                             <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
+                            <MoreHorizontal className="size-4" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -73,14 +75,16 @@ export const columns: ColumnDef<Role>[] = [
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem className={disabledStyle} asChild>
-                            <Link href={editLink} prefetch>
+                            <Link href={editRoute} as="button">
                                 Edit
                             </Link>
                         </DropdownMenuItem>
+                        {/* TODO: Implement delete role functionality */}
                         <DropdownMenuItem className={disabledStyle}>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );
         },
+        size: 40,
     },
 ];

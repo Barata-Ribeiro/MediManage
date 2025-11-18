@@ -32,6 +32,8 @@ export const myColumn: ColumnDef<TableArticle>[] = [
         accessorKey: 'id',
         header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
         enableSorting: true,
+        enableHiding: false,
+        size: 40,
     },
     {
         accessorKey: 'title',
@@ -72,7 +74,7 @@ export const myColumn: ColumnDef<TableArticle>[] = [
     },
     {
         id: 'actions',
-        cell: ({ row }) => {
+        cell: function Cell({ row }) {
             const title = row.original.title;
 
             return (
@@ -122,5 +124,6 @@ export const myColumn: ColumnDef<TableArticle>[] = [
                 </DropdownMenu>
             );
         },
+        size: 40,
     },
 ];
