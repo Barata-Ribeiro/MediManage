@@ -38,55 +38,62 @@ Requirements
 
 Initial setup (Windows + XAMPP + PowerShell)
 
+Or, on Unix-like systems (macOS / Linux with bash): examples are provided below where relevant.
+
 1. Clone the repository:
 
-```powershell
+```bash
 git clone https://github.com/Barata-Ribeiro/MediManage.git
 cd MediManage
 ```
 
-2. Install PHP dependencies with Composer:
+2. Install PHP & Node dependencies
 
-```powershell
-composer install
+```bash
+composer run setup
 ```
 
-3. Install Node dependencies and build assets:
+3. Configure environment
 
-```powershell
-npm install
-npm run dev
+The command above already copies `.env.example` to `.env` and generates the application key. However, you may need to further edit `.env` to set database connection and other environment variables.
+
+The most important ones are:
+
+```sh
+APP_NAME='YourAppName'
+APP_ADMIN_EMAIL='admin@example.com'
+APP_ADMIN_NAME=Administrator
+APP_ADMIN_PASSWORD='123456A#'
+APP_ADMIN_FIRST_NAME='Sr. Admin'
+APP_ADMIN_LAST_NAME='of Site'
 ```
 
-4. Environment file
+If you plan to use MySQL instead of the default SQLite, update the DB\_\* variables accordingly; uncomment the relevant lines and provide your MySQL credentials.
 
-- Copy `.env.example` to `.env` and update values (DB settings, mailer, app key, etc.). On Windows PowerShell:
+4. Database File (Optional)
 
-```powershell
-Copy-Item .env.example .env
-```
-
-- Generate the application key:
+- If you're using the default sqlite in `.env` (`DB_CONNECTION=sqlite`), create the database file:
 
 ```powershell
-php artisan key:generate
-```
-
-- If you're using the default sqlite in `.env` (DB_CONNECTION=sqlite), create the database file:
-
-```powershell
+# Windows PowerShell
 New-Item -Path database\database.sqlite -ItemType File -Force
+```
+
+```bash
+# macOS / Linux (bash)
+mkdir -p database
+touch database/database.sqlite
 ```
 
 5. Database migrations & seeders
 
-```powershell
+```bash
 php artisan migrate --seed
 ```
 
 6. Start the local server (Laravel development server):
 
-```powershell
+```bash
 composer run dev
 #SSR:
 composer run dev:ssr
@@ -133,12 +140,35 @@ Important files
 
 Try it (quick start)
 
+Option 1 — Full setup using the composer script (recommended):
+
+```bash
+composer run setup
+```
+
+Or manually, Option 2 — Manual setup:
+
 1. Copy `.env` and set DB to sqlite (or configure MySQL). Create sqlite file if needed:
 
 ```powershell
+# Windows PowerShell
+composer install
 Copy-Item .env.example .env
 php artisan key:generate
 New-Item -Path database\database.sqlite -ItemType File -Force
+php artisan migrate --seed
+npm install
+npm run dev
+php artisan serve
+```
+
+```bash
+# macOS / Linux (bash)
+composer install
+cp .env.example .env
+php artisan key:generate
+mkdir -p database
+touch database/database.sqlite
 php artisan migrate --seed
 npm install
 npm run dev
@@ -156,6 +186,8 @@ There are bugs and/or implementations that require some attention.
 - Implement route for notice deletion.
 - Implement route for contract creation.
 - Implement route for contract editing.
+- Implement delete functionality for roles.
+- Add delete confirmation modals for some actions.
 
 ## 🤝 Contributing
 
