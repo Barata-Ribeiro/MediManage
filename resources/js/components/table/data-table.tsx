@@ -7,6 +7,7 @@ import { buildParams } from '@/lib/utils';
 import { PaginationMeta } from '@/types';
 import { Link, router } from '@inertiajs/react';
 import {
+    Column,
     ColumnDef,
     flexRender,
     getCoreRowModel,
@@ -23,17 +24,44 @@ interface DataTableProps<TData, TValue> {
     pagination: PaginationMeta<TData[]>;
 }
 
+function getCommonPinningStyles<TData>({
+    column,
+    withBorder = false,
+}: {
+    column: Column<TData>;
+    withBorder?: boolean;
+}): React.CSSProperties {
+    const isPinned = column.getIsPinned();
+    const isLastLeftPinnedColumn = isPinned === 'left' && column.getIsLastColumn('left');
+    const isFirstRightPinnedColumn = isPinned === 'right' && column.getIsFirstColumn('right');
+
+    const leftPinnedBoxShadow = '-4px 0 4px -4px var(--border) inset';
+    const rightPinnedBoxShadow = '4px 0 4px -4px var(--border) inset';
+
+    const rightPinnedShadow = isFirstRightPinnedColumn ? rightPinnedBoxShadow : undefined;
+    const pinnedColumnShadow = isLastLeftPinnedColumn ? leftPinnedBoxShadow : rightPinnedShadow;
+
+    return {
+        boxShadow: withBorder ? pinnedColumnShadow : undefined,
+        left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
+        right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
+        opacity: isPinned ? 0.97 : 1,
+        position: isPinned ? 'sticky' : 'relative',
+        background: 'var(--background)',
+        width: column.getSize(),
+        zIndex: isPinned ? 1 : undefined,
+    };
+}
+
 export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly<DataTableProps<TData, TValue>>) {
-    const getInitialSorting = (): SortingState => {
+    const [sorting, setSorting] = useState<SortingState>(() => {
         const params = new URLSearchParams(globalThis.location.search);
         const sort_by = params.get('sort_by');
         const sort_dir = params.get('sort_dir');
         if (!sort_by) return [];
 
         return [{ id: sort_by, desc: sort_dir === 'desc' }];
-    };
-
-    const [sorting, setSorting] = useState<SortingState>(getInitialSorting);
+    });
 
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
@@ -43,10 +71,29 @@ export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly
     };
 
     const [search, setSearch] = useState<string>(getInitialSearch());
+    const [path] = useState<string | undefined>(pagination.path);
     const searchDebounce = useRef<NodeJS.Timeout | undefined>(undefined);
 
-    const path = pagination.path;
+    const table = useReactTable({
+        columns,
+        data,
+        getCoreRowModel: getCoreRowModel(),
+        manualPagination: true, // turn off client-side pagination
+        manualSorting: true, // turn off client-side sorting
+        pageCount: pagination.last_page ?? Math.ceil((pagination.total ?? 0) / (pagination.per_page ?? 1)),
+        initialState: {
+            pagination: {
+                pageIndex: Math.max((pagination.current_page ?? 1) - 1, 0),
+                pageSize: pagination.per_page,
+            },
+            columnPinning: { left: ['id'], right: ['actions'] },
+        },
+        onSortingChange: setSorting,
+        onColumnVisibilityChange: setColumnVisibility,
+        state: { sorting, columnVisibility },
+    });
 
+    // Sync sorting state with server via Inertia
     useEffect(() => {
         if (!path) return;
 
@@ -54,28 +101,18 @@ export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly
         const currentSortBy = params.get('sort_by');
         const currentSortDir = params.get('sort_dir');
 
-        if (!sorting || sorting.length === 0) {
-            if (!currentSortBy && !currentSortDir) return;
+        const sort = sorting?.[0];
+        const desiredSortBy = sort ? String(sort.id) : undefined;
+        let desiredSortDir: string | undefined = undefined;
 
-            router.get(path, buildParams({ sort_by: undefined, sort_dir: undefined }), {
-                preserveState: true,
-                replace: true,
-            });
-            return;
-        }
+        if (sort) desiredSortDir = sort.desc ? 'desc' : 'asc';
 
-        const sort = sorting[0];
-        const sortBy = String(sort.id);
-        const sortDir = sort.desc ? 'desc' : 'asc';
+        if (currentSortBy === desiredSortBy && currentSortDir === desiredSortDir) return;
 
-        if (currentSortBy === sortBy && currentSortDir === sortDir) return;
-
-        if (sortBy) {
-            router.get(path, buildParams({ sort_by: sortBy, sort_dir: sortDir }), {
-                preserveState: true,
-                replace: true,
-            });
-        }
+        router.get(path, buildParams({ sort_by: desiredSortBy, sort_dir: desiredSortDir }), {
+            preserveState: true,
+            replace: true,
+        });
     }, [sorting, path]);
 
     useEffect(() => {
@@ -97,18 +134,6 @@ export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly
 
         return () => globalThis.clearTimeout(searchDebounce.current);
     }, [search, path]);
-
-    const table = useReactTable({
-        data,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-        onSortingChange: setSorting,
-        onColumnVisibilityChange: setColumnVisibility,
-        state: {
-            sorting,
-            columnVisibility,
-        },
-    });
 
     return (
         <div className="mx-auto w-full flex-col space-y-4">
@@ -146,7 +171,13 @@ export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id}>
+                                        <TableHead
+                                            key={header.id}
+                                            colSpan={header.colSpan}
+                                            style={{
+                                                ...getCommonPinningStyles({ column: header.column }),
+                                            }}
+                                        >
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(header.column.columnDef.header, header.getContext())}
@@ -161,7 +192,12 @@ export function DataTable<TData, TValue>({ columns, data, pagination }: Readonly
                             table.getRowModel().rows.map((row) => (
                                 <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
+                                        <TableCell
+                                            key={cell.id}
+                                            style={{
+                                                ...getCommonPinningStyles({ column: cell.column }),
+                                            }}
+                                        >
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
                                     ))}
