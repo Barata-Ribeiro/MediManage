@@ -14,5 +14,14 @@ createServer((page) =>
         setup: ({ App, props }) => {
             return <App {...props} />;
         },
+        defaults: {
+            future: {
+                useScriptElementForInitialPage: true,
+            },
+            prefetch: {
+                cacheFor: '1m',
+                hoverDelay: 150,
+            },
+        },
     }),
 );
