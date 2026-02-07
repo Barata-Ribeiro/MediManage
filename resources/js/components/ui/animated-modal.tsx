@@ -1,5 +1,5 @@
+import { useOnClickOutside } from '@/hooks/use-on-click-outside';
 import { cn } from '@/lib/utils';
-import { useOnClickOutside } from '@/packages/hooks';
 import { AnimatePresence, motion } from 'framer-motion';
 import type React from 'react';
 import { createContext, type ReactNode, useContext, useEffect, useRef, useState } from 'react';
@@ -68,7 +68,7 @@ export const ModalBody = ({ children, className }: { children: ReactNode; classN
                         opacity: 1,
                         backdropFilter: 'blur(10px)',
                     }}
-                    className="fixed inset-0 z-50 flex h-full w-full items-center justify-center [perspective:800px] [transform-style:preserve-3d]"
+                    className="fixed inset-0 z-50 flex h-full w-full items-center justify-center perspective-midrange transform-3d"
                     exit={{
                         opacity: 0,
                         backdropFilter: 'blur(0px)',
