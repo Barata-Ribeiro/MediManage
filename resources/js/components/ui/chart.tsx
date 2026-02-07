@@ -40,11 +40,10 @@ function ChartContainer({
     children: React.ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>['children'];
 }) {
     const uniqueId = React.useId();
-    const chartId = `chart-${id || uniqueId.replaceAll(/:/g, '')}`;
-    const contextValue = React.useMemo(() => ({ config }), [config]);
+    const chartId = `chart-${id || uniqueId.replace(/:/g, '')}`;
 
     return (
-        <ChartContext.Provider value={contextValue}>
+        <ChartContext.Provider value={{ config }}>
             <div
                 data-slot="chart"
                 data-chart={chartId}
@@ -124,7 +123,10 @@ function ChartTooltipContent({
         const [item] = payload;
         const key = `${labelKey || item?.dataKey || item?.name || 'value'}`;
         const itemConfig = getPayloadConfigFromPayload(config, item, key);
-        const value = !labelKey && typeof label === 'string' ? config[label]?.label || label : itemConfig?.label;
+        const value =
+            !labelKey && typeof label === 'string'
+                ? config[label as keyof typeof config]?.label || label
+                : itemConfig?.label;
 
         if (labelFormatter) {
             return <div className={cn('font-medium', labelClassName)}>{labelFormatter(value, payload)}</div>;
@@ -150,7 +152,7 @@ function ChartTooltipContent({
                 className,
             )}
         >
-            {nestLabel ? null : tooltipLabel}
+            {!nestLabel ? tooltipLabel : null}
             <div className="grid gap-1.5">
                 {payload
                     .filter((item) => item.type !== 'none')
@@ -177,7 +179,7 @@ function ChartTooltipContent({
                                             !hideIndicator && (
                                                 <div
                                                     className={cn(
-                                                        'shrink-0 rounded-[2px] border-border bg-(--color-bg)',
+                                                        'shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)',
                                                         {
                                                             'h-2.5 w-2.5': indicator === 'dot',
                                                             'w-1': indicator === 'line',
@@ -281,7 +283,6 @@ function ChartLegendContent({
     );
 }
 
-// Helper to extract item config from a payload.
 function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key: string) {
     if (typeof payload !== 'object' || payload === null) {
         return undefined;
@@ -304,7 +305,7 @@ function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key:
         configLabelKey = payloadPayload[key as keyof typeof payloadPayload] as string;
     }
 
-    return configLabelKey in config ? config[configLabelKey] : config[key];
+    return configLabelKey in config ? config[configLabelKey] : config[key as keyof typeof config];
 }
 
 export { ChartContainer, ChartLegend, ChartLegendContent, ChartStyle, ChartTooltip, ChartTooltipContent };
