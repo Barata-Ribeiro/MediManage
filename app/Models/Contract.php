@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $start_date
  * @property string $end_date
  * @property string $rate_type
- * @property string $rate
+ * @property numeric $rate
  * @property string $contract_type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at

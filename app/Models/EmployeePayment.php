@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $employee_info_id
  * @property string|null $payment_date
- * @property string $amount
+ * @property numeric $amount
  * @property string $payment_method
  * @property string|null $transaction_reference
  * @property \Illuminate\Support\Carbon|null $created_at

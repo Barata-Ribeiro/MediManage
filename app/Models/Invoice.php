@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $consultation_date
  * @property string|null $notes
  * @property string $due_date
- * @property string $amount
+ * @property numeric $amount
  * @property string $payment_method
  * @property string $status
  * @property \Illuminate\Support\Carbon|null $created_at
