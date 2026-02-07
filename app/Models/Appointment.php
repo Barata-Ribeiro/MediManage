@@ -23,6 +23,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read \App\Models\EmployeeInfo $employeeInfo
  * @property-read \App\Models\PatientInfo $patientInfo
+ *
  * @method static \Database\Factories\AppointmentFactory factory($count = null, $state = [])
  * @method static Builder<static>|Appointment newModelQuery()
  * @method static Builder<static>|Appointment newQuery()
@@ -35,6 +36,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|Appointment whereReasonForVisit($value)
  * @method static Builder<static>|Appointment whereStatus($value)
  * @method static Builder<static>|Appointment whereUpdatedAt($value)
+ *
  * @mixin Eloquent
  */
 class Appointment extends Model

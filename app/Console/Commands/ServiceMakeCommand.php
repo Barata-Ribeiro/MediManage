@@ -27,13 +27,14 @@ class ServiceMakeCommand extends GeneratorCommand
 
     /**
      * Execute the console command.
+     *
      * @throws FileNotFoundException
      */
     public function handle(): ?bool
     {
-        $codeToAdd = "\n\t\t\$this->app->bind(\n" .
-            "\t\t\t\\App\\Interfaces\\" . str_replace('/', '\\', $this->argument('name')) . "Interface::class,\n" .
-            "\t\t\t\\App\\Services\\" . str_replace('/', '\\', $this->argument('name')) . "::class\n" .
+        $codeToAdd = "\n\t\t\$this->app->bind(\n".
+            "\t\t\t\\App\\Interfaces\\".str_replace('/', '\\', $this->argument('name'))."Interface::class,\n".
+            "\t\t\t\\App\\Services\\".str_replace('/', '\\', $this->argument('name'))."::class\n".
             "\t\t);\n";
 
         $appServiceProviderFile = app_path('Providers/AppServiceProvider.php');
@@ -41,29 +42,25 @@ class ServiceMakeCommand extends GeneratorCommand
         $this->injectCodeToRegisterMethod($appServiceProviderFile, $codeToAdd);
 
         Artisan::call('make:interface', [
-            'name' => $this->argument('name') . 'Interface'
+            'name' => $this->argument('name').'Interface',
         ]);
+
         return parent::handle();
     }
 
     /**
      * Get the stub file for the generator.
-     *
-     * @return string
      */
     protected function getStub(): string
     {
-        return __DIR__ . '/stubs/service.stub';
+        return __DIR__.'/stubs/service.stub';
     }
 
     /**
      * Execute the console command.
-     *
-     * @param $rootNamespace
-     * @return string
      */
     protected function getDefaultNamespace($rootNamespace): string
     {
-        return $rootNamespace . '\\Services';
+        return $rootNamespace.'\\Services';
     }
 }

@@ -43,7 +43,7 @@ class PatientInfoFactory extends Factory
             'current_medications' => fake()->randomElement(['None', 'Aspirin', 'Ibuprofen']),
             'past_illnesses' => fake()->randomElement(['None', 'Chickenpox', 'Measles']),
             'surgeries' => fake()->randomElement(['None', 'Appendectomy', 'Tonsillectomy']),
-            'family_medical_history' => fake()->randomElement(['None', 'Diabetes', 'Heart Disease', 'Cancer'])
+            'family_medical_history' => fake()->randomElement(['None', 'Diabetes', 'Heart Disease', 'Cancer']),
         ];
     }
 }

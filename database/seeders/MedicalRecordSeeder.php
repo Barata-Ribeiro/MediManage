@@ -13,6 +13,6 @@ class MedicalRecordSeeder extends Seeder
      */
     public function run(): void
     {
-        PatientInfo::all()->each(fn($patient) => MedicalRecord::factory()->count(1)->create(['patient_info_id' => $patient->id]));
+        PatientInfo::all()->each(fn ($patient) => MedicalRecord::factory()->count(1)->create(['patient_info_id' => $patient->id]));
     }
 }

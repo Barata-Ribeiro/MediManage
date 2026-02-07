@@ -14,15 +14,16 @@ class IsImageRule implements ValidationRule
     /**
      * Run the validation rule.
      *
-     * @param Closure(string, ?string=): PotentiallyTranslatedString $fail
+     * @param  Closure(string, ?string=): PotentiallyTranslatedString  $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
 
-        if (!filter_var($value, FILTER_VALIDATE_URL)) {
+        if (! filter_var($value, FILTER_VALIDATE_URL)) {
             Log::warning('Invalid URL format', ['url' => $value]);
             $fail(self::ERROR_MESSAGE);
+
             return;
         }
 
@@ -51,12 +52,13 @@ class IsImageRule implements ValidationRule
         if ($httpCode >= 400 || empty($contentType)) {
             Log::warning('Failed to retrieve content type or HTTP error', ['url' => $value, 'http_code' => $httpCode]);
             $fail(self::ERROR_MESSAGE);
+
             return;
         }
 
         $contentType = strtolower(explode(';', $contentType)[0]);
 
-        if (!in_array($contentType, $allowedMimeTypes, true)) {
+        if (! in_array($contentType, $allowedMimeTypes, true)) {
             $fail(self::ERROR_MESSAGE);
         }
     }

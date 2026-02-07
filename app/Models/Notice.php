@@ -20,6 +20,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read \App\Models\User $user
+ *
  * @method static \Database\Factories\NoticeFactory factory($count = null, $state = [])
  * @method static Builder<static>|Notice newModelQuery()
  * @method static Builder<static>|Notice newQuery()
@@ -32,6 +33,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|Notice whereType($value)
  * @method static Builder<static>|Notice whereUpdatedAt($value)
  * @method static Builder<static>|Notice whereUserId($value)
+ *
  * @mixin Eloquent
  */
 class Notice extends Model

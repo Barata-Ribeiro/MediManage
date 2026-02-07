@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\EmployeeInfo $employeeInfo
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmployeePayment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmployeePayment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmployeePayment query()
@@ -26,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmployeePayment wherePaymentMethod($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmployeePayment whereTransactionReference($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EmployeePayment whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class EmployeePayment extends Model

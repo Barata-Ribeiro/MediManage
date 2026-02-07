@@ -22,22 +22,17 @@ class InterfaceMakeCommand extends GeneratorCommand
 
     /**
      * Execute the console command.
-     *
-     * @param $rootNamespace
-     * @return string
      */
     protected function getDefaultNamespace($rootNamespace): string
     {
-        return $rootNamespace . '\\Interfaces';
+        return $rootNamespace.'\\Interfaces';
     }
 
     /**
      * Get the stub file for the generator.
-     *
-     * @return string
      */
     protected function getStub(): string
     {
-        return __DIR__ . '/stubs/interface.stub';
+        return __DIR__.'/stubs/interface.stub';
     }
 }

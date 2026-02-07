@@ -19,6 +19,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read Collection<int, \App\Models\Article> $articles
  * @property-read int|null $articles_count
+ *
  * @method static \Database\Factories\CategoryFactory factory($count = null, $state = [])
  * @method static Builder<static>|Category newModelQuery()
  * @method static Builder<static>|Category newQuery()
@@ -28,6 +29,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|Category whereId($value)
  * @method static Builder<static>|Category whereName($value)
  * @method static Builder<static>|Category whereUpdatedAt($value)
+ *
  * @mixin Eloquent
  */
 class Category extends Model

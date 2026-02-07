@@ -17,10 +17,10 @@ class ArticleSeeder extends Seeder
         $users = User::role('Doctor')->get();
         $categories = Category::all();
 
-        $users->each(fn($user) => Article::factory()
+        $users->each(fn ($user) => Article::factory()
             ->count(5)
             ->create(['user_id' => $user->id])
-            ->each(fn($article) => $article->categories()
+            ->each(fn ($article) => $article->categories()
                 ->attach($categories->random(rand(1, 3))->pluck('id')->toArray())
             )
         );

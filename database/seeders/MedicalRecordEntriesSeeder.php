@@ -2,14 +2,14 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\MedicalRecord;
-use App\Models\MedicalRecordEntry;
 use App\Models\Appointment;
 use App\Models\EmployeeInfo;
+use App\Models\MedicalRecord;
+use App\Models\MedicalRecordEntry;
+use Exception;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 use Log;
-use Exception;
 
 class MedicalRecordEntriesSeeder extends Seeder
 {
@@ -31,13 +31,13 @@ class MedicalRecordEntriesSeeder extends Seeder
 
                 $appointment = $appointments->isNotEmpty() ? $appointments->random() : null;
 
-                if (!$appointment) {
+                if (! $appointment) {
                     return;
                 }
 
                 $doctor = EmployeeInfo::find($appointment->employee_info_id);
 
-                if (!$doctor) {
+                if (! $doctor) {
                     return;
                 }
 

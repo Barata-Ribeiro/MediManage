@@ -47,7 +47,7 @@ class LoginRequest extends FormRequest
         if ($user && (
             (method_exists($user, 'hasRole') && $user->hasRole('Banned')) ||
             (isset($user->role) && $user->role === 'Banned') ||
-            (isset($user->roles) && (is_array($user->roles) ? in_array('Banned', $user->roles) : stripos((string)$user->roles, 'Banned') !== false))
+            (isset($user->roles) && (is_array($user->roles) ? in_array('Banned', $user->roles) : stripos((string) $user->roles, 'Banned') !== false))
         )) {
             RateLimiter::hit($this->throttleKey());
 

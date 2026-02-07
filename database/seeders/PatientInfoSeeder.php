@@ -33,7 +33,7 @@ class PatientInfoSeeder extends Seeder
 
                 $end = now();
                 $createdAt = Carbon::createFromTimestamp(rand($start->timestamp, $end->timestamp));
-            
+
                 $updatedAt = (clone $createdAt)->addDays(rand(0, 30));
                 if ($updatedAt->greaterThan($end)) {
                     $updatedAt = $end;

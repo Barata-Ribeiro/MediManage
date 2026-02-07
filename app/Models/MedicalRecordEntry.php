@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
+use Database\Factories\MedicalRecordEntryFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
-use Database\Factories\MedicalRecordEntryFactory;
-
 
 /**
  * @property int $id
@@ -26,6 +25,7 @@ use Database\Factories\MedicalRecordEntryFactory;
  * @property-read \App\Models\Appointment $appointment
  * @property-read \App\Models\EmployeeInfo $employeeInfo
  * @property-read \App\Models\MedicalRecord $medicalRecord
+ *
  * @method static \Database\Factories\MedicalRecordEntryFactory factory($count = null, $state = [])
  * @method static Builder<static>|MedicalRecordEntry newModelQuery()
  * @method static Builder<static>|MedicalRecordEntry newQuery()
@@ -41,11 +41,11 @@ use Database\Factories\MedicalRecordEntryFactory;
  * @method static Builder<static>|MedicalRecordEntry whereMedicalRecordId($value)
  * @method static Builder<static>|MedicalRecordEntry whereTitle($value)
  * @method static Builder<static>|MedicalRecordEntry whereUpdatedAt($value)
+ *
  * @mixin Eloquent
  */
 class MedicalRecordEntry extends Model
 {
-
     /** @use HasFactory <MedicalRecordEntryFactory> */
     use HasFactory;
 

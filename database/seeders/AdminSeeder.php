@@ -5,8 +5,8 @@ namespace Database\Seeders;
 use App\Models\EmployeeInfo;
 use App\Models\User;
 use Exception;
-use Illuminate\Database\Seeder;
 use Faker\Generator;
+use Illuminate\Database\Seeder;
 use Log;
 
 class AdminSeeder extends Seeder

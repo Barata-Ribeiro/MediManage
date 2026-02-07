@@ -19,7 +19,7 @@ class AppointmentSeeder extends Seeder
     {
         try {
             $patients = PatientInfo::all();
-            $doctors = EmployeeInfo::whereHas('user', fn($q) => $q->role('Doctor'))->get();
+            $doctors = EmployeeInfo::whereHas('user', fn ($q) => $q->role('Doctor'))->get();
 
             Log::info('Seeding appointments for patients and doctors.', [
                 'patients_count' => $patients->count(),

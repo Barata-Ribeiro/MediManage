@@ -21,7 +21,7 @@ class MedicalRecordEntryFactory extends Factory
 
         return [
             'title' => fake()->sentence(),
-            'content_html' => '<p>' . implode('</p><p>', $content) . '</p>',
+            'content_html' => '<p>'.implode('</p><p>', $content).'</p>',
             'content_json' => $this->getFormattedJson($content),
             'entry_type' => $entry_type,
             'is_visible_to_patient' => fake()->boolean(80),
@@ -30,9 +30,6 @@ class MedicalRecordEntryFactory extends Factory
 
     /**
      * Get formatted JSON content for the editor.
-     *
-     * @param array|string $content
-     * @return false|string
      */
     private function getFormattedJson(array|string $content): string|false
     {
@@ -48,8 +45,8 @@ class MedicalRecordEntryFactory extends Factory
                                 'style' => '',
                                 'text' => $p,
                                 'type' => 'text',
-                                'version' => 1
-                            ]
+                                'version' => 1,
+                            ],
                         ],
                         'direction' => null,
                         'format' => '',
@@ -57,15 +54,15 @@ class MedicalRecordEntryFactory extends Factory
                         'type' => 'paragraph',
                         'version' => 1,
                         'textFormat' => 0,
-                        'textStyle' => ''
+                        'textStyle' => '',
                     ];
                 }, $content),
                 'direction' => null,
                 'format' => '',
                 'indent' => 0,
                 'type' => 'root',
-                'version' => 1
-            ]
+                'version' => 1,
+            ],
         ]);
     }
 }

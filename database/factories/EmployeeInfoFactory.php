@@ -43,9 +43,6 @@ class EmployeeInfoFactory extends Factory
      *
      * Usage in seeder:
      * EmployeeInfo::factory()->forRole('Doctor')->create();
-     *
-     * @param string $role
-     * @return static
      */
     public function forRole(string $role): static
     {
@@ -58,7 +55,7 @@ class EmployeeInfoFactory extends Factory
             default => fake()->randomElement(['Janitor', 'Technician']),
         };
 
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'position' => $mappedPosition,
             'registration_number' => $mappedPosition === 'Doctor' ? fake()->bothify('??########') : null,
             'registration_origin' => $mappedPosition === 'Doctor' ? fake()->company() : null,

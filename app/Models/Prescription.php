@@ -15,7 +15,6 @@ use tbQuar\Facades\Quar;
 use Throwable;
 use UnexpectedValueException;
 
-
 /**
  * @property int $id
  * @property string $validation_code
@@ -31,6 +30,7 @@ use UnexpectedValueException;
  * @property-read \App\Models\EmployeeInfo $employeeInfo
  * @property-read string $qr_code
  * @property-read \App\Models\PatientInfo $patientInfo
+ *
  * @method static \Database\Factories\PrescriptionFactory factory($count = null, $state = [])
  * @method static Builder<static>|Prescription newModelQuery()
  * @method static Builder<static>|Prescription newQuery()
@@ -46,6 +46,7 @@ use UnexpectedValueException;
  * @method static Builder<static>|Prescription wherePrescriptionDetailsJson($value)
  * @method static Builder<static>|Prescription whereUpdatedAt($value)
  * @method static Builder<static>|Prescription whereValidationCode($value)
+ *
  * @mixin Eloquent
  */
 class Prescription extends Model
@@ -74,13 +75,11 @@ class Prescription extends Model
      * @var string[]
      */
     protected $appends = [
-        'qr_code'
+        'qr_code',
     ];
 
     /**
      * The "booted" method of the model.
-     *
-     * @return void
      */
     protected static function boot(): void
     {
@@ -108,9 +107,6 @@ class Prescription extends Model
     /**
      * Attempt to generate a unique validation code.
      * If unable to do so after several attempts, fall back to a less robust method.
-     *
-     * @param $prescription
-     * @return void
      */
     private static function attemptToGenerateValidationCode($prescription): void
     {
@@ -138,9 +134,6 @@ class Prescription extends Model
      * Compute is_valid (1 = valid, 0 = expired) from date_expires.
      * If date_expires is empty, the prescription is considered valid.
      * If date_expires is invalid, the prescription is considered expired.
-     *
-     * @param string|null $dateExpires
-     * @return int
      */
     private static function computeValidity(?string $dateExpires): int
     {
@@ -150,17 +143,17 @@ class Prescription extends Model
 
         try {
             $expires = Carbon::parse($dateExpires);
+
             return $expires->isFuture() ? 1 : 0;
         } catch (Throwable $e) {
             Log::warning('Invalid date_expires when computing validity', ['date_expires' => $dateExpires, 'error' => $e->getMessage()]);
+
             return 0;
         }
     }
 
     /**
      * Generate a base64-encoded QR code for the prescription validation URL.
-     *
-     * @return string
      */
     public function getQrCodeAttribute(): string
     {
