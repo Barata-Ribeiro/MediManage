@@ -3,7 +3,7 @@ import AppPagination from '@/components/application/app-pagination';
 import ArticleFilterForm from '@/components/forms/home/article-filter-form';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
-import { Marquee, MarqueeContent, MarqueeFade, MarqueeItem } from '@/components/ui/shadcn-io/marquee';
+import { Marquee, MarqueeContent, MarqueeFade, MarqueeItem } from '@/components/ui/marquee';
 import Layout from '@/layouts/app/app-public-layout';
 import { article as articleRoute } from '@/routes';
 import { PaginationMeta } from '@/types';

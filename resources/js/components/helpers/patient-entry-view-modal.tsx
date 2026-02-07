@@ -1,6 +1,6 @@
+import { Modal, ModalBody, ModalContent, ModalTrigger } from '@/components/ui/animated-modal';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Modal, ModalBody, ModalContent, ModalTrigger } from '@/components/ui/shadcn-io/animated-modal';
 import { normalizeString } from '@/lib/utils';
 import { MedicalRecordEntry } from '@/types/application/medicalRecord';
 import { format } from 'date-fns';

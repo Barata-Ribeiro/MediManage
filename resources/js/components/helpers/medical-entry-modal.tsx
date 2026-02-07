@@ -1,14 +1,7 @@
 import medicalRecordController from '@/actions/App/Http/Controllers/Medical/MedicalRecordController';
+import { Modal, ModalBody, ModalContent, ModalFooter, ModalTrigger, useModal } from '@/components/ui/animated-modal';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalFooter,
-    ModalTrigger,
-    useModal,
-} from '@/components/ui/shadcn-io/animated-modal';
 import { normalizeString } from '@/lib/utils';
 import { MedicalRecordEntry } from '@/types/application/medicalRecord';
 import { Link } from '@inertiajs/react';
