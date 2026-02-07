@@ -114,7 +114,7 @@ export default function Show({ medicalRecord, entries }: Readonly<ShowProps>) {
                     </header>
 
                     <div
-                        className="prose max-w-none dark:prose-invert"
+                        className="prose dark:prose-invert max-w-none"
                         dangerouslySetInnerHTML={{ __html: medicalRecord.medical_notes_html }}
                     />
                 </article>

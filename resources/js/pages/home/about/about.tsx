@@ -12,7 +12,7 @@ export default function About() {
             </Head>
 
             <div className="container py-26 md:py-36">
-                <article className="prose max-w-4xl dark:prose-invert">
+                <article className="prose dark:prose-invert max-w-4xl">
                     <header className="text-center">
                         <h1>MediManage</h1>
                         <p className="lead">Smart, simple clinic management crafted by our product & marketing team.</p>

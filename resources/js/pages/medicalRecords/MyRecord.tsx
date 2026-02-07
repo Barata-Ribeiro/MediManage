@@ -103,7 +103,7 @@ export default function MyRecord({ medicalRecord, entries }: Readonly<MyRecordPr
                     <HeadingSmall title="Medical Notes" />
 
                     <div
-                        className="prose -mt-2 max-w-none dark:prose-invert"
+                        className="prose dark:prose-invert -mt-2 max-w-none"
                         dangerouslySetInnerHTML={{ __html: medicalRecord.medical_notes_html }}
                     />
                 </article>
