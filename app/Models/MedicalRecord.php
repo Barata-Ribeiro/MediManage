@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
-
 /**
  * @property int $id
  * @property int $patient_info_id
@@ -23,6 +22,7 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, \App\Models\MedicalRecordEntry> $medicalRecordEntries
  * @property-read int|null $medical_record_entries_count
  * @property-read \App\Models\PatientInfo $patientInfo
+ *
  * @method static \Database\Factories\MedicalRecordFactory factory($count = null, $state = [])
  * @method static Builder<static>|MedicalRecord newModelQuery()
  * @method static Builder<static>|MedicalRecord newQuery()
@@ -33,6 +33,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|MedicalRecord whereMedicalNotesJson($value)
  * @method static Builder<static>|MedicalRecord wherePatientInfoId($value)
  * @method static Builder<static>|MedicalRecord whereUpdatedAt($value)
+ *
  * @mixin Eloquent
  */
 class MedicalRecord extends Model

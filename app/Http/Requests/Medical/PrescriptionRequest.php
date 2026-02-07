@@ -8,7 +8,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class PrescriptionRequest extends FormRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -17,9 +16,9 @@ class PrescriptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'prescription_details_html' => ['required', 'string', new isValidHtml()],
+            'prescription_details_html' => ['required', 'string', new isValidHtml],
             'prescription_details_json' => ['nullable', 'string', 'json'],
-            'date_expires' => ['nullable', 'date', 'after:today']
+            'date_expires' => ['nullable', 'date', 'after:today'],
         ];
     }
 }

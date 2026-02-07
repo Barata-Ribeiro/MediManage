@@ -7,7 +7,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class PatientRequest extends FormRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -31,11 +30,11 @@ class PatientRequest extends FormRequest
             'emergency_contact_name' => ['nullable', 'required_with:emergency_contact_relationship,emergency_contact_phone_number', 'string', 'max:255'],
             'emergency_contact_relationship' => ['nullable', 'required_with:emergency_contact_name,emergency_contact_phone_number', 'string', 'max:50'],
             'emergency_contact_phone_number' => ['nullable', 'required_with:emergency_contact_name,emergency_contact_relationship', 'string', 'max:20'],
-            
+
             'current_medications' => ['nullable', 'string', 'max:255'],
             'past_illnesses' => ['nullable', 'string', 'max:255'],
             'surgeries' => ['nullable', 'string', 'max:255'],
-            'family_medical_history' => ['nullable', 'string', 'max:255']
+            'family_medical_history' => ['nullable', 'string', 'max:255'],
         ];
     }
 }

@@ -34,12 +34,12 @@ class UserAccountRequest extends FormRequest
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
 
-            'avatar' => ['nullable', 'url', 'max:2048', new IsImageRule()],
+            'avatar' => ['nullable', 'url', 'max:2048', new IsImageRule],
 
             'bio' => ['nullable', 'string', 'max:500'],
 
             'roles' => ['nullable', 'array'],
-            'roles.*' => ['string', 'exists:roles,name']
+            'roles.*' => ['string', 'exists:roles,name'],
         ];
     }
 }

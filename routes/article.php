@@ -14,8 +14,7 @@ Route::middleware(['auth', 'verified'])->prefix('manage')->group(function () {
         Route::get('/{article:slug}/edit', [ArticleController::class, 'edit'])->name('articles.edit')->middleware('permission:article.edit');
         Route::patch('/{article}', [ArticleController::class, 'update'])->name('articles.update')->middleware('permission:article.edit');
 
-        Route::delete('/{article:slug}', [ArticleController::class, 'destroy'])->name('articles.destroy')->middleware
-        ('permission:article.destroy');
+        Route::delete('/{article:slug}', [ArticleController::class, 'destroy'])->name('articles.destroy')->middleware('permission:article.destroy');
     });
 
     Route::prefix('categories')->group(function () {

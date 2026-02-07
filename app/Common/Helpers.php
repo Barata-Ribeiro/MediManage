@@ -17,7 +17,7 @@ class Helpers
      *  - Apply or normalize boolean operators/flags for individual terms,
      *  - Escape or remove characters that would break the target query syntax.
      *
-     * @param string $query Raw user-provided search string.
+     * @param  string  $query  Raw user-provided search string.
      * @return string A sanitized, normalized boolean-mode query string ready for use in full-text searches.
      */
     public static function buildBooleanQuery(string $query): string
@@ -26,10 +26,12 @@ class Helpers
 
         $booleanParts = array_map(function ($t) {
             $t = preg_replace('/[+\-<>()~\"*]/', '', $t);
-            return $t !== '' ? '+' . $t . '*' : null;
+
+            return $t !== '' ? '+'.$t.'*' : null;
         }, $terms);
 
         $booleanParts = array_filter($booleanParts);
+
         return $booleanParts ? implode(' ', $booleanParts) : $query;
     }
 }

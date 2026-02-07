@@ -9,7 +9,6 @@ use Illuminate\Validation\Rule;
 
 class CategoryRequest extends FormRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -22,10 +21,10 @@ class CategoryRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique(Category::class, 'name')->ignore($this->route('category')?->id)
+                Rule::unique(Category::class, 'name')->ignore($this->route('category')?->id),
             ],
 
-            'description' => ['nullable', 'string', 'max:255']
+            'description' => ['nullable', 'string', 'max:255'],
         ];
     }
 }

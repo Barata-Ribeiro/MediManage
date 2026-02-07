@@ -46,18 +46,18 @@ class HandleInertiaRequests extends Middleware
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
                 'user' => $request->user(),
-                'roles' => fn() => $request->user()?->getRoleNames(),
-                'permissions' => fn() => $request->user()?->getAllPermissions()->pluck('name'),
+                'roles' => fn () => $request->user()?->getRoleNames(),
+                'permissions' => fn () => $request->user()?->getAllPermissions()->pluck('name'),
             ],
-            'sidebarOpen' => !$request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'flash' => [
-                'success' => fn() => $request->session()->get('success'),
-                'error' => fn() => $request->session()->get('error'),
-                'info' => fn() => $request->session()->get('info'),
-                'warning' => fn() => $request->session()->get('warning'),
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+                'info' => fn () => $request->session()->get('info'),
+                'warning' => fn () => $request->session()->get('warning'),
             ],
-            'notices' => fn() => Notice::whereIsActive(true)->get(),
-            'latestArticles' => fn() => Article::whereIsPublished(true)->latest()->take(3)->get(['id', 'title', 'slug', 'created_at'])
+            'notices' => fn () => Notice::whereIsActive(true)->get(),
+            'latestArticles' => fn () => Article::whereIsPublished(true)->latest()->take(3)->get(['id', 'title', 'slug', 'created_at']),
         ];
     }
 }

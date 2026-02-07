@@ -49,6 +49,7 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, \App\Models\Prescription> $prescriptions
  * @property-read int|null $prescriptions_count
  * @property-read \App\Models\User|null $user
+ *
  * @method static \Database\Factories\PatientInfoFactory factory($count = null, $state = [])
  * @method static Builder<static>|PatientInfo newModelQuery()
  * @method static Builder<static>|PatientInfo newQuery()
@@ -76,6 +77,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|PatientInfo whereSurgeries($value)
  * @method static Builder<static>|PatientInfo whereUpdatedAt($value)
  * @method static Builder<static>|PatientInfo whereUserId($value)
+ *
  * @mixin Eloquent
  */
 class PatientInfo extends Model

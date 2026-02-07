@@ -18,7 +18,7 @@ class MedicalRecordFactory extends Factory
     public function definition(): array
     {
         return [
-            'medical_notes_html' => $this->faker->realTextBetween(250, 1000)
+            'medical_notes_html' => $this->faker->realTextBetween(250, 1000),
         ];
     }
 }

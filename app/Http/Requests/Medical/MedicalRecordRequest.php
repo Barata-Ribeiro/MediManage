@@ -8,7 +8,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class MedicalRecordRequest extends FormRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -18,11 +17,10 @@ class MedicalRecordRequest extends FormRequest
     {
         return [
             'patient_info_id' => ['sometimes', 'required', 'exists:patient_info,id', 'unique:medical_records,patient_info_id'],
-            'medical_notes_html' => ['required', 'string', new isValidHtml()],
+            'medical_notes_html' => ['required', 'string', new isValidHtml],
             'medical_notes_json' => ['nullable', 'string', 'json'],
         ];
     }
-
 
     /**
      * Get the error messages for the defined validation rules.

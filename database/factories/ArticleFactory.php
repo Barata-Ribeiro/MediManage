@@ -26,7 +26,7 @@ class ArticleFactory extends Factory
             'subtitle' => fake()->sentence(),
             'slug' => fake()->unique()->slug(),
             'excerpt' => fake()->text(200),
-            'content_html' => '<p>' . implode('</p><p>', $content) . '</p>',
+            'content_html' => '<p>'.implode('</p><p>', $content).'</p>',
             'content_json' => $this->getFormattedJson($content),
             'thumbnail' => $this->fakeImageUrl(1920, 1080, $thumbText, $bgColor, 'FFFFFF', 'webp'),
             'is_published' => fake()->boolean(80),
@@ -35,9 +35,6 @@ class ArticleFactory extends Factory
 
     /**
      * Get formatted JSON content for the editor.
-     *
-     * @param array|string $content
-     * @return false|string
      */
     private function getFormattedJson(array|string $content): string|false
     {
@@ -53,8 +50,8 @@ class ArticleFactory extends Factory
                                 'style' => '',
                                 'text' => $p,
                                 'type' => 'text',
-                                'version' => 1
-                            ]
+                                'version' => 1,
+                            ],
                         ],
                         'direction' => null,
                         'format' => '',
@@ -62,15 +59,15 @@ class ArticleFactory extends Factory
                         'type' => 'paragraph',
                         'version' => 1,
                         'textFormat' => 0,
-                        'textStyle' => ''
+                        'textStyle' => '',
                     ];
                 }, $content),
                 'direction' => null,
                 'format' => '',
                 'indent' => 0,
                 'type' => 'root',
-                'version' => 1
-            ]
+                'version' => 1,
+            ],
         ]);
     }
 
@@ -81,45 +78,43 @@ class ArticleFactory extends Factory
      *  - https://dummyimage.com/300
      *  - https://dummyimage.com/300x200.png/09f/fff&text=Hello+World
      *
-     * @param int $width
-     * @param int $height Use 0 for square (width x width)
-     * @param string $text Optional text to display on the image
-     * @param string $bg Background hex color (with or without #). Defaults to cccccc
-     * @param string $color Text hex color (with or without #). Defaults to 000000
-     * @param string $format Image format/extension: png, jpg, jpeg, gif
-     * @return string
+     * @param  int  $height  Use 0 for square (width x width)
+     * @param  string  $text  Optional text to display on the image
+     * @param  string  $bg  Background hex color (with or without #). Defaults to cccccc
+     * @param  string  $color  Text hex color (with or without #). Defaults to 000000
+     * @param  string  $format  Image format/extension: png, jpg, jpeg, gif
      */
     private function fakeImageUrl(int $width, int $height = 0, string $text = '', string $bg = 'cccccc', string $color = '000000', string $format = 'png'): string
     {
         $baseUrl = 'https://dummyimage.com/';
 
-        $width = max(1, (int)$width);
-        $height = (int)$height;
+        $width = max(1, (int) $width);
+        $height = (int) $height;
 
         // Size: either "{width}" or "{width}x{height}"
-        $size = $height > 0 ? sprintf('%dx%d', $width, $height) : (string)$width;
+        $size = $height > 0 ? sprintf('%dx%d', $width, $height) : (string) $width;
 
         // Normalization and Validation of format
-        $format = strtolower(trim((string)$format, ". \t\n\r\0\x0B"));
+        $format = strtolower(trim((string) $format, ". \t\n\r\0\x0B"));
         $allowed = ['png', 'jpg', 'jpeg', 'gif'];
-        if (!in_array($format, $allowed, true)) {
+        if (! in_array($format, $allowed, true)) {
             $format = 'png';
         }
 
-        $bg = ltrim((string)$bg, '#');
-        $color = ltrim((string)$color, '#');
+        $bg = ltrim((string) $bg, '#');
+        $color = ltrim((string) $color, '#');
 
         $bg = $bg === '' ? 'cccccc' : $bg;
         $color = $color === '' ? '000000' : $color;
 
         // Path construction
-        $sizeSegment = $size . '.' . $format;
-        $path = $sizeSegment . '/' . $bg . '/' . $color;
+        $sizeSegment = $size.'.'.$format;
+        $path = $sizeSegment.'/'.$bg.'/'.$color;
 
         if ($text !== '') {
-            $path .= '&text=' . urlencode($text);
+            $path .= '&text='.urlencode($text);
         }
 
-        return $baseUrl . $path;
+        return $baseUrl.$path;
     }
 }

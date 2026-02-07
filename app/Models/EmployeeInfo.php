@@ -46,6 +46,7 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, \App\Models\Prescription> $prescriptions
  * @property-read int|null $prescriptions_count
  * @property-read \App\Models\User $user
+ *
  * @method static \Database\Factories\EmployeeInfoFactory factory($count = null, $state = [])
  * @method static Builder<static>|EmployeeInfo newModelQuery()
  * @method static Builder<static>|EmployeeInfo newQuery()
@@ -69,6 +70,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|EmployeeInfo whereTerminationDate($value)
  * @method static Builder<static>|EmployeeInfo whereUpdatedAt($value)
  * @method static Builder<static>|EmployeeInfo whereUserId($value)
+ *
  * @mixin Eloquent
  */
 class EmployeeInfo extends Model

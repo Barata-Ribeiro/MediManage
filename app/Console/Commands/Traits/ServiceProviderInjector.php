@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Console\Commands\Traits;
 
 use App\Providers\AppServiceProvider;

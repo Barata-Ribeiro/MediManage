@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
 
-
 /**
  * @property int $id
  * @property int $user_id
@@ -30,6 +29,7 @@ use Illuminate\Support\Carbon;
  * @property-read int|null $categories_count
  * @property-read int $reading_time
  * @property-read \App\Models\User $user
+ *
  * @method static \Database\Factories\ArticleFactory factory($count = null, $state = [])
  * @method static Builder<static>|Article newModelQuery()
  * @method static Builder<static>|Article newQuery()
@@ -46,6 +46,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder<static>|Article whereTitle($value)
  * @method static Builder<static>|Article whereUpdatedAt($value)
  * @method static Builder<static>|Article whereUserId($value)
+ *
  * @mixin Eloquent
  */
 class Article extends Model
@@ -74,8 +75,6 @@ class Article extends Model
 
     /**
      * Estimate reading time in minutes (integer).
-     *
-     * @return int
      */
     public function getReadingTimeAttribute(): int
     {
@@ -89,7 +88,7 @@ class Article extends Model
         $wpm = 200; // Average reading speed in words per minute
         $wordCount = str_word_count($text);
 
-        return (int)max(1, ceil($wordCount / $wpm));
+        return (int) max(1, ceil($wordCount / $wpm));
     }
 
     public function user(): BelongsTo

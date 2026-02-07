@@ -32,9 +32,9 @@ class RepositoryMakeCommand extends GeneratorCommand
      */
     public function handle(): ?bool
     {
-        $codeToAdd = "\n\t\t\$this->app->bind(\n" .
-            "\t\t\t\\App\\Interfaces\\" . str_replace('/', '\\', $this->argument('name')) . "Interface::class,\n" .
-            "\t\t\t\\App\\Repositories\\" . str_replace('/', '\\', $this->argument('name')) . "::class\n" .
+        $codeToAdd = "\n\t\t\$this->app->bind(\n".
+            "\t\t\t\\App\\Interfaces\\".str_replace('/', '\\', $this->argument('name'))."Interface::class,\n".
+            "\t\t\t\\App\\Repositories\\".str_replace('/', '\\', $this->argument('name'))."::class\n".
             "\t\t);\n";
 
         $appServiceProviderFile = app_path('Providers/AppServiceProvider.php');
@@ -42,29 +42,25 @@ class RepositoryMakeCommand extends GeneratorCommand
         $this->injectCodeToRegisterMethod($appServiceProviderFile, $codeToAdd);
 
         Artisan::call('make:interface', [
-            'name' => $this->argument('name') . 'Interface'
+            'name' => $this->argument('name').'Interface',
         ]);
+
         return parent::handle();
     }
 
     /**
      * Get the stub file for the generator.
-     *
-     * @return string
      */
     protected function getStub(): string
     {
-        return __DIR__ . '/stubs/repository.stub';
+        return __DIR__.'/stubs/repository.stub';
     }
 
     /**
      * Get the default namespace for the class.
-     *
-     * @param $rootNamespace
-     * @return string
      */
     protected function getDefaultNamespace($rootNamespace): string
     {
-        return $rootNamespace . '\\Repositories';
+        return $rootNamespace.'\\Repositories';
     }
 }
