@@ -21,16 +21,16 @@ function InputGroup({ className, ...props }: React.ComponentProps<'div'>) {
 }
 
 const inputGroupAddonVariants = cva(
-    "text-muted-foreground **:data-[slot=kbd]:bg-muted-foreground/10 h-auto gap-2 py-2 text-sm font-medium group-data-[disabled=true]/input-group:opacity-50 **:data-[slot=kbd]:rounded-4xl **:data-[slot=kbd]:px-1.5 [&>svg:not([class*='size-'])]:size-4 flex cursor-text items-center justify-center select-none",
+    "flex h-auto cursor-text items-center justify-center gap-2 py-2 text-sm font-medium text-muted-foreground select-none group-data-[disabled=true]/input-group:opacity-50 **:data-[slot=kbd]:rounded-4xl **:data-[slot=kbd]:bg-muted-foreground/10 **:data-[slot=kbd]:px-1.5 [&>svg:not([class*='size-'])]:size-4",
     {
         variants: {
             align: {
-                'inline-start': 'pl-3 has-[>button]:-ml-1 has-[>kbd]:ml-[-0.15rem] order-first',
-                'inline-end': 'pr-3 has-[>button]:-mr-1 has-[>kbd]:mr-[-0.15rem] order-last',
+                'inline-start': 'order-first pl-3 has-[>button]:-ml-1 has-[>kbd]:ml-[-0.15rem]',
+                'inline-end': 'order-last pr-3 has-[>button]:-mr-1 has-[>kbd]:mr-[-0.15rem]',
                 'block-start':
-                    'px-3 pt-3 group-has-[>input]/input-group:pt-3 [.border-b]:pb-3 order-first w-full justify-start',
+                    'order-first w-full justify-start px-3 pt-3 group-has-[>input]/input-group:pt-3 [.border-b]:pb-3',
                 'block-end':
-                    'px-3 pb-3 group-has-[>input]/input-group:pb-3 [.border-t]:pt-3 order-last w-full justify-start',
+                    'order-last w-full justify-start px-3 pb-3 group-has-[>input]/input-group:pb-3 [.border-t]:pt-3',
             },
         },
         defaultVariants: {
@@ -61,7 +61,7 @@ function InputGroupAddon({
     );
 }
 
-const inputGroupButtonVariants = cva('gap-2 rounded-4xl text-sm shadow-none flex items-center', {
+const inputGroupButtonVariants = cva('flex items-center gap-2 rounded-4xl text-sm shadow-none', {
     variants: {
         size: {
             xs: "h-6 gap-1 px-1.5 [&>svg:not([class*='size-'])]:size-3.5",
