@@ -62,7 +62,7 @@ export default function PatientMedicalRecordInfoItem({ medicalRecord }: Readonly
                     </time>
                 </div>
                 <div
-                    className="mx-auto prose rounded-lg bg-card px-3 py-1.5 dark:prose-invert"
+                    className="prose dark:prose-invert mx-auto rounded-lg bg-card px-3 py-1.5"
                     dangerouslySetInnerHTML={{ __html: medicalRecord.medical_notes_html! }}
                 />
 

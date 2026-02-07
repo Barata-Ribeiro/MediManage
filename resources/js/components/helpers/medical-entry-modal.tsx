@@ -74,7 +74,7 @@ export default function MedicalEntryModal(entry: Readonly<MedicalRecordEntry>) {
                     </div>
 
                     <div
-                        className="prose max-w-full whitespace-normal dark:prose-invert"
+                        className="prose dark:prose-invert max-w-full whitespace-normal"
                         dangerouslySetInnerHTML={{
                             __html: entry.content_html ?? '<p>No content available.</p>',
                         }}
