@@ -4,6 +4,7 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import {
     Tags,
     TagsContent,
@@ -14,8 +15,7 @@ import {
     TagsList,
     TagsTrigger,
     TagsValue,
-} from '@/components/ui/shadcn-io/tags';
-import { Switch } from '@/components/ui/switch';
+} from '@/components/ui/tags';
 import { Textarea } from '@/components/ui/textarea';
 import { lexicalToHtml } from '@/lib/lexical-to-html';
 import { Category } from '@/types/application/article';

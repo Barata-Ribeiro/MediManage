@@ -3,9 +3,10 @@ import { Editor } from '@/components/blocks/editor-x/editor';
 import InputError from '@/components/input-error';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { ImageZoom } from '@/components/ui/image-zoom';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ImageZoom } from '@/components/ui/shadcn-io/image-zoom';
+import { Switch } from '@/components/ui/switch';
 import {
     Tags,
     TagsContent,
@@ -16,8 +17,7 @@ import {
     TagsList,
     TagsTrigger,
     TagsValue,
-} from '@/components/ui/shadcn-io/tags';
-import { Switch } from '@/components/ui/switch';
+} from '@/components/ui/tags';
 import { Textarea } from '@/components/ui/textarea';
 import { htmlToLexical } from '@/lib/html-to-lexical';
 import { lexicalToHtml } from '@/lib/lexical-to-html';
