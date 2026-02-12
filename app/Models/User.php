@@ -56,9 +56,9 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static Builder<static>|User newModelQuery()
  * @method static Builder<static>|User newQuery()
- * @method static Builder<static>|User permission($permissions, $without = false)
+ * @method static Builder<static>|User permission($permissions, bool $without = false)
  * @method static Builder<static>|User query()
- * @method static Builder<static>|User role($roles, $guard = null, $without = false)
+ * @method static Builder<static>|User role($roles, ?string $guard = null, bool $without = false)
  * @method static Builder<static>|User whereAvatar($value)
  * @method static Builder<static>|User whereBio($value)
  * @method static Builder<static>|User whereCreatedAt($value)
@@ -75,7 +75,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static Builder<static>|User whereTwoFactorSecret($value)
  * @method static Builder<static>|User whereUpdatedAt($value)
  * @method static Builder<static>|User withoutPermission($permissions)
- * @method static Builder<static>|User withoutRole($roles, $guard = null)
+ * @method static Builder<static>|User withoutRole($roles, ?string $guard = null)
  *
  * @mixin Eloquent
  */
