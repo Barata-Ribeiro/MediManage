@@ -13,10 +13,13 @@ use Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use DB;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Schema;
 use Inertia\Inertia;
 use Log;
+
+use function in_array;
 
 class MedicalRecordController extends Controller
 {
@@ -49,16 +52,17 @@ class MedicalRecordController extends Controller
 
             $isSql = $this->isSqlDriver;
 
-            $entries = MedicalRecordEntry::select($columns)
+            $entries = MedicalRecordEntry::query()
                 ->whereMedicalRecordId($medicalRecord->id)
                 ->whereIsVisibleToPatient(true)
-                ->when($search, function ($q) use ($isSql, $search) {
+                ->select($columns)
+                ->when($search, function (Builder $q) use ($isSql, $search) {
                     if ($isSql) {
                         $booleanQuery = Helpers::buildBooleanQuery($search);
                         $q->whereFullText(['title', 'content_html'], $booleanQuery, ['mode' => 'boolean'])
                             ->orWhere('entry_type', 'like', "%$search%");
                     } else {
-                        $q->where(fn ($q2) => $q2->whereLike('title', "%$search%")->orWhereLike('content_html', "%$search%")->orWhere('entry_type', 'like', "%$search%"));
+                        $q->where(fn (Builder $q2) => $q2->whereLike('title', "%$search%")->orWhereLike('content_html', "%$search%")->orWhere('entry_type', 'like', "%$search%"));
                     }
                 })
                 ->orderByDesc('created_at')
@@ -100,25 +104,21 @@ class MedicalRecordController extends Controller
             $sortBy = 'id';
         }
 
-        $query = MedicalRecord::select(['medical_records.id', 'medical_records.patient_info_id', 'medical_records.created_at', 'medical_records.updated_at'])
-            ->with(['patientInfo' => fn ($q) => $q->select('id', 'first_name', 'last_name')]);
-
-        if (str_starts_with($sortBy, 'patient_info.')) {
-            $query->leftJoin('patient_info', 'patient_info.id', '=', 'medical_records.patient_info_id');
-        }
-
         $isSql = $this->isSqlDriver;
 
-        $query->when($search, function ($qr) use ($isSql, $search) {
-            if ($isSql) {
-                $booleanQuery = Helpers::buildBooleanQuery($search);
-                $qr->whereFullText('medical_notes_html', $booleanQuery, ['mode' => 'boolean']);
-            } else {
-                $qr->whereLike('medical_notes_html', "%$search%");
-            }
-        })->orWhereHas('patientInfo', fn ($q) => $q->whereLike('first_name', "%$search%")->orWhereLike('last_name', "%$search%"));
-
-        $medicalRecords = $query->orderBy($sortBy, $sortDir)
+        $medicalRecords = MedicalRecord::query()
+            ->select(['medical_records.id', 'medical_records.patient_info_id', 'medical_records.created_at', 'medical_records.updated_at'])
+            ->with(['patientInfo' => fn (Builder $q) => $q->select('id', 'first_name', 'last_name')])
+            ->when(str_starts_with($sortBy, 'patient_info.'), fn (Builder $q) => $q->leftJoin('patient_info', 'patient_info.id', '=', 'medical_records.patient_info_id'))
+            ->when($search, function (Builder $qr) use ($isSql, $search) {
+                if ($isSql) {
+                    $booleanQuery = Helpers::buildBooleanQuery($search);
+                    $qr->whereFullText('medical_notes_html', $booleanQuery, ['mode' => 'boolean']);
+                } else {
+                    $qr->whereLike('medical_notes_html', "%$search%");
+                }
+            })->orWhereHas('patientInfo', fn (Builder $q) => $q->whereLike('first_name', "%$search%")->orWhereLike('last_name', "%$search%"))
+            ->orderBy($sortBy, $sortDir)
             ->paginate($perPage)
             ->withQueryString();
 
@@ -170,9 +170,10 @@ class MedicalRecordController extends Controller
 
         $isSql = $this->isSqlDriver;
 
-        $entries = MedicalRecordEntry::select($columns)
+        $entries = MedicalRecordEntry::query()
             ->whereMedicalRecordId($medicalRecord->id)
-            ->when($search, fn ($q) => $q->where(function ($q2) use ($search, $isSql) {
+            ->select($columns)
+            ->when($search, fn (Builder $q) => $q->where(function (Builder $q2) use ($search, $isSql) {
                 if ($isSql) {
                     $booleanQuery = Helpers::buildBooleanQuery($search);
                     $q2->whereFullText(['title', 'content_html'], $booleanQuery, ['mode' => 'boolean']);
@@ -196,7 +197,7 @@ class MedicalRecordController extends Controller
 
         try {
             $hasPatientRole = Auth::user()->hasRole('Patient');
-            $hasPatientInfo = is_null(Auth::user()->patient_info_id) === false;
+            $hasPatientInfo = Auth::user()->patient_info_id !== null;
             $hasMedicalRecord = $hasPatientInfo && MedicalRecord::where('patient_info_id', Auth::user()->patient_info_id)->exists();
 
             if ($hasPatientRole && $hasPatientInfo && Auth::user()->patient_info_id !== $medicalRecord->patient_info_id) {

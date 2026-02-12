@@ -11,6 +11,8 @@ use Exception;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
+use function in_array;
+
 class NoticeController extends Controller
 {
     /**

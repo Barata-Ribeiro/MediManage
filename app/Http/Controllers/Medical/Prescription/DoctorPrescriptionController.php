@@ -12,8 +12,11 @@ use App\Models\Prescription;
 use Auth;
 use DB;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Inertia\Inertia;
 use Log;
+
+use function in_array;
 
 class DoctorPrescriptionController extends Controller
 {
@@ -60,26 +63,21 @@ class DoctorPrescriptionController extends Controller
 
         $isSql = $this->isSqlDriver;
 
-        $query = $doctor->prescriptions()
+        $prescriptions = $doctor->prescriptions()
             ->select($select)
-            ->with(['patientInfo' => fn ($q) => $q->select('id', 'first_name', 'last_name')]);
-
-        if (str_starts_with($sortBy, 'patient_info.')) {
-            $query->leftJoin('patient_info', 'patient_info.id', '=', 'prescriptions.patient_info_id');
-        }
-
-        $query->when($search, function ($qr) use ($search, $isSql) {
-            if ($isSql) {
-                $booleanQuery = Helpers::buildBooleanQuery($search);
-                $qr->whereFullText('prescription_details_html', $booleanQuery, ['mode' => 'boolean'])
-                    ->orWhereHas('patientInfo', fn ($q) => $q->whereLike('first_name', "%$search%")->orWhereLike('last_name', "%$search%"));
-            } else {
-                $qr->whereLike('prescription_details_html', "%$search%")
-                    ->orWhereHas('patientInfo', fn ($q) => $q->whenLike('first_name', "%$search%")->orWhenLike('last_name', "%$search%"));
-            }
-        });
-
-        $prescriptions = $query->orderBy($sortBy, $sortDir)
+            ->with(['patientInfo' => fn ($q) => $q->select('id', 'first_name', 'last_name')])
+            ->when(str_starts_with($sortBy, 'patient_info.'), fn (Builder $q) => $q->leftJoin('patient_info', 'patient_info.id', '=', 'prescriptions.patient_info_id'))
+            ->when($search, function (Builder $qr) use ($search, $isSql) {
+                if ($isSql) {
+                    $booleanQuery = Helpers::buildBooleanQuery($search);
+                    $qr->whereFullText('prescription_details_html', $booleanQuery, ['mode' => 'boolean'])
+                        ->orWhereHas('patientInfo', fn (Builder $q) => $q->whereLike('first_name', "%$search%")->orWhereLike('last_name', "%$search%"));
+                } else {
+                    $qr->whereLike('prescription_details_html', "%$search%")
+                        ->orWhereHas('patientInfo', fn (Builder $q) => $q->whenLike('first_name', "%$search%")->orWhenLike('last_name', "%$search%"));
+                }
+            })
+            ->orderBy($sortBy, $sortDir)
             ->paginate($perPage)
             ->withQueryString();
 

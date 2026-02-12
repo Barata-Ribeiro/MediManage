@@ -12,10 +12,13 @@ use App\Models\EmployeeInfo;
 use Auth;
 use DB;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Inertia\Inertia;
 use Log;
 use Mail;
 use Str;
+
+use function in_array;
 
 class EmployeeInfoController extends Controller
 {
@@ -37,9 +40,11 @@ class EmployeeInfoController extends Controller
 
         $isSql = $this->isSqlDriver;
 
-        $employees = EmployeeInfo::whereIsActive(true)
+        $employees = EmployeeInfo::query()
+            ->whereIsActive(true)
             ->wherePosition('doctor')
-            ->when($search, function ($q) use ($search, $isSql) {
+            ->select(['id', 'first_name', 'last_name'])
+            ->when($search, function (Builder $q) use ($search, $isSql) {
                 if ($isSql) {
                     $booleanQuery = Helpers::buildBooleanQuery($search);
                     $q->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'specialization', 'position'], $booleanQuery, ['mode' => 'boolean'])
@@ -50,7 +55,6 @@ class EmployeeInfoController extends Controller
                         ->orWhenLike('specialization', "%$search%")->orWhenLike('position', "%$search%");
                 }
             })
-            ->select(['id', 'first_name', 'last_name'])
             ->orderBy('first_name', 'asc')
             ->paginate(10)
             ->withQueryString();
@@ -79,17 +83,18 @@ class EmployeeInfoController extends Controller
 
         $isSql = $this->isSqlDriver;
 
-        $employees = EmployeeInfo::select(['id', 'first_name', 'last_name', 'position', 'is_active', 'created_at', 'updated_at'])
-            ->with('user')->when($search, function ($q) use ($isSql, $search) {
+        $employees = EmployeeInfo::query()
+            ->select(['id', 'first_name', 'last_name', 'position', 'is_active', 'created_at', 'updated_at'])
+            ->with('user')->when($search, function (Builder $q) use ($isSql, $search) {
                 if ($isSql) {
                     $booleanQuery = Helpers::buildBooleanQuery($search);
                     $q->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'specialization', 'position'], $booleanQuery, ['mode' => 'boolean'])
-                        ->orWhereHas('user', fn ($q2) => $q2->whereLike('name', "%$search%")->orWhereLike('email', "%$search%"));
+                        ->orWhereHas('user', fn (Builder $q2) => $q2->whereLike('name', "%$search%")->orWhereLike('email', "%$search%"));
                 } else {
                     $q->whenLike('first_name', "%$search%")
                         ->orWhenLike('last_name', "%$search%")->orWhenLike('phone_number', "%$search%")
                         ->orWhenLike('address', "%$search%")->orWhenLike('specialization', "%$search%")->orWhenLike('position', "%$search%")
-                        ->orWhereHas('user', fn ($q2) => $q2->whereLike('name', "%$search%")->orWhereLike('email', "%$search%"));
+                        ->orWhereHas('user', fn (Builder $q2) => $q2->whereLike('name', "%$search%")->orWhereLike('email', "%$search%"));
                 }
             })
             ->orderBy($sortBy, $sortDir)

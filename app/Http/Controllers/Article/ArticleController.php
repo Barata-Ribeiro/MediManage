@@ -11,9 +11,12 @@ use App\Models\Category;
 use Auth;
 use DB;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Inertia\Inertia;
 use Log;
 use Str;
+
+use function in_array;
 
 class ArticleController extends Controller
 {
@@ -62,9 +65,10 @@ class ArticleController extends Controller
 
         $isSql = $this->isSqlDriver;
 
-        $query = Article::select($select)
+        $query = Article::query()
+            ->select($select)
             ->with(['user' => fn ($q) => $q->select('id', 'name')])
-            ->when($search, function ($qr) use ($search, $isSql) {
+            ->when($search, function (Builder $qr) use ($search, $isSql) {
                 if ($isSql) {
                     $booleanQuery = Helpers::buildBooleanQuery($search);
                     $qr->whereFullText(['title', 'subtitle', 'excerpt', 'content_html'], $booleanQuery, ['mode' => 'boolean'])
@@ -75,7 +79,7 @@ class ArticleController extends Controller
                         ->orWhereHas('user', fn ($q) => $q->whereLike('name', "%$search%"));
                 }
             })
-            ->when(str_starts_with($sortBy, 'users.'), fn ($qr) => $qr->leftJoin('users', 'users.id', '=', 'articles.user_id'));
+            ->when(str_starts_with($sortBy, 'users.'), fn (Builder $qr) => $qr->leftJoin('users', 'users.id', '=', 'articles.user_id'));
 
         $articles = $query->orderBy($sortBy, $sortDir)
             ->paginate($perPage)
@@ -107,9 +111,10 @@ class ArticleController extends Controller
 
         $isSql = $this->isSqlDriver;
 
-        $query = Article::select(['id', 'user_id', 'title', 'slug', 'is_published', 'created_at', 'updated_at'])
+        $query = Article::query()
+            ->select(['id', 'user_id', 'title', 'slug', 'is_published', 'created_at', 'updated_at'])
             ->where('user_id', $user_id)
-            ->when($search, function ($qr) use ($search, $isSql) {
+            ->when($search, function (Builder $qr) use ($search, $isSql) {
                 if ($isSql) {
                     $booleanQuery = Helpers::buildBooleanQuery($search);
                     $qr->whereFullText(['title', 'subtitle', 'excerpt', 'content_html'], $booleanQuery, ['mode' => 'boolean']);

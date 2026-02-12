@@ -10,10 +10,13 @@ use Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 use DB;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Inertia\Inertia;
 use Log;
 use Str;
+
+use function in_array;
 
 class PrescriptionController extends Controller
 {
@@ -58,30 +61,25 @@ class PrescriptionController extends Controller
 
         $isSql = $this->isSqlDriver;
 
-        $query = $user->patientInfo->prescriptions()
+        $prescriptions = $user->patientInfo->prescriptions()
             ->select($select)
-            ->with(['employeeInfo' => fn ($q) => $q->select('id', 'first_name', 'last_name', 'specialization')]);
-
-        if (str_starts_with($sortBy, 'employee_info.')) {
-            $query->leftJoin('employee_info', 'employee_info.id', '=', 'prescriptions.employee_info_id');
-        }
-
-        $query->when($search, function ($qr) use ($search, $isSql) {
-            if ($isSql) {
-                $booleanQuery = Helpers::buildBooleanQuery($search);
-                $qr->whereFullText('prescription_details_html', $booleanQuery, ['mode' => 'boolean'])
-                    ->orWhereHas('employeeInfo', fn ($q) => $q->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'specialization', 'position'], $booleanQuery, ['mode' => 'boolean'])
-                        ->orWhereHas('user', fn ($q2) => $q2->whereLike('name', "%$search%")->orWhereLike('email', "%$search%")));
-            } else {
-                $qr->whereLike('prescription_details_html', "%$search%")
-                    ->orWhereHas('employeeInfo', fn ($q) => $q->whenLike('first_name', "%$search%")
-                        ->orWhenLike('last_name', "%$search%")->orWhenLike('phone_number', "%$search%")
-                        ->orWhenLike('address', "%$search%")->orWhenLike('specialization', "%$search%")->orWhenLike('position', "%$search%")
-                        ->orWhereHas('user', fn ($q2) => $q2->whereLike('name', "%$search%")->orWhereLike('email', "%$search%")));
-            }
-        });
-
-        $prescriptions = $query->orderBy($sortBy, $sortDir)
+            ->with(['employeeInfo' => fn ($q) => $q->select('id', 'first_name', 'last_name', 'specialization')])
+            ->when(str_starts_with($sortBy, 'employee_info.'), fn (Builder $q) => $q->leftJoin('employee_info', 'employee_info.id', '=', 'prescriptions.employee_info_id'))
+            ->when($search, function (Builder $qr) use ($search, $isSql) {
+                if ($isSql) {
+                    $booleanQuery = Helpers::buildBooleanQuery($search);
+                    $qr->whereFullText('prescription_details_html', $booleanQuery, ['mode' => 'boolean'])
+                        ->orWhereHas('employeeInfo', fn (Builder $q) => $q->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'specialization', 'position'], $booleanQuery, ['mode' => 'boolean'])
+                            ->orWhereHas('user', fn (Builder $q2) => $q2->whereLike('name', "%$search%")->orWhereLike('email', "%$search%")));
+                } else {
+                    $qr->whereLike('prescription_details_html', "%$search%")
+                        ->orWhereHas('employeeInfo', fn (Builder $q) => $q->whenLike('first_name', "%$search%")
+                            ->orWhenLike('last_name', "%$search%")->orWhenLike('phone_number', "%$search%")
+                            ->orWhenLike('address', "%$search%")->orWhenLike('specialization', "%$search%")->orWhenLike('position', "%$search%")
+                            ->orWhereHas('user', fn (Builder $q2) => $q2->whereLike('name', "%$search%")->orWhereLike('email', "%$search%")));
+                }
+            })
+            ->orderBy($sortBy, $sortDir)
             ->paginate($perPage)
             ->withQueryString();
 
@@ -134,6 +132,6 @@ class PrescriptionController extends Controller
         ])->setPaper('a4', 'portrait');
         $fileName = 'prescription_'.Str::slug($prescription->patientInfo->full_name).'.pdf';
 
-        return $pdf->stream($fileName.'.pdf');
+        return $pdf->stream("$fileName.pdf");
     }
 }

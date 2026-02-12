@@ -13,11 +13,15 @@ use App\Models\User;
 use Auth;
 use DB;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
 use Mail;
 use Str;
+
+use function in_array;
+use function is_null;
 
 class PatientInfoController extends Controller
 {
@@ -72,28 +76,28 @@ class PatientInfoController extends Controller
             return to_route('dashboard')->with('error', 'You do not have permission to edit this patient information.');
         }
 
-        $query = PatientInfo::select(['id', 'user_id', 'first_name', 'last_name', 'date_of_birth', 'phone_number']);
+        $patients = PatientInfo::query()
+            ->select(['id', 'user_id', 'first_name', 'last_name', 'date_of_birth', 'phone_number'])
+            ->when($request->filled('search'), function (Builder $q) use ($request) {
+                $validated = $request->validated();
 
-        if ($request->filled('search')) {
-            $validated = $request->validated();
+                $searchTerm = trim($validated['search'] ?? '');
 
-            $searchTerm = trim($validated['search'] ?? '');
+                $isSql = $this->isSqlDriver;
+                $booleanQuery = Helpers::buildBooleanQuery($searchTerm);
 
-            $isSql = $this->isSqlDriver;
-            $booleanQuery = Helpers::buildBooleanQuery($searchTerm);
+                $q->when($isSql, fn (Builder $q) => $q->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'insurance_company', 'emergency_contact_name'], $booleanQuery, ['mode' => 'boolean']))
+                    ->when(! $isSql, fn (Builder $q) => $q->whereLike('first_name', "%$searchTerm%")
+                        ->orWhereLike('last_name', "%$searchTerm%")->orWhereLike('phone_number', "%$searchTerm%")
+                        ->orWhereLike('address', "%$searchTerm%")->orWhereLike('insurance_company', "%$searchTerm%")
+                        ->orWhereLike('emergency_contact_name', "%$searchTerm%"))
+                    ->orWhereHas('user', fn (Builder $q) => $q->whereLike('name', "%$searchTerm%")
+                        ->orWhereLike('email', "%$searchTerm%"));
+            })->when(! $request->filled('search'), fn (Builder $q) => $q->whereId(0))
+            ->with('user:id,name,email,avatar')
+            ->cursorPaginate(10)
+            ->withQueryString();
 
-            $query->when($isSql, fn ($q) => $q->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'insurance_company', 'emergency_contact_name'], $booleanQuery, ['mode' => 'boolean']))
-                ->when(! $isSql, fn ($q) => $q->whereLike('first_name', "%$searchTerm%")
-                    ->orWhereLike('last_name', "%$searchTerm%")->orWhereLike('phone_number', "%$searchTerm%")
-                    ->orWhereLike('address', "%$searchTerm%")->orWhereLike('insurance_company', "%$searchTerm%")
-                    ->orWhereLike('emergency_contact_name', "%$searchTerm%"))
-                ->orWhereHas('user', fn ($q) => $q->whereLike('name', "%$searchTerm%")
-                    ->orWhereLike('email', "%$searchTerm%"));
-        } else {
-            $query->where('id', 0);
-        }
-
-        $patients = $query->with('user:id,name,email,avatar')->cursorPaginate(10)->withQueryString();
         Log::info('Patient Info: Searched for patients', ['action_user_id' => Auth::id(), 'search_term' => $request->input('search')]);
 
         return Inertia::render('patient/Find', ['patients' => Inertia::scroll(fn () => $patients)]);

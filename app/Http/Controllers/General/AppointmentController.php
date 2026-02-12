@@ -13,9 +13,12 @@ use Auth;
 use Carbon\Carbon;
 use DB;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
+
+use function in_array;
 
 class AppointmentController extends Controller
 {
@@ -69,11 +72,11 @@ class AppointmentController extends Controller
             $appointmentsQuery = $patient->appointments()
                 ->with([
                     'employeeInfo' => fn ($q) => $q->select('id', 'user_id', 'first_name', 'last_name', 'specialization'),
-                    'employeeInfo.user' => fn ($q) => $q->select('id', 'name', 'email'),
+                    'employeeInfo.user' => fn (Builder $q) => $q->select('id', 'name', 'email'),
                 ])
-                ->when($search, fn ($q) => $q->where(fn ($q) => $q->whereLike('status', "%$search%")
+                ->when($search, fn (Builder $q) => $q->where(fn (Builder $q) => $q->whereLike('status', "%$search%")
                     ->orWhereLike('reason_for_visit', "%$search%")
-                    ->orWhereHas('employeeInfo', function ($q2) use ($search, $isSql) {
+                    ->orWhereHas('employeeInfo', function (Builder $q2) use ($search, $isSql) {
                         if ($isSql) {
                             $booleanQuery = Helpers::buildBooleanQuery($search);
                             $q2->whereFullText(['first_name', 'last_name', 'phone_number', 'address', 'specialization', 'position'], $booleanQuery, ['mode' => 'boolean']);

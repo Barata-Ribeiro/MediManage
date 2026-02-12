@@ -7,10 +7,13 @@ use App\Http\Requests\QueryRequest;
 use App\Models\Invoice;
 use Auth;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Inertia\Inertia;
 use Log;
 use PDF;
 use Str;
+
+use function in_array;
 
 class InvoiceController extends Controller
 {
@@ -33,16 +36,13 @@ class InvoiceController extends Controller
             $sortBy = 'id';
         }
 
-        $invoices = Invoice::select(['invoices.*'])
-            ->with(['patientInfo' => fn ($q) => $q->select('id', 'first_name', 'last_name')]);
-
-        if (str_starts_with($sortBy, 'patient_info.')) {
-            $invoices->leftJoin('patient_info', 'patient_info.id', '=', 'invoices.patient_info_id');
-        }
-
-        $invoices = $invoices->when($search, fn ($q) => $q->whereLike('notes', "%$search%")
-            ->orWhereLike('payment_method', "%$search%")->orWhereLike('status', "%$search%"))
-            ->orWhereHas('patientInfo', fn ($q) => $q->whereLike('first_name', "%$search%")->orWhereLike('last_name', "%$search%"))
+        $invoices = Invoice::query()
+            ->select(['invoices.*'])
+            ->with(['patientInfo' => fn (Builder $q) => $q->select('id', 'first_name', 'last_name')])
+            ->when(str_starts_with($sortBy, 'patient_info.'), fn ($q) => $q->leftJoin('patient_info', 'patient_info.id', '=', 'invoices.patient_info_id'))
+            ->when($search, fn (Builder $q) => $q->whereLike('notes', "%$search%")
+                ->orWhereLike('payment_method', "%$search%")->orWhereLike('status', "%$search%"))
+            ->orWhereHas('patientInfo', fn (Builder $q) => $q->whereLike('first_name', "%$search%")->orWhereLike('last_name', "%$search%"))
             ->orderBy($sortBy, $sortDir)
             ->paginate($perPage)
             ->withQueryString();
@@ -72,7 +72,7 @@ class InvoiceController extends Controller
         }
 
         $invoices = $patientInfo->invoices()
-            ->when($search, fn ($q) => $q->where(function ($q) use ($search) {
+            ->when($search, fn (Builder $q) => $q->where(function (Builder $q) use ($search) {
                 $q->whereLike('notes', "%$search%")
                     ->orWhereLike('payment_method', "%$search%")
                     ->orWhereLike('status', "%$search%");
@@ -90,12 +90,12 @@ class InvoiceController extends Controller
     public function generateInvoicePdf(Invoice $invoice)
     {
         try {
-            Log::info('Generating PDF for Invoice ID: '.$invoice->id, ['action_user_id' => Auth::id()]);
+            Log::info("Generating PDF for Invoice ID: {$invoice->id}", ['action_user_id' => Auth::id()]);
             $hasPatientRole = Auth::user()->hasRole('Patient');
-            $hasPatientInfo = is_null(Auth::user()->patient_info_id) === false;
+            $hasPatientInfo = Auth::user()->patient_info_id !== null;
 
             if ($hasPatientRole && $hasPatientInfo && Auth::user()->patient_info_id !== $invoice->patient_info_id) {
-                Log::warning('Unauthorized PDF generation attempt for Invoice ID: '.$invoice->id, ['action_user_id' => Auth::id(), 'invoice_id' => $invoice->id]);
+                Log::warning("Unauthorized PDF generation attempt for Invoice ID: {$invoice->id}", ['action_user_id' => Auth::id(), 'invoice_id' => $invoice->id]);
 
                 return to_route('dashboard')->with('error', 'You are not authorized to generate this invoice PDF.');
             }
@@ -107,11 +107,11 @@ class InvoiceController extends Controller
             ])->setPaper('a4', 'portrait');
 
             $patientFullName = $invoice->patientInfo->full_name;
-            $filename = 'invoice_'.$invoice->id.'_'.Str::slug($patientFullName);
+            $filename = "invoice_{$invoice->id}_".Str::slug($patientFullName);
 
             return $pdf->stream($filename.'.pdf');
         } catch (Exception $e) {
-            Log::error('Error generating PDF for Invoice ID: '.$invoice->id.'.', ['action_user_id' => Auth::id(), 'invoice_id' => $invoice->id, 'error' => $e->getMessage()]);
+            Log::error("Error generating PDF for Invoice ID: {$invoice->id}.", ['action_user_id' => Auth::id(), 'invoice_id' => $invoice->id, 'error' => $e->getMessage()]);
 
             return to_route('dashboard')->with('error', 'Failed to generate invoice PDF. Please try again later.');
         }

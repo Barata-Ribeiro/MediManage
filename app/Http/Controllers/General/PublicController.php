@@ -8,8 +8,11 @@ use App\Models\Article;
 use App\Models\Category;
 use App\Models\Prescription;
 use DB;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+
+use function in_array;
 
 class PublicController extends Controller
 {
@@ -62,15 +65,16 @@ class PublicController extends Controller
 
         $isSql = $this->isSqlDriver;
 
-        $articles = Article::whereIsPublished(true)
-            ->with(['user' => fn ($query) => $query->select('id', 'name', 'avatar')])
-            ->with(['categories' => fn ($query) => $query->select('id', 'name')])
-            ->when($category, function ($query) use ($category) {
+        $articles = Article::query()
+            ->whereIsPublished(true)
+            ->with(['user' => fn (Builder $query) => $query->select('id', 'name', 'avatar')])
+            ->with(['categories' => fn (Builder $query) => $query->select('id', 'name')])
+            ->when($category, function (Builder $query) use ($category) {
                 $names = array_filter(array_map('trim', explode(',', $category)));
 
-                return $query->whereHas('categories', fn ($q) => $q->whereIn('name', $names));
+                return $query->whereHas('categories', fn (Builder $q) => $q->whereIn('name', $names));
             })
-            ->when($search, fn ($q) => $q->where(function ($query) use ($search, $isSql) {
+            ->when($search, fn (Builder $q) => $q->where(function (Builder $query) use ($search, $isSql) {
                 if ($isSql) {
                     $booleanQuery = Helpers::buildBooleanQuery($search);
                     $query->whereFullText(['title', 'subtitle', 'excerpt', 'content_html'], $booleanQuery, ['mode' => 'boolean']);
@@ -78,14 +82,14 @@ class PublicController extends Controller
                     $query->whereLike('title', "%$search%")->orWhereLike('subtitle', "%$search%")
                         ->orWhereLike('excerpt', "%$search%")->orWhereLike('content_html', "%$search%");
                 }
-            })->orWhereHas('user', fn ($q) => $q->whereLike('name', "%$search%")))
-            ->when($start_date, fn ($query) => $query->whereDate('created_at', '>=', $start_date))
-            ->when($end_date, fn ($query) => $query->whereDate('created_at', '<=', $end_date))
+            })->orWhereHas('user', fn (Builder $q) => $q->whereLike('name', "%$search%")))
+            ->when($start_date, fn (Builder $query) => $query->whereDate('created_at', '>=', $start_date))
+            ->when($end_date, fn (Builder $query) => $query->whereDate('created_at', '<=', $end_date))
             ->latest()
             ->paginate(10, ['id', 'user_id', 'title', 'slug', 'excerpt', 'thumbnail', 'created_at'])
             ->withQueryString();
 
-        $categories = Category::withCount(['articles as articles_count' => fn ($query) => $query->whereIsPublished(true)])->get();
+        $categories = Category::withCount(['articles as articles_count' => fn (Builder $query) => $query->whereIsPublished(true)])->get();
 
         return Inertia::render('home/articles/Index', [
             'articles' => $articles,

@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
 
+use function in_array;
+
 class UserManagementController extends Controller
 {
     /**
@@ -34,11 +36,10 @@ class UserManagementController extends Controller
             $sortBy = 'id';
         }
 
-        $query = User::with('roles')->select('users.*');
-
-        $query->when($search, fn ($qr) => $qr->whereLike('users.name', "%$search%")
-            ->orWhereLike('users.email', "%$search%")
-            ->orWhereHas('roles', fn ($q) => $q->whereLike('roles.name', "%$search%")));
+        $query = User::with('roles')->select('users.*')
+            ->when($search, fn ($qr) => $qr->whereLike('users.name', "%$search%")
+                ->orWhereLike('users.email', "%$search%")
+                ->orWhereHas('roles', fn ($q) => $q->whereLike('roles.name', "%$search%")));
 
         if ($sortBy === 'roles') {
             $rolesSub = DB::table('model_has_roles')
@@ -47,9 +48,8 @@ class UserManagementController extends Controller
                 ->where('model_has_roles.model_type', User::class)
                 ->groupBy('model_has_roles.model_id');
 
-            $query->leftJoinSub($rolesSub, 'r', fn ($join) => $join->on('users.id', '=', 'r.model_id'));
-
-            $query->orderBy(DB::raw('COALESCE(r.roles_names, "")'), $sortDir);
+            $query->leftJoinSub($rolesSub, 'r', fn ($join) => $join->on('users.id', '=', 'r.model_id'))
+                ->orderBy(DB::raw('COALESCE(r.roles_names, "")'), $sortDir);
         } else {
             $query->orderBy("users.$sortBy", $sortDir);
         }
@@ -67,6 +67,7 @@ class UserManagementController extends Controller
     public function show(User $user)
     {
         Log::info('User Management: Viewed user details', ['action_user_id' => Auth::id(), 'viewed_user_id' => $user->id]);
+
         $user->load('roles.permissions');
 
         return Inertia::render('admin/users/Show', [
@@ -94,6 +95,7 @@ class UserManagementController extends Controller
     {
         try {
             $data = $request->validated();
+
             $user->update($data);
 
             if (isset($data['roles'])) {
