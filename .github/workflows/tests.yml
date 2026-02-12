@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -26,13 +26,14 @@ jobs:
           coverage: xdebug
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: '25'
           cache: 'npm'
 
       - name: Install Node Dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps --include=optional
+        # TODO: Remove --legacy-peer-deps and --include=optional once all dependencies are updated
 
       - name: Install Dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader

@@ -17,7 +17,7 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -27,7 +27,8 @@ jobs:
       - name: Install Dependencies
         run: |
           composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-          npm install
+          npm install --legacy-peer-deps --include=optional
+        # TODO: Remove --legacy-peer-deps and --include=optional once all dependencies are updated
 
       - name: Run Pint
         run: vendor/bin/pint
