@@ -11,6 +11,8 @@ use Exception;
 use Inertia\Inertia;
 use Log;
 
+use function in_array;
+
 class CategoryController extends Controller
 {
     /**

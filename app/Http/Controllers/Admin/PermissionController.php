@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\QueryRequest;
 use Auth;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Log;
 use Spatie\Permission\Models\Permission;
+
+use function in_array;
 
 class PermissionController extends Controller
 {
@@ -86,7 +89,7 @@ class PermissionController extends Controller
             Log::info('Permission Management: Updated permission', ['action_user_id' => Auth::id(), 'permission_id' => $permission->id]);
 
             return to_route('admin.permissions.index')->with('success', 'Permission updated successfully.');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Permission Management: Failed to update permission', ['action_user_id' => Auth::id(), 'permission_id' => $permission->id, 'error' => $e->getMessage()]);
 
             return back()->withInput()->with('error', 'Failed to update permission. Please try again.');

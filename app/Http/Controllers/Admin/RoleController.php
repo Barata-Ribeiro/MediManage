@@ -12,6 +12,8 @@ use Log;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
+use function in_array;
+
 class RoleController extends Controller
 {
     /**
