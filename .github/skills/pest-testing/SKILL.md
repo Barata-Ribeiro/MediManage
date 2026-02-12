@@ -1,10 +1,9 @@
 ---
 name: pest-testing
-description: >-
-  Tests applications using the Pest 3 PHP framework. Activates when writing tests, creating unit or feature
-  tests, adding assertions, testing Livewire components, architecture testing, debugging test failures,
-  working with datasets or mocking; or when the user mentions test, spec, TDD, expects, assertion,
-  coverage, or needs to verify functionality works.
+description: "Tests applications using the Pest 3 PHP framework. Activates when writing tests, creating unit or feature tests, adding assertions, testing Livewire components, architecture testing, debugging test failures, working with datasets or mocking; or when the user mentions test, spec, TDD, expects, assertion, coverage, or needs to verify functionality works."
+license: MIT
+metadata:
+  author: laravel
 ---
 
 # Pest Testing 3
@@ -36,13 +35,12 @@ All tests must be written using Pest. Use `php artisan make:test --pest {name}`.
 
 ### Basic Test Structure
 
-<code-snippet name="Basic Pest Test Example" lang="php">
-
+<!-- Basic Pest Test Example -->
+```php
 it('is true', function () {
     expect(true)->toBeTrue();
 });
-
-</code-snippet>
+```
 
 ### Running Tests
 
@@ -54,13 +52,12 @@ it('is true', function () {
 
 Use specific assertions (`assertSuccessful()`, `assertNotFound()`) instead of `assertStatus()`:
 
-<code-snippet name="Pest Response Assertion" lang="php">
-
+<!-- Pest Response Assertion -->
+```php
 it('returns all', function () {
     $this->postJson('/api/docs', [])->assertSuccessful();
 });
-
-</code-snippet>
+```
 
 | Use | Instead of |
 |-----|------------|
@@ -76,16 +73,15 @@ Import mock function before use: `use function Pest\Laravel\mock;`
 
 Use datasets for repetitive tests (validation rules, etc.):
 
-<code-snippet name="Pest Dataset Example" lang="php">
-
+<!-- Pest Dataset Example -->
+```php
 it('has emails', function (string $email) {
     expect($email)->not->toBeEmpty();
 })->with([
     'james' => 'james@laravel.com',
     'taylor' => 'taylor@laravel.com',
 ]);
-
-</code-snippet>
+```
 
 ## Pest 3 Features
 
@@ -93,8 +89,8 @@ it('has emails', function (string $email) {
 
 Pest 3 includes architecture testing to enforce code conventions:
 
-<code-snippet name="Architecture Test Example" lang="php">
-
+<!-- Architecture Test Example -->
+```php
 arch('controllers')
     ->expect('App\Http\Controllers')
     ->toExtendNothing()
@@ -107,8 +103,7 @@ arch('models')
 arch('no debugging')
     ->expect(['dd', 'dump', 'ray'])
     ->not->toBeUsed();
-
-</code-snippet>
+```
 
 ### Type Coverage
 
